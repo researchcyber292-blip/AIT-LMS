@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "course-1",
+      "description": "A hacker in a hoodie surrounded by code.",
+      "imageUrl": "https://images.unsplash.com/photo-1631624220291-8f191fbdb543?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYWNrZXIlMjBjb2RlfGVufDB8fHx8MTc2OTA5Njc3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hacker code"
+    },
+    {
+      "id": "course-2",
+      "description": "A server room with glowing lights.",
+      "imageUrl": "https://images.unsplash.com/photo-1639066648921-82d4500abf1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzZXJ2ZXIlMjByb29tfGVufDB8fHx8MTc2OTEzODc5N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "server room"
+    },
+    {
+      "id": "course-3",
+      "description": "A digital padlock symbolizing cybersecurity.",
+      "imageUrl": "https://images.unsplash.com/photo-1548092372-0d1bd40894a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwc2VjdXJpdHl8ZW58MHx8fHwxNzY5MTE5MTI4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "digital security"
+    },
+    {
+      "id": "course-4",
+      "description": "A person analyzing data on multiple screens.",
+      "imageUrl": "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGF0YSUyMGFuYWx5c2lzfGVufDB8fHx8MTc2OTE2MjI3M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data analysis"
+    },
+    {
+      "id": "course-5",
+      "description": "Cloud computing illustration with servers and networks.",
+      "imageUrl": "https://images.unsplash.com/photo-1667984390538-3dea7a3fe33d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjbG91ZCUyMGNvbXB1dGluZ3xlbnwwfHx8fDE3NjkxNDI1OTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cloud computing"
+    },
+    {
+      "id": "course-6",
+      "description": "An abstract visualization of a computer virus.",
+      "imageUrl": "https://images.unsplash.com/photo-1610337673044-720471f83677?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb21wdXRlciUyMHZpcnVzfGVufDB8fHx8MTc2OTE2ODA2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "computer virus"
+    },
+    {
+      "id": "person-1",
+      "description": "Portrait of a confident professional.",
+      "imageUrl": "https://images.unsplash.com/photo-1655249481446-25d575f1c054?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwcm9mZXNzaW9uYWwlMjBwZXJzb258ZW58MHx8fHwxNzY5MTQ0NTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional person"
+    },
+    {
+      "id": "person-2",
+      "description": "Portrait of a smiling tech expert.",
+      "imageUrl": "https://images.unsplash.com/photo-1768633647910-7e6fb53e5b0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0ZWNoJTIwZXhwZXJ0fGVufDB8fHx8MTc2OTE2ODA2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tech expert"
+    },
+    {
+      "id": "person-3",
+      "description": "Portrait of a friendly team member.",
+      "imageUrl": "https://images.unsplash.com/photo-1580929571530-51780c506410?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmcmllbmRseSUyMHBlcnNvbnxlbnwwfHx8fDE3NjkxNjgwNjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "friendly person"
+    },
+    {
+      "id": "person-4",
+      "description": "Portrait of a focused developer.",
+      "imageUrl": "https://images.unsplash.com/photo-1689218742383-c4e7b8494e75?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkZXZlbG9wZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjkwODY3ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "developer portrait"
+    }
+  ]
 }
