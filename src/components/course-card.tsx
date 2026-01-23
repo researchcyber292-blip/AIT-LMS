@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Course } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
@@ -12,35 +11,31 @@ interface CourseCardProps {
 
 export function CourseCard({ course }: CourseCardProps) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
-      <CardHeader className="p-0">
+    <Card className="flex h-full flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 bg-card border-border group">
+      <CardHeader className="p-0 overflow-hidden">
         <Link href={`/courses/${course.id}`} className="block">
           <Image
             src={course.image}
             alt={course.title}
             width={600}
             height={400}
-            className="aspect-[3/2] w-full object-cover"
+            className="aspect-[3/2] w-full object-cover group-hover:scale-105 transition-transform duration-300"
             data-ai-hint={course.imageHint}
           />
         </Link>
       </CardHeader>
-      <CardContent className="flex-1 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <Badge variant={course.category === 'Beginner' ? 'secondary' : 'default'} className="bg-accent text-accent-foreground">{course.category}</Badge>
-          <p className="font-headline text-lg font-bold text-primary">${course.price}</p>
-        </div>
-        <CardTitle className="mb-2 font-headline text-xl">
+      <CardContent className="flex flex-1 flex-col p-4">
+        <CardTitle className="mb-2 font-headline text-lg text-primary">
           <Link href={`/courses/${course.id}`}>{course.title}</Link>
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground flex-1">
           {course.description}
         </p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button asChild variant="outline" className="w-full">
+        <Button asChild size="sm" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground rounded-full">
             <Link href={`/courses/${course.id}`}>
-                View Details <ArrowRight className="ml-2 h-4 w-4" />
+                Read More <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
         </Button>
       </CardFooter>

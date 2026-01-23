@@ -5,8 +5,8 @@ import { Footer } from '@/components/layout/footer';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CyberLearn - Your Gateway to Cybersecurity Mastery',
-  description: 'CyberLearn offers expert-led courses in cybersecurity, from ethical hacking to advanced network defense.',
+  title: 'Aviraj Info Tech - Your Gateway to Cybersecurity Mastery',
+  description: 'Aviraj Info Tech offers expert-led courses in cybersecurity, from ethical hacking to advanced network defense.',
 };
 
 export default function RootLayout({

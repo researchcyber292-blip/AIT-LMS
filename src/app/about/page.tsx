@@ -3,10 +3,10 @@ import type { Metadata } from 'next';
 import { TEAM_MEMBERS } from '@/data/content';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Eye, Rocket } from 'lucide-react';
+import { Target, TrendingUp } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About Us - CyberLearn',
+  title: 'About Us - Aviraj Info Tech',
   description: 'Learn about the mission, vision, and team behind Aviraj Info Tech Cyber Security.',
 };
 
@@ -27,7 +27,7 @@ export default function AboutPage() {
       <section className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2">
         <Card className="p-8">
           <div className="flex items-center gap-4">
-            <Rocket className="h-8 w-8 text-primary" />
+            <TrendingUp className="h-8 w-8 text-primary" />
             <h2 className="font-headline text-2xl font-bold">Our Mission</h2>
           </div>
           <p className="mt-4 text-muted-foreground">
@@ -36,7 +36,7 @@ export default function AboutPage() {
         </Card>
         <Card className="p-8">
           <div className="flex items-center gap-4">
-            <Eye className="h-8 w-8 text-primary" />
+            <Target className="h-8 w-8 text-primary" />
             <h2 className="font-headline text-2xl font-bold">Our Vision</h2>
           </div>
           <p className="mt-4 text-muted-foreground">
@@ -49,7 +49,7 @@ export default function AboutPage() {
       <section className="mt-16 text-center">
         <h2 className="font-headline text-3xl font-bold md:text-4xl">Meet the Team</h2>
         <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-          Our team of industry veterans and passionate educators is the driving force behind CyberLearn.
+          Our team of industry veterans and passionate educators is the driving force behind our success.
         </p>
         <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {TEAM_MEMBERS.map(member => (
