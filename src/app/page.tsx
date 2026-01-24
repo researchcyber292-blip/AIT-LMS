@@ -22,16 +22,19 @@ export default function Home() {
           Your browser does not support the video tag.
         </video>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-start pt-48 bg-black/60 text-center text-white">
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-36 bg-black/60 text-center text-white">
           <h1 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
             AVIRAJ INFO TECH
           </h1>
           <p className="mt-6 max-w-2xl font-body text-2xl text-gray-200 drop-shadow-lg md:text-3xl">
             CYBER SECURITY COURSES
           </p>
-          <Button asChild size="lg" className="mt-8 bg-accent hover:bg-accent/90 text-accent-foreground rounded-full px-8">
-            <Link href="/courses">Explore Our Courses</Link>
-          </Button>
+          <Link
+            href="/courses"
+            className="mt-8 inline-block rounded-full border border-white/30 bg-white/10 px-8 py-3 text-lg font-semibold text-white backdrop-blur-md transition-all hover:border-white/40 hover:bg-white/20"
+          >
+            Get Started...
+          </Link>
 
           <div className="absolute bottom-10 animate-bounce">
             <a href="#featured-courses" aria-label="Scroll to next section">
