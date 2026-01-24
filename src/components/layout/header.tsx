@@ -6,6 +6,7 @@ import { Menu, X, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -18,6 +19,15 @@ const navLinks = [
 
 export function Header() {
   const pathname = usePathname();
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const isActive = href === '/' ? pathname === href : pathname.startsWith(href);
@@ -35,20 +45,24 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container relative flex h-16 max-w-screen-2xl items-center justify-between">
-        {/* Left: Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-primary" />
-        </Link>
-        
-        {/* Center: Desktop Navigation */}
-        <nav className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 text-sm md:flex">
-            {navLinks.map(link => <NavLink key={link.href} {...link} />)}
-        </nav>
+    <header className={cn(
+      "sticky top-0 z-50 w-full transition-colors duration-300",
+      hasScrolled ? "border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" : "border-b border-transparent"
+    )}>
+      <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
+        {/* Left: Logo + Nav */}
+        <div className="flex items-center gap-6 md:gap-10">
+          <Link href="/" className="flex items-center space-x-2">
+              <Shield className="h-8 w-8 text-primary" />
+          </Link>
+          
+          <nav className="hidden gap-6 md:flex">
+              {navLinks.map(link => <NavLink key={link.href} {...link} />)}
+          </nav>
+        </div>
 
         {/* Right: Auth Buttons & Mobile Menu */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2">
                 <Button variant="link" className="text-muted-foreground">Sign up</Button>
                 <Button size="sm" className="bg-accent hover:bg-accent/90 rounded-full px-6">Login</Button>
