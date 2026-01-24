@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, Shield } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -48,12 +48,12 @@ export function Header() {
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
+            <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center">
               <Image
                 src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
                 alt="Aviraj Info Tech Logo"
-                width={40}
-                height={40}
+                width={32}
+                height={32}
                 className="object-contain"
               />
             </div>
