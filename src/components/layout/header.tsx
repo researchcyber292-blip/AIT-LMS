@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
+  { href: '/', label: 'Home' },
   { href: '/courses', label: 'Courses' },
   { href: '/programs', label: 'Programs' },
   { href: '/certifications', label: 'Certifications' },
@@ -18,25 +19,27 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
 
-  const NavLink = ({ href, label }: { href: string; label: string }) => (
-    <Link
-      href={href}
-      className={cn(
-        "text-sm font-medium transition-colors hover:text-primary",
-        pathname.startsWith(href) ? "text-primary" : "text-muted-foreground"
-      )}
-    >
-      {label}
-    </Link>
-  );
+  const NavLink = ({ href, label }: { href: string; label: string }) => {
+    const isActive = href === '/' ? pathname === href : pathname.startsWith(href);
+    return (
+        <Link
+        href={href}
+        className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            isActive ? "text-primary" : "text-muted-foreground"
+        )}
+        >
+        {label}
+        </Link>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container relative flex h-16 max-w-screen-2xl items-center justify-between">
         {/* Left: Logo */}
         <Link href="/" className="flex items-center space-x-2">
-            <span className="text-3xl font-bold font-headline text-primary">A</span>
-            <span className="hidden font-bold sm:inline-block">AVIRAJ INFO TECH</span>
+            <Shield className="h-8 w-8 text-primary" />
         </Link>
         
         {/* Center: Desktop Navigation */}
@@ -63,8 +66,7 @@ export function Header() {
                     <div className="flex h-full flex-col">
                         <div className="flex items-center justify-between border-b p-4">
                              <Link href="/" className="flex items-center space-x-2">
-                               <span className="text-2xl font-bold font-headline text-primary">A</span>
-                               <span className="font-bold text-sm">AVIRAJ INFO TECH</span>
+                               <Shield className="h-7 w-7 text-primary" />
                              </Link>
                              <SheetClose asChild>
                                  <Button variant="ghost" size="icon">
@@ -75,19 +77,22 @@ export function Header() {
                         </div>
                         
                         <nav className="flex flex-col gap-6 p-4">
-                          {navLinks.map(link => (
-                              <SheetClose asChild key={link.href}>
-                                  <Link 
-                                    href={link.href} 
-                                    className={cn(
-                                        "text-base font-medium transition-colors hover:text-primary",
-                                        pathname.startsWith(link.href) ? "text-primary" : "text-foreground"
-                                    )}
-                                  >
-                                    {link.label}
-                                  </Link>
-                              </SheetClose>
-                          ))}
+                          {navLinks.map(link => {
+                              const isActive = link.href === '/' ? pathname === link.href : pathname.startsWith(link.href);
+                              return (
+                                  <SheetClose asChild key={link.href}>
+                                      <Link 
+                                        href={link.href} 
+                                        className={cn(
+                                            "text-base font-medium transition-colors hover:text-primary",
+                                            isActive ? "text-primary" : "text-foreground"
+                                        )}
+                                      >
+                                        {link.label}
+                                      </Link>
+                                  </SheetClose>
+                              )
+                          })}
                         </nav>
                         
                         <div className="mt-auto flex flex-col gap-2 border-t p-4">

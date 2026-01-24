@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Twitter, Linkedin, Github } from 'lucide-react';
+import { Twitter, Linkedin, Github, Shield } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
@@ -9,7 +9,7 @@ export function Footer() {
       <div className="container grid grid-cols-1 md:grid-cols-4 gap-8 py-10">
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-3xl font-bold font-headline text-primary">A</span>
+            <Shield className="h-6 w-6 text-primary" />
             <span className="font-bold">AVIRAJ INFO TECH</span>
           </Link>
           <p className="text-sm text-muted-foreground">
