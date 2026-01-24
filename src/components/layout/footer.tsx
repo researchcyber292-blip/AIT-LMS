@@ -2,18 +2,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { Linkedin } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 export function Footer() {
-  const pathname = usePathname();
-
   return (
     <footer className="border-t border-border/40 bg-card">
-      <div className="container grid grid-cols-1 md:grid-cols-4 gap-8 py-10">
-        <div className="flex flex-col gap-4">
+      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-3 md:gap-16">
+        {/* Column 1: Company Info */}
+        <div className="flex flex-col items-center text-center md:items-start md:text-left">
           <Link href="/" className="flex items-center space-x-2">
             <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
               <Image
@@ -26,10 +24,10 @@ export function Footer() {
             </div>
             <span className="font-bold">AVIRAJ INFO TECH</span>
           </Link>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-4 text-sm text-muted-foreground">
             Safeguarding the Future of Digital.
           </p>
-          <div className="flex items-center gap-4 mt-4">
+          <div className="mt-4 flex items-center gap-4">
               <Link href="https://whatsapp.com/channel/0029Vb6kdko2kNFlxxNKNo1Z" target="_blank" rel="noreferrer" aria-label="WhatsApp">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -46,36 +44,40 @@ export function Footer() {
               </Link>
           </div>
         </div>
-        
-        <div>
-          <h4 className="font-headline font-semibold mb-4">Company</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link href="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
-            <li><Link href="/courses" className="text-muted-foreground hover:text-primary">Courses</Link></li>
-            <li><Link href="#" className="text-muted-foreground hover:text-primary">Careers</Link></li>
-            <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
-          </ul>
+
+        {/* Column 2: Links */}
+        <div className="grid grid-cols-2 gap-8 text-sm">
+          <div>
+            <h4 className="font-headline font-semibold mb-4">Company</h4>
+            <ul className="space-y-2">
+              <li><Link href="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
+              <li><Link href="/courses" className="text-muted-foreground hover:text-primary">Courses</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-primary">Careers</Link></li>
+              <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-headline font-semibold mb-4">Resources</h4>
+            <ul className="space-y-2">
+              <li><Link href="#" className="text-muted-foreground hover:text-primary">Blog</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-primary">Help Center</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
+              <li><Link href="#" className="text-muted-foreground hover:text-primary">Terms of Service</Link></li>
+            </ul>
+          </div>
         </div>
-        
-        <div>
-          <h4 className="font-headline font-semibold mb-4">Resources</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link href="#" className="text-muted-foreground hover:text-primary">Blog</Link></li>
-            <li><Link href="#" className="text-muted-foreground hover:text-primary">Help Center</Link></li>
-            <li><Link href="#" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
-            <li><Link href="#" className="text-muted-foreground hover:text-primary">Terms of Service</Link></li>
-          </ul>
-        </div>
-        
+
+        {/* Column 3: Subscribe */}
         <div>
           <h4 className="font-headline font-semibold mb-4">Subscribe for updates</h4>
-          <form className="flex flex-col gap-2">
-            <Input type="email" placeholder="Your email address" className="bg-background" />
+          <p className="text-sm text-muted-foreground mb-4">Get the latest news and special offers.</p>
+          <form className="flex flex-col sm:flex-row gap-2">
+            <Input type="email" placeholder="Your email address" className="bg-background flex-1" />
             <Button type="submit" className="bg-accent hover:bg-accent/90 rounded-full">Subscribe</Button>
           </form>
         </div>
       </div>
-      <div className="border-t border-border/40 py-4">
+      <div className="border-t border-border/40 py-6">
           <p className="text-center text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} Aviraj Info Tech. All Rights Reserved.
           </p>
