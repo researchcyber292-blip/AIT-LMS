@@ -25,7 +25,7 @@ export default function Home() {
             trigger: sectionRef.current,
             start: 'top top',
             end: '+=3000',
-            scrub: true,
+            scrub: 1,
             pin: true,
           },
         });
