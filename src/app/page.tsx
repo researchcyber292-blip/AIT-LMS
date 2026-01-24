@@ -22,7 +22,7 @@ export default function Home() {
           Your browser does not support the video tag.
         </video>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-start pt-36 bg-black/60 text-center text-white">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-center text-white">
           <h1 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
             AVIRAJ INFO TECH
           </h1>
@@ -31,9 +31,9 @@ export default function Home() {
           </p>
           <Link
             href="/courses"
-            className="mt-8 inline-block rounded-full border border-white/30 bg-white/10 px-8 py-3 text-lg font-semibold text-white backdrop-blur-md transition-all hover:border-white/40 hover:bg-white/20"
+            className="mt-10 rounded-full border-2 border-white/70 bg-white/10 px-10 py-3 text-lg font-semibold text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/20"
           >
-            Get Started...
+            Get Started
           </Link>
 
           <div className="absolute bottom-10 animate-bounce">
