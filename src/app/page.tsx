@@ -31,7 +31,7 @@ export default function Home() {
           </p>
           <Link
             href="/courses"
-            className="mt-10 rounded-full border-2 border-white/70 bg-white/10 px-10 py-3 text-lg font-semibold text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/20"
+            className="mt-10 rounded-full border border-white/40 bg-black/20 px-10 py-3 text-lg font-medium text-white backdrop-blur-md transition-all hover:border-white/70 hover:bg-white/10"
           >
             Get Started
           </Link>
