@@ -1,10 +1,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CourseCard } from '@/components/course-card';
-import { COURSES } from '@/data/content';
-import { ArrowDown, ShieldCheck, Zap, Award } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowDown, ShieldCheck, Zap, Award, BookOpen, Target, TrendingUp } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -37,7 +34,7 @@ export default function Home() {
           </Link>
 
           <div className="absolute bottom-10 animate-bounce">
-            <a href="#featured-courses" aria-label="Scroll to next section">
+            <a href="#main-content" aria-label="Scroll to next section">
                 <ArrowDown className="h-8 w-8 text-white/70" />
             </a>
           </div>
@@ -45,77 +42,86 @@ export default function Home() {
       </div>
 
       {/* Main Content */}
-      <div id="featured-courses" className="bg-background scroll-mt-20">
-        {/* Featured Courses Section */}
+      <div id="main-content" className="bg-background scroll-mt-20">
         <section className="container py-16 md:py-24">
-          <div className="text-center">
-            <h2 className="font-headline text-3xl font-bold md:text-4xl">Featured Courses</h2>
-            <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-              Kickstart your journey into cybersecurity with our most popular courses.
-            </p>
-          </div>
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {COURSES.slice(0, 4).map(course => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-              <Link href="/courses">View All Courses</Link>
-            </Button>
-          </div>
-        </section>
-        
-        {/* Why Choose Us Section */}
-        <section className="bg-card border-y">
-            <div className="container py-16 md:py-24">
-                <div className="text-center">
-                    <h2 className="font-headline text-3xl font-bold md:text-4xl">Why Aviraj Info Tech?</h2>
-                    <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                        We provide industry-leading education to build the next generation of security experts.
-                    </p>
+            <div className="text-center mb-12">
+                <h2 className="font-headline text-3xl font-bold md:text-4xl">Your Gateway to Cybersecurity Mastery</h2>
+                <p className="mt-4 max-w-3xl mx-auto text-muted-foreground">
+                    At Aviraj Info Tech, we're dedicated to forging the next generation of cybersecurity experts. We provide cutting-edge, hands-on training to equip you with the skills demanded by the industry.
+                </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <div className="bg-primary/10 text-primary p-3 rounded-full">
+                            <Award className="h-6 w-6" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-headline text-xl font-semibold mb-2">Expert-Led Training</h3>
+                        <p className="text-muted-foreground">Learn from seasoned professionals who are leaders in the cybersecurity industry, bringing real-world experience to every lesson.</p>
+                    </div>
                 </div>
-                <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-                    <Card className="text-center p-6 border-transparent shadow-lg hover:shadow-primary/20 transition-shadow">
-                        <div className="flex justify-center mb-4">
-                            <div className="bg-primary/10 text-primary p-4 rounded-full">
-                                <Award className="h-8 w-8" />
-                            </div>
+                <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <div className="bg-primary/10 text-primary p-3 rounded-full">
+                            <Zap className="h-6 w-6" />
                         </div>
-                        <CardHeader>
-                            <CardTitle className="font-headline">Expert-Led Training</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground">Learn from seasoned professionals who are leaders in the cybersecurity industry.</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="text-center p-6 border-transparent shadow-lg hover:shadow-accent/20 transition-shadow">
-                         <div className="flex justify-center mb-4">
-                            <div className="bg-accent/10 text-accent p-4 rounded-full">
-                                <Zap className="h-8 w-8" />
-                            </div>
-                        </div>
-                        <CardHeader>
-                            <CardTitle className="font-headline">Hands-On Labs</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground">Apply what you learn in real-world scenarios with our interactive lab environments.</p>
-                        </CardContent>
-                    </Card>
-                    <Card className="text-center p-6 border-transparent shadow-lg hover:shadow-secondary-foreground/20 transition-shadow">
-                        <div className="flex justify-center mb-4">
-                            <div className="bg-secondary text-secondary-foreground p-4 rounded-full">
-                                <ShieldCheck className="h-8 w-8" />
-                            </div>
-                        </div>
-                        <CardHeader>
-                            <CardTitle className="font-headline">Career-Focused</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground">Our curriculum is designed to equip you with the skills demanded by top employers.</p>
-                        </CardContent>
-                    </Card>
+                    </div>
+                    <div>
+                        <h3 className="font-headline text-xl font-semibold mb-2">Hands-On Labs</h3>
+                        <p className="text-muted-foreground">Apply what you learn in real-world scenarios with our interactive lab environments designed to build practical, job-ready skills.</p>
+                    </div>
                 </div>
+                <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <div className="bg-primary/10 text-primary p-3 rounded-full">
+                            <TrendingUp className="h-6 w-6" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-headline text-xl font-semibold mb-2">Career-Focused Curriculum</h3>
+                        <p className="text-muted-foreground">Our curriculum is designed in collaboration with industry experts to equip you with the skills demanded by top employers.</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <div className="bg-primary/10 text-primary p-3 rounded-full">
+                            <ShieldCheck className="h-6 w-6" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-headline text-xl font-semibold mb-2">Industry-Recognized Certifications</h3>
+                        <p className="text-muted-foreground">Validate your skills and enhance your resume with certifications that are respected and valued by employers worldwide.</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <div className="bg-primary/10 text-primary p-3 rounded-full">
+                            <BookOpen className="h-6 w-6" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-headline text-xl font-semibold mb-2">Comprehensive Course Catalog</h3>
+                        <p className="text-muted-foreground">From beginner fundamentals to advanced specializations, find the perfect course to match your skill level and career goals.</p>
+                    </div>
+                </div>
+                <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                        <div className="bg-primary/10 text-primary p-3 rounded-full">
+                            <Target className="h-6 w-6" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-headline text-xl font-semibold mb-2">Personalized Learning Paths</h3>
+                        <p className="text-muted-foreground">Our platform helps you track your progress and suggests courses to help you achieve your specific career objectives.</p>
+                    </div>
+                </div>
+            </div>
+            <div className="mt-12 text-center">
+                <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full">
+                    <Link href="/courses">Explore All Courses</Link>
+                </Button>
             </div>
         </section>
       </div>
