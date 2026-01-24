@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -35,37 +35,44 @@ export function Header() {
   }, []);
 
   const headerDynamicClasses = isHomePage && !isScrolled 
-    ? 'bg-transparent' 
-    : 'bg-background/90 border-b border-border/40 backdrop-blur-sm';
+    ? 'bg-transparent text-white' 
+    : 'bg-background/90 border-b border-border/40 backdrop-blur-sm text-foreground';
     
   const linkDynamicClasses = isHomePage && !isScrolled
-    ? 'text-white/80 hover:text-white'
-    : 'text-foreground/80 hover:text-foreground';
+    ? 'hover:text-white/80'
+    : 'hover:text-foreground/80';
 
   return (
     <header className={cn("fixed top-0 z-50 w-full transition-all duration-300", headerDynamicClasses)}>
-      <div className="container flex h-20 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
-            alt="Aviraj Info Tech Logo"
-            width={48}
-            height={48}
-            className="rounded-full object-contain"
-          />
-        </Link>
-        
-        <nav className="hidden md:flex items-center gap-8">
+      <div className="container flex h-20 items-center">
+        {/* Logo */}
+        <div className="flex-1 flex justify-start">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
+              <Image
+                src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
+                alt="Aviraj Info Tech Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+            </div>
+          </Link>
+        </div>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex flex-1 justify-center items-center gap-8">
             {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className={cn("text-sm font-medium", linkDynamicClasses)}>
+                <Link key={link.href} href={link.href} className={cn("text-sm font-medium transition-colors", linkDynamicClasses, pathname === link.href ? 'text-primary' : '')}>
                     {link.label}
                 </Link>
             ))}
         </nav>
         
-        <div className="flex items-center gap-4">
+        {/* Auth Buttons & Mobile Nav */}
+        <div className="flex-1 flex justify-end items-center gap-4">
             <div className="hidden md:flex items-center gap-2">
-                <Button variant="link" asChild className={cn("text-sm font-medium", linkDynamicClasses)}>
+                <Button variant="ghost" asChild className={cn("text-sm font-medium", linkDynamicClasses)}>
                     <Link href="#">Login</Link>
                 </Button>
                 <Button size="sm" className="rounded-full">
@@ -73,7 +80,7 @@ export function Header() {
                 </Button>
             </div>
             
-            {/* Mobile Nav */}
+            {/* Mobile Nav Trigger */}
             <div className="md:hidden">
                <Sheet>
                 <SheetTrigger asChild>
@@ -82,17 +89,19 @@ export function Header() {
                     <span className="sr-only">Toggle Menu</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[90%] max-w-xs p-0">
+                <SheetContent side="right" className="w-[90%] max-w-xs p-0 bg-background text-foreground">
                     <div className="flex h-full flex-col">
                         <div className="flex items-center justify-between border-b p-4">
                              <Link href="/" className="flex items-center space-x-2">
-                               <Image
-                                    src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
-                                    alt="Aviraj Info Tech Logo"
-                                    width={32}
-                                    height={32}
-                                    className="rounded-full"
-                                />
+                               <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center">
+                                 <Image
+                                      src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
+                                      alt="Aviraj Info Tech Logo"
+                                      width={24}
+                                      height={24}
+                                      className="object-contain"
+                                  />
+                                </div>
                              </Link>
                              <SheetClose asChild>
                                  <Button variant="ghost" size="icon">
