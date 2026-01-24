@@ -45,7 +45,7 @@ export function CustomCursor() {
   return (
     <div
       className={cn(
-        'pointer-events-none fixed z-[9999] h-3 w-3 rounded-full bg-black transition-transform duration-200 ease-in-out mix-blend-difference',
+        'pointer-events-none fixed z-[9999] h-3 w-3 rounded-full bg-white transition-transform duration-200 ease-in-out mix-blend-difference',
         {
           'scale-[3]': isHovering,
           'opacity-0': !isVisible,
