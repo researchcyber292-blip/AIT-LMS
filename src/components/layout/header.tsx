@@ -63,7 +63,7 @@ export function Header() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex flex-1 justify-center items-center gap-8">
             {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className={cn("text-sm font-medium transition-colors", linkDynamicClasses, pathname === link.href ? 'text-primary' : '')}>
+                <Link key={link.href} href={link.href} className={cn("text-sm font-medium transition-colors whitespace-nowrap", linkDynamicClasses, pathname === link.href ? 'text-primary' : '')}>
                     {link.label}
                 </Link>
             ))}
