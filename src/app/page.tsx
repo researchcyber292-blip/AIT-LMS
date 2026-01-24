@@ -25,7 +25,7 @@ export default function Home() {
             trigger: sectionRef.current,
             start: 'top top',
             end: '+=5000',
-            scrub: 1,
+            scrub: 2, // This adds the smoothing effect
             pin: true,
           },
         });
