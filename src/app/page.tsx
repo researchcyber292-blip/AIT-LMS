@@ -63,10 +63,19 @@ export default function Home() {
           className="absolute top-0 left-0 w-full h-full object-cover -z-20"
           poster="https://images.pexels.com/videos/5361042/pictures/pexels-photo-5361042.jpeg"
         >
-          <source src="https://videos.pexels.com/video-files/853880/853880-hd_1920_1080_30fps.mp4" type="video/mp4" />
+          {/* 
+            Your video goes here. Place your video file in the `public` folder 
+            and update the src path. For example, if your video is `my-video.mp4`, 
+            the path would be `/my-video.mp4`.
+          */}
+          <source src="/video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-background/60 -z-10"></div>
+        <div className="z-10 p-8 bg-black/50 rounded-lg text-center">
+            <h1 className="text-4xl font-bold text-white font-headline">Video Scroll Effect</h1>
+            <p className="text-white/80 mt-2">Replace the placeholder at <code className="bg-white/20 px-2 py-1 rounded-md font-code text-sm">public/video.mp4</code> with your own video.</p>
+        </div>
       </section>
 
       {/* This div creates scroll space */}
