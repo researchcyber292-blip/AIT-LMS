@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Twitter, Linkedin, Github } from 'lucide-react';
+import { Github, Instagram, MessageCircle, Send, Twitter } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
@@ -30,14 +30,20 @@ export function Footer() {
             Safeguarding the Future of Digital.
           </p>
           <div className="flex items-center gap-4 mt-4">
-              <Link href="#" target="_blank" rel="noreferrer">
-                  <Twitter className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
+              <Link href="#" target="_blank" rel="noreferrer" aria-label="WhatsApp">
+                  <MessageCircle className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
               </Link>
-              <Link href="#" target="_blank" rel="noreferrer">
-                  <Linkedin className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
+              <Link href="#" target="_blank" rel="noreferrer" aria-label="Instagram">
+                  <Instagram className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
               </Link>
-              <Link href="#" target="_blank" rel="noreferrer">
+              <Link href="#" target="_blank" rel="noreferrer" aria-label="Telegram">
+                  <Send className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
+              </Link>
+              <Link href="#" target="_blank" rel="noreferrer" aria-label="Github">
                   <Github className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
+              </Link>
+              <Link href="#" target="_blank" rel="noreferrer" aria-label="X">
+                  <Twitter className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
               </Link>
           </div>
         </div>
