@@ -23,11 +23,6 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const isHomePage = pathname === '/';
 
-  // We don't want to show the header on login/signup pages
-  if (pathname === '/login' || pathname === '/signup') {
-    return null;
-  }
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -38,6 +33,11 @@ export function Header() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // We don't want to show the header on login/signup pages
+  if (pathname === '/login' || pathname === '/signup') {
+    return null;
+  }
 
   const headerDynamicClasses = isHomePage && !isScrolled 
     ? 'bg-transparent text-white' 
