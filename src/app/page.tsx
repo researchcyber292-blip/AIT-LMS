@@ -22,8 +22,8 @@ export default function Home() {
           Your browser does not support the video tag.
         </video>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-center text-white pb-20">
-          <h1 className="font-headline text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-48 bg-black/60 text-center text-white">
+          <h1 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
             AVIRAJ INFO TECH
           </h1>
           <p className="mt-4 max-w-2xl font-body text-xl text-gray-200 drop-shadow-lg md:text-2xl">
