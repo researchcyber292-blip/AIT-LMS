@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from '@/components/course-card';
 import { COURSES } from '@/data/content';
-import { Lock, Shield, CheckCircle, Search, ShieldCheck, BookOpen, User, Star, Award } from 'lucide-react';
+import { Shield, CheckCircle, Search, ShieldCheck, BookOpen, User, Star, Award } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
 export default function Home() {
@@ -23,37 +23,39 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col gap-16 md:gap-24 container">
+    <div className="flex flex-col gap-16 md:gap-24">
       {/* Hero Section */}
-      <section className="pt-16 md:pt-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
-          <div className="text-center md:text-left">
+      <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center text-center">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover -z-20"
+          poster="https://images.pexels.com/videos/3214466/free-video-3214466.jpg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+        >
+          <source src="https://videos.pexels.com/video-files/3214466/3214466-hd_1920_1080_25fps.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute top-0 left-0 w-full h-full bg-background/60 -z-10"></div>
+        <div className="container">
+          <div className="text-center text-white">
             <p className="font-headline text-lg text-primary">AVIRAJ INFO TECH</p>
             <h1 className="font-headline text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl mt-2">
               CYBER SECURITY PROGRAM
             </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 text-lg text-muted-foreground/90 max-w-2xl mx-auto">
               Safeguarding the Future of Digital
             </p>
             <Button asChild size="lg" className="mt-8 bg-accent hover:bg-accent/90 rounded-full">
               <Link href="/courses">EXPLORE PROGRAMS</Link>
             </Button>
           </div>
-          <div className="flex items-center justify-center">
-             <div className="relative w-64 h-64 md:w-80 md:h-80">
-              <div className="absolute inset-0 border-2 border-primary/20 rounded-full animate-pulse"></div>
-              <div className="absolute inset-4 border-2 border-primary/40 rounded-full animate-pulse delay-200"></div>
-              <div className="absolute inset-8 border-t-2 border-primary rounded-full animate-spin-slow"></div>
-              <div className="absolute inset-12 bg-background/50 rounded-full flex items-center justify-center">
-                 <Lock className="w-24 h-24 text-primary" />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
       {/* Info Boxes Section */}
-      <section>
+      <section className="container">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {infoBoxes.map((box, index) => (
             <div key={index} className="flex flex-col items-center justify-center gap-3 p-4 border border-border/50 rounded-lg bg-card/50 text-center">
@@ -65,7 +67,7 @@ export default function Home() {
       </section>
 
       {/* Our Expertise Section */}
-      <section>
+      <section className="container">
         <h2 className="font-headline text-3xl font-bold text-center mb-12">OUR EXPERTISE</h2>
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           <div className="lg:col-span-1">
