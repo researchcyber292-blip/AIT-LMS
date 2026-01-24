@@ -44,16 +44,16 @@ export function Header() {
 
   return (
     <header className={cn("fixed top-0 z-50 w-full transition-all duration-300", headerDynamicClasses)}>
-      <div className="container flex h-20 items-center">
+      <div className="container flex h-16 items-center">
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center">
+            <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center">
               <Image
                 src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
                 alt="Aviraj Info Tech Logo"
-                width={32}
-                height={32}
+                width={24}
+                height={24}
                 className="object-contain"
               />
             </div>
