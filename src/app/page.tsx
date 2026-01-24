@@ -24,7 +24,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top top',
-            end: '+=3000',
+            end: '+=5000',
             scrub: 1,
             pin: true,
           },
@@ -80,7 +80,7 @@ export default function Home() {
       </section>
 
       {/* This div creates scroll space for the animation */}
-      <div className="h-[3000px]"></div>
+      <div className="h-[5000px]"></div>
     </div>
   );
 }
