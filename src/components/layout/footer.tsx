@@ -47,7 +47,7 @@ export function Footer() {
               <Link href="#" target="_blank" rel="noreferrer" aria-label="Github">
                   <Github className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
               </Link>
-              <Link href="#" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+              <Link href="https://www.linkedin.com/company/aviraj-infotech/?originalSubdomain=in" target="_blank" rel="noreferrer" aria-label="LinkedIn">
                   <Linkedin className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
               </Link>
           </div>
