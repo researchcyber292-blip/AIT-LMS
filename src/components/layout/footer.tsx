@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Twitter, Linkedin, Github, Shield } from 'lucide-react';
+import { Twitter, Linkedin, Github } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
@@ -14,7 +15,15 @@ export function Footer() {
       <div className="container grid grid-cols-1 md:grid-cols-4 gap-8 py-10">
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center space-x-2">
-            <Shield className="h-6 w-6 text-primary" />
+            <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
+              <Image
+                src="/image.png"
+                alt="Aviraj Info Tech Logo"
+                width={28}
+                height={28}
+                className="object-cover w-full h-full"
+              />
+            </div>
             <span className="font-bold">AVIRAJ INFO TECH</span>
           </Link>
           <p className="text-sm text-muted-foreground">
