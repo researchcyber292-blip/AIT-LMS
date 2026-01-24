@@ -26,7 +26,7 @@ export default function Home() {
           <h1 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
             AVIRAJ INFO TECH
           </h1>
-          <p className="mt-4 max-w-2xl font-body text-xl text-gray-200 drop-shadow-lg md:text-2xl">
+          <p className="mt-6 max-w-2xl font-body text-2xl text-gray-200 drop-shadow-lg md:text-3xl">
             CYBER SECURITY COURSES
           </p>
           <Button asChild size="lg" className="mt-8 bg-accent hover:bg-accent/90 text-accent-foreground rounded-full px-8">
