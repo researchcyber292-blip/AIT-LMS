@@ -48,13 +48,13 @@ export function Header() {
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-full bg-white flex items-center justify-center">
+            <div className="h-7 w-7 rounded-full bg-white overflow-hidden">
               <Image
                 src="/image.png"
                 alt="Aviraj Info Tech Logo"
-                width={20}
-                height={20}
-                className="object-contain"
+                width={28}
+                height={28}
+                className="object-cover w-full h-full"
               />
             </div>
           </Link>
@@ -93,13 +93,13 @@ export function Header() {
                     <div className="flex h-full flex-col">
                         <div className="flex items-center justify-between border-b p-4">
                              <Link href="/" className="flex items-center space-x-2">
-                               <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center">
+                               <div className="h-8 w-8 rounded-full bg-white overflow-hidden">
                                  <Image
                                       src="/image.png"
                                       alt="Aviraj Info Tech Logo"
-                                      width={24}
-                                      height={24}
-                                      className="object-contain"
+                                      width={32}
+                                      height={32}
+                                      className="object-cover w-full h-full"
                                   />
                                 </div>
                              </Link>
