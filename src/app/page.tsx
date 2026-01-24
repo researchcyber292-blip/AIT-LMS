@@ -1,3 +1,6 @@
+'use client';
+
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from '@/components/course-card';
@@ -22,17 +25,48 @@ export default function Home() {
     { icon: ShieldCheck, text: 'DATA PRIVACY' },
   ];
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // We need to wait for the video's metadata to be loaded to get its duration.
+    video.onloadedmetadata = () => {
+      const handleScroll = () => {
+        if (video.readyState >= 2) { // HAVE_CURRENT_DATA or more
+          const scrollPosition = window.scrollY;
+          const windowHeight = window.innerHeight;
+          
+          // Let the animation play out over the first screen height
+          const scrollFraction = Math.min(scrollPosition / (windowHeight * 0.8), 1);
+          
+          video.currentTime = video.duration * scrollFraction;
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      // Set initial time in case the page is reloaded at a scroll position
+      handleScroll();
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
+
   return (
     <div className="flex flex-col gap-16 md:gap-24">
       {/* Hero Section */}
-      <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center text-center">
+      <section className="relative h-screen flex items-center justify-center text-center">
         <video
-          autoPlay
-          loop
+          ref={videoRef}
           muted
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover -z-20"
           poster="https://images.pexels.com/videos/3214466/free-video-3214466.jpg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+          preload="auto"
         >
           <source src="https://videos.pexels.com/video-files/3214466/3214466-hd_1920_1080_25fps.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -55,10 +89,10 @@ export default function Home() {
       </section>
 
       {/* Info Boxes Section */}
-      <section className="container">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <section className="container -mt-24 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 bg-card p-6 rounded-xl shadow-lg border">
           {infoBoxes.map((box, index) => (
-            <div key={index} className="flex flex-col items-center justify-center gap-3 p-4 border border-border/50 rounded-lg bg-card/50 text-center">
+            <div key={index} className="flex flex-col items-center justify-center gap-3 p-4 text-center">
               <box.icon className="w-8 h-8 text-primary" />
               <span className="font-headline text-sm font-semibold">{box.text}</span>
             </div>
