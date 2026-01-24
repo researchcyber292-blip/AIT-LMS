@@ -8,6 +8,8 @@ import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { LoginDialog } from '@/components/auth/login-dialog';
+import { SignUpDialog } from '@/components/auth/signup-dialog';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -48,13 +50,13 @@ export function Header() {
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-full bg-white overflow-hidden">
+            <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
               <Image
                 src="/image.png"
                 alt="Aviraj Info Tech Logo"
                 width={28}
                 height={28}
-                className="object-cover w-full h-full"
+                className="object-contain w-full h-full"
               />
             </div>
           </Link>
@@ -72,12 +74,16 @@ export function Header() {
         {/* Auth Buttons & Mobile Nav */}
         <div className="flex-1 flex justify-end items-center gap-4">
             <div className="hidden md:flex items-center gap-2">
-                <Button variant="ghost" asChild className={cn("text-sm font-medium", linkDynamicClasses)}>
-                    <Link href="#">Login</Link>
+              <LoginDialog>
+                <Button variant="ghost" className={cn("text-sm font-medium", linkDynamicClasses)}>
+                    Login
                 </Button>
+              </LoginDialog>
+              <SignUpDialog>
                 <Button size="sm" className="rounded-full">
                     Sign up
                 </Button>
+              </SignUpDialog>
             </div>
             
             {/* Mobile Nav Trigger */}
@@ -122,14 +128,14 @@ export function Header() {
                         </nav>
                         
                         <div className="mt-auto flex flex-col gap-2 border-t p-4">
-                            <SheetClose asChild>
-                                <Button variant="outline" asChild><Link href="#" className="w-full">Login</Link></Button>
-                            </SheetClose>
-                            <SheetClose asChild>
-                                 <Button className="w-full rounded-full" asChild>
-                                    <Link href="#">Sign up</Link>
+                            <LoginDialog>
+                                <Button variant="outline" className="w-full">Login</Button>
+                            </LoginDialog>
+                            <SignUpDialog>
+                                 <Button className="w-full rounded-full">
+                                    Sign up
                                  </Button>
-                            </SheetClose>
+                            </SignUpDialog>
                         </div>
                     </div>
                 </SheetContent>
