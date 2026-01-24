@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="bg-background text-foreground">
-      <div className="container flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
+      <div className="container flex min-h-screen items-center justify-center py-12">
         <div className="relative w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 items-center gap-8">
           
           {/* Left Side: Form */}
@@ -104,19 +104,6 @@ export default function AdminLoginPage() {
              {/* Background image removed as requested */}
           </div>
         </div>
-      </div>
-      <div className="container pb-6 text-center w-full">
-            <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            By continuing, you agree to Aviraj Info Tech's{' '}
-            <Link href="#" className="underline">
-                Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link href="#" className="underline">
-                Privacy Policy
-            </Link>
-            .
-            </p>
       </div>
     </div>
   );

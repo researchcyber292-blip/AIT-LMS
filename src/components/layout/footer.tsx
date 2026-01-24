@@ -5,8 +5,15 @@ import Image from 'next/image';
 import { Linkedin } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname === '/about') {
+    return null;
+  }
+  
   return (
     <footer className="border-t border-border/40 bg-card">
       <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-3 md:gap-16">
@@ -50,7 +57,7 @@ export function Footer() {
           <div>
             <h4 className="font-headline font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><Link href="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
+              <li><Link href="/about" className="text-muted-foreground hover:text-primary">ADMINS</Link></li>
               <li><Link href="/courses" className="text-muted-foreground hover:text-primary">Courses</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-primary">Careers</Link></li>
               <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
