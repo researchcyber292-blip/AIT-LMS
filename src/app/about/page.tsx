@@ -36,20 +36,11 @@ export default function AdminLoginPage() {
           
           {/* Left Side: Form */}
           <div className="flex flex-col justify-center">
-              <Link href="/" className="mb-8 self-start">
-                  <Image
-                      src="/image.png"
-                      alt="Aviraj Info Tech Logo"
-                      width={28}
-                      height={28}
-                      className="rounded-full"
-                  />
-              </Link>
-            <h1 className="font-headline text-3xl font-bold text-left">
+            <h1 className="font-headline text-3xl font-bold text-left mb-8">
               Admin Log In
             </h1>
 
-            <div className="mt-8 max-w-sm">
+            <div className="max-w-sm">
               <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                       <FormField
