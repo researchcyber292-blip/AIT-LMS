@@ -11,6 +11,10 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/courses', label: 'Courses' },
+  { href: '/programs', label: 'Programs' },
+  { href: '/certifications', label: 'Certifications' },
+  { href: '/about', label: 'About Us' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -51,21 +55,23 @@ export function Header() {
           />
         </Link>
         
+        <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+                <Link key={link.href} href={link.href} className={cn("text-sm font-medium", linkDynamicClasses)}>
+                    {link.label}
+                </Link>
+            ))}
+        </nav>
+        
         <div className="flex items-center gap-4">
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-4">
-                {navLinks.map((link) => (
-                    <Link key={link.href} href={link.href} className={cn("text-sm font-medium", linkDynamicClasses)}>
-                        {link.label}
-                    </Link>
-                ))}
-                 <Button variant="link" asChild className={cn("text-sm font-medium", linkDynamicClasses)}>
+            <div className="hidden md:flex items-center gap-2">
+                <Button variant="link" asChild className={cn("text-sm font-medium", linkDynamicClasses)}>
                     <Link href="#">Login</Link>
                 </Button>
                 <Button size="sm" className="rounded-full">
                     Sign up
                 </Button>
-            </nav>
+            </div>
             
             {/* Mobile Nav */}
             <div className="md:hidden">
