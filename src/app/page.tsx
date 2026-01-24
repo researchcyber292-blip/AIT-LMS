@@ -3,28 +3,8 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CourseCard } from '@/components/course-card';
-import { COURSES } from '@/data/content';
-import { Shield, CheckCircle, Search, ShieldCheck, BookOpen, User, Star, Award } from 'lucide-react';
-import { Card } from '@/components/ui/card';
 
 export default function Home() {
-  const featuredCourses = COURSES.slice(0, 4);
-
-  const expertiseItems = [
-    { icon: Award, text: 'BEST-IN-CLASS-LMS' },
-    { icon: User, text: 'EXPERT FACULTY' },
-    { icon: Star, text: 'CERTIFICATION & PLACEMENT' },
-    { icon: BookOpen, text: 'FLEXIBLE ONLINE & OFFLINE' },
-  ];
-
-  const infoBoxes = [
-    { icon: Shield, text: 'THREAT DETECTION' },
-    { icon: Search, text: 'THREAT MITIGATION' },
-    { icon: CheckCircle, text: 'DATA TERMINEX' },
-    { icon: ShieldCheck, text: 'DATA PRIVACY' },
-  ];
-
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -57,7 +37,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-16 md:gap-24">
+    <div>
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center text-center">
         <video
@@ -88,41 +68,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Info Boxes Section */}
-      <section className="container -mt-24 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 bg-card p-6 rounded-xl shadow-lg border">
-          {infoBoxes.map((box, index) => (
-            <div key={index} className="flex flex-col items-center justify-center gap-3 p-4 text-center">
-              <box.icon className="w-8 h-8 text-primary" />
-              <span className="font-headline text-sm font-semibold">{box.text}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Our Expertise Section */}
-      <section className="container">
-        <h2 className="font-headline text-3xl font-bold text-center mb-12">OUR EXPERTISE</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-          <div className="lg:col-span-1">
-            <Card className="p-6 space-y-4 bg-card border-none">
-              {expertiseItems.map((item, index) => (
-                <div key={index} className="flex items-center gap-4 p-3 rounded-md hover:bg-muted/50 cursor-pointer transition-colors">
-                  <item.icon className="w-6 h-6 text-primary" />
-                  <span className="font-semibold text-sm">{item.text}</span>
-                </div>
-              ))}
-            </Card>
-          </div>
-          <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {featuredCourses.map(course => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="pb-16 md:pb-24"></div>
+      {/* This div creates scroll space */}
+      <div className="h-screen"></div>
     </div>
   );
 }
