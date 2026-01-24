@@ -32,10 +32,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 max-w-screen-2xl items-center">
+      <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="text-3xl font-bold font-headline text-primary">A</span>
+            <span className="text-2xl font-bold font-headline text-primary">A</span>
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             {navLinks.map(link => <NavLink key={link.href} {...link} />)}
@@ -53,7 +53,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="left">
               <Link href="/" className="mb-8 flex items-center space-x-2">
-                 <span className="text-3xl font-bold font-headline text-primary">A</span>
+                 <span className="text-2xl font-bold font-headline text-primary">A</span>
                 <span className="font-bold font-headline">AVIRAJ INFO TECH</span>
               </Link>
               <nav className="flex flex-col gap-6">
@@ -65,7 +65,7 @@ export function Header() {
         
         <div className='flex-1 md:hidden'>
             <Link href="/" className="flex items-center space-x-2 justify-center">
-                <span className="text-3xl font-bold font-headline text-primary">A</span>
+                <span className="text-2xl font-bold font-headline text-primary">A</span>
             </Link>
         </div>
 
