@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -9,6 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -16,14 +17,14 @@ export default function Home() {
     
     let tl: gsap.core.Timeline | undefined;
 
-    const setupScrollAnimation = () => {
-      // Ensure video duration is available
+    const onVideoMetadataLoaded = () => {
+      setVideoLoaded(true);
       if (video.duration) {
         tl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top top',
-            end: '+=3000', // Longer scroll for a smoother effect
+            end: '+=3000',
             scrub: true,
             pin: true,
           },
@@ -34,17 +35,21 @@ export default function Home() {
         });
       }
     };
+    
+    const onVideoError = () => {
+      setVideoLoaded(false);
+    }
 
-    // Wait for metadata to load to get video duration
-    video.addEventListener('loadedmetadata', setupScrollAnimation);
+    video.addEventListener('loadedmetadata', onVideoMetadataLoaded);
+    video.addEventListener('error', onVideoError);
 
-    // If metadata is already loaded, run it.
     if (video.readyState >= 1) {
-      setupScrollAnimation();
+      onVideoMetadataLoaded();
     }
 
     return () => {
-      video.removeEventListener('loadedmetadata', setupScrollAnimation);
+      video.removeEventListener('loadedmetadata', onVideoMetadataLoaded);
+      video.removeEventListener('error', onVideoError);
       if (tl) {
         tl.scrollTrigger?.kill();
         tl.kill();
@@ -54,13 +59,20 @@ export default function Home() {
 
   return (
     <div>
-      <section ref={sectionRef} className="relative h-screen w-full">
+      <section ref={sectionRef} className="relative h-screen w-full bg-black flex items-center justify-center">
+        {!videoLoaded && (
+          <div className="absolute z-10 text-center text-white p-4">
+            <h2 className="text-2xl font-bold">Video not found</h2>
+            <p className="mt-2">Please make sure you have placed your video file at <code className="bg-gray-800 p-1 rounded">public/video.mp4</code>.</p>
+          </div>
+        )}
         <video
           ref={videoRef}
           muted
           playsInline
           preload="auto"
-          className="absolute top-0 left-0 w-full h-full object-cover"
+          className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500"
+          style={{ opacity: videoLoaded ? 1 : 0 }}
         >
           <source src="/video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
