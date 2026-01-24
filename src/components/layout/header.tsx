@@ -8,8 +8,6 @@ import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { LoginDialog } from '@/components/auth/login-dialog';
-import { SignUpDialog } from '@/components/auth/signup-dialog';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -24,6 +22,11 @@ export function Header() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const isHomePage = pathname === '/';
+
+  // We don't want to show the header on login/signup pages
+  if (pathname === '/login' || pathname === '/signup') {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,18 +75,14 @@ export function Header() {
         </nav>
         
         {/* Auth Buttons & Mobile Nav */}
-        <div className="flex-1 flex justify-end items-center gap-4">
+        <div className="flex-1 flex justify-end items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
-              <LoginDialog>
-                <Button variant="ghost" className={cn("text-sm font-medium", linkDynamicClasses)}>
-                    Login
-                </Button>
-              </LoginDialog>
-              <SignUpDialog>
-                <Button size="sm" className="rounded-full">
-                    Sign up
-                </Button>
-              </SignUpDialog>
+              <Button asChild variant="ghost" className={cn("text-sm font-medium", linkDynamicClasses)}>
+                <Link href="/login">Login</Link>
+              </Button>
+              <Button asChild size="sm" className="rounded-full">
+                <Link href="/signup">Sign up</Link>
+              </Button>
             </div>
             
             {/* Mobile Nav Trigger */}
@@ -128,14 +127,16 @@ export function Header() {
                         </nav>
                         
                         <div className="mt-auto flex flex-col gap-2 border-t p-4">
-                            <LoginDialog>
-                                <Button variant="outline" className="w-full">Login</Button>
-                            </LoginDialog>
-                            <SignUpDialog>
-                                 <Button className="w-full rounded-full">
-                                    Sign up
-                                 </Button>
-                            </SignUpDialog>
+                          <SheetClose asChild>
+                            <Button asChild variant="outline" className="w-full">
+                                <Link href="/login">Login</Link>
+                            </Button>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Button asChild className="w-full rounded-full">
+                                <Link href="/signup">Sign up</Link>
+                            </Button>
+                          </SheetClose>
                         </div>
                     </div>
                 </SheetContent>

@@ -1,9 +1,19 @@
+'use client'
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Twitter, Linkedin, Github, Shield } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // We don't want to show the footer on login/signup pages
+  if (pathname === '/login' || pathname === '/signup') {
+    return null;
+  }
+  
   return (
     <footer className="border-t border-border/40 bg-card">
       <div className="container grid grid-cols-1 md:grid-cols-4 gap-8 py-10">
