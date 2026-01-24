@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { Menu, X, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
@@ -18,6 +19,22 @@ const navLinks = [
 
 export function Header() {
   const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Add a small threshold to avoid triggering on minimal scroll
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const isActive = href === '/' ? pathname === href : pathname.startsWith(href);
@@ -25,8 +42,11 @@ export function Header() {
         <Link
         href={href}
         className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
-            isActive ? "text-primary" : "text-foreground/80 hover:text-foreground"
+            "text-sm font-medium transition-colors",
+            isScrolled || pathname !== '/'
+              ? 'text-foreground/80 hover:text-foreground'
+              : 'text-white/80 hover:text-white',
+            isActive && (isScrolled || pathname !== '/' ? 'text-primary' : 'text-white')
         )}
         >
         {label}
@@ -35,12 +55,20 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full">
+    <header className={cn(
+      "sticky top-0 z-50 w-full transition-all duration-300",
+      isScrolled || pathname !== '/'
+        ? "border-b border-border/40 bg-background/95 backdrop-blur-sm"
+        : "bg-transparent",
+    )}>
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
         {/* Left: Logo + Nav */}
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-primary" />
+              <Shield className={cn(
+                "h-8 w-8 transition-colors",
+                isScrolled || pathname !== '/' ? 'text-primary' : 'text-white'
+              )} />
           </Link>
           
           <nav className="hidden gap-6 md:flex">
@@ -51,14 +79,25 @@ export function Header() {
         {/* Right: Auth Buttons & Mobile Menu */}
         <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2">
-                <Button variant="link" className="text-foreground/80 hover:text-foreground">Sign up</Button>
+                <Button 
+                    variant="link" 
+                    className={cn(
+                        isScrolled || pathname !== '/'
+                        ? 'text-foreground/80 hover:text-foreground'
+                        : 'text-white/80 hover:text-white'
+                    )}>
+                        Sign up
+                </Button>
                 <Button size="sm" className="bg-accent hover:bg-accent/90 rounded-full px-6">Login</Button>
             </div>
             
             <div className="md:hidden">
                <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hover:bg-foreground/10">
+                  <Button variant="ghost" size="icon" className={cn(
+                    "hover:bg-foreground/10",
+                    isScrolled || pathname !== '/' ? 'text-foreground' : 'text-white hover:text-white hover:bg-white/10'
+                  )}>
                     <Menu className="h-6 w-6" />
                     <span className="sr-only">Toggle Menu</span>
                   </Button>
