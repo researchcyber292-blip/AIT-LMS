@@ -17,7 +17,7 @@ export default function Home() {
     
     let tl: gsap.core.Timeline | undefined;
 
-    const onVideoMetadataLoaded = () => {
+    const onCanPlay = () => {
       setVideoLoaded(true);
       if (video.duration) {
         tl = gsap.timeline({
@@ -40,15 +40,11 @@ export default function Home() {
       setVideoLoaded(false);
     }
 
-    video.addEventListener('loadedmetadata', onVideoMetadataLoaded);
+    video.addEventListener('canplay', onCanPlay);
     video.addEventListener('error', onVideoError);
 
-    if (video.readyState >= 1) {
-      onVideoMetadataLoaded();
-    }
-
     return () => {
-      video.removeEventListener('loadedmetadata', onVideoMetadataLoaded);
+      video.removeEventListener('canplay', onCanPlay);
       video.removeEventListener('error', onVideoError);
       if (tl) {
         tl.scrollTrigger?.kill();
@@ -62,8 +58,8 @@ export default function Home() {
       <section ref={sectionRef} className="relative h-screen w-full bg-black flex items-center justify-center">
         {!videoLoaded && (
           <div className="absolute z-10 text-center text-white p-4">
-            <h2 className="text-2xl font-bold">Video not found</h2>
-            <p className="mt-2">Please make sure you have placed your video file at <code className="bg-gray-800 p-1 rounded">public/video.mp4</code>.</p>
+            <h2 className="text-2xl font-bold">Loading video...</h2>
+            <p className="mt-2">If the video doesn't appear, please ensure it's at <code className="bg-gray-800 p-1 rounded">public/video.mp4</code>.</p>
           </div>
         )}
         <video
