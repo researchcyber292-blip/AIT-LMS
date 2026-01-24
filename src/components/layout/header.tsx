@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -34,11 +34,6 @@ export function Header() {
     };
   }, []);
 
-  // We don't want to show the header on login/signup pages
-  if (pathname === '/login' || pathname === '/signup') {
-    return null;
-  }
-
   const headerDynamicClasses = isHomePage && !isScrolled 
     ? 'bg-transparent text-white' 
     : 'bg-background/90 border-b border-border/40 backdrop-blur-sm text-foreground';
@@ -59,7 +54,7 @@ export function Header() {
                 alt="Aviraj Info Tech Logo"
                 width={28}
                 height={28}
-                className="object-contain w-full h-full"
+                className="object-cover w-full h-full"
               />
             </div>
           </Link>
@@ -77,11 +72,11 @@ export function Header() {
         {/* Auth Buttons & Mobile Nav */}
         <div className="flex-1 flex justify-end items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
-              <Button asChild variant="ghost" className={cn("text-sm font-medium", linkDynamicClasses)}>
-                <Link href="/login">Login</Link>
-              </Button>
-              <Button asChild size="sm" className="rounded-full">
-                <Link href="/signup">Sign up</Link>
+              <Button asChild size="sm" variant="outline" className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/10 hover:text-primary font-bold", isHomePage && !isScrolled && "border-white/50 text-white hover:bg-white/10 hover:text-white")}>
+                <Link href="/activation">
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  ACTIVATION
+                </Link>
               </Button>
             </div>
             
@@ -128,13 +123,11 @@ export function Header() {
                         
                         <div className="mt-auto flex flex-col gap-2 border-t p-4">
                           <SheetClose asChild>
-                            <Button asChild variant="outline" className="w-full">
-                                <Link href="/login">Login</Link>
-                            </Button>
-                          </SheetClose>
-                          <SheetClose asChild>
                             <Button asChild className="w-full rounded-full">
-                                <Link href="/signup">Sign up</Link>
+                                <Link href="/activation">
+                                  <ShieldCheck className="mr-2 h-4 w-4" />
+                                  ACTIVATION
+                                </Link>
                             </Button>
                           </SheetClose>
                         </div>
