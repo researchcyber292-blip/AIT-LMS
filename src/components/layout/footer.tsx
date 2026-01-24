@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Github, Instagram, MessageCircle, Send, Twitter } from 'lucide-react';
+import { Github, Instagram, MessageCircle, Send } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
@@ -41,9 +41,6 @@ export function Footer() {
               </Link>
               <Link href="#" target="_blank" rel="noreferrer" aria-label="Github">
                   <Github className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
-              </Link>
-              <Link href="#" target="_blank" rel="noreferrer" aria-label="X">
-                  <Twitter className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
               </Link>
           </div>
         </div>
