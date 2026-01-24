@@ -50,7 +50,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-full bg-white flex items-center justify-center">
               <Image
-                src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
+                src="/image.png"
                 alt="Aviraj Info Tech Logo"
                 width={20}
                 height={20}
@@ -95,7 +95,7 @@ export function Header() {
                              <Link href="/" className="flex items-center space-x-2">
                                <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center">
                                  <Image
-                                      src="/AVIRAJINFOTECHLOGO-removebg-preview.png"
+                                      src="/image.png"
                                       alt="Aviraj Info Tech Logo"
                                       width={24}
                                       height={24}
