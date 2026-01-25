@@ -73,8 +73,8 @@ export default function ActivationPage() {
         <source src="/4.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-        <div className="container max-w-xl">
+      <div className="absolute inset-0 flex items-end justify-start bg-black/30 pb-20">
+        <div className="container max-w-2xl">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {inputs.map(({ name, placeholder, type }) => (
