@@ -6,19 +6,25 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, MoreVertical, Circle, Compass, Bell } from 'lucide-react';
-import { Slider } from '@/components/ui/slider';
+import { Shield, LogOut, Circle, LayoutDashboard, Users, Settings } from 'lucide-react';
 import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
+  SidebarProvider, 
+  Sidebar, 
+  SidebarHeader, 
+  SidebarContent, 
+  SidebarFooter, 
+  SidebarMenu, 
+  SidebarMenuItem, 
+  SidebarMenuButton, 
+  SidebarInset 
+} from '@/components/ui/sidebar';
+
 
 export default function AdminPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeView, setActiveView] = useState('example1');
   const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
@@ -41,58 +47,92 @@ export default function AdminPage() {
 
   if (isAuthenticated) {
     return (
-      <div className="relative flex min-h-[calc(100vh-3.5rem)] mt-14 items-center justify-center bg-background text-white">
-        <Image
-          src="https://images.unsplash.com/photo-1593455048013-333c151b8d64?q=80&w=1920&auto=format&fit=crop"
-          alt="Wireframe background"
-          fill
-          className="object-cover"
-          data-ai-hint="digital wireframe architecture"
-        />
-        <div className="absolute inset-0 bg-black/70" />
-
-        {/* Top Right Controls */}
-        <div className="absolute top-8 right-8 flex items-center gap-4 text-white/70">
-            <Button variant="ghost" size="icon" className="text-white/70 hover:bg-white/10 hover:text-white">
-                <Bell className="h-5 w-5" />
-            </Button>
-            <Circle className="h-5 w-5 opacity-50" />
-            <Circle className="h-5 w-5 opacity-50" />
-            <div className="h-24">
-                <Slider
-                    defaultValue={[50]}
-                    max={100}
-                    step={1}
-                    orientation="vertical"
-                    className="data-[orientation=vertical]:w-2"
-                />
+      <div className="mt-14 min-h-[calc(100vh-3.5rem)]">
+        <SidebarProvider>
+          <Sidebar>
+            <SidebarHeader>
+              <div className="flex items-center gap-2">
+                <div className="bg-primary/10 text-primary p-2 rounded-lg">
+                  <Shield className="h-5 w-5" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-semibold tracking-tight">Admin Panel</span>
+                  <span className="text-xs text-muted-foreground">Owner View</span>
+                </div>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => setActiveView('example1')} isActive={activeView === 'example1'}>
+                    <LayoutDashboard />
+                    EXAMPLE-1
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => setActiveView('example2')} isActive={activeView === 'example2'}>
+                    <Users />
+                    EXAMPLE-2
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => setActiveView('example3')} isActive={activeView === 'example3'}>
+                    <Settings />
+                    EXAMPLE-3
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarContent>
+            <SidebarFooter>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => setIsAuthenticated(false)}>
+                    <LogOut />
+                    Logout
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarFooter>
+          </Sidebar>
+          <SidebarInset>
+            <div className="p-6">
+              <div className="flex justify-end items-center mb-6">
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                    <Circle className="h-5 w-5 text-muted-foreground" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                    <Circle className="h-5 w-5 text-muted-foreground" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                    <Circle className="h-5 w-5 text-muted-foreground" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="aspect-video bg-card border rounded-lg flex items-center justify-center p-8">
+                {activeView === 'example1' && (
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold font-headline">Content for EXAMPLE-1</h2>
+                        <p className="text-muted-foreground mt-2">This is the main content area for the first example.</p>
+                    </div>
+                )}
+                {activeView === 'example2' && (
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold font-headline">Content for EXAMPLE-2</h2>
+                        <p className="text-muted-foreground mt-2">This is the main content area for the second example.</p>
+                    </div>
+                )}
+                {activeView === 'example3' && (
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold font-headline">Content for EXAMPLE-3</h2>
+                        <p className="text-muted-foreground mt-2">This is the main content area for the third example.</p>
+                    </div>
+                )}
+              </div>
             </div>
-            <Circle className="h-5 w-5 opacity-50" />
-            <Circle className="h-5 w-5 opacity-50" />
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white">
-                        <MoreVertical className="h-5 w-5" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background/80 border-white/20 text-white">
-                    <DropdownMenuItem className="cursor-pointer focus:bg-white/10 focus:text-white">Settings</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setIsAuthenticated(false)} className="cursor-pointer focus:bg-white/10 focus:text-white">Logout</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-        
-        {/* Bottom Left Controls */}
-        <div className="absolute bottom-8 left-8">
-            <Button variant="ghost" size="icon" className="text-white/70 hover:bg-white/10 hover:text-white">
-                <Compass className="h-6 w-6" />
-            </Button>
-        </div>
-
-        <div className="relative container text-center">
-          <h1 className="text-4xl font-bold font-headline drop-shadow-md">Welcome, Admin!</h1>
-          <p className="text-white/80 mt-4 drop-shadow-md">This is your secure admin panel.</p>
-        </div>
+          </SidebarInset>
+        </SidebarProvider>
       </div>
     );
   }
