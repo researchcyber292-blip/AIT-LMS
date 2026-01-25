@@ -39,8 +39,8 @@ export default function GettingStartedPage() {
       return;
     }
 
-    // If valid, proceed to the main app (e.g., homepage or dashboard)
-    router.push('/');
+    // If valid, proceed to the activation page
+    router.push('/activation');
   };
 
   return (

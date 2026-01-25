@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isFullScreenPage = pathname === '/student-welcome' || pathname === '/profile-setup' || pathname === '/getting-started';
+  const isFullScreenPage = pathname === '/student-welcome' || pathname === '/profile-setup' || pathname === '/getting-started' || pathname === '/activation';
 
   return (
     <html lang="en" className="dark">

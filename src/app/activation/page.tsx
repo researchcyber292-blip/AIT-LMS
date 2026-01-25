@@ -1,14 +1,27 @@
-import { Metadata } from "next";
+'use client';
 
-export const metadata: Metadata = {
-    title: 'Activation - Aviraj Info Tech',
-};
+import Link from 'next/link';
 
 export default function ActivationPage() {
   return (
-    <div className="container py-24 text-center">
-      <h1 className="text-4xl font-bold font-headline">Activation</h1>
-      <p className="text-muted-foreground mt-4">This page is under construction.</p>
+    <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden">
+      <video
+        autoPlay
+        muted
+        playsInline
+        className="absolute top-0 left-0 h-full w-full object-cover"
+      >
+        <source src="/4.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="absolute inset-0 flex items-end justify-center pb-24">
+        <Link
+          href="/dashboard"
+          className="rounded-full border-2 border-white/30 bg-black/50 px-16 py-2 text-lg font-semibold tracking-widest text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-white/20"
+        >
+          GO TO DASHBOARD
+        </Link>
+      </div>
     </div>
   );
 }
