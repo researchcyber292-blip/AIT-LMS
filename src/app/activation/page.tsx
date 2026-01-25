@@ -73,12 +73,12 @@ export default function ActivationPage() {
         <source src="/4.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="absolute inset-0 flex items-end justify-start bg-black/30 pb-20">
+      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
         <div className="container">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-2xl mx-auto">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 gap-y-3">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
                       {inputs.map(({ name, placeholder, type }) => (
                           <FormField
                               key={name}
@@ -87,7 +87,7 @@ export default function ActivationPage() {
                               render={({ field }) => (
                                   <FormItem>
                                   <FormControl>
-                                      <div className={`group flex items-center gap-2 rounded-full border-2 ${errors[name] ? 'border-destructive' : 'border-white/20'} bg-black/30 p-1.5 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50`}>
+                                      <div className={`group flex items-center gap-2 rounded-full border-2 ${errors[name] ? 'border-destructive' : 'border-white/20'} bg-black/30 p-1 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50`}>
                                           <Input
                                               {...field}
                                               type={type}
@@ -99,11 +99,11 @@ export default function ActivationPage() {
                                                   }
                                                   field.onChange(value);
                                               }}
-                                              className="h-10 flex-1 rounded-full border-none bg-transparent px-5 text-sm text-white placeholder:text-white/50 focus:ring-0"
+                                              className="h-9 flex-1 rounded-full border-none bg-transparent px-4 text-xs text-white placeholder:text-white/50 focus:ring-0"
                                           />
                                       </div>
                                   </FormControl>
-                                  <FormMessage className="pl-6 text-xs font-bold text-destructive-foreground" />
+                                  <FormMessage className="pl-5 text-xs font-bold text-destructive-foreground" />
                                   </FormItem>
                               )}
                           />
@@ -113,7 +113,7 @@ export default function ActivationPage() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full rounded-full h-14 bg-white/10 text-white transition-all hover:bg-white/20 border-2 border-white/20"
+                    className="w-full rounded-full h-12 bg-white/10 text-white transition-all hover:bg-white/20 border-2 border-white/20"
                   >
                     Activate Account
                     <ArrowRight className="ml-2 h-5 w-5" />
