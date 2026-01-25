@@ -54,8 +54,8 @@ export default function SignUpPage() {
                   <span className="mx-4 flex-shrink text-xs text-gray-500">or</span>
                   <div className="flex-grow border-t border-gray-700"></div>
               </div>
-              <Button size="lg" className="h-14 w-full justify-center bg-white text-lg font-bold text-black hover:bg-gray-200">
-                SIGN UP WITH AVIRAJ INFO TECH CONSOLE
+              <Button size="lg" className="h-14 w-full justify-center bg-white text-base font-bold text-black hover:bg-gray-200">
+                Sign up with Aviraj Info Tech Console
               </Button>
             </div>
              <p className="mt-4 text-center text-xs text-gray-500">
