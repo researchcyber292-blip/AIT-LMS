@@ -100,13 +100,12 @@ export default function SignUpPage() {
         {/* Right Side: Image */}
         <div className="relative hidden items-center justify-center overflow-hidden md:flex">
             <Image
-                src="https://picsum.photos/seed/adminbg/1000/1200"
+                src="https://picsum.photos/seed/universetech/1000/1200"
                 alt="Abstract background"
                 fill
                 className="object-cover"
-                data-ai-hint="abstract technology gradient"
+                data-ai-hint="universe technology"
             />
-            <div className="absolute inset-0 bg-black/30"></div>
         </div>
       </div>
     </div>
