@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isStudentWelcomePage = pathname === '/student-welcome' || pathname === '/profile-setup';
+  const isFullScreenPage = pathname === '/student-welcome' || pathname === '/profile-setup' || pathname === '/getting-started';
 
   return (
     <html lang="en" className="dark">
@@ -33,7 +33,7 @@ export default function RootLayout({
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>
-            {!isStudentWelcomePage && <Footer />}
+            {!isFullScreenPage && <Footer />}
           </div>
           <SecurityInterceptor />
           <Toaster />
