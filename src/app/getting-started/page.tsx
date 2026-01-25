@@ -18,8 +18,8 @@ export default function GettingStartedPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Allows letters (upper and lower), numbers, and the '@' symbol.
-    const validationRegex = /^[a-zA-Z0-9@]+$/;
+    // Allows letters, numbers, underscore, dot. Must contain @ followed by exactly 3 digits.
+    const validationRegex = /^[a-zA-Z0-9_.]+@[0-9]{3}$/;
 
     if (!userId.trim()) {
         toast({
@@ -34,7 +34,7 @@ export default function GettingStartedPage() {
       toast({
         variant: "destructive",
         title: "Invalid Username",
-        description: "Username can only contain letters, numbers, and the '@' symbol.",
+        description: "Invalid format. Username must end with '@' followed by 3 numbers. Underscores and dots are allowed.",
       });
       return;
     }
@@ -61,7 +61,7 @@ export default function GettingStartedPage() {
               <Input
                 name="userId"
                 type="text"
-                placeholder="CREATE A USERNAME (e.g., user@123)"
+                placeholder="CREATE A USERNAME (e.g., user.name@123)"
                 value={userId}
                 onChange={handleChange}
                 className="h-12 flex-1 rounded-full border-none bg-transparent px-6 text-lg text-white placeholder:text-white/50 focus:ring-0"
