@@ -35,17 +35,6 @@ export default function LoginPage() {
 
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-       <div className="relative hidden bg-muted lg:block">
-        {bgImage && (
-            <Image
-                src={bgImage.imageUrl}
-                alt="Futuristic industrial background"
-                fill
-                className="object-cover"
-                data-ai-hint={bgImage.imageHint}
-            />
-        )}
-      </div>
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
@@ -106,6 +95,17 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
+      </div>
+      <div className="relative hidden bg-muted lg:block">
+        {bgImage && (
+            <Image
+                src={bgImage.imageUrl}
+                alt="Futuristic industrial background"
+                fill
+                className="object-cover"
+                data-ai-hint={bgImage.imageHint}
+            />
+        )}
       </div>
     </div>
   )
