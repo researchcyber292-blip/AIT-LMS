@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isStudentWelcomePage = pathname === '/student-welcome';
+  const isStudentWelcomePage = pathname === '/student-welcome' || pathname === '/profile-setup';
 
   return (
     <html lang="en" className="dark">
