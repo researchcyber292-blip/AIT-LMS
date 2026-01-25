@@ -22,16 +22,6 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
-
-// SVG for Apple Icon
-const AppleIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-        <path d="M12.01,2.07c-2.45,0-4.32,1.86-4.32,4.32s0,4.32,0,4.32c0.01,0,1.88-0.02,4.33-0.02s4.32-1.85,4.32-4.32 S14.45,2.07,12.01,2.07z M12.01,4c1.17,0,2.15,0.9,2.15,2.15c0,1.25-0.98,2.15-2.15,2.15c-1.17,0-2.15-0.9-2.15-2.15 C9.86,4.9,10.84,4,12.01,4z" />
-        <path d="M19.16,8.38c-0.64-0.63-1.49-0.8-2.4-0.8c-0.66,0-1.3,0.11-1.9,0.33c-0.6,0.22-1.14,0.52-1.63,0.9 c-0.41,0.32-0.85,0.73-1.31,1.23c-0.45,0.5-0.8,0.9-1.04,1.19c-0.34-0.4-0.78-0.89-1.3-1.47c-0.6-0.64-1.28-1.1-2.02-1.38 c-0.81-0.3-1.66-0.33-2.52-0.12c-1.79,0.45-3.08,1.88-3.08,3.83c0,1.09,0.4,2.15,1.17,3.15c0.68,0.88,1.52,1.66,2.5,2.33 c0.98,0.67,1.96,1.2,2.94,1.59c0.9,0.35,1.69,0.53,2.35,0.53s1.45-0.18,2.35-0.53c0.98-0.39,1.96-0.92,2.94-1.59 c0.98-0.67,1.82-1.45,2.5-2.33c0.77-1,1.17-2.06,1.17-3.15C22.24,10.26,20.95,8.83,19.16,8.38z" />
-    </svg>
-);
-
-
 export default function SignUpPage() {
   return (
     <div className="min-h-screen w-full bg-black text-gray-200">
@@ -59,16 +49,13 @@ export default function SignUpPage() {
                <Button size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-transparent text-lg font-medium text-white hover:bg-gray-900 hover:text-white">
                 <GoogleIcon className="mr-2 h-6 w-6" /> Sign up with Google
               </Button>
-              <Button size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-transparent text-lg font-medium text-white hover:bg-gray-900 hover:text-white">
-                <AppleIcon className="mr-2 h-6 w-6" /> Sign up with Apple
-              </Button>
               <div className="my-2 flex items-center">
                   <div className="flex-grow border-t border-gray-700"></div>
                   <span className="mx-4 flex-shrink text-xs text-gray-500">or</span>
                   <div className="flex-grow border-t border-gray-700"></div>
               </div>
               <Button size="lg" className="h-14 w-full justify-center bg-white text-lg font-bold text-black hover:bg-gray-200">
-                Create account
+                SIGN UP WITH AVIRAJ INFO TECH CONSOLE
               </Button>
             </div>
              <p className="mt-4 text-center text-xs text-gray-500">
