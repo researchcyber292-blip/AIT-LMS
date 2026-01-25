@@ -34,8 +34,8 @@ export default function ProfileSetupPage() {
     if (!validationRegex.test(username)) {
       toast({
         variant: "destructive",
-        title: "Invalid Input",
-        description: "Please enter your original full name.",
+        title: "Invalid Name",
+        description: "Please enter a valid full name. Numbers and special characters are not allowed.",
       });
       return;
     }
@@ -55,7 +55,7 @@ export default function ProfileSetupPage() {
         <source src="/2.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="absolute inset-0 flex items-center justify-start">
+      <div className="absolute inset-0 flex items-end justify-start pb-40">
         <div className="container">
           <div className="w-full max-w-md">
             <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
