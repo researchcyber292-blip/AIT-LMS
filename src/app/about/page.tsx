@@ -100,11 +100,10 @@ export default function SignUpPage() {
         {/* Right Side: Image */}
         <div className="relative hidden items-center justify-center overflow-hidden md:flex">
             <Image
-                src="https://picsum.photos/seed/universetech/1000/1200"
+                src="/LOGINBG.png"
                 alt="Abstract background"
                 fill
                 className="object-cover"
-                data-ai-hint="universe technology"
             />
         </div>
       </div>
