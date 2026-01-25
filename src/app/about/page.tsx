@@ -42,7 +42,7 @@ export default function SignUpPage() {
               <div className="my-2 text-center text-xs uppercase tracking-wider text-gray-500">
                 OR SIGN UP WITH
               </div>
-              <Button size="lg" className="h-14 w-full justify-center bg-white text-base font-bold text-black hover:bg-gray-200">
+              <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
                 <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
                     <Image
                         src="/image.png"
