@@ -29,6 +29,10 @@ export function Header() {
     };
 
     window.addEventListener('scroll', handleScroll);
+    
+    // Initial check
+    handleScroll();
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
