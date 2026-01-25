@@ -159,7 +159,7 @@ export default function ActivationPage() {
       </video>
       <div className="absolute inset-0 flex items-center justify-start">
         <div className="container">
-          <div className="flex w-full max-w-md items-center gap-4">
+          <div className="flex w-full max-w-sm items-center gap-4">
              <form className="group flex flex-1 items-center gap-2 rounded-full border-2 border-white/20 bg-black/30 p-1.5 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
                 <Input
                   type={type}
