@@ -105,6 +105,10 @@ export default function SignUpPage() {
                 fill
                 className="object-cover"
             />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+                <h2 className="font-headline text-4xl font-bold tracking-tight drop-shadow-md md:text-5xl">WELCOME TO</h2>
+                <h1 className="font-headline text-5xl font-bold tracking-tight drop-shadow-lg md:text-6xl mt-2">AVIRAJ INFO TECH</h1>
+            </div>
         </div>
       </div>
     </div>
