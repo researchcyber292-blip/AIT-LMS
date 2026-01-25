@@ -1,18 +1,16 @@
 'use client';
 
-import Image from "next/image"
-import Link from "next/link"
+import Link from "next/link";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import imageData from '@/lib/placeholder-images.json';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-
+// Define the validation schema for the sign-up form
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(8, { message: "Password must be at least 8 characters." }),
@@ -21,11 +19,8 @@ const formSchema = z.object({
   }),
 });
 
-
 export default function SignUpPage() {
-    const { placeholderImages } = imageData;
-    const bgImage = placeholderImages.find(img => img.id === 'auth-background');
-
+    // Initialize the form with react-hook-form and Zod for validation
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -35,97 +30,121 @@ export default function SignUpPage() {
         },
     });
 
+    // Handle form submission
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Handle sign up logic here
-        console.log(values);
+        // Your sign-up logic will go here
+        console.log("Sign up values:", values);
     }
-    
+
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="relative flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Sign up</h1>
-            <p className="text-balance text-muted-foreground">
-              Register as a member to experience.
-            </p>
-          </div>
-           <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem className="grid gap-2">
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                                <Input
-                                type="email"
-                                placeholder="m@example.com"
-                                {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
+      {/* Left side: Sign-up Form */}
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-sm">
+            <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold">Create an Account</h1>
+                <p className="text-balance text-muted-foreground mt-2">
+                Enter your details to get started.
+                </p>
+            </div>
+            
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="email"
+                                        autoComplete="email"
+                                        placeholder="name@example.com"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input type="password" autoComplete="new-password" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="terms"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>
+                              I agree to the <Link href="#" className="underline">terms & conditions</Link>
+                            </FormLabel>
+                             <FormMessage />
+                          </div>
                         </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                        <FormItem className="grid gap-2">
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input type="password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                  control={form.control}
-                  name="terms"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>
-                          I agree to the <Link href="#" className="underline">terms of service</Link>
-                        </FormLabel>
-                         <FormMessage />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">
-                  Create Account
-                </Button>
-              </form>
-          </Form>
-          <div className="mt-4 text-center text-sm">
-            Already a member?{" "}
-            <Link href="/login" className="underline">
-              Sign in
-            </Link>
-          </div>
+                      )}
+                    />
+                    <Button type="submit" className="w-full">
+                      Create Account
+                    </Button>
+                </form>
+            </Form>
+
+            <div className="mt-6 text-center text-sm">
+                Already have an account?{" "}
+                <Link href="/login" className="font-semibold text-primary hover:underline">
+                  Sign in
+                </Link>
+            </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
-        {bgImage && (
-            <Image
-                src={bgImage.imageUrl}
-                alt="Futuristic industrial background"
-                fill
-                className="object-cover"
-                data-ai-hint={bgImage.imageHint}
-            />
-        )}
+
+      {/* Right side: Placeholder for Image/Video */}
+      <div className="hidden bg-muted lg:block">
+        {/*
+          MANUAL EDIT:
+          You can add an Image or a Video component here.
+          For example, using Next.js Image component:
+          
+          import Image from 'next/image';
+          
+          <Image
+            src="/your-image-path.jpg"
+            alt="Descriptive alt text"
+            fill
+            className="object-cover"
+          />
+
+          Or for a video:
+
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/your-video.mp4" type="video/mp4" />
+          </video>
+        */}
       </div>
     </div>
-  )
+  );
 }
