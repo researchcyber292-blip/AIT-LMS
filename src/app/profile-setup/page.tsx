@@ -1,15 +1,46 @@
 'use client';
 
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProfileSetupPage() {
   const router = useRouter();
+  const { toast } = useToast();
+  const [username, setUsername] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Just convert to uppercase
+    setUsername(value.toUpperCase());
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const validationRegex = /^[A-Z\s]+$/;
+
+    if (!username.trim()) {
+        toast({
+            variant: "destructive",
+            title: "Validation Error",
+            description: "Username cannot be empty.",
+        });
+        return;
+    }
+    
+    if (!validationRegex.test(username)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Input",
+        description: "Please enter your original full name.",
+      });
+      return;
+    }
+
+    // If valid, proceed
     router.push('/getting-started');
   };
 
@@ -24,13 +55,16 @@ export default function ProfileSetupPage() {
         <source src="/2.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="absolute inset-0 flex items-end">
+      <div className="absolute inset-0 flex items-end justify-center">
         <div className="container">
-          <div className="w-full max-w-lg pl-4 pb-40 md:pl-16">
+          <div className="w-full max-w-lg mx-auto pb-40">
             <form className="flex items-center gap-4" onSubmit={handleSubmit}>
               <Input
+                name="username"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="ENTER YOUR FULL NAME"
+                value={username}
+                onChange={handleChange}
                 className="h-14 flex-1 rounded-lg border-2 border-white/30 bg-black/50 px-6 text-lg text-white backdrop-blur-sm placeholder:text-white/60 focus:border-white/50 focus:ring-0"
               />
               <Button
