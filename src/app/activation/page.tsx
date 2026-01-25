@@ -1,194 +1,124 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, SkipForward } from 'lucide-react';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { ArrowRight } from 'lucide-react';
 
-type Step = 
-  | 'mobile' 
-  | 'altMobile' 
-  | 'motherName' 
-  | 'fatherName' 
-  | 'altEmail' 
-  | 'password';
+const activationSchema = z.object({
+  mobileNumber: z.string().regex(/^\d{10}$/, { message: 'Mobile number must be 10 digits.' }),
+  alternateMobileNumber: z.union([z.string().regex(/^\d{10}$/, { message: 'Must be 10 digits if provided.' }), z.string().length(0)]).optional(),
+  motherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Mother's name is required." }),
+  fatherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Father's name is required." }),
+  alternateEmail: z.string().email({ message: 'Invalid email address.' }).refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed.' }),
+  password: z.string()
+    .min(8, { message: 'Password must be 8+ characters.' })
+    .regex(/[a-zA-Z]/, { message: 'Password must contain a letter.' })
+    .regex(/[0-9]/, { message: 'Password must contain a number.' })
+    .regex(/[^a-zA-Z0-9]/, { message: 'Password must contain a special character.' }),
+});
 
-const STEPS: Step[] = ['mobile', 'altMobile', 'motherName', 'fatherName', 'altEmail', 'password'];
+type ActivationFormValues = z.infer<typeof activationSchema>;
 
 export default function ActivationPage() {
   const router = useRouter();
   const { toast } = useToast();
   
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [formData, setFormData] = useState({
-    mobileNumber: '',
-    alternateMobileNumber: '',
-    motherName: '',
-    fatherName: '',
-    alternateEmail: '',
-    password: '',
+  const form = useForm<ActivationFormValues>({
+    resolver: zodResolver(activationSchema),
+    defaultValues: {
+      mobileNumber: '',
+      alternateMobileNumber: '',
+      motherName: '',
+      fatherName: '',
+      alternateEmail: '',
+      password: '',
+    },
   });
-  const [inputValue, setInputValue] = useState('');
 
-  const currentStep = STEPS[currentStepIndex];
+  const { formState: { errors } } = form;
 
-  const getStepConfig = (step: Step) => {
-    switch (step) {
-      case 'mobile':
-        return {
-          placeholder: 'ENTER YOUR 10-DIGIT MOBILE NUMBER',
-          type: 'text',
-          validation: (val: string) => /^\d{10}$/.test(val),
-          errorMessage: 'Mobile number must be exactly 10 digits.',
-          field: 'mobileNumber',
-        };
-      case 'altMobile':
-        return {
-          placeholder: 'ALTERNATE MOBILE (OPTIONAL)',
-          type: 'text',
-          validation: (val: string) => val === '' || /^\d{10}$/.test(val),
-          errorMessage: 'Alternate mobile must be 10 digits if provided.',
-          field: 'alternateMobileNumber',
-        };
-      case 'motherName':
-        return {
-          placeholder: "ENTER YOUR MOTHER'S NAME",
-          type: 'text',
-          validation: (val: string) => /^[a-zA-Z\s]+$/.test(val),
-          errorMessage: "Please enter a valid name.",
-          field: 'motherName',
-        };
-      case 'fatherName':
-        return {
-          placeholder: "ENTER YOUR FATHER'S NAME",
-          type: 'text',
-          validation: (val: string) => /^[a-zA-Z\s]+$/.test(val),
-          errorMessage: "Please enter a valid name.",
-          field: 'fatherName',
-        };
-      case 'altEmail':
-        return {
-          placeholder: 'ALTERNATE EMAIL (GMAIL ONLY)',
-          type: 'email',
-          validation: (val: string) => /^[^\s@]+@gmail\.com$/.test(val),
-          errorMessage: 'Please enter a valid Gmail address. Temporary emails are not allowed.',
-          field: 'alternateEmail',
-        };
-      case 'password':
-        return {
-          placeholder: 'CREATE A STRONG PASSWORD',
-          type: 'password',
-          validation: (val: string) => 
-            val.length >= 8 &&
-            /[a-zA-Z]/.test(val) &&
-            /[0-9]/.test(val) &&
-            /[^a-zA-Z0-9]/.test(val),
-          errorMessage: 'Password must be 8+ characters with a letter, number, and special character.',
-          field: 'password',
-        };
-      default:
-        return { placeholder: '', type: 'text', validation: (val: string) => true, errorMessage: '', field: 'mobileNumber' as keyof typeof formData };
-    }
-  };
-
-  const { placeholder, type, validation, errorMessage, field } = getStepConfig(currentStep);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let value = e.target.value;
-      if (currentStep === 'motherName' || currentStep === 'fatherName') {
-          value = value.toUpperCase();
-      }
-      setInputValue(value);
-  };
+  function onSubmit(data: ActivationFormValues) {
+    console.log('Final Activation Data:', data);
+    toast({
+      title: 'Activation Complete!',
+      description: 'Your account details have been saved.',
+    });
+    router.push('/dashboard');
+  }
   
-  const handleNextStep = (value: string) => {
-    const newFormData = { ...formData, [field]: value };
-    setFormData(newFormData);
-
-    if (currentStepIndex === STEPS.length - 1) {
-      console.log('Final Activation Data:', newFormData);
-      toast({
-        title: 'Activation Complete!',
-        description: 'Your account details have been saved.',
-      });
-      router.push('/dashboard');
-    } else {
-      setCurrentStepIndex(currentStepIndex + 1);
-      setInputValue(''); 
-    }
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (inputValue.trim() === '' && field === 'alternateMobileNumber') {
-      handleNextStep('');
-      return;
-    } 
-    
-    if (!validation(inputValue)) {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid Input',
-        description: errorMessage,
-      });
-      return;
-    }
-    
-    handleNextStep(inputValue);
-  };
-
-  const handleSkip = () => {
-    if (field === 'alternateMobileNumber') {
-      handleNextStep('');
-    }
-  }
+  const inputs = [
+      { name: 'mobileNumber', placeholder: 'ENTER YOUR 10-DIGIT MOBILE NUMBER', type: 'text' },
+      { name: 'alternateMobileNumber', placeholder: 'ALTERNATE MOBILE (OPTIONAL)', type: 'text' },
+      { name: 'motherName', placeholder: "ENTER YOUR MOTHER'S NAME", type: 'text' },
+      { name: 'fatherName', placeholder: "ENTER YOUR FATHER'S NAME", type: 'text' },
+      { name: 'alternateEmail', placeholder: 'ALTERNATE EMAIL (GMAIL ONLY)', type: 'email' },
+      { name: 'password', placeholder: 'CREATE A STRONG PASSWORD', type: 'password' },
+  ] as const;
 
   return (
     <div className="relative mt-14 h-[calc(100vh-3.5rem)] w-full overflow-hidden">
       <video
         autoPlay
         muted
+        loop
         playsInline
         className="absolute top-0 left-0 h-full w-full object-cover"
       >
         <source src="/4.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="absolute inset-0 flex items-center justify-start">
-        <div className="container">
-          <div className="flex w-full max-w-xs items-center gap-4">
-             <form className="group flex flex-1 items-center gap-2 rounded-full border-2 border-white/20 bg-black/30 p-1.5 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
-                <Input
-                  type={type}
-                  placeholder={placeholder}
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  className="h-10 flex-1 rounded-full border-none bg-transparent px-5 text-base text-white placeholder:text-white/50 focus:ring-0"
-                />
+      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+        <div className="container max-w-4xl">
+           <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
+                    {inputs.map(({ name, placeholder, type }) => (
+                        <FormField
+                            key={name}
+                            control={form.control}
+                            name={name}
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormControl>
+                                    <div className={`group flex items-center gap-2 rounded-full border-2 ${errors[name] ? 'border-destructive' : 'border-white/20'} bg-black/30 p-1.5 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50`}>
+                                        <Input
+                                            {...field}
+                                            type={type}
+                                            placeholder={placeholder}
+                                            onChange={(e) => {
+                                                let value = e.target.value;
+                                                if (name === 'motherName' || name === 'fatherName') {
+                                                    value = value.toUpperCase();
+                                                }
+                                                field.onChange(value);
+                                            }}
+                                            className="h-10 flex-1 rounded-full border-none bg-transparent px-5 text-sm text-white placeholder:text-white/50 focus:ring-0"
+                                        />
+                                    </div>
+                                </FormControl>
+                                <FormMessage className="pl-6 text-xs font-bold text-destructive-foreground" />
+                                </FormItem>
+                            )}
+                        />
+                    ))}
+                </div>
+                
                 <Button
                   type="submit"
-                  size="icon"
-                  className="h-10 w-10 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
+                  size="lg"
+                  className="w-full rounded-full h-14 bg-white/10 text-white transition-all hover:bg-white/20 border-2 border-white/20"
                 >
-                  <span className="sr-only">Next</span>
-                  <ArrowRight className="h-5 w-5" />
+                  Activate Account
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              </form>
-              {field === 'alternateMobileNumber' && (
-                <Button
-                  type="button"
-                  onClick={handleSkip}
-                  size="icon"
-                  className="h-10 w-10 flex-shrink-0 rounded-full border-2 border-white/20 bg-black/30 text-white/80 backdrop-blur-sm hover:border-white/50 hover:bg-white/20 hover:text-white"
-                >
-                  <span className="sr-only">Skip</span>
-                  <SkipForward className="h-5 w-5" />
-                </Button>
-              )}
-          </div>
+            </form>
+           </Form>
         </div>
       </div>
     </div>
