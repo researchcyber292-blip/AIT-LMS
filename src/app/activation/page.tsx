@@ -102,22 +102,9 @@ export default function ActivationPage() {
       }
       setInputValue(value);
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (inputValue.trim() === '' && field === 'alternateMobileNumber') {
-      // Allow empty optional field
-    } else if (!validation(inputValue)) {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid Input',
-        description: errorMessage,
-      });
-      return;
-    }
-    
-    const newFormData = { ...formData, [field]: inputValue };
+  
+  const handleNextStep = (value: string) => {
+    const newFormData = { ...formData, [field]: value };
     setFormData(newFormData);
 
     if (currentStepIndex === STEPS.length - 1) {
@@ -131,7 +118,33 @@ export default function ActivationPage() {
       setCurrentStepIndex(currentStepIndex + 1);
       setInputValue(''); 
     }
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (inputValue.trim() === '' && field === 'alternateMobileNumber') {
+      handleNextStep('');
+      return;
+    } 
+    
+    if (!validation(inputValue)) {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid Input',
+        description: errorMessage,
+      });
+      return;
+    }
+    
+    handleNextStep(inputValue);
   };
+
+  const handleSkip = () => {
+    if (field === 'alternateMobileNumber') {
+      handleNextStep('');
+    }
+  }
 
   return (
     <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden">
@@ -146,24 +159,34 @@ export default function ActivationPage() {
       </video>
       <div className="absolute inset-0 flex items-center justify-start">
         <div className="container">
-          <div className="w-full max-w-md">
-             <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
+          <div className="flex w-full max-w-lg items-center gap-4">
+             <form className="group flex flex-1 items-center gap-2 rounded-full border-2 border-white/20 bg-black/30 p-1.5 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
                 <Input
                   type={type}
                   placeholder={placeholder}
                   value={inputValue}
                   onChange={handleInputChange}
-                  className="h-12 flex-1 rounded-full border-none bg-transparent px-6 text-lg text-white placeholder:text-white/50 focus:ring-0"
+                  className="h-10 flex-1 rounded-full border-none bg-transparent px-5 text-base text-white placeholder:text-white/50 focus:ring-0"
                 />
                 <Button
                   type="submit"
                   size="icon"
-                  className="h-12 w-12 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
+                  className="h-10 w-10 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
                 >
                   <span className="sr-only">Next</span>
-                  <ArrowRight className="h-6 w-6" />
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </form>
+              {field === 'alternateMobileNumber' && (
+                <Button
+                  type="button"
+                  onClick={handleSkip}
+                  size="sm"
+                  className="rounded-full border-2 border-white/20 bg-black/30 text-white/80 backdrop-blur-sm hover:border-white/50 hover:bg-white/20 hover:text-white"
+                >
+                  Skip
+                </Button>
+              )}
           </div>
         </div>
       </div>
