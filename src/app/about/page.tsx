@@ -40,7 +40,7 @@ export default function SignUpPage() {
                 </svg> Sign up with Google
               </Button>
               <div className="my-2 text-center text-xs uppercase tracking-wider text-gray-500">
-                Or
+                OR SIGN UP WITH
               </div>
               <Button size="lg" className="h-14 w-full justify-center bg-white text-base font-bold text-black hover:bg-gray-200">
                 Sign up with Aviraj Info Tech Console
