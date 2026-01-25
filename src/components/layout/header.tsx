@@ -75,7 +75,7 @@ export function Header() {
               <Button asChild size="sm" variant="outline" className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/10 hover:text-primary font-bold", isHomePage && !isScrolled && "border-white/50 text-white hover:bg-white/10 hover:text-white")}>
                 <Link href="/activation">
                   <ShieldCheck className="mr-2 h-4 w-4" />
-                  ACTIVATION
+                  CONSOLE
                 </Link>
               </Button>
             </div>
@@ -126,7 +126,7 @@ export function Header() {
                             <Button asChild className="w-full rounded-full">
                                 <Link href="/activation">
                                   <ShieldCheck className="mr-2 h-4 w-4" />
-                                  ACTIVATION
+                                  CONSOLE
                                 </Link>
                             </Button>
                           </SheetClose>
