@@ -94,16 +94,18 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Side: Graphic */}
-        <div className="relative hidden items-center justify-center md:flex">
-             <Image
-                src="https://picsum.photos/seed/loginbg/1000/1200"
+        {/* Right Side: Image */}
+        <div className="relative hidden items-center justify-center overflow-hidden md:flex">
+            <Image
+                src="/LOGINPAGE.png"
                 alt="Abstract background"
                 fill
-                className="object-cover opacity-20"
-                data-ai-hint="abstract logo gradient"
+                className="object-cover"
             />
-             <div className="absolute inset-0 bg-gradient-to-l from-gray-900/50 via-black to-black"></div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+                <h2 className="font-headline text-4xl font-bold tracking-tight drop-shadow-md md:text-5xl">WELCOME TO</h2>
+                <h1 className="font-headline text-5xl font-bold tracking-tight drop-shadow-lg md:text-6xl mt-2">AVIRAJ INFO TECH</h1>
+            </div>
         </div>
       </div>
     </div>
