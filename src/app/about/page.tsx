@@ -17,7 +17,7 @@ export default function SignUpPage() {
         {/* Left Side: Form */}
         <div className="relative flex flex-col items-center justify-center p-8 overflow-hidden">
             <Image
-                src="/LOGINBG.jpg"
+                src="/LOGINBG.png"
                 alt="Abstract background"
                 fill
                 className="object-cover z-0"
@@ -120,4 +120,3 @@ export default function SignUpPage() {
     </div>
   );
 }
-    
