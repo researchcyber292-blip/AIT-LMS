@@ -8,11 +8,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  role: z.enum(['instructor', 'owner'], {
+    required_error: "You need to select a role.",
+  }),
 });
 
 export default function AdminLoginPage() {
@@ -21,6 +25,7 @@ export default function AdminLoginPage() {
         defaultValues: {
             email: "",
             password: "",
+            role: "instructor",
         },
     });
 
@@ -68,6 +73,40 @@ export default function AdminLoginPage() {
                                   <FormMessage />
                               </FormItem>
                           )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field }) => (
+                          <FormItem className="space-y-3 pt-2">
+                            <FormLabel>Login as</FormLabel>
+                            <FormControl>
+                              <RadioGroup
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                className="flex items-center space-x-4"
+                              >
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="instructor" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    Instructor
+                                  </FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                  <FormControl>
+                                    <RadioGroupItem value="owner" />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    Owner
+                                  </FormLabel>
+                                </FormItem>
+                              </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                       <div className="flex items-center justify-between pt-2">
                            <Link href="#" className="text-sm font-medium text-primary hover:underline">
