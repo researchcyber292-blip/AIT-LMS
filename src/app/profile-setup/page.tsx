@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -15,14 +14,17 @@ export default function ProfileSetupPage() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] w-full">
-      <Image
-        src="/PAGE-2.png"
-        alt="Profile Setup"
-        fill
-        className="object-cover"
-      />
-      <div className="absolute inset-0 flex items-end bg-black/40">
+    <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden">
+      <video
+        autoPlay
+        muted
+        playsInline
+        className="absolute top-0 left-0 h-full w-full object-cover"
+      >
+        <source src="/2.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="absolute inset-0 flex items-end">
         <div className="container">
           <div className="w-full max-w-lg pl-4 pb-40 md:pl-16">
             <form className="flex items-center gap-4" onSubmit={handleSubmit}>
