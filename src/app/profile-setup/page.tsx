@@ -58,7 +58,6 @@ export default function ProfileSetupPage() {
       <div className="absolute inset-0 flex items-center justify-start">
         <div className="container">
           <div className="w-full max-w-md">
-             <p className="text-white/80 mt-2 mb-8 drop-shadow">Please enter your full name below.</p>
             <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
               <Input
                 name="username"
