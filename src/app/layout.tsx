@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
+import { SecurityInterceptor } from '@/components/security-interceptor';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
+        <SecurityInterceptor />
         <Toaster />
       </body>
     </html>
