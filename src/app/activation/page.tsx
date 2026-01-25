@@ -134,7 +134,7 @@ export default function ActivationPage() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden flex items-center justify-center">
+    <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden">
       <video
         autoPlay
         muted
@@ -144,25 +144,27 @@ export default function ActivationPage() {
         <source src="/4.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="relative z-10 container flex justify-start">
-        <div className="w-full max-w-md">
-           <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
-              <Input
-                type={type}
-                placeholder={placeholder}
-                value={inputValue}
-                onChange={handleInputChange}
-                className="h-12 flex-1 rounded-full border-none bg-transparent px-6 text-lg text-white placeholder:text-white/50 focus:ring-0"
-              />
-              <Button
-                type="submit"
-                size="icon"
-                className="h-12 w-12 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
-              >
-                <span className="sr-only">Next</span>
-                <ArrowRight className="h-6 w-6" />
-              </Button>
-            </form>
+      <div className="absolute inset-0 flex items-center justify-start">
+        <div className="container">
+          <div className="w-full max-w-md">
+             <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
+                <Input
+                  type={type}
+                  placeholder={placeholder}
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  className="h-12 flex-1 rounded-full border-none bg-transparent px-6 text-lg text-white placeholder:text-white/50 focus:ring-0"
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="h-12 w-12 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
+                >
+                  <span className="sr-only">Next</span>
+                  <ArrowRight className="h-6 w-6" />
+                </Button>
+              </form>
+          </div>
         </div>
       </div>
     </div>
