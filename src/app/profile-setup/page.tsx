@@ -55,25 +55,27 @@ export default function ProfileSetupPage() {
         <source src="/2.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="absolute inset-0 flex items-end justify-center">
+      <div className="absolute inset-0 flex items-center justify-start">
         <div className="container">
-          <div className="w-full max-w-lg mx-auto pb-40">
-            <form className="flex items-center gap-4" onSubmit={handleSubmit}>
+          <div className="w-full max-w-md">
+             <h2 className="font-headline text-4xl font-bold text-white drop-shadow-md">What's your name?</h2>
+             <p className="text-white/80 mt-2 mb-8 drop-shadow">Please enter your full name below.</p>
+            <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
               <Input
                 name="username"
                 type="text"
                 placeholder="ENTER YOUR FULL NAME"
                 value={username}
                 onChange={handleChange}
-                className="h-14 flex-1 rounded-lg border-2 border-white/30 bg-black/50 px-6 text-lg text-white backdrop-blur-sm placeholder:text-white/60 focus:border-white/50 focus:ring-0"
+                className="h-12 flex-1 rounded-full border-none bg-transparent px-6 text-lg text-white placeholder:text-white/50 focus:ring-0"
               />
               <Button
                 type="submit"
                 size="icon"
-                className="h-14 w-14 flex-shrink-0 rounded-full border-2 border-white/30 bg-black/50 backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10"
+                className="h-12 w-12 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
               >
                 <span className="sr-only">Next</span>
-                <ArrowRight className="h-6 w-6 text-white" />
+                <ArrowRight className="h-6 w-6" />
               </Button>
             </form>
           </div>
