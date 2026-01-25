@@ -59,6 +59,12 @@
       "description": "Portrait of a focused developer.",
       "imageUrl": "https://images.unsplash.com/photo-1689218742383-c4e7b8494e75?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkZXZlbG9wZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjkwODY3ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "developer portrait"
+    },
+    {
+      "id": "auth-background",
+      "description": "A futuristic 3D render of a high-tech industrial site with glowing blue lights.",
+      "imageUrl": "https://picsum.photos/seed/authbg/1280/1920",
+      "imageHint": "digital twin industrial"
     }
   ]
 }
