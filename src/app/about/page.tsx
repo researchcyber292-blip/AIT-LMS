@@ -100,7 +100,7 @@ export default function SignUpPage() {
         {/* Right Side: Image */}
         <div className="relative hidden items-center justify-center overflow-hidden md:flex">
             <Image
-                src="/LOGINBG.png"
+                src="/LOGINPAGE.png"
                 alt="Abstract background"
                 fill
                 className="object-cover"
