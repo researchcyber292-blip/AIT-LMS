@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,16 +34,34 @@ export default function AdminPage() {
 
   if (isAuthenticated) {
     return (
-      <div className="container py-24 text-center">
-        <h1 className="text-4xl font-bold font-headline">Welcome, Admin!</h1>
-        <p className="text-muted-foreground mt-4">This is your secure admin panel.</p>
+      <div className="relative flex min-h-screen items-center justify-center bg-background text-white">
+         <Image
+          src="https://picsum.photos/seed/adminwelcome/1920/1080"
+          alt="Abstract background"
+          fill
+          className="object-cover"
+          data-ai-hint="abstract technology"
+        />
+        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm" />
+        <div className="relative container text-center">
+          <h1 className="text-4xl font-bold font-headline drop-shadow-md">Welcome, Admin!</h1>
+          <p className="text-white/80 mt-4 drop-shadow-md">This is your secure admin panel.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-sm">
+    <div className="relative flex min-h-screen items-center justify-center bg-background px-4">
+      <Image
+        src="https://picsum.photos/seed/universe/1920/1080"
+        alt="Universe background"
+        fill
+        className="object-cover"
+        data-ai-hint="universe stars"
+      />
+      <div className="absolute inset-0 bg-black/60" />
+      <Card className="w-full max-w-sm z-10 border-white/10 bg-card/50 backdrop-blur-sm">
         <CardHeader className="text-center">
             <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4">
                 <Shield className="h-8 w-8" />
@@ -61,6 +80,7 @@ export default function AdminPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 autoComplete="off"
+                className="bg-transparent border-white/20"
               />
             </div>
             <div className="space-y-2">
@@ -72,6 +92,7 @@ export default function AdminPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
+                className="bg-transparent border-white/20"
               />
             </div>
             <Button type="submit" className="w-full">
