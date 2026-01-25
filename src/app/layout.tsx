@@ -1,4 +1,6 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
@@ -7,19 +9,19 @@ import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import Script from 'next/script';
 
-export const metadata: Metadata = {
-  title: 'Aviraj Info Tech - Your Gateway to Cybersecurity Mastery',
-  description: 'Aviraj Info Tech offers expert-led courses in cybersecurity, from ethical hacking to advanced network defense.',
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isStudentWelcomePage = pathname === '/student-welcome';
+
   return (
     <html lang="en" className="dark">
       <head>
+        <title>Aviraj Info Tech - Your Gateway to Cybersecurity Mastery</title>
+        <meta name="description" content="Aviraj Info Tech offers expert-led courses in cybersecurity, from ethical hacking to advanced network defense." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -31,7 +33,7 @@ export default function RootLayout({
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>
-            <Footer />
+            {!isStudentWelcomePage && <Footer />}
           </div>
           <SecurityInterceptor />
           <Toaster />
