@@ -96,16 +96,19 @@ export default function SignUpPage() {
           </div>
         </div>
 
-        {/* Right Side: Graphic */}
-        <div className="relative hidden items-center justify-center md:flex">
-             <Image
-                src="https://picsum.photos/seed/loginbg/1000/1200"
-                alt="Abstract background"
-                fill
-                className="object-cover opacity-20"
-                data-ai-hint="abstract logo gradient"
-            />
-             <div className="absolute inset-0 bg-gradient-to-l from-gray-900/50 via-black to-black"></div>
+        {/* Right Side: Video */}
+        <div className="relative hidden items-center justify-center overflow-hidden md:flex">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute top-1/2 left-1/2 min-h-full min-w-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover"
+            >
+              <source src="/USEINGELEMENTLOGIN.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <div className="absolute inset-0 bg-black/50"></div>
         </div>
       </div>
     </div>
