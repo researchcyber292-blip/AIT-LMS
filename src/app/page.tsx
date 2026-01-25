@@ -49,6 +49,14 @@ export default function Home() {
 
       {/* Main Content */}
       <div id="main-content" className="bg-background scroll-mt-20">
+        <div className="py-10 text-center">
+            <Link
+              href="/dashboard"
+              className="inline-block rounded-full border-2 border-primary/50 bg-primary/10 px-10 py-4 text-lg font-bold text-primary shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-1 hover:bg-primary/20 hover:shadow-2xl hover:shadow-primary/40"
+            >
+                OPEN WORKSPACE
+            </Link>
+        </div>
         <section className="relative py-16 md:py-24">
             {bgImage && (
               <Image
