@@ -1,11 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Welcome - Aviraj Info Tech',
-};
 
 export default function StudentWelcomePage() {
   return (
