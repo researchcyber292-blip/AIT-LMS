@@ -1,0 +1,171 @@
+/**
+ * Core Philosophy:
+ * This ruleset enforces a security model with a clear separation between public and private data.
+ * Publicly browsable content, like courses, allows for open read access but restricts write
+ * operations to the content creators (instructors). Private user-specific data, such as student
+ * profiles and their course enrollments, is strictly confined to the authenticated owner of that data.
+ *
+ * Data Structure:
+ * The data is organized into three top-level collections:
+ * - /courses: A public collection of all available courses.
+ * - /instructors: A restricted collection for instructor profiles.
+ * - /users: Contains individual user profiles, with each user's data isolated under their
+ *   unique user ID (`/users/{userId}`).
+ * Nested within each user's document is an `/enrollments` subcollection, which is private to that user.
+ *
+ * Key Security Decisions:
+ * - User Isolation: A user can only access data under their own `/users/{userId}` path. Listing or
+ *   accessing other users' profiles or enrollments is strictly forbidden.
+ * - Public Content Model: The `/courses` collection is readable by anyone, including unauthenticated
+ *   users, to allow for browsing. However, creating, updating, or deleting a course is restricted
+ *   to the instructor who owns it, identified by the `instructorId` field on the course document.
+ * - Restricted Collections: The `/instructors` collection is currently locked down entirely. An
+ *   admin-level role or specific business logic (e.g., via Cloud Functions) is required to manage this data.
+ * - Denormalization for Authorization: To ensure fast and secure rule evaluation, authorization
+ *   data is stored directly on the documents being secured. For example, the `instructorId` on a
+ *   course document avoids the need for slow and costly lookups to other collections.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --------------------------------
+    // Helper Functions
+    // --------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the primary function for enforcing data ownership.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Verifies that a document exists before an update or delete operation.
+     * This prevents writes to non-existent paths.
+     */
+    function isExistingDoc() {
+      return resource != null;
+    }
+
+    /**
+     * Combines ownership and existence checks for secure updates and deletes.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && isExistingDoc();
+    }
+
+    /**
+     * Ensures that on course creation, the instructorId field matches the creator's UID.
+     */
+    function isCreatorTheInstructor() {
+      return request.resource.data.instructorId == request.auth.uid;
+    }
+
+    /**
+     * Ensures the instructorId cannot be changed after a course is created.
+     */
+    function isInstructorImmutable() {
+      return request.resource.data.instructorId == resource.data.instructorId;
+    }
+
+    /**
+     * On user profile creation, ensures the document's 'id' field matches the user's auth UID.
+     */
+    function isUserIdConsistentOnCreate(userId) {
+      return request.resource.data.id == userId;
+    }
+
+    /**
+     * Ensures the user 'id' field is immutable on update.
+     */
+    function isUserIdImmutable() {
+      return request.resource.data.id == resource.data.id;
+    }
+    
+    /**
+     * On enrollment creation, ensures the document's 'studentId' field matches the parent user's auth UID.
+     */
+    function isStudentIdConsistentOnCreate(userId) {
+      return request.resource.data.studentId == userId;
+    }
+
+    /**
+     * Ensures the enrollment 'studentId' field is immutable on update.
+     */
+    function isStudentIdImmutable() {
+      return request.resource.data.studentId == resource.data.studentId;
+    }
+
+    // --------------------------------
+    // Collection Rules
+    // --------------------------------
+
+    /**
+     * @description Controls access to the public collection of courses.
+     * @path /courses/{courseId}
+     * @allow (get) Any user, authenticated or not, can read a course.
+     * @deny (create) An authenticated user tries to create a course where the `instructorId` does not match their own UID.
+     * @principle Public Read with Owner-Only Writes. Course management is restricted to the instructor who created it.
+     */
+    match /courses/{courseId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isCreatorTheInstructor();
+      allow update: if isExistingOwner(resource.data.instructorId) && isInstructorImmutable();
+      allow delete: if isExistingOwner(resource.data.instructorId);
+    }
+
+    /**
+     * @description Controls access to instructor profiles. This is a highly restricted collection.
+     * @path /instructors/{instructorId}
+     * @allow None. All direct client access is denied.
+     * @deny (get) Any user attempts to read an instructor profile.
+     * @principle Secure by Default. A mechanism for identifying admins (e.g., custom claims) is needed to grant access.
+     */
+    match /instructors/{instructorId} {
+      // TODO: Implement admin-only access, likely via custom claims, once an admin role is defined.
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Secures student profile data.
+     * @path /users/{userId}
+     * @allow (create) A new user can create their own profile document (`/users/` + their UID).
+     * @deny (get) A user (`user_abc`) tries to read another user's profile (`/users/user_xyz`).
+     * @principle Restricts access to a user's own data tree and enforces relational integrity.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Disallow listing all users for security and privacy.
+      allow create: if isOwner(userId) && isUserIdConsistentOnCreate(userId);
+      allow update: if isExistingOwner(userId) && isUserIdImmutable();
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Secures a user's private enrollment records.
+       * @path /users/{userId}/enrollments/{enrollmentId}
+       * @allow (list) An authenticated user can list their own enrollments.
+       * @deny (get) A user (`user_abc`) tries to read an enrollment from another user's path (`/users/user_xyz/enrollments/...`).
+       * @principle Path-based ownership. Access is inherited and enforced from the parent user document.
+       */
+      match /enrollments/{enrollmentId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isStudentIdConsistentOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isStudentIdImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "entities": {
+    "Course": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Course",
+      "type": "object",
+      "description": "Represents a course offered by CyberLearn.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the course."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the course."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the course content and objectives."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the course."
+        },
+        "instructorId": {
+          "type": "string",
+          "description": "Reference to the Instructor who teaches the course. (Relationship: Instructor 1:N Course)"
+        },
+        "learningObjectives": {
+          "type": "array",
+          "description": "A list of learning objectives for the course.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "curriculum": {
+          "type": "array",
+          "description": "A list of curriculum topics covered in this course.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "category": {
+          "type": "string",
+          "description": "The category the course belongs to."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "price",
+        "instructorId"
+      ]
+    },
+    "Instructor": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Instructor",
+      "type": "object",
+      "description": "Represents an instructor at CyberLearn.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the instructor."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the instructor."
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography of the instructor."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the instructor.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "bio",
+        "email"
+      ]
+    },
+    "Student": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Student",
+      "type": "object",
+      "description": "Represents a student enrolled at CyberLearn.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the student."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the student."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the student.",
+          "format": "email"
+        },
+        "enrolledCourseIds": {
+          "type": "array",
+          "description": "References to Courses the student is enrolled in. (Relationship: Student N:N Course)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email"
+      ]
+    },
+    "Enrollment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Enrollment",
+      "type": "object",
+      "description": "Represents a student's enrollment in a course and their purchase.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the enrollment record."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the Student who is enrolled. (Relationship: Student 1:N Enrollment)"
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to the Course the student is enrolled in. (Relationship: Course 1:N Enrollment)"
+        },
+        "enrollmentDate": {
+          "type": "string",
+          "description": "The date the student enrolled in the course.",
+          "format": "date-time"
+        },
+        "purchaseDate": {
+          "type": "string",
+          "description": "The date the course was purchased",
+          "format": "date-time"
+        },
+        "price": {
+          "type": "number",
+          "description": "Price paid for enrollment."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "courseId",
+        "enrollmentDate",
+        "purchaseDate",
+        "price"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/courses/{courseId}",
+        "definition": {
+          "entityName": "Course",
+          "schema": {
+            "$ref": "#/backend/entities/Course"
+          },
+          "description": "Stores details about each course. Publicly readable, writeable only by Instructors or Admins.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "Unique identifier for the course."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/instructors/{instructorId}",
+        "definition": {
+          "entityName": "Instructor",
+          "schema": {
+            "$ref": "#/backend/entities/Instructor"
+          },
+          "description": "Stores information about instructors. Only accessible by admins.",
+          "params": [
+            {
+              "name": "instructorId",
+              "description": "Unique identifier for the instructor."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "Student",
+          "schema": {
+            "$ref": "#/backend/entities/Student"
+          },
+          "description": "Stores student profile information. Only accessible by the user themselves or admins.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the student (User ID from authentication)."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/enrollments/{enrollmentId}",
+        "definition": {
+          "entityName": "Enrollment",
+          "schema": {
+            "$ref": "#/backend/entities/Enrollment"
+          },
+          "description": "Stores enrollment records for each student. Only accessible by the user themselves or admins.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "Unique identifier for the student (User ID from authentication)."
+            },
+            {
+              "name": "enrollmentId",
+              "description": "Unique identifier for the enrollment record."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to provide a secure and scalable data model for the CyberLearn application, focusing on authorization independence and clear data relationships. The structure emphasizes path-based ownership for private user data and membership maps for collaborative data access. \n\nAuthorization Independence (CRITICAL):  Authorization Independence is achieved by avoiding the get() function in rules. This is accomplished via denormalization: relevant authorization data (such as course instructor) is included directly within the documents where it's needed.\n\nQAPs Support: List operations are secured through structural segregation and path-based ownership. User-specific data (enrollments) is stored under the `/users/{userId}` path, allowing secure listing of only the current user's enrollments. Access to the courses collection is controlled by role-based access via the instructorId field, and is publicly readable only."
+  }
+}
