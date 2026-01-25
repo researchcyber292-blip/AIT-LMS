@@ -49,25 +49,29 @@ export default function Home() {
 
       {/* Main Content */}
       <div id="main-content" className="bg-background scroll-mt-20">
-        <div className="py-10 text-center">
-            <Link
-              href="/dashboard"
-              className="inline-block rounded-full border-2 border-primary/50 bg-primary/10 px-10 py-4 text-lg font-bold text-primary shadow-lg shadow-primary/20 transition-all duration-300 hover:-translate-y-1 hover:bg-primary/20 hover:shadow-2xl hover:shadow-primary/40"
-            >
-                OPEN WORKSPACE
-            </Link>
-        </div>
-        <section className="relative py-16 md:py-24">
+        <section className="relative overflow-hidden py-20 md:py-28">
             {bgImage && (
               <Image
                 src={bgImage.imageUrl}
                 alt="Abstract background image of a server room"
                 fill
-                className="object-cover opacity-10"
+                className="object-cover opacity-15"
                 data-ai-hint={bgImage.imageHint}
               />
             )}
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+
             <div className="container relative">
+                <div className="mb-16 text-center">
+                    <Link
+                      href="/dashboard"
+                      className="group relative inline-block rounded-full bg-primary/10 px-10 py-4 text-lg font-bold text-primary transition-all duration-300 hover:scale-105 hover:bg-primary/20"
+                    >
+                        <span className="absolute -inset-0.5 animate-spin-slow rounded-full bg-gradient-to-r from-primary via-accent to-primary opacity-50 blur-xl group-hover:opacity-75"></span>
+                        <span className="relative">OPEN WORKSPACE</span>
+                    </Link>
+                </div>
+
                 <div className="text-center mb-12">
                     <h2 className="font-headline text-3xl font-bold md:text-4xl">Your Gateway to Cybersecurity Mastery</h2>
                     <p className="mt-4 max-w-3xl mx-auto text-muted-foreground">
@@ -75,7 +79,7 @@ export default function Home() {
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <Card className="bg-card/60 backdrop-blur-lg border-primary/20 hover:border-primary/40 transition-colors duration-300">
+                    <Card className="bg-card/50 backdrop-blur-lg border border-border/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/10">
                         <CardHeader className="flex-row items-center gap-4 pb-4">
                             <div className="bg-primary/10 text-primary p-3 rounded-lg">
                                 <Award className="h-6 w-6" />
@@ -86,7 +90,7 @@ export default function Home() {
                             <p className="text-muted-foreground text-sm">Learn from seasoned professionals who are leaders in the cybersecurity industry, bringing real-world experience to every lesson.</p>
                         </CardContent>
                     </Card>
-                    <Card className="bg-card/60 backdrop-blur-lg border-primary/20 hover:border-primary/40 transition-colors duration-300">
+                    <Card className="bg-card/50 backdrop-blur-lg border border-border/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/10">
                         <CardHeader className="flex-row items-center gap-4 pb-4">
                             <div className="bg-primary/10 text-primary p-3 rounded-lg">
                                 <Zap className="h-6 w-6" />
@@ -97,7 +101,7 @@ export default function Home() {
                             <p className="text-muted-foreground text-sm">Apply what you learn in real-world scenarios with our interactive lab environments designed to build practical, job-ready skills.</p>
                         </CardContent>
                     </Card>
-                    <Card className="bg-card/60 backdrop-blur-lg border-primary/20 hover:border-primary/40 transition-colors duration-300">
+                    <Card className="bg-card/50 backdrop-blur-lg border border-border/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/10">
                         <CardHeader className="flex-row items-center gap-4 pb-4">
                             <div className="bg-primary/10 text-primary p-3 rounded-lg">
                                 <TrendingUp className="h-6 w-6" />
@@ -108,7 +112,7 @@ export default function Home() {
                             <p className="text-muted-foreground text-sm">Our curriculum is designed in collaboration with industry experts to equip you with the skills demanded by top employers.</p>
                         </CardContent>
                     </Card>
-                    <Card className="bg-card/60 backdrop-blur-lg border-primary/20 hover:border-primary/40 transition-colors duration-300">
+                    <Card className="bg-card/50 backdrop-blur-lg border border-border/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/10">
                         <CardHeader className="flex-row items-center gap-4 pb-4">
                             <div className="bg-primary/10 text-primary p-3 rounded-lg">
                                 <ShieldCheck className="h-6 w-6" />
@@ -119,7 +123,7 @@ export default function Home() {
                             <p className="text-muted-foreground text-sm">Validate your skills and enhance your resume with certifications that are respected and valued by employers worldwide.</p>
                         </CardContent>
                     </Card>
-                    <Card className="bg-card/60 backdrop-blur-lg border-primary/20 hover:border-primary/40 transition-colors duration-300">
+                    <Card className="bg-card/50 backdrop-blur-lg border border-border/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/10">
                         <CardHeader className="flex-row items-center gap-4 pb-4">
                             <div className="bg-primary/10 text-primary p-3 rounded-lg">
                                 <BookOpen className="h-6 w-6" />
@@ -130,7 +134,7 @@ export default function Home() {
                             <p className="text-muted-foreground text-sm">From beginner fundamentals to advanced specializations, find the perfect course to match your skill level and career goals.</p>
                         </CardContent>
                     </Card>
-                    <Card className="bg-card/60 backdrop-blur-lg border-primary/20 hover:border-primary/40 transition-colors duration-300">
+                    <Card className="bg-card/50 backdrop-blur-lg border border-border/20 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/10">
                         <CardHeader className="flex-row items-center gap-4 pb-4">
                             <div className="bg-primary/10 text-primary p-3 rounded-lg">
                                 <Target className="h-6 w-6" />
@@ -142,7 +146,7 @@ export default function Home() {
                         </CardContent>
                     </Card>
                 </div>
-                <div className="mt-12 text-center">
+                <div className="mt-16 text-center">
                     <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full">
                         <Link href="/courses">Explore All Courses</Link>
                     </Button>
