@@ -11,9 +11,9 @@ export default function SignUpPage() {
   const [role, setRole] = useState<'student' | 'instructor'>('student');
 
   return (
-    <div className="min-h-screen w-full bg-black text-gray-200">
+    <div className="w-full bg-black text-gray-200 pt-14">
       {/* Main Content */}
-      <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
+      <div className="grid min-h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2">
         {/* Left Side: Form */}
         <div className="flex flex-col items-center justify-center p-8">
           <div className="w-full max-w-sm">
