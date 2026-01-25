@@ -3,7 +3,8 @@
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
@@ -19,10 +20,33 @@ export function initializeFirebase() {
     } catch (e) {
       // Only warn in production because it's normal to use the firebaseConfig to initialize
       // during development
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
+      if (process.env.NODE_ENV === 'production') {
+        console.warn(
+          'Automatic initialization failed. Falling back to firebase config object.',
+          e
+        );
       }
       firebaseApp = initializeApp(firebaseConfig);
+    }
+
+    // Initialize App Check only in the browser
+    if (typeof window !== 'undefined') {
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+      if (siteKey && siteKey !== 'YOUR_RECAPTCHA_V3_SITE_KEY_HERE') {
+        try {
+          initializeAppCheck(firebaseApp, {
+            provider: new ReCaptchaV3Provider(siteKey),
+            isTokenAutoRefreshEnabled: true,
+          });
+        } catch (error) {
+          console.error('Error initializing Firebase App Check:', error);
+        }
+      } else {
+        console.warn(
+          'Firebase App Check is not enabled. Add NEXT_PUBLIC_RECAPTCHA_SITE_KEY to your .env file.'
+        );
+      }
     }
 
     return getSdks(firebaseApp);
@@ -36,7 +60,7 @@ export function getSdks(firebaseApp: FirebaseApp) {
   return {
     firebaseApp,
     auth: getAuth(firebaseApp),
-    firestore: getFirestore(firebaseApp)
+    firestore: getFirestore(firebaseApp),
   };
 }
 
