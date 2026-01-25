@@ -29,7 +29,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="student" id="student" className="peer sr-only" />
                         <Label
                         htmlFor="student"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white/5 p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Student
                         </Label>
@@ -38,7 +38,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="instructor" id="instructor" className="peer sr-only" />
                         <Label
                         htmlFor="instructor"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white/5 p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Instructor
                         </Label>
