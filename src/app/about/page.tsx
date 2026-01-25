@@ -15,16 +15,9 @@ export default function SignUpPage() {
       {/* Main Content */}
       <div className="grid min-h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2">
         {/* Left Side: Form */}
-        <div className="relative flex flex-col items-center justify-center p-8 overflow-hidden">
-            <Image
-                src="/LOGINBG.png"
-                alt="Abstract background"
-                fill
-                className="object-cover z-0"
-            />
-            <div className="absolute inset-0 bg-black/60 z-0"/>
+        <div className="flex flex-col items-center justify-center p-8">
           
-          <div className="relative z-10 w-full max-w-md">
+          <div className="w-full max-w-md">
             <h1 className="mb-8 text-4xl font-headline font-bold tracking-tight text-white">
               Create your account
             </h1>
@@ -36,7 +29,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="student" id="student" className="peer sr-only" />
                         <Label
                         htmlFor="student"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card/50 backdrop-blur-sm p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Student
                         </Label>
@@ -45,7 +38,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="instructor" id="instructor" className="peer sr-only" />
                         <Label
                         htmlFor="instructor"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card/50 backdrop-blur-sm p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Instructor
                         </Label>
@@ -58,7 +51,7 @@ export default function SignUpPage() {
                 <>
                   <div className="relative my-2">
                     <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                    <div className="relative flex justify-center text-sm"><span className="bg-black/50 px-2 uppercase text-muted-foreground">Sign up as a Student</span></div>
+                    <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Sign up as a Student</span></div>
                   </div>
                   <Button size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-white/10 text-lg font-medium text-white hover:bg-white/20 hover:text-white">
                     <svg viewBox="0 0 48 48" className="mr-2 h-6 w-6">
@@ -75,9 +68,9 @@ export default function SignUpPage() {
                 <>
                     <div className="relative my-2">
                         <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                        <div className="relative flex justify-center text-sm"><span className="bg-black/50 px-2 uppercase text-muted-foreground">Sign up as an Instructor</span></div>
+                        <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Sign up as an Instructor</span></div>
                     </div>
-                    <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black/50 text-base font-bold text-white hover:bg-gray-800">
+                    <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
                         <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
                             <Image
                                 src="/image.png"
@@ -108,11 +101,12 @@ export default function SignUpPage() {
         <div className="relative hidden items-center justify-center overflow-hidden md:flex">
             <video
               autoPlay
+              loop
               muted
               playsInline
               className="absolute inset-0 h-full w-full object-cover"
             >
-              <source src="/USEINGELEMENTLOGIN.mp4" type="video/mp4" />
+              <source src="/video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
         </div>
