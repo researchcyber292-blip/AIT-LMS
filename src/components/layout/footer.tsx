@@ -15,7 +15,7 @@ export function Footer() {
       <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-3 md:gap-16">
         {/* Column 1: Company Info */}
         <div className="flex flex-col items-center text-center md:items-start md:text-left">
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/admin" className="flex items-center space-x-2">
             <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
               <Image
                 src="/image.png"

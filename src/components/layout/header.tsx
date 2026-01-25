@@ -51,7 +51,7 @@ export function Header() {
       <div className="container flex h-full items-center">
         {/* Logo */}
         <div className="flex-1 flex justify-start">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/admin" className="flex items-center gap-2">
             <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
               <Image
                 src="/image.png"
@@ -96,7 +96,7 @@ export function Header() {
                 <SheetContent side="right" className="w-[90%] max-w-xs p-0 bg-background text-foreground">
                     <div className="flex h-full flex-col">
                         <div className="flex items-center justify-between border-b p-4">
-                             <Link href="/" className="flex items-center space-x-2">
+                             <Link href="/admin" className="flex items-center space-x-2">
                                <div className="h-8 w-8 rounded-full bg-white overflow-hidden">
                                  <Image
                                       src="/image.png"
