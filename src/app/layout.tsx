@@ -4,6 +4,8 @@ import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 import { SecurityInterceptor } from '@/components/security-interceptor';
 import './globals.css';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Aviraj Info Tech - Your Gateway to Cybersecurity Mastery',
@@ -25,13 +27,16 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
-        <SecurityInterceptor />
-        <Toaster />
+        <FirebaseClientProvider>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <SecurityInterceptor />
+          <Toaster />
+        </FirebaseClientProvider>
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       </body>
     </html>
   );

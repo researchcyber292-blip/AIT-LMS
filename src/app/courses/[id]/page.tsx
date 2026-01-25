@@ -1,3 +1,5 @@
+'use client';
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,43 +9,103 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { CheckCircle, User, BarChart, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata } from 'next';
+import { useUser } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 
-type Props = {
-  params: { id: string };
-};
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const course = COURSES.find(c => c.id === params.id);
-  if (!course) {
-    return {
-      title: 'Course Not Found',
-    };
+// This is a client component, so we can't use generateMetadata directly.
+// However, we can fetch the data and set the title dynamically in the component.
+// For SEO, it would be better to fetch this data in a parent Server Component if possible.
+
+// export async function generateStaticParams() {
+//   return COURSES.map(course => ({
+//     id: course.id,
+//   }));
+// }
+
+
+declare global {
+  interface Window {
+    Razorpay: any;
   }
-  return {
-    title: `${course.title} - CyberLearn`,
-    description: course.description,
-  };
 }
 
-export async function generateStaticParams() {
-  return COURSES.map(course => ({
-    id: course.id,
-  }));
-}
-
-export default function CourseDetailPage({ params }: Props) {
+export default function CourseDetailPage({ params }: { params: { id: string }}) {
   const course = COURSES.find(c => c.id === params.id);
+  const { user } = useUser();
+  const { toast } = useToast();
 
   if (!course) {
     notFound();
   }
 
+  const handlePayment = async () => {
+    if (!user) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please sign in to purchase a course.',
+        variant: 'destructive',
+      });
+      // Here you might want to redirect to a login page
+      return;
+    }
+
+    if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+      console.error("Razorpay Key ID is not defined.");
+      toast({
+        title: 'Configuration Error',
+        description: 'Payment system is not configured. Please contact support.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    // In a real application, you would first create an order on your server
+    // and get the order_id. The server would call Razorpay's Orders API.
+    // For this example, we'll proceed directly to checkout, which is not recommended for production.
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: course.price * 100, // Amount in paise
+      currency: "INR",
+      name: "Aviraj Info Tech",
+      description: `Purchase: ${course.title}`,
+      image: "/image.png", // Your logo
+      // order_id: order.id, // From your server
+      handler: function (response: any) {
+        // This is where the server-to-server verification happens.
+        // The client should NOT assume the payment is valid.
+        // We just inform the user and wait for the backend to update Firestore.
+        console.log('Razorpay Response:', response);
+        toast({
+          title: 'Payment Successful!',
+          description: 'Your enrollment is being processed. You will have access shortly.',
+        });
+      },
+      prefill: {
+        name: user.displayName || "Valued Student",
+        email: user.email || "",
+        contact: user.phoneNumber || "",
+      },
+      notes: {
+        courseId: course.id,
+        userId: user.uid,
+      },
+      theme: {
+        color: "#3498db"
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
+
   return (
     <div className="container py-12 md:py-16">
+       {typeof document !== 'undefined' && (
+        <title>{`${course.title} - CyberLearn`}</title>
+      )}
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
         {/* Left column (sticky on desktop) */}
         <div className="md:col-span-1 md:sticky md:top-24 h-fit">
@@ -57,9 +119,9 @@ export default function CourseDetailPage({ params }: Props) {
               data-ai-hint={course.imageHint}
             />
             <div className="p-6">
-              <p className="mb-4 text-4xl font-bold font-headline text-primary">${course.price}</p>
-              <Button asChild size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-                <Link href="/dashboard">Enroll Now</Link>
+              <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{course.price}</p>
+              <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+                Buy Now with UPI/Google Pay
               </Button>
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-center gap-3">
