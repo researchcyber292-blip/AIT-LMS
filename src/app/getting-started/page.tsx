@@ -1,19 +1,17 @@
-import Image from 'next/image';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Getting Started - Aviraj Info Tech',
-};
+'use client';
 
 export default function GettingStartedPage() {
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] w-full">
-      <Image
-        src="/PAGE-3.png"
-        alt="Getting Started"
-        fill
-        className="object-cover"
-      />
+    <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden">
+      <video
+        autoPlay
+        muted
+        playsInline
+        className="absolute top-0 left-0 h-full w-full object-cover"
+      >
+        <source src="/3.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     </div>
   );
 }
