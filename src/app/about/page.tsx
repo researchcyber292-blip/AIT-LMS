@@ -43,7 +43,16 @@ export default function SignUpPage() {
                 OR SIGN UP WITH
               </div>
               <Button size="lg" className="h-14 w-full justify-center bg-white text-base font-bold text-black hover:bg-gray-200">
-                Sign up with Aviraj Info Tech Console
+                <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
+                    <Image
+                        src="/image.png"
+                        alt="Aviraj Info Tech Logo"
+                        width={28}
+                        height={28}
+                        className="object-contain"
+                    />
+                </div>
+                Aviraj Info Tech Console
               </Button>
             </div>
              <p className="mt-4 text-center text-xs text-gray-500">
