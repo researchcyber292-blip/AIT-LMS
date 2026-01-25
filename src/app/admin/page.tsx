@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, MoreVertical, Circle, Compass } from 'lucide-react';
+import { Shield, MoreVertical, Circle, Compass, Bell } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { 
   DropdownMenu, 
@@ -53,6 +53,9 @@ export default function AdminPage() {
 
         {/* Top Right Controls */}
         <div className="absolute top-8 right-8 flex items-center gap-4 text-white/70">
+            <Button variant="ghost" size="icon" className="text-white/70 hover:bg-white/10 hover:text-white">
+                <Bell className="h-5 w-5" />
+            </Button>
             <Circle className="h-5 w-5 opacity-50" />
             <Circle className="h-5 w-5 opacity-50" />
             <div className="h-24">
