@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, SkipForward } from 'lucide-react';
 
 type Step = 
   | 'mobile' 
@@ -159,7 +159,7 @@ export default function ActivationPage() {
       </video>
       <div className="absolute inset-0 flex items-center justify-start">
         <div className="container">
-          <div className="flex w-full max-w-sm items-center gap-4">
+          <div className="flex w-full max-w-xs items-center gap-4">
              <form className="group flex flex-1 items-center gap-2 rounded-full border-2 border-white/20 bg-black/30 p-1.5 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
                 <Input
                   type={type}
@@ -181,10 +181,11 @@ export default function ActivationPage() {
                 <Button
                   type="button"
                   onClick={handleSkip}
-                  size="sm"
-                  className="rounded-full border-2 border-white/20 bg-black/30 text-white/80 backdrop-blur-sm hover:border-white/50 hover:bg-white/20 hover:text-white"
+                  size="icon"
+                  className="h-10 w-10 flex-shrink-0 rounded-full border-2 border-white/20 bg-black/30 text-white/80 backdrop-blur-sm hover:border-white/50 hover:bg-white/20 hover:text-white"
                 >
-                  Skip
+                  <span className="sr-only">Skip</span>
+                  <SkipForward className="h-5 w-5" />
                 </Button>
               )}
           </div>
