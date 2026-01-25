@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 export function Footer() {
   const pathname = usePathname();
 
-  if (pathname === '/about') {
+  if (pathname === '/login' || pathname === '/about') {
     return null;
   }
   
