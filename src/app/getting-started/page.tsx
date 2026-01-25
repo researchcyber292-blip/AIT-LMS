@@ -44,7 +44,7 @@ export default function GettingStartedPage() {
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden">
+    <div className="relative mt-14 h-[calc(100vh-3.5rem)] w-full overflow-hidden">
       <video
         autoPlay
         muted

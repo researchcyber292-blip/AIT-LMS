@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function StudentWelcomePage() {
   return (
-    <div className="relative min-h-[calc(100vh-3.5rem)] w-full overflow-hidden">
+    <div className="relative mt-14 h-[calc(100vh-3.5rem)] w-full overflow-hidden">
       <video
         autoPlay
         muted
