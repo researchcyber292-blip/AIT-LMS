@@ -47,10 +47,8 @@ export default function LoginPage() {
               <Button size="lg" className="h-14 w-full justify-center bg-white text-lg font-bold text-black hover:bg-gray-200">
                 <XIcon className="mr-2 h-5 w-5" /> Login with X
               </Button>
-              <div className="my-2 flex items-center">
-                  <div className="flex-grow border-t border-gray-700"></div>
-                  <span className="mx-4 flex-shrink text-xs text-gray-500">or</span>
-                  <div className="flex-grow border-t border-gray-700"></div>
+              <div className="my-2 text-center text-xs uppercase tracking-wider text-gray-500">
+                Or sign in with
               </div>
               <Button size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-transparent text-lg font-medium text-white hover:bg-gray-900 hover:text-white">
                 <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
