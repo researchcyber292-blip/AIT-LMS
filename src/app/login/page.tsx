@@ -35,18 +35,6 @@ const AppleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full bg-black text-gray-200">
-      {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-10 p-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <Link href="/">
-            <XIcon className="h-7 w-7 text-white" />
-          </Link>
-          <Button variant="ghost" className="rounded-full border border-gray-800 bg-gray-900/50 px-4 py-1.5 text-sm font-medium text-gray-300 hover:bg-gray-800">
-            You are signing into Grok <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
         {/* Left Side: Form */}
@@ -96,13 +84,6 @@ export default function LoginPage() {
              <div className="absolute inset-0 bg-gradient-to-l from-gray-900/50 via-black to-black"></div>
         </div>
       </div>
-
-       {/* Footer */}
-       <footer className="absolute bottom-0 left-0 right-0 p-4">
-            <p className="text-center text-xs text-gray-500">
-                By continuing, you agree to Aviraj Info Tech&apos;s <Link href="#" className="underline hover:text-white">Terms of Service</Link> and <Link href="#" className="underline hover:text-white">Privacy Policy</Link>.
-            </p>
-       </footer>
     </div>
   );
 }

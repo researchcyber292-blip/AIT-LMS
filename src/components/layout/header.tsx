@@ -23,11 +23,6 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const isHomePage = pathname === '/';
 
-  // Do not render header on login or signup pages
-  if (pathname === '/login' || pathname === '/about') {
-    return null;
-  }
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
