@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -9,9 +8,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import imageData from '@/lib/placeholder-images.json';
-
+import { ShieldCheck } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 const formSchema = z.object({
   role: z.enum(['instructor', 'owner'], {
@@ -22,9 +20,6 @@ const formSchema = z.object({
 });
 
 export default function AdminLoginPage() {
-    const { placeholderImages } = imageData;
-    const bgImage = placeholderImages.find(img => img.id === 'course-2');
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -40,104 +35,99 @@ export default function AdminLoginPage() {
     }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background text-foreground p-4">
-      {bgImage && (
-        <Image
-          src={bgImage.imageUrl}
-          alt="Abstract background image of a server room"
-          fill
-          className="object-cover opacity-20"
-          data-ai-hint={bgImage.imageHint}
-        />
-      )}
-      <div className="absolute inset-0 bg-background/60" />
+    <div className="min-h-screen w-full bg-background text-foreground grid grid-cols-1 md:grid-cols-2">
+      {/* Left Branding Panel */}
+      <div className="hidden md:flex flex-col items-center justify-center bg-muted/40 p-10 text-center border-r">
+          <ShieldCheck className="w-16 h-16 text-primary mb-6" />
+          <h1 className="font-headline text-4xl font-bold text-foreground">Aviraj Info Tech</h1>
+          <p className="mt-2 text-lg text-muted-foreground">Admin Portal</p>
+          <p className="mt-4 max-w-sm text-sm text-muted-foreground/80">
+              This area is restricted. Please login with your authorized credentials.
+          </p>
+      </div>
 
-      <Card className="relative z-10 w-full max-w-md border-border/50 shadow-2xl">
-        <CardHeader className="text-center">
-          <CardTitle className="font-headline text-3xl">Admin Access</CardTitle>
-          <CardDescription>Please select your role and sign in.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="role"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel className="text-center block">I am an...</FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="grid grid-cols-2 gap-4"
-                          >
-                            <FormItem>
-                              <FormControl>
-                                <RadioGroupItem value="instructor" id="instructor" className="sr-only" />
-                              </FormControl>
-                              <FormLabel 
-                                htmlFor="instructor"
-                                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                              >
-                                Instructor
-                              </FormLabel>
-                            </FormItem>
-                            <FormItem>
-                              <FormControl>
-                                <RadioGroupItem value="owner" id="owner" className="sr-only" />
-                              </FormControl>
-                              <FormLabel 
-                                htmlFor="owner"
-                                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                              >
-                                Owner
-                              </FormLabel>
-                            </FormItem>
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
+      {/* Right Form Panel */}
+      <div className="flex items-center justify-center p-6 lg:p-12">
+        <div className="w-full max-w-md">
+            <div className="mb-8 text-center md:text-left">
+              <h2 className="font-headline text-3xl font-bold tracking-tight">Admin Sign In</h2>
+              <p className="text-muted-foreground mt-2">Enter your details to access the dashboard.</p>
+            </div>
+            
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
                       control={form.control}
-                      name="email"
+                      name="role"
                       render={({ field }) => (
-                          <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <FormControl>
-                                  <Input placeholder="admin@example.com" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                          </FormItem>
+                        <FormItem className="space-y-3">
+                          <FormLabel>I am an...</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex gap-6"
+                            >
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <RadioGroupItem value="instructor" id="role-instructor" />
+                                </FormControl>
+                                <FormLabel htmlFor="role-instructor" className="font-normal cursor-pointer">
+                                  Instructor
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <RadioGroupItem value="owner" id="role-owner" />
+                                </FormControl>
+                                <FormLabel htmlFor="role-owner" className="font-normal cursor-pointer">
+                                  Owner
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                  />
-                  <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                          <FormItem>
-                              <FormLabel>Password</FormLabel>
-                              <FormControl>
-                                  <Input type="password" placeholder="••••••••" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                          </FormItem>
-                      )}
-                  />
-                  <div className="flex items-center justify-end">
-                       <Link href="#" className="text-sm font-medium text-primary hover:underline">
-                          Forgot password?
-                      </Link>
-                  </div>
-                  <Button type="submit" className="w-full !mt-8" size="lg">
-                      Login
-                  </Button>
-              </form>
-          </Form>
-        </CardContent>
-      </Card>
+                    />
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email Address</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="admin@example.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <div className="flex items-center justify-between">
+                                  <FormLabel>Password</FormLabel>
+                                   <Link href="#" className="text-sm font-medium text-primary hover:underline">
+                                      Forgot password?
+                                  </Link>
+                                </div>
+                                <FormControl>
+                                    <Input type="password" placeholder="••••••••" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit" className="w-full !mt-8" size="lg">
+                        Sign In
+                    </Button>
+                </form>
+            </Form>
+        </div>
+      </div>
     </div>
   );
 }
