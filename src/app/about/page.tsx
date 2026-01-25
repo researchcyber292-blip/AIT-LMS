@@ -39,8 +39,15 @@ export default function SignUpPage() {
                     <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.012 36.45 44 30.634 44 24c0-1.341-.138-2.65-.389-3.917z" />
                 </svg> Sign up with Google
               </Button>
-              <div className="my-2 text-center text-xs uppercase tracking-wider text-gray-500">
-                OR SIGN UP WITH
+              <div className="relative my-2">
+                <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                  <div className="w-full border-t border-gray-700" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-black px-2 uppercase text-muted-foreground">
+                    OR SIGN UP WITH
+                  </span>
+                </div>
               </div>
               <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
                 <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
