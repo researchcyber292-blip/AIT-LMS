@@ -15,8 +15,16 @@ export default function SignUpPage() {
       {/* Main Content */}
       <div className="grid min-h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2">
         {/* Left Side: Form */}
-        <div className="flex flex-col items-center justify-center p-8">
-          <div className="w-full max-w-md">
+        <div className="relative flex flex-col items-center justify-center p-8 overflow-hidden">
+            <Image
+                src="/LOGINBG.jpg"
+                alt="Abstract background"
+                fill
+                className="object-cover z-0"
+            />
+            <div className="absolute inset-0 bg-black/60 z-0"/>
+          
+          <div className="relative z-10 w-full max-w-md">
             <h1 className="mb-8 text-4xl font-headline font-bold tracking-tight text-white">
               Create your account
             </h1>
@@ -28,7 +36,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="student" id="student" className="peer sr-only" />
                         <Label
                         htmlFor="student"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card/50 backdrop-blur-sm p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Student
                         </Label>
@@ -37,7 +45,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="instructor" id="instructor" className="peer sr-only" />
                         <Label
                         htmlFor="instructor"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card/50 backdrop-blur-sm p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Instructor
                         </Label>
@@ -50,9 +58,9 @@ export default function SignUpPage() {
                 <>
                   <div className="relative my-2">
                     <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                    <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Sign up as a Student</span></div>
+                    <div className="relative flex justify-center text-sm"><span className="bg-black/50 px-2 uppercase text-muted-foreground">Sign up as a Student</span></div>
                   </div>
-                  <Button size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-transparent text-lg font-medium text-white hover:bg-gray-900 hover:text-white">
+                  <Button size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-white/10 text-lg font-medium text-white hover:bg-white/20 hover:text-white">
                     <svg viewBox="0 0 48 48" className="mr-2 h-6 w-6">
                         <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
                         <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
@@ -67,9 +75,9 @@ export default function SignUpPage() {
                 <>
                     <div className="relative my-2">
                         <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                        <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Sign up as an Instructor</span></div>
+                        <div className="relative flex justify-center text-sm"><span className="bg-black/50 px-2 uppercase text-muted-foreground">Sign up as an Instructor</span></div>
                     </div>
-                    <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
+                    <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black/50 text-base font-bold text-white hover:bg-gray-800">
                         <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
                             <Image
                                 src="/image.png"
