@@ -22,10 +22,10 @@ export default function ProfileSetupPage() {
         fill
         className="object-cover"
       />
-      <div className="absolute inset-0 flex items-center bg-black/40">
+      <div className="absolute inset-0 flex items-end bg-black/40">
         <div className="container">
-          <div className="w-full max-w-lg pl-4 md:pl-16">
-            <form className="mt-8 flex items-center gap-4" onSubmit={handleSubmit}>
+          <div className="w-full max-w-lg pl-4 pb-40 md:pl-16">
+            <form className="flex items-center gap-4" onSubmit={handleSubmit}>
               <Input
                 type="text"
                 placeholder="Enter your username"
@@ -34,7 +34,7 @@ export default function ProfileSetupPage() {
               <Button
                 type="submit"
                 size="icon"
-                className="h-14 w-14 flex-shrink-0 rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/20"
+                className="h-14 w-14 flex-shrink-0 rounded-full border-2 border-white/30 bg-black/50 backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10"
               >
                 <span className="sr-only">Next</span>
                 <ArrowRight className="h-6 w-6 text-white" />
