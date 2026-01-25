@@ -100,7 +100,6 @@ export default function SignUpPage() {
         <div className="relative hidden items-center justify-center overflow-hidden md:flex">
             <video
               autoPlay
-              loop
               muted
               playsInline
               className="absolute inset-0 h-full w-full object-cover"
@@ -114,3 +113,4 @@ export default function SignUpPage() {
     </div>
   );
 }
+    
