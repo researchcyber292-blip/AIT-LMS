@@ -15,10 +15,10 @@ export default function StudentWelcomePage() {
         fill
         className="object-cover"
       />
-      <div className="absolute inset-0 flex items-end justify-center pb-[20%]">
+      <div className="absolute inset-0 flex items-end justify-center pb-24">
         <Link 
           href="/profile-setup" 
-          className="rounded-xl border-2 border-white/30 bg-transparent px-28 py-3 text-3xl font-semibold tracking-[0.3em] text-white/70 backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10"
+          className="rounded-full border-2 border-white/30 bg-transparent px-16 py-2 text-lg font-semibold tracking-widest text-white/70 backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10"
         >
           START
         </Link>
