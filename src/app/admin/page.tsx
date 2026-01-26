@@ -64,19 +64,19 @@ export default function AdminPage() {
             <SidebarContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => setActiveView('example1')} isActive={activeView === 'example1'}>
+                  <SidebarMenuButton size="lg" onClick={() => setActiveView('example1')} isActive={activeView === 'example1'}>
                     <LayoutDashboard />
                     EXAMPLE-1
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => setActiveView('example2')} isActive={activeView === 'example2'}>
+                  <SidebarMenuButton size="lg" onClick={() => setActiveView('example2')} isActive={activeView === 'example2'}>
                     <Users />
                     EXAMPLE-2
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => setActiveView('example3')} isActive={activeView === 'example3'}>
+                  <SidebarMenuButton size="lg" onClick={() => setActiveView('example3')} isActive={activeView === 'example3'}>
                     <Settings />
                     EXAMPLE-3
                   </SidebarMenuButton>
