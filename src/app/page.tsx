@@ -22,9 +22,8 @@ export default function Home() {
             const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
             const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
             const featuresGrid = document.querySelector('.features-grid');
-            const finalImageWrapper = document.querySelector('.final-image-wrapper');
 
-            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalTargetO || !featuresGrid || !finalImageWrapper) return;
+            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalTargetO || !featuresGrid) return;
             
             // --- Pre-calculate final position of the 'O' ---
             // 1. Temporarily move the final container to its end state (visible and at the top).
@@ -66,7 +65,7 @@ export default function Home() {
                 scrollTrigger: {
                     trigger: '.choose-us-section',
                     start: 'top top',
-                    end: '+=600%',
+                    end: '+=450%',
                     scrub: 1.5,
                     pin: '.sticky-container',
                     invalidateOnRefresh: true, // This re-runs the layout effect on resize, recalculating everything.
@@ -149,13 +148,6 @@ export default function Home() {
                 ease: "power2.out",
                 duration: 1.5
             }, revealFeaturesTime);
-
-            // Step E: Reveal the image on more scroll.
-            tl.to(finalImageWrapper, {
-                opacity: 1,
-                ease: 'power2.out',
-                duration: 1.5
-            }, `${revealFeaturesTime}+=1.5`);
 
             // Cleanup function to remove the event listener.
             return () => {

@@ -23,7 +23,7 @@ const features = [
 
 export function WhyChooseUs() {
   return (
-    <section className="choose-us-section relative h-[600vh] w-full bg-background">
+    <section className="choose-us-section relative h-[450vh] w-full bg-background">
       <div className="sticky-container sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         
         {/* Container for the "WHY TO CHOOSE US" text */}
@@ -71,16 +71,6 @@ export function WhyChooseUs() {
                   <p className="text-muted-foreground">{feature.description}</p>
                 </div>
               ))}
-            </div>
-
-            <div className="final-image-wrapper relative w-full max-w-4xl aspect-[16/9] rounded-xl overflow-hidden shadow-2xl mt-16 opacity-0 mx-auto">
-                 <Image
-                    src="https://picsum.photos/seed/cyber-landscape/1920/1080"
-                    alt="Cybersecurity landscape"
-                    fill
-                    className="object-cover"
-                    data-ai-hint="cyber landscape"
-                />
             </div>
         </div>
 
