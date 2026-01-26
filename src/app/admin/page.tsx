@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, LogOut, Circle, LayoutDashboard, Users, Settings } from 'lucide-react';
+import { Shield, LogOut, LayoutDashboard, Users, Settings, Bell } from 'lucide-react';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -96,7 +96,11 @@ export default function AdminPage() {
           </Sidebar>
           <SidebarInset>
             <div className="p-6">
-              <div className="flex justify-end items-center mb-6">
+              <div className="flex justify-end items-center mb-6 gap-2">
+                <Button variant="outline" size="icon">
+                  <Bell className="h-4 w-4" />
+                  <span className="sr-only">Notifications</span>
+                </Button>
                 <Button variant="outline">
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
