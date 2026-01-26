@@ -27,7 +27,9 @@ export function SecurityInterceptor() {
         // A proxy interceptor would have high jitter (e.g., time1=300ms, time2=5000ms) because
         // the user is manually inspecting and forwarding the request.
         if (Math.abs(time2 - time1) > 4000) { 
-          window.location.href = "/busted.html";
+          // Obfuscate the redirect path to make it harder to find and disable.
+          // atob("YnVzdGVkLmh0bWw=") decodes to "busted.html"
+          window.location.href = atob("YnVzdGVkLmh0bWw=");
         }
       } catch (error) {
         // Errors are expected if the proxy blocks the request entirely, or if the network is down.
