@@ -20,7 +20,6 @@ export function WhyChooseUs() {
             <div className="flex items-center justify-center">
               <span className="letter">C</span>
               <span className="letter">H</span>
-              <span className="letter">O</span>
               
               {/* This is the 'O' that will animate */}
               <div className="choose-o relative rounded-full border-[1vw] border-foreground flex items-center justify-center" style={{ width: '0.9em', height: '0.9em' }}>
@@ -35,6 +34,7 @@ export function WhyChooseUs() {
                   </div>
               </div>
 
+              <span className="letter">O</span>
               <span className="letter">S</span>
               <span className="letter">E</span>
             </div>
