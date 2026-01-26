@@ -15,14 +15,14 @@ export function WhyChooseUs() {
         </div>
         
         {/* This container holds the large text and the animating 'O' */}
-        <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(3rem, 15vw, 12rem)', lineHeight: 1 }}>
+        <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(3rem, 12vw, 10rem)', lineHeight: 1 }}>
             <h2 className="why-to">WHY TO</h2>
             <div className="flex items-center justify-center">
               <span className="letter">C</span>
               <span className="letter">H</span>
               
               {/* This is the 'O' that will animate */}
-              <div className="choose-o relative rounded-full border-[1vw] border-foreground flex items-center justify-center bg-black" style={{ width: '0.9em', height: '0.9em' }}>
+              <div className="choose-o relative rounded-full border-[8px] border-foreground flex items-center justify-center" style={{ width: '0.9em', height: '0.9em' }}>
                   <div className="choose-o-image-wrapper relative h-full w-full rounded-full overflow-hidden opacity-0">
                     <Image
                       src="/CIRCULAR_GSAP.png"
