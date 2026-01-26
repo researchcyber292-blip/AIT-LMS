@@ -19,7 +19,6 @@ export default function Home() {
             const animator = document.querySelector('.choose-o-animator') as HTMLElement;
             const animatorImage = document.querySelector('.animator-image');
             
-            // Selectors for new structure
             const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
             const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
             const featuresGrid = document.querySelector('.features-grid');
@@ -27,10 +26,23 @@ export default function Home() {
 
             if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalTargetO || !featuresGrid || !finalImageWrapper) return;
             
-            // Set initial state for reveal
-            gsap.set(featuresGrid, { opacity: 0 });
-            gsap.set(finalImageWrapper, { opacity: 0 });
+            // --- Pre-calculate final position of the 'O' ---
+            // 1. Temporarily move the final container to its end state (visible and at the top).
+            gsap.set(finalContentContainer, { top: '140px', yPercent: 0, opacity: 1 });
+            // 2. Get the coordinates of the target 'O' in that final state.
+            const finalRect = finalTargetO.getBoundingClientRect();
+            const parentRect = animator.parentElement.getBoundingClientRect();
+            const finalO_position = {
+                width: finalRect.width,
+                height: finalRect.height,
+                left: finalRect.left - parentRect.left,
+                top: finalRect.top - parentRect.top,
+            };
+            // 3. Reset the final container to its starting state (centered and invisible).
+            gsap.set(finalContentContainer, { top: '50%', yPercent: -50, opacity: 0 });
+            // --- End pre-calculation ---
 
+            // Set initial animator position based on the "CHOOSE" text 'O'
             const setInitialPosition = () => {
                 if (!targetO) return;
                 const rect = targetO.getBoundingClientRect();
@@ -55,7 +67,7 @@ export default function Home() {
                     end: '+=600%',
                     scrub: 1.5,
                     pin: '.sticky-container',
-                    invalidateOnRefresh: true,
+                    invalidateOnRefresh: true, // This re-runs the layout effect on resize, recalculating everything.
                 },
             });
 
@@ -87,68 +99,61 @@ export default function Home() {
             }, zoomTime);
 
             // Stage 3: Hold the full screen view
-            tl.to({}, {duration: 0.5});
+            tl.to({}, {duration: 1});
 
-            // --- REVERSE ANIMATION ---
-            const shrinkTime = 'shrink';
-            
-            // Stage 4: Fade in the final content container (which holds the text, features, etc)
-            tl.to(finalContentContainer, { opacity: 1, duration: 0.5 }, shrinkTime)
-              .set(finalTargetO, { opacity: 0 }, shrinkTime);
+            // --- REBUILT FINAL SEQUENCE ---
+            const finalSequenceTime = 'finalSequence';
 
-            // Stage 5: Shrink the animator to the new 'O' position
+            // Step A: Shrink circle to its PRE-CALCULATED final position.
             tl.to(animator, {
                 duration: 2,
                 ease: 'power2.inOut',
-                width: () => finalTargetO!.getBoundingClientRect().width,
-                height: () => finalTargetO!.getBoundingClientRect().height,
-                left: () => finalTargetO!.getBoundingClientRect().left - (animator.parentElement?.getBoundingClientRect().left || 0),
-                top: () => finalTargetO!.getBoundingClientRect().top - (animator.parentElement?.getBoundingClientRect().top || 0),
+                width: finalO_position.width,
+                height: finalO_position.height,
+                left: finalO_position.left,
+                top: finalO_position.top,
                 borderRadius: '9999px',
                 borderWidth: '8px'
-            }, shrinkTime);
-
+            }, finalSequenceTime);
             tl.to(animator.querySelector('.relative'), {
                 borderRadius: '9999px',
                 ease: 'power2.inOut',
                 duration: 2,
-            }, shrinkTime);
+            }, finalSequenceTime);
 
-            // Stage 6: Finalize by fading out image and fading in text 'O'
-            const finalFadeTime = `${shrinkTime}+=1.5`;
-            tl.to(animatorImage, { opacity: 0, duration: 0.5 }, finalFadeTime)
-              .to(finalTargetO, { opacity: 1, duration: 0.5 }, finalFadeTime)
+            // Step B: AT THE SAME TIME, move the final content container up into its final position.
+            tl.to(finalContentContainer, {
+                top: '140px',
+                yPercent: 0,
+                opacity: 1,
+                ease: "power2.inOut",
+                duration: 2
+            }, finalSequenceTime);
+
+            // Step C: After the circle and text are in place, fade the circle image out and the text 'O' in.
+            const fadeSwapTime = `${finalSequenceTime}+=1.5`;
+            tl.to(animatorImage, { opacity: 0, duration: 0.5 }, fadeSwapTime)
+              .set(finalTargetO, { opacity: 0 }) // ensure it starts at 0 before fading in
+              .to(finalTargetO, { opacity: 1, duration: 0.5 }, fadeSwapTime)
               .set(animator, { visibility: 'hidden' });
 
-            // Stage 7: Hold the final text in the center for a moment
-            tl.to({}, {duration: 1});
 
-            // --- NEW STAGE: TRANSITION TO FINAL LAYOUT ---
-            const featureTransitionTime = "featureTransition";
-
-            // Stage 8: Move the entire content block up to its final position.
-            tl.to(finalContentContainer, {
-                top: '140px', // Final position from the top of the viewport
-                yPercent: 0,   // Animate from the initial -50% translation to 0
-                ease: "power2.out",
-                duration: 1.5
-            }, featureTransitionTime);
+            // Step D: Reveal the features and image.
+            const revealFeaturesTime = `${finalSequenceTime}+=2.2`;
+            gsap.set(featuresGrid, { y: 50, opacity: 0 }); // Set initial state for reveal
             
-            // Stage 9: Reveal feature cards.
             tl.to(featuresGrid, {
                 opacity: 1,
                 y: 0,
                 ease: "power2.out",
                 duration: 1.5
-            }, `${featureTransitionTime}+=0.3`);
-            
-            // Stage 10: Reveal final image on further scroll
+            }, revealFeaturesTime);
+
             tl.to(finalImageWrapper, {
                 opacity: 1,
                 ease: 'power2.out',
-                duration: 1.5
-            });
-
+                duration: 1
+            }, `${revealFeaturesTime}+=0.5`);
 
             // Cleanup function to remove the event listener.
             return () => {
