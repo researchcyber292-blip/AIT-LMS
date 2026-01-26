@@ -42,7 +42,7 @@ export default function Home() {
                 scrollTrigger: {
                     trigger: '.choose-us-section',
                     start: 'top top',
-                    end: '+=300%',
+                    end: '+=450%',
                     scrub: 1.5,
                     pin: '.sticky-container',
                     invalidateOnRefresh: true,

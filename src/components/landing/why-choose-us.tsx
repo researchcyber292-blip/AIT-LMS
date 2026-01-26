@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export function WhyChooseUs() {
   return (
-    <section className="choose-us-section relative h-[300vh] w-full bg-background">
+    <section className="choose-us-section relative h-[450vh] w-full bg-background">
       <div className="sticky-container sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         
         {/* This container holds the large text and provides the target for the animation */}
