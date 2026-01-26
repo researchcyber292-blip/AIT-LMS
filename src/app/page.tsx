@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
 
 export default function Home() {
@@ -60,9 +59,9 @@ export default function Home() {
               </div>
               <div className="p-8 text-center flex flex-col flex-1">
                 <h2 className="font-headline text-3xl font-bold flex-1 flex items-center justify-center min-h-[6rem]">Live Testing Environment with our Professional Teachers</h2>
-                <Button asChild className="mt-6 w-full rounded-full">
-                  <Link href="/courses">Open Workspace</Link>
-                </Button>
+                <Link href="/courses" className="mt-6 block w-full rounded-full border border-white/20 bg-white/10 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-white/20">
+                    Open Workspace
+                </Link>
               </div>
             </div>
             {/* Right Rectangle */}
@@ -79,9 +78,9 @@ export default function Home() {
               <div className="p-8 text-center flex flex-col flex-1">
                 <h2 className="font-headline text-3xl font-bold">For Instructors</h2>
                 <p className="mt-4 text-muted-foreground flex-1">Join our team of experts and share your knowledge with the world.</p>
-                <Button asChild variant="secondary" className="mt-6 w-full rounded-full">
-                  <Link href="/about">Become an Instructor</Link>
-                </Button>
+                <Link href="/about" className="mt-6 block w-full rounded-full border border-white/20 bg-white/10 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-white/20">
+                    Become an Instructor
+                </Link>
               </div>
             </div>
           </div>
