@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -22,14 +21,15 @@ export default function Home() {
             
             // Selectors for new structure
             const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
-            const finalAvirajTextContainer = document.querySelector('.final-aviraj-text-container') as HTMLElement;
+            const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
             const featuresGrid = document.querySelector('.features-grid');
             const finalImageWrapper = document.querySelector('.final-image-wrapper');
 
-            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalAvirajTextContainer || !featuresGrid || !finalImageWrapper) return;
+            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalTargetO || !featuresGrid || !finalImageWrapper) return;
             
-            // Set initial state for the slide-up animation
-            gsap.set(featuresGrid, { opacity: 0, y: 50 });
+            // Set initial state for reveal
+            gsap.set(featuresGrid, { opacity: 0 });
+            gsap.set(finalImageWrapper, { opacity: 0 });
 
             const setInitialPosition = () => {
                 if (!targetO) return;
@@ -87,15 +87,13 @@ export default function Home() {
             }, zoomTime);
 
             // Stage 3: Hold the full screen view
-            tl.to({}, {duration: 1});
+            tl.to({}, {duration: 0.5});
 
             // --- REVERSE ANIMATION ---
             const shrinkTime = 'shrink';
             
-            // Stage 4: Fade in the new text container (without its 'O')
-            const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
-            tl.to('.animated-text-container', { autoAlpha: 0, duration: 0.5 }, shrinkTime)
-              .to(finalContentContainer, { opacity: 1, duration: 1 }, shrinkTime)
+            // Stage 4: Fade in the final content container (which holds the text, features, etc)
+            tl.to(finalContentContainer, { opacity: 1, duration: 0.5 }, shrinkTime)
               .set(finalTargetO, { opacity: 0 }, shrinkTime);
 
             // Stage 5: Shrink the animator to the new 'O' position
@@ -122,27 +120,21 @@ export default function Home() {
               .to(finalTargetO, { opacity: 1, duration: 0.5 }, finalFadeTime)
               .set(animator, { visibility: 'hidden' });
 
-            // Stage 7: Hold the final text for a moment
+            // Stage 7: Hold the final text in the center for a moment
             tl.to({}, {duration: 1});
 
-            // --- NEW STAGE: TRANSITION TO FEATURES ---
+            // --- NEW STAGE: TRANSITION TO FINAL LAYOUT ---
             const featureTransitionTime = "featureTransition";
 
             // Stage 8: Move the entire content block up to its final position.
             tl.to(finalContentContainer, {
-                y: () => {
-                    // This is the desired final distance from the top of the viewport.
-                    const targetTop = 140; 
-                    // The block is centered, so its initial top is (viewportHeight - blockHeight) / 2.
-                    const initialBlockTop = (window.innerHeight - finalContentContainer.offsetHeight) / 2;
-                    // The required 'y' translation is the difference between where we want to be and where we are.
-                    return targetTop - initialBlockTop;
-                },
+                top: '140px', // Final position from the top of the viewport
+                yPercent: 0,   // Animate from the initial -50% translation to 0
                 ease: "power2.out",
                 duration: 1.5
             }, featureTransitionTime);
             
-            // Stage 9: Reveal feature cards with a slide-up animation.
+            // Stage 9: Reveal feature cards.
             tl.to(featuresGrid, {
                 opacity: 1,
                 y: 0,

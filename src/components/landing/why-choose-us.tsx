@@ -52,15 +52,15 @@ export function WhyChooseUs() {
             </div>
         </div>
 
-        {/* NEW: Single container for all final content */}
-        <div className="final-content-container container absolute inset-0 flex flex-col items-center justify-center opacity-0">
-            <div className="final-aviraj-text-container">
+        {/* NEW: Single container for all final content. Centered with transform. */}
+        <div className="final-content-container container absolute w-full max-w-7xl opacity-0" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+            <div className="final-aviraj-text-container text-center">
                 <h2 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
                     <span>AVIRAJ&nbsp;</span>
                     <span>INF</span><span className="final-o-target-new" style={{ display: 'inline-block' }}>O</span><span>&nbsp;TECH</span>
                 </h2>
             </div>
-            <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 opacity-0">
+            <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 opacity-0" style={{ y: 50 }}>
               {features.map((feature, index) => (
                 <div key={index} className="feature-card bg-card border rounded-lg p-8 text-center shadow-lg">
                   <div className="mx-auto bg-primary/10 text-primary p-4 rounded-full w-fit mb-6">
@@ -72,7 +72,7 @@ export function WhyChooseUs() {
               ))}
             </div>
 
-            <div className="final-image-wrapper relative w-full max-w-4xl aspect-[16/9] rounded-xl overflow-hidden shadow-2xl mt-16 opacity-0">
+            <div className="final-image-wrapper relative w-full max-w-4xl aspect-[16/9] rounded-xl overflow-hidden shadow-2xl mt-16 opacity-0 mx-auto">
                  <Image
                     src="https://picsum.photos/seed/cyber-landscape/1920/1080"
                     alt="Cybersecurity landscape"
