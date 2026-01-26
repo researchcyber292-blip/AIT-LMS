@@ -3,11 +3,11 @@ import Image from 'next/image';
 
 export function WhyChooseUs() {
   return (
-    <section className="choose-us-section relative h-[700vh] w-full bg-background">
+    <section className="choose-us-section relative h-[550vh] w-full bg-background">
       <div className="sticky-container sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         
         {/* This container holds the large text and provides the target for the animation */}
-        <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(8rem, 20vw, 15rem)', lineHeight: 1 }}>
+        <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(6rem, 15vw, 12rem)', lineHeight: 1 }}>
             <h2 className="why-to">WHY TO</h2>
             <div className="flex items-center justify-center" style={{ letterSpacing: '0.25rem' }}>
               <span className="letter">C</span>

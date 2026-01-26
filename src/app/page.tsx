@@ -42,7 +42,7 @@ export default function Home() {
                 scrollTrigger: {
                     trigger: '.choose-us-section',
                     start: 'top top',
-                    end: '+=600%', // Animate over 600% of viewport height
+                    end: '+=450%', // Animate over a shorter scroll distance
                     scrub: 1.5,
                     pin: '.sticky-container',
                     invalidateOnRefresh: true, // Recalculate on resize
@@ -76,8 +76,8 @@ export default function Home() {
                 duration: 2,
             }, zoomTime);
 
-            // Stage 3: Hold the full screen view for a bit.
-            tl.to({}, {duration: 2});
+            // Stage 3: Hold the full screen view for a shorter time.
+            tl.to({}, {duration: 0.5});
 
             // --- REVERSE ANIMATION ---
             const shrinkTime = 'shrink';
