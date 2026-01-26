@@ -17,7 +17,7 @@ export function WhyChooseUs() {
         {/* This container holds the large text and provides the target for the animation */}
         <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(8rem, 20vw, 15rem)', lineHeight: 1 }}>
             <h2 className="why-to">WHY TO</h2>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center tracking-wider">
               <span className="letter">C</span>
               <span className="letter">H</span>
               <span className="letter choose-o-target">O</span>
