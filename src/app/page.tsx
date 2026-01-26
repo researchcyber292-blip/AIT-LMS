@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
 
@@ -47,20 +48,41 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left Rectangle */}
-            <div className="bg-card border rounded-lg shadow-lg h-[600px] flex flex-col items-center justify-center p-8 text-center">
-              <h2 className="font-headline text-3xl font-bold">For Students</h2>
-              <p className="mt-4 text-muted-foreground">Enroll in our courses and start your journey in cybersecurity.</p>
-              <Button asChild className="mt-6">
-                <Link href="/courses">Browse Courses</Link>
-              </Button>
+            <div className="bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden">
+              <div className="relative w-full aspect-[4/3]">
+                <Image 
+                  src="https://picsum.photos/seed/workspace/600/450"
+                  alt="Live testing environment"
+                  fill
+                  className="object-cover"
+                  data-ai-hint="live environment cyber"
+                />
+              </div>
+              <div className="p-8 text-center flex flex-col flex-1">
+                <h2 className="font-headline text-3xl font-bold flex-1 flex items-center justify-center min-h-[6rem]">Live Testing Environment with our Professional Teachers</h2>
+                <Button asChild className="mt-6 w-full">
+                  <Link href="/courses">Open Workspace</Link>
+                </Button>
+              </div>
             </div>
             {/* Right Rectangle */}
-            <div className="bg-card border rounded-lg shadow-lg h-[600px] flex flex-col items-center justify-center p-8 text-center">
-              <h2 className="font-headline text-3xl font-bold">For Instructors</h2>
-              <p className="mt-4 text-muted-foreground">Join our team of experts and share your knowledge with the world.</p>
-              <Button asChild variant="secondary" className="mt-6">
-                <Link href="/about">Become an Instructor</Link>
-              </Button>
+            <div className="bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden">
+              <div className="relative w-full aspect-[4/3]">
+                <Image 
+                  src="https://picsum.photos/seed/teaching/600/450"
+                  alt="Instructor teaching"
+                  fill
+                  className="object-cover"
+                  data-ai-hint="teaching online"
+                />
+              </div>
+              <div className="p-8 text-center flex flex-col flex-1">
+                <h2 className="font-headline text-3xl font-bold">For Instructors</h2>
+                <p className="mt-4 text-muted-foreground flex-1">Join our team of experts and share your knowledge with the world.</p>
+                <Button asChild variant="secondary" className="mt-6 w-full">
+                  <Link href="/about">Become an Instructor</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
