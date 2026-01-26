@@ -6,13 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, LogOut, LayoutDashboard, Users, Settings, Bell } from 'lucide-react';
+import { Shield, LayoutDashboard, Users, Settings, Bell } from 'lucide-react';
 import { 
   SidebarProvider, 
   Sidebar, 
   SidebarHeader, 
   SidebarContent, 
-  SidebarFooter, 
   SidebarMenu, 
   SidebarMenuItem, 
   SidebarMenuButton, 
@@ -83,16 +82,6 @@ export default function AdminPage() {
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarContent>
-            <SidebarFooter>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => setIsAuthenticated(false)}>
-                    <LogOut />
-                    Logout
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarFooter>
           </Sidebar>
           <SidebarInset>
             <div className="p-6">
@@ -174,7 +163,7 @@ export default function AdminPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                autoComplete="current-password"
+                autoComplete="off"
                 className="bg-transparent border-white/20"
               />
             </div>
