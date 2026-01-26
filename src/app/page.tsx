@@ -60,7 +60,7 @@ export default function Home() {
               </div>
               <div className="p-8 text-center flex flex-col flex-1">
                 <h2 className="font-headline text-3xl font-bold flex-1 flex items-center justify-center min-h-[6rem]">Live Testing Environment with our Professional Teachers</h2>
-                <Button asChild className="mt-6 w-full">
+                <Button asChild className="mt-6 w-full rounded-full">
                   <Link href="/courses">Open Workspace</Link>
                 </Button>
               </div>
@@ -79,7 +79,7 @@ export default function Home() {
               <div className="p-8 text-center flex flex-col flex-1">
                 <h2 className="font-headline text-3xl font-bold">For Instructors</h2>
                 <p className="mt-4 text-muted-foreground flex-1">Join our team of experts and share your knowledge with the world.</p>
-                <Button asChild variant="secondary" className="mt-6 w-full">
+                <Button asChild variant="secondary" className="mt-6 w-full rounded-full">
                   <Link href="/about">Become an Instructor</Link>
                 </Button>
               </div>
