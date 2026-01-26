@@ -86,11 +86,11 @@ export default function AdminPage() {
           <SidebarInset>
             <div className="p-6">
               <div className="flex justify-end items-center mb-6 gap-2">
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" onClick={() => setActiveView('notifications')}>
                   <Bell className="h-4 w-4" />
                   <span className="sr-only">Notifications</span>
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => setActiveView('settings')}>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </Button>
@@ -113,6 +113,18 @@ export default function AdminPage() {
                     <div className="text-center">
                         <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-3</h2>
                         <p className="text-muted-foreground mt-2">Content for Example 3 is displayed here.</p>
+                    </div>
+                )}
+                {activeView === 'notifications' && (
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold font-headline">Secure View: Notifications</h2>
+                        <p className="text-muted-foreground mt-2">Notifications content is displayed here.</p>
+                    </div>
+                )}
+                {activeView === 'settings' && (
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold font-headline">Secure View: Settings</h2>
+                        <p className="text-muted-foreground mt-2">Settings content is displayed here.</p>
                     </div>
                 )}
               </div>
