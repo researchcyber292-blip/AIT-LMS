@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -31,6 +32,7 @@ export default function Home() {
             gsap.set(featuresGrid, { opacity: 0, y: 50 });
 
             const setInitialPosition = () => {
+                if (!targetO) return;
                 const rect = targetO.getBoundingClientRect();
                 const parentRect = animator.parentElement!.getBoundingClientRect();
 
@@ -126,9 +128,16 @@ export default function Home() {
             // --- NEW STAGE: TRANSITION TO FEATURES ---
             const featureTransitionTime = "featureTransition";
 
-            // Stage 8: Move the entire content block up, but not as high.
+            // Stage 8: Move the entire content block up to its final position.
             tl.to(finalContentContainer, {
-                y: () => -(window.innerHeight / 2) + (finalAvirajTextContainer.offsetHeight / 2) + 180, // Increased padding from top
+                y: () => {
+                    // This is the desired final distance from the top of the viewport.
+                    const targetTop = 140; 
+                    // The block is centered, so its initial top is (viewportHeight - blockHeight) / 2.
+                    const initialBlockTop = (window.innerHeight - finalContentContainer.offsetHeight) / 2;
+                    // The required 'y' translation is the difference between where we want to be and where we are.
+                    return targetTop - initialBlockTop;
+                },
                 ease: "power2.out",
                 duration: 1.5
             }, featureTransitionTime);
