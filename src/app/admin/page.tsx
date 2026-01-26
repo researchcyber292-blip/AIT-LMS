@@ -110,20 +110,20 @@ export default function AdminPage() {
               <div className="aspect-video bg-card border rounded-lg flex items-center justify-center p-8">
                 {activeView === 'example1' && (
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Content for EXAMPLE-1</h2>
-                        <p className="text-muted-foreground mt-2">This is the main content area for the first example.</p>
+                        <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-1</h2>
+                        <p className="text-muted-foreground mt-2">Content for Example 1 is displayed here.</p>
                     </div>
                 )}
                 {activeView === 'example2' && (
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Content for EXAMPLE-2</h2>
-                        <p className="text-muted-foreground mt-2">This is the main content area for the second example.</p>
+                        <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-2</h2>
+                        <p className="text-muted-foreground mt-2">Content for Example 2 is displayed here.</p>
                     </div>
                 )}
                 {activeView === 'example3' && (
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Content for EXAMPLE-3</h2>
-                        <p className="text-muted-foreground mt-2">This is the main content area for the third example.</p>
+                        <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-3</h2>
+                        <p className="text-muted-foreground mt-2">Content for Example 3 is displayed here.</p>
                     </div>
                 )}
               </div>
