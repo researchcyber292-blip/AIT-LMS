@@ -47,6 +47,13 @@ export default function Home() {
                     ease: 'power1.inOut',
                     duration: 2,
                 }, zoomTime);
+                
+                // ALSO MORPH THE INNER IMAGE WRAPPER TO A RECTANGLE
+                tl.to('.choose-o-image-wrapper', {
+                    borderRadius: '0px',
+                    ease: 'power1.inOut',
+                    duration: 2,
+                }, zoomTime);
 
                 // Stage 3: Hold full screen view for a moment
                 tl.to({}, {duration: 2});
