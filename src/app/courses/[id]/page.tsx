@@ -1,6 +1,6 @@
 'use client';
 
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { COURSES } from '@/data/content';
@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { CheckCircle, User, BarChart, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { Metadata } from 'next';
 import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,7 +30,8 @@ declare global {
   }
 }
 
-export default function CourseDetailPage({ params }: { params: { id: string }}) {
+export default function CourseDetailPage() {
+  const params = useParams<{ id: string }>();
   const course = COURSES.find(c => c.id === params.id);
   const { user } = useUser();
   const { toast } = useToast();
