@@ -42,10 +42,10 @@ export default function Home() {
                 scrollTrigger: {
                     trigger: '.choose-us-section',
                     start: 'top top',
-                    end: '+=450%', // Animate over a shorter scroll distance
+                    end: '+=300%',
                     scrub: 1.5,
                     pin: '.sticky-container',
-                    invalidateOnRefresh: true, // Recalculate on resize
+                    invalidateOnRefresh: true,
                 },
             });
 
