@@ -29,13 +29,13 @@ export function WhyChooseUs() {
         </div>
 
         {/* This is the div that will actually animate. It's positioned via JS. */}
-        <div className="choose-o-animator absolute rounded-full border-[8px] border-foreground" style={{ visibility: 'hidden' }}>
+        <div className="choose-o-animator absolute rounded-full border-[8px] border-foreground bg-background" style={{ visibility: 'hidden' }}>
             <div className="relative h-full w-full overflow-hidden rounded-full">
               <Image
                 src="/CIRCULAR_GSAP.png"
                 alt="Zoom effect image"
                 fill
-                className="object-cover"
+                className="animator-image object-contain opacity-0"
               />
             </div>
         </div>

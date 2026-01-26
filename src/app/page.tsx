@@ -18,8 +18,9 @@ export default function Home() {
         const ctx = gsap.context(() => {
             const targetO = document.querySelector('.choose-o-target');
             const animator = document.querySelector('.choose-o-animator') as HTMLElement;
+            const animatorImage = document.querySelector('.animator-image');
             
-            if (!targetO || !animator) return;
+            if (!targetO || !animator || !animatorImage) return;
             
             const setInitialPosition = () => {
                 const rect = targetO.getBoundingClientRect();
@@ -28,7 +29,7 @@ export default function Home() {
                     height: rect.height,
                     left: rect.left,
                     top: rect.top,
-                    visibility: 'visible',
+                    visibility: 'hidden',
                 });
             };
             
@@ -45,11 +46,13 @@ export default function Home() {
                 },
             });
 
-            // Stage 1: Fade out text
+            // Stage 1: Reveal animator and fade image in, while fading text out
             tl.to(['.why-to', '.letter', '.us'], {
                 opacity: 0,
                 duration: 0.5,
-            }, 'start');
+            }, 'start')
+            .set(animator, { visibility: 'visible' }, 'start')
+            .to(animatorImage, { opacity: 1, duration: 0.5 }, 'start');
 
             // Stage 2: Zoom animator to fill screen
             const zoomTime = 'start';
