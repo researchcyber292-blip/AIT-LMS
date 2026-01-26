@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -63,7 +64,7 @@ export default function Home() {
                 tl.to('.choose-o', {
                     width: 'min(45vw, 550px)', // The final width of the image
                     height: 'min(60vh, 420px)',// The final height of the image
-                    x: '25vw', // Move it to the right half of the screen
+                    x: '27.5vw', // Move it to the right half of the screen
                     ease: 'power2.inOut',
                     duration: 2,
                 }, shrinkTime);
