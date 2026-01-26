@@ -28,7 +28,7 @@ export function WhyChooseUs() {
                       src="/CIRCULAR_GSAP.png"
                       alt="Zoom effect image"
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </div>
               </div>
