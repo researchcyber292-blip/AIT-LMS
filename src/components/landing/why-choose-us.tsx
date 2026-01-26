@@ -59,17 +59,17 @@ export function WhyChooseUs() {
                 <h2 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
                     <span>AVIRAJ&nbsp;</span>
                     {/* This structure is changed to fix spacing and allow for opacity animation */}
-                    <span>INF<span style={{marginLeft: '0.25rem'}}></span></span><span className="final-o-target-new" style={{ display: 'inline-block' }}>O</span><span>&nbsp;TECH</span>
+                    <span>INF<span style={{marginLeft: '0.25rem'}}></span></span><span className="final-o-target-new" style={{ display: 'inline-block', opacity: 0 }}>O</span><span>&nbsp;TECH</span>
                 </h2>
             </div>
             <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 opacity-0" style={{ y: 50 }}>
               {features.map((feature, index) => (
-                <div key={index} className="feature-card bg-card border rounded-lg p-8 text-center shadow-lg">
-                  <div className="mx-auto bg-primary/10 text-primary p-4 rounded-full w-fit mb-6">
-                    <feature.icon className="h-8 w-8" />
+                <div key={index} className="feature-card bg-card border rounded-lg p-6 text-center shadow-lg">
+                  <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4">
+                    <feature.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="font-headline text-xl font-semibold mb-3">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <h3 className="font-headline text-lg font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground text-sm">{feature.description}</p>
                 </div>
               ))}
             </div>
