@@ -2,6 +2,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
@@ -18,6 +19,11 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isFullScreenPage = pathname === '/student-welcome' || pathname === '/profile-setup' || pathname === '/getting-started' || pathname === '/activation' || pathname === '/admin';
+
+  useEffect(() => {
+    console.log("%cSTOP! This Vault is protected by PRINCE.", "color: red; font-size: 30px; font-weight: bold;");
+    console.log("%cTrying to intercept? Our AI has already logged your IP and browser fingerprint. 😂", "color: yellow; font-size: 15px;");
+  }, []);
 
   return (
     <html lang="en" className="dark">

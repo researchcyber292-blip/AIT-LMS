@@ -1,48 +1,48 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { ShieldAlert } from 'lucide-react';
+import { useEffect } from 'react';
 
 export function SecurityInterceptor() {
-  const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
-    const detectBurp = async () => {
+    const checkHacker = async () => {
       try {
-        // Burp Suite's default proxy listener is at http://127.0.0.1:8080, 
-        // and it often exposes an internal "burp" domain.
-        // We'll check for the proxy directly, as the domain can be inconsistent.
-        // We use "no-cors" mode to avoid CORS errors, as we only care if the request succeeds, not about the response.
-        await fetch('http://127.0.0.1:8080', { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
-        
-        // If the fetch doesn't throw an error, it means something is listening on that port.
-        // This is a strong indicator of an active interception proxy.
-        setIsBlocked(true);
+        // Send a small dummy request and time it. We use no-store to bypass the browser cache.
+        const start1 = performance.now();
+        await fetch('/favicon.ico', { method: 'HEAD', cache: 'no-store' });
+        const end1 = performance.now();
+        const time1 = end1 - start1;
 
+        // A small delay to allow a human interceptor to act on the first request.
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Send the exact same request again.
+        const start2 = performance.now();
+        await fetch('/favicon.ico', { method: 'HEAD', cache: 'no-store' });
+        const end2 = performance.now();
+        const time2 = end2 - start2;
+        
+        // Jitter detection logic.
+        // A normal slow connection would have high latency (e.g., time1=2000ms, time2=2100ms).
+        // A proxy interceptor would have high jitter (e.g., time1=300ms, time2=5000ms) because
+        // the user is manually inspecting and forwarding the request.
+        if (Math.abs(time2 - time1) > 4000) { 
+          window.location.href = "/busted.html";
+        }
       } catch (error) {
-        // An error is the expected outcome in a normal browser without a proxy.
-        // We can safely ignore it.
+        // Errors are expected if the proxy blocks the request entirely, or if the network is down.
+        // We can silently ignore them as part of the security check.
+        console.log("Security check: A network request was intercepted or failed.");
       }
     };
 
-    detectBurp();
-    
-  }, []);
+    // Run the check once, shortly after the application mounts, to avoid impacting initial load performance.
+    const timer = setTimeout(checkHacker, 1500);
 
-  if (!isBlocked) {
-    return null;
-  }
+    // Cleanup the timer if the component unmounts.
+    return () => clearTimeout(timer);
+  }, []); // Empty dependency array ensures this runs only once.
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm">
-      <ShieldAlert className="h-16 w-16 text-destructive mb-6" />
-      <h1 className="font-headline text-3xl font-bold text-destructive">Security Alert</h1>
-      <p className="mt-2 max-w-md text-center text-lg text-muted-foreground">
-        Access to this application has been blocked due to the detection of a potential security threat.
-      </p>
-      <p className="mt-4 text-sm text-muted-foreground">
-          Please disable any active interception proxies or security analysis tools and refresh the page.
-      </p>
-    </div>
-  );
+  // This component renders nothing. It is purely for the security side-effect.
+  return null;
 }
