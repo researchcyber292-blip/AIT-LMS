@@ -4,7 +4,7 @@ import Image from 'next/image';
 export function WhyChooseUs() {
   return (
     <section className="choose-us-section relative h-[500vh] w-full bg-background">
-      <div className="sticky-container sticky top-0 flex h-screen w-full items-center justify-center">
+      <div className="sticky-container sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         
         {/* This is the final text that fades in on the left */}
         <div className="final-text-container absolute left-[calc(50%-45vw)] top-1/2 w-[35vw] max-w-xl -translate-y-1/2 opacity-0">
@@ -20,16 +20,15 @@ export function WhyChooseUs() {
             <div className="flex items-center justify-center">
               <span className="letter">C</span>
               <span className="letter">H</span>
-              <span className="letter">O</span>
               
               {/* This is the 'O' that will animate */}
-              <div className="choose-o relative rounded-full border-[1vw] border-foreground flex items-center justify-center" style={{ width: '0.9em', height: '0.9em' }}>
+              <div className="choose-o relative rounded-full border-[1vw] border-foreground flex items-center justify-center bg-black" style={{ width: '0.9em', height: '0.9em' }}>
                   <div className="choose-o-image-wrapper relative h-full w-full rounded-full overflow-hidden opacity-0">
                     <Image
                       src="/CIRCULAR_GSAP.png"
                       alt="Zoom effect image"
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </div>
               </div>
