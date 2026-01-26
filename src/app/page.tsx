@@ -15,144 +15,156 @@ export default function Home() {
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            const targetO = document.querySelector('.choose-o-target');
-            const animator = document.querySelector('.choose-o-animator') as HTMLElement;
-            const animatorImage = document.querySelector('.animator-image');
-            
-            const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
-            const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
-            const featuresGrid = document.querySelector('.features-grid');
-
-            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalTargetO || !featuresGrid) return;
-            
-            // --- Pre-calculate final position of the 'O' ---
-            // 1. Temporarily move the final container to its end state (visible and at the top).
-            gsap.set(finalContentContainer, { top: '140px', yPercent: 0, opacity: 1 });
-            // 2. Get the coordinates of the target 'O' in that final state.
-            const finalRect = finalTargetO.getBoundingClientRect();
-            // 2a. Set the text 'O' to be invisible initially.
-            gsap.set(finalTargetO, { opacity: 0 }); 
-            const parentRect = animator.parentElement.getBoundingClientRect();
-            const finalO_position = {
-                width: finalRect.width,
-                height: finalRect.height,
-                left: finalRect.left - parentRect.left,
-                top: finalRect.top - parentRect.top,
+            // Helper function to run code after fonts are loaded
+            const runAfterFontsLoaded = (callback: () => void) => {
+                // Check if fonts are already loaded
+                if (document.fonts.status === 'loaded') {
+                    callback();
+                } else {
+                    // Wait for fonts to load
+                    document.fonts.ready.then(callback).catch(e => {
+                        console.error("Font loading error:", e);
+                        // Still run the callback as a fallback
+                        callback();
+                    });
+                }
             };
-            // 3. Reset the final container to its starting state (centered and invisible).
-            gsap.set(finalContentContainer, { top: '50%', yPercent: -50, opacity: 0 });
-            // --- End pre-calculation ---
+            
+            const initAnimation = () => {
+                const targetO = document.querySelector('.choose-o-target');
+                const animator = document.querySelector('.choose-o-animator') as HTMLElement;
+                const animatorImage = document.querySelector('.animator-image');
+                
+                const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
+                const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
+                const featuresGrid = document.querySelector('.features-grid');
+                const footerWrapper = document.querySelector('.footer-wrapper');
 
-            // Set initial animator position based on the "CHOOSE" text 'O'
-            const setInitialPosition = () => {
-                if (!targetO) return;
-                const rect = targetO.getBoundingClientRect();
-                const parentRect = animator.parentElement!.getBoundingClientRect();
+                if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalTargetO || !featuresGrid || !footerWrapper) return;
+                
+                // --- Pre-calculate final position of the 'O' ---
+                gsap.set(finalContentContainer, { top: '140px', yPercent: 0, opacity: 1 });
+                const finalRect = finalTargetO.getBoundingClientRect();
+                gsap.set(finalTargetO, { opacity: 0 }); 
+                const parentRect = animator.parentElement.getBoundingClientRect();
+                const finalO_position = {
+                    width: finalRect.width,
+                    height: finalRect.height,
+                    left: finalRect.left - parentRect.left,
+                    top: finalRect.top - parentRect.top,
+                };
+                gsap.set(finalContentContainer, { top: '50%', yPercent: -50, opacity: 0 });
+                // --- End pre-calculation ---
 
-                gsap.set(animator, {
-                    width: rect.width,
-                    height: rect.height,
-                    left: rect.left - parentRect.left,
-                    top: rect.top - parentRect.top,
-                    visibility: 'hidden',
+                const setInitialPosition = () => {
+                    if (!targetO) return;
+                    const rect = targetO.getBoundingClientRect();
+                    const parentRect = animator.parentElement!.getBoundingClientRect();
+
+                    gsap.set(animator, {
+                        width: rect.width,
+                        height: rect.height,
+                        left: rect.left - parentRect.left,
+                        top: rect.top - parentRect.top,
+                        visibility: 'hidden',
+                    });
+                };
+                
+                setInitialPosition();
+                window.addEventListener('resize', setInitialPosition);
+
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.choose-us-section',
+                        start: 'top top',
+                        end: '+=450%',
+                        scrub: 1.5,
+                        pin: '.sticky-container',
+                        invalidateOnRefresh: true,
+                    },
                 });
+
+                tl.to(['.why-to', '.letter', '.us'], {
+                    opacity: 0,
+                    duration: 0.5,
+                }, 'start')
+                .set(animator, { visibility: 'visible' }, 'start')
+                .to(animatorImage, { opacity: 1, duration: 0.5 }, 'start');
+
+                const zoomTime = 'start';
+                tl.to(animator, {
+                    width: '100vw',
+                    height: '100vh',
+                    top: 0,
+                    left: 0,
+                    borderRadius: '0px',
+                    borderWidth: '0px',
+                    ease: 'power1.inOut',
+                    duration: 2,
+                }, zoomTime);
+                
+                tl.to(animator.querySelector('.relative'), {
+                    borderRadius: '0px',
+                    ease: 'power1.inOut',
+                    duration: 2,
+                }, zoomTime);
+
+                tl.to({}, {duration: 1});
+
+                const finalSequenceTime = 'finalSequence';
+
+                tl.to(animator, {
+                    duration: 2,
+                    ease: 'power2.inOut',
+                    width: finalO_position.width,
+                    height: finalO_position.height,
+                    left: finalO_position.left,
+                    top: finalO_position.top,
+                    borderRadius: '9999px',
+                    borderWidth: '8px'
+                }, finalSequenceTime);
+                tl.to(animator.querySelector('.relative'), {
+                    borderRadius: '9999px',
+                    ease: 'power2.inOut',
+                    duration: 2,
+                }, finalSequenceTime);
+
+                tl.to(finalContentContainer, {
+                    top: '140px',
+                    yPercent: 0,
+                    opacity: 1,
+                    ease: "power2.inOut",
+                    duration: 2
+                }, finalSequenceTime);
+                
+                const fadeSwapTime = `${finalSequenceTime}+=1.5`;
+                tl.to(animatorImage, { opacity: 0, duration: 0.5 }, fadeSwapTime)
+                  .to(finalTargetO, { opacity: 1, duration: 0.5 }, fadeSwapTime)
+                  .set(animator, { visibility: 'hidden' });
+
+                const revealFeaturesTime = `${finalSequenceTime}+=2.2`;
+                gsap.set(featuresGrid, { y: 50, opacity: 0 });
+                
+                tl.to(featuresGrid, {
+                    opacity: 1,
+                    y: 0,
+                    ease: "power2.out",
+                    duration: 1.5
+                }, revealFeaturesTime);
+
+                tl.to(footerWrapper, {
+                    opacity: 1,
+                    ease: "power2.out",
+                    duration: 1.5
+                }, revealFeaturesTime);
+                
+                return () => {
+                    window.removeEventListener('resize', setInitialPosition);
+                }
             };
             
-            setInitialPosition();
-            window.addEventListener('resize', setInitialPosition);
+            runAfterFontsLoaded(initAnimation);
 
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: '.choose-us-section',
-                    start: 'top top',
-                    end: '+=450%',
-                    scrub: 1.5,
-                    pin: '.sticky-container',
-                    invalidateOnRefresh: true, // This re-runs the layout effect on resize, recalculating everything.
-                },
-            });
-
-            // Stage 1: Reveal animator and fade image in, while fading text out.
-            tl.to(['.why-to', '.letter', '.us'], {
-                opacity: 0,
-                duration: 0.5,
-            }, 'start')
-            .set(animator, { visibility: 'visible' }, 'start')
-            .to(animatorImage, { opacity: 1, duration: 0.5 }, 'start');
-
-            // Stage 2: Zoom animator to fill the screen.
-            const zoomTime = 'start';
-            tl.to(animator, {
-                width: '100vw',
-                height: '100vh',
-                top: 0,
-                left: 0,
-                borderRadius: '0px',
-                borderWidth: '0px',
-                ease: 'power1.inOut',
-                duration: 2,
-            }, zoomTime);
-            
-            tl.to(animator.querySelector('.relative'), {
-                borderRadius: '0px',
-                ease: 'power1.inOut',
-                duration: 2,
-            }, zoomTime);
-
-            // Stage 3: Hold the full screen view
-            tl.to({}, {duration: 1});
-
-            // --- REBUILT FINAL SEQUENCE ---
-            const finalSequenceTime = 'finalSequence';
-
-            // Step A: Shrink circle to its PRE-CALCULATED final position.
-            tl.to(animator, {
-                duration: 2,
-                ease: 'power2.inOut',
-                width: finalO_position.width,
-                height: finalO_position.height,
-                left: finalO_position.left,
-                top: finalO_position.top,
-                borderRadius: '9999px',
-                borderWidth: '8px'
-            }, finalSequenceTime);
-            tl.to(animator.querySelector('.relative'), {
-                borderRadius: '9999px',
-                ease: 'power2.inOut',
-                duration: 2,
-            }, finalSequenceTime);
-
-            // Step B: AT THE SAME TIME, move the final content container up into its final position.
-            tl.to(finalContentContainer, {
-                top: '140px',
-                yPercent: 0,
-                opacity: 1,
-                ease: "power2.inOut",
-                duration: 2
-            }, finalSequenceTime);
-            
-            // Step C: After the circle and text are in place, fade the circle image out and the text 'O' in.
-            const fadeSwapTime = `${finalSequenceTime}+=1.5`;
-            tl.to(animatorImage, { opacity: 0, duration: 0.5 }, fadeSwapTime)
-              .to(finalTargetO, { opacity: 1, duration: 0.5 }, fadeSwapTime)
-              .set(animator, { visibility: 'hidden' });
-
-
-            // Step D: Reveal the features.
-            const revealFeaturesTime = `${finalSequenceTime}+=2.2`;
-            gsap.set(featuresGrid, { y: 50, opacity: 0 }); // Set initial state for reveal
-            
-            tl.to(featuresGrid, {
-                opacity: 1,
-                y: 0,
-                ease: "power2.out",
-                duration: 1.5
-            }, revealFeaturesTime);
-
-            // Cleanup function to remove the event listener.
-            return () => {
-                window.removeEventListener('resize', setInitialPosition);
-            }
         }, mainRef);
         return () => ctx.revert();
     }, []);

@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isFullScreenPage = pathname === '/student-welcome' || pathname === '/profile-setup' || pathname === '/getting-started' || pathname === '/activation' || pathname === '/admin';
+  const isFullScreenPage = pathname === '/' || pathname === '/student-welcome' || pathname === '/profile-setup' || pathname === '/getting-started' || pathname === '/activation' || pathname === '/admin';
 
   useEffect(() => {
     console.log("%cSTOP! This Vault is protected by PRINCE.", "color: red; font-size: 30px; font-weight: bold;");

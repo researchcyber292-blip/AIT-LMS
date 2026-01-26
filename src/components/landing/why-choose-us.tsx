@@ -1,6 +1,7 @@
 
 import Image from 'next/image';
 import { ShieldCheck, BrainCircuit, Users } from 'lucide-react';
+import { Footer } from '@/components/layout/footer';
 
 const features = [
   {
@@ -58,7 +59,7 @@ export function WhyChooseUs() {
                 <h2 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
                     <span>AVIRAJ&nbsp;</span>
                     {/* This structure is changed to fix spacing and allow for opacity animation */}
-                    <span>INF</span><span className="final-o-target-new" style={{ display: 'inline-block' }}>O</span><span>&nbsp;TECH</span>
+                    <span>INF<span style={{marginLeft: '0.25rem'}}></span></span><span className="final-o-target-new" style={{ display: 'inline-block' }}>O</span><span>&nbsp;TECH</span>
                 </h2>
             </div>
             <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 opacity-0" style={{ y: 50 }}>
@@ -72,6 +73,10 @@ export function WhyChooseUs() {
                 </div>
               ))}
             </div>
+        </div>
+        
+        <div className="footer-wrapper absolute bottom-0 left-0 w-full opacity-0">
+            <Footer />
         </div>
 
       </div>
