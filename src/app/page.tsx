@@ -7,7 +7,6 @@ import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { WhyChooseUs } from '@/components/landing/why-choose-us';
-import { ScrollFeatures } from '@/components/landing/scroll-features';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -114,27 +113,6 @@ export default function Home() {
             // Hide the animator at the very end
             tl.set(animator, { visibility: 'hidden' });
 
-            // New animation for feature cards
-            const featureCards = gsap.utils.toArray('.feature-card');
-            featureCards.forEach((card, index) => {
-                const direction = index % 2 === 0 ? -100 : 100;
-                gsap.fromTo(card as gsap.DOMTarget, 
-                    { x: direction, autoAlpha: 0 }, 
-                    {
-                        x: 0,
-                        autoAlpha: 1,
-                        duration: 0.8,
-                        ease: 'power2.out',
-                        scrollTrigger: {
-                            trigger: card as gsap.DOMTarget,
-                            start: 'top 85%',
-                            toggleActions: 'play none none none'
-                        }
-                    }
-                );
-            });
-
-
             // Cleanup function to remove the event listener.
             return () => {
                 window.removeEventListener('resize', setInitialPosition);
@@ -226,7 +204,6 @@ export default function Home() {
       </div>
       
       <WhyChooseUs />
-      <ScrollFeatures />
     </div>
   );
 }
