@@ -80,11 +80,6 @@ export function Footer() {
           </form>
         </div>
       </div>
-      <div className="border-t border-border/40 py-6">
-          <p className="text-center text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Aviraj Info Tech. All Rights Reserved.
-          </p>
-      </div>
     </footer>
   );
 }
