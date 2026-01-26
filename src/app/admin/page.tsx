@@ -97,17 +97,10 @@ export default function AdminPage() {
           <SidebarInset>
             <div className="p-6">
               <div className="flex justify-end items-center mb-6">
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                    <Circle className="h-5 w-5 text-muted-foreground" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                    <Circle className="h-5 w-5 text-muted-foreground" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                    <Circle className="h-5 w-5 text-muted-foreground" />
-                  </Button>
-                </div>
+                <Button variant="outline">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </Button>
               </div>
               
               <div className="aspect-video bg-card border rounded-lg flex items-center justify-center p-8">
