@@ -18,8 +18,9 @@ export default function Home() {
             const targetO = document.querySelector('.choose-o-target');
             const animator = document.querySelector('.choose-o-animator') as HTMLElement;
             const animatorImage = document.querySelector('.animator-image');
+            const finalTargetO = document.querySelector('.final-o-target-new');
             
-            if (!targetO || !animator || !animatorImage || !animator.parentElement) return;
+            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalTargetO) return;
             
             const setInitialPosition = () => {
                 const rect = targetO.getBoundingClientRect();
@@ -34,7 +35,6 @@ export default function Home() {
                 });
             };
             
-            // Set position immediately and on any window resize.
             setInitialPosition();
             window.addEventListener('resize', setInitialPosition);
 
@@ -42,14 +42,14 @@ export default function Home() {
                 scrollTrigger: {
                     trigger: '.choose-us-section',
                     start: 'top top',
-                    end: '+=400%', // Animate over 400% of viewport height
+                    end: '+=600%', // Animate over 600% of viewport height
                     scrub: 1.5,
                     pin: '.sticky-container',
+                    invalidateOnRefresh: true, // Recalculate on resize
                 },
             });
 
             // Stage 1: Reveal animator and fade image in, while fading text out.
-            // The text fades, and the animator (which is already positioned over the 'O') becomes visible.
             tl.to(['.why-to', '.letter', '.us'], {
                 opacity: 0,
                 duration: 0.5,
@@ -70,7 +70,6 @@ export default function Home() {
                 duration: 2,
             }, zoomTime);
             
-            // Also morph the inner image wrapper to a rectangle.
             tl.to(animator.querySelector('.relative'), {
                 borderRadius: '0px',
                 ease: 'power1.inOut',
@@ -80,31 +79,40 @@ export default function Home() {
             // Stage 3: Hold the full screen view for a bit.
             tl.to({}, {duration: 2});
 
-            // Stage 4: Shrink the image container to its final position on the right.
+            // --- REVERSE ANIMATION ---
             const shrinkTime = 'shrink';
+            
+            // Stage 4: Fade in the new text container (without its 'O')
+            tl.to('.animated-text-container', { autoAlpha: 0, duration: 0.5 }, shrinkTime)
+              .to('.final-aviraj-text-container', { opacity: 1, duration: 1 }, shrinkTime)
+              .set('.final-o-target-new', { opacity: 0 }, shrinkTime);
+
+            // Stage 5: Shrink the animator to the new 'O' position
             tl.to(animator, {
-                width: 'min(45vw, 550px)',
-                height: 'min(60vh, 420px)',
-                left: '52.5vw',
-                top: '50%',
-                yPercent: -50,
-                xPercent: 0,
+                duration: 2,
+                ease: 'power2.inOut',
+                width: () => finalTargetO.getBoundingClientRect().width,
+                height: () => finalTargetO.getBoundingClientRect().height,
+                left: () => finalTargetO.getBoundingClientRect().left - (animator.parentElement?.getBoundingClientRect().left || 0),
+                top: () => finalTargetO.getBoundingClientRect().top - (animator.parentElement?.getBoundingClientRect().top || 0),
+                borderRadius: '9999px',
+                borderWidth: '8px'
+            }, shrinkTime);
+
+            tl.to(animator.querySelector('.relative'), {
+                borderRadius: '9999px',
                 ease: 'power2.inOut',
                 duration: 2,
             }, shrinkTime);
 
-            // Stage 5: As it shrinks, fade in the final text on the left.
-            tl.to('.final-text-container', {
-                opacity: 1,
-                ease: 'power2.inOut',
-                duration: 2,
-            }, `${shrinkTime}+=1`);
-            
-            // Also ensure the original animated text container is gone.
-            tl.to('.animated-text-container', {
-              opacity: 0,
-              duration: 1,
-            }, shrinkTime);
+            // Stage 6: Finalize by fading out image and fading in text 'O'
+            const finalFadeTime = `${shrinkTime}+=1.5`;
+            tl.to(animatorImage, { opacity: 0, duration: 0.5 }, finalFadeTime)
+              .to('.final-o-target-new', { opacity: 1, duration: 0.5 }, finalFadeTime);
+
+            // Hide the animator at the very end
+            tl.set(animator, { visibility: 'hidden' });
+
 
             // Cleanup function to remove the event listener.
             return () => {
