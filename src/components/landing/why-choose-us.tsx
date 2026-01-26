@@ -25,11 +25,10 @@ export function WhyChooseUs() {
               <div className="choose-o relative rounded-full border-[1vw] border-foreground flex items-center justify-center" style={{ width: '0.9em', height: '0.9em' }}>
                   <div className="choose-o-image-wrapper relative h-full w-full rounded-full overflow-hidden opacity-0">
                     <Image
-                      src="https://picsum.photos/seed/fullscreen/1920/1080"
+                      src="/CIRCULAR_GSAP.png"
                       alt="Zoom effect image"
                       fill
                       className="object-cover"
-                      data-ai-hint="cyber security technology"
                     />
                   </div>
               </div>
