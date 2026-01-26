@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -6,9 +7,21 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/firebase";
+import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 
 export default function LoginPage() {
   const [role, setRole] = useState<'student' | 'instructor'>('student');
+  const auth = useAuth();
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithRedirect(auth, provider);
+    } catch (error) {
+      console.error("Google Sign-In Error", error);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-black text-gray-200">
@@ -52,7 +65,7 @@ export default function LoginPage() {
                     <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
                     <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Login as a Student</span></div>
                   </div>
-                  <Button size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-transparent text-lg font-medium text-white hover:bg-gray-900 hover:text-white">
+                  <Button onClick={handleGoogleSignIn} size="lg" variant="outline" className="h-14 w-full justify-center border-gray-700 bg-transparent text-lg font-medium text-white hover:bg-gray-900 hover:text-white">
                     <svg viewBox="0 0 48 48" className="mr-2 h-6 w-6">
                         <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
                         <path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />

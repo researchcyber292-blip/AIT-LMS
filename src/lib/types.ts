@@ -1,3 +1,19 @@
+
+export type UserProfile = {
+  id: string; // Firebase UID
+  email: string;
+  name: string;
+  photoURL?: string;
+  username?: string;
+  onboardingStatus: 'new' | 'profile_complete' | 'username_complete' | 'active';
+  mobileNumber?: string;
+  alternateMobileNumber?: string;
+  motherName?: string;
+  fatherName?: string;
+  alternateEmail?: string;
+  enrolledCourseIds?: string[];
+};
+
 export type Course = {
   id: string;
   title: string;

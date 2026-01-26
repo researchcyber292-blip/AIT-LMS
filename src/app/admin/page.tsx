@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -17,6 +18,7 @@ import {
   SidebarMenuButton, 
   SidebarInset 
 } from '@/components/ui/sidebar';
+import { StudentsList } from '@/components/admin/students-list';
 
 
 export default function AdminPage() {
@@ -96,35 +98,40 @@ export default function AdminPage() {
                 </Button>
               </div>
               
-              <div className="aspect-video bg-card border rounded-lg flex items-center justify-center p-8">
+              <div className="bg-card border rounded-lg p-8">
                 {activeView === 'students' && (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Secure View: Students & Enrollment</h2>
-                        <p className="text-muted-foreground mt-2">Student enrollment data will be displayed here.</p>
-                    </div>
+                    <StudentsList />
                 )}
                 {activeView === 'example2' && (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-2</h2>
-                        <p className="text-muted-foreground mt-2">Content for Example 2 is displayed here.</p>
+                    <div className="text-center aspect-video flex items-center justify-center">
+                        <div>
+                            <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-2</h2>
+                            <p className="text-muted-foreground mt-2">Content for Example 2 is displayed here.</p>
+                        </div>
                     </div>
                 )}
                 {activeView === 'example3' && (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-3</h2>
-                        <p className="text-muted-foreground mt-2">Content for Example 3 is displayed here.</p>
+                    <div className="text-center aspect-video flex items-center justify-center">
+                        <div>
+                            <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-3</h2>
+                            <p className="text-muted-foreground mt-2">Content for Example 3 is displayed here.</p>
+                        </div>
                     </div>
                 )}
                 {activeView === 'notifications' && (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Secure View: Notifications</h2>
-                        <p className="text-muted-foreground mt-2">Notifications content is displayed here.</p>
+                    <div className="text-center aspect-video flex items-center justify-center">
+                        <div>
+                            <h2 className="text-2xl font-bold font-headline">Secure View: Notifications</h2>
+                            <p className="text-muted-foreground mt-2">Notifications content is displayed here.</p>
+                        </div>
                     </div>
                 )}
                 {activeView === 'settings' && (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Secure View: Settings</h2>
-                        <p className="text-muted-foreground mt-2">Settings content is displayed here.</p>
+                    <div className="text-center aspect-video flex items-center justify-center">
+                        <div>
+                            <h2 className="text-2xl font-bold font-headline">Secure View: Settings</h2>
+                            <p className="text-muted-foreground mt-2">Settings content is displayed here.</p>
+                        </div>
                     </div>
                 )}
               </div>

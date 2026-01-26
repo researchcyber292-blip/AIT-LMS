@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -9,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ArrowRight } from 'lucide-react';
+import { useUser, useFirestore } from '@/firebase';
+import { updateUserProfile } from '@/firebase/user';
 
 const activationSchema = z.object({
   mobileNumber: z.string().regex(/^\d{10}$/, { message: 'Mobile number must be 10 digits.' }),
@@ -16,11 +19,6 @@ const activationSchema = z.object({
   motherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Mother's name is required." }),
   fatherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Father's name is required." }),
   alternateEmail: z.string().email({ message: 'Invalid email address.' }).refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed.' }),
-  password: z.string()
-    .min(8, { message: 'Password must be 8+ characters.' })
-    .regex(/[a-zA-Z]/, { message: 'Password must contain a letter.' })
-    .regex(/[0-9]/, { message: 'Password must contain a number.' })
-    .regex(/[^a-zA-Z0-9]/, { message: 'Password must contain a special character.' }),
 });
 
 type ActivationFormValues = z.infer<typeof activationSchema>;
@@ -28,6 +26,8 @@ type ActivationFormValues = z.infer<typeof activationSchema>;
 export default function ActivationPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
   
   const form = useForm<ActivationFormValues>({
     resolver: zodResolver(activationSchema),
@@ -37,19 +37,34 @@ export default function ActivationPage() {
       motherName: '',
       fatherName: '',
       alternateEmail: '',
-      password: '',
     },
   });
 
-  const { formState: { errors } } = form;
+  const { formState: { errors, isSubmitting } } = form;
 
-  function onSubmit(data: ActivationFormValues) {
-    console.log('Final Activation Data:', data);
-    toast({
-      title: 'Activation Complete!',
-      description: 'Your account details have been saved.',
-    });
-    router.push('/dashboard');
+  async function onSubmit(data: ActivationFormValues) {
+    if (!user) {
+      toast({ variant: "destructive", title: "You must be logged in." });
+      return;
+    }
+    
+    try {
+      await updateUserProfile(firestore, user.uid, {
+        ...data,
+        onboardingStatus: 'active',
+      });
+      toast({
+        title: 'Activation Complete!',
+        description: 'Your account details have been saved.',
+      });
+      router.push('/dashboard');
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "Update Failed",
+        description: "Could not save your details. Please try again.",
+      });
+    }
   }
   
   const inputs = [
@@ -58,7 +73,6 @@ export default function ActivationPage() {
       { name: 'motherName', placeholder: "ENTER YOUR MOTHER'S NAME", type: 'text' },
       { name: 'fatherName', placeholder: "ENTER YOUR FATHER'S NAME", type: 'text' },
       { name: 'alternateEmail', placeholder: 'ALTERNATE EMAIL (GMAIL ONLY)', type: 'email' },
-      { name: 'password', placeholder: 'CREATE A STRONG PASSWORD', type: 'password' },
   ] as const;
 
   return (
@@ -89,6 +103,7 @@ export default function ActivationPage() {
                                         {...field}
                                         type={type}
                                         placeholder={placeholder}
+                                        disabled={isSubmitting}
                                         onChange={(e) => {
                                             let value = e.target.value;
                                             if (name === 'motherName' || name === 'fatherName') {
@@ -111,8 +126,9 @@ export default function ActivationPage() {
                     type="submit"
                     size="lg"
                     className="w-full rounded-full h-12 bg-white/10 text-white transition-all hover:bg-white/20 border-2 border-white/20"
+                    disabled={isSubmitting}
                   >
-                    Activate Account
+                    {isSubmitting ? 'Activating...' : 'Activate Account'}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>

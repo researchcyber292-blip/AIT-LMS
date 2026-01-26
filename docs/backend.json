@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Course": {
@@ -88,21 +89,40 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Student",
       "type": "object",
-      "description": "Represents a student enrolled at CyberLearn.",
+      "description": "Represents a student's profile at CyberLearn.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the student."
+          "description": "Unique identifier for the student (matches Firebase Auth UID)."
         },
         "name": {
           "type": "string",
-          "description": "The name of the student."
+          "description": "The full name of the student."
         },
         "email": {
           "type": "string",
-          "description": "The email address of the student.",
+          "description": "The primary email address of the student.",
           "format": "email"
         },
+        "photoURL": {
+            "type": "string",
+            "description": "URL of the user's profile picture.",
+            "format": "uri"
+        },
+        "username": {
+            "type": "string",
+            "description": "The student's chosen username (e.g., user.name@123)."
+        },
+        "onboardingStatus": {
+          "type": "string",
+          "description": "Tracks the user's progress through the initial setup flow.",
+          "enum": ["new", "profile_complete", "username_complete", "active"]
+        },
+        "mobileNumber": { "type": "string" },
+        "alternateMobileNumber": { "type": "string" },
+        "motherName": { "type": "string" },
+        "fatherName": { "type": "string" },
+        "alternateEmail": { "type": "string", "format": "email" },
         "enrolledCourseIds": {
           "type": "array",
           "description": "References to Courses the student is enrolled in. (Relationship: Student N:N Course)",
@@ -114,7 +134,8 @@
       "required": [
         "id",
         "name",
-        "email"
+        "email",
+        "onboardingStatus"
       ]
     },
     "Enrollment": {
@@ -163,7 +184,8 @@
   "auth": {
     "providers": [
       "password",
-      "anonymous"
+      "anonymous",
+      "google.com"
     ]
   },
   "firestore": {

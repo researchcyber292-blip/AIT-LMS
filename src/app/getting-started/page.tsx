@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -6,18 +7,28 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useFirestore } from '@/firebase';
+import { updateUserProfile } from '@/firebase/user';
 
 export default function GettingStartedPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
   const [userId, setUserId] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserId(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast({ variant: "destructive", title: "You must be logged in." });
+      return;
+    }
+
     // Allows letters, numbers, underscore, dot. Must contain @ followed by exactly 3 digits.
     const validationRegex = /^[a-zA-Z0-9_.]+@[0-9]{3}$/;
 
@@ -39,8 +50,22 @@ export default function GettingStartedPage() {
       return;
     }
 
-    // If valid, proceed to the activation page
-    router.push('/activation');
+    setIsLoading(true);
+    try {
+      await updateUserProfile(firestore, user.uid, {
+        username: userId,
+        onboardingStatus: 'username_complete',
+      });
+      router.push('/activation');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Update Failed",
+        description: "Could not save your username. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -65,11 +90,13 @@ export default function GettingStartedPage() {
                 value={userId}
                 onChange={handleChange}
                 className="h-12 flex-1 rounded-full border-none bg-transparent px-6 text-lg text-white placeholder:text-white/50 focus:ring-0"
+                disabled={isLoading}
               />
               <Button
                 type="submit"
                 size="icon"
                 className="h-12 w-12 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
+                disabled={isLoading}
               >
                 <span className="sr-only">Finish Setup</span>
                 <ArrowRight className="h-6 w-6" />

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -8,6 +9,7 @@ import { SecurityInterceptor } from '@/components/security-interceptor';
 import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import Script from 'next/script';
+import { OnboardingGuard } from '@/components/onboarding-guard';
 
 export default function RootLayout({
   children,
@@ -30,13 +32,15 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <FirebaseClientProvider>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            {!isFullScreenPage && <Footer />}
-          </div>
-          <SecurityInterceptor />
-          <Toaster />
+          <OnboardingGuard>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              {!isFullScreenPage && <Footer />}
+            </div>
+            <SecurityInterceptor />
+            <Toaster />
+          </OnboardingGuard>
         </FirebaseClientProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       </body>

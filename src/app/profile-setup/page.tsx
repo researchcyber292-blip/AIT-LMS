@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -6,11 +7,16 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useFirestore } from '@/firebase';
+import { updateUserProfile } from '@/firebase/user';
 
 export default function ProfileSetupPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
   const [username, setUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -18,8 +24,13 @@ export default function ProfileSetupPage() {
     setUsername(value.toUpperCase());
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast({ variant: "destructive", title: "You must be logged in." });
+      return;
+    }
+
     const validationRegex = /^[A-Z\s]+$/;
 
     if (!username.trim()) {
@@ -40,8 +51,22 @@ export default function ProfileSetupPage() {
       return;
     }
 
-    // If valid, proceed
-    router.push('/getting-started');
+    setIsLoading(true);
+    try {
+      await updateUserProfile(firestore, user.uid, {
+        name: username,
+        onboardingStatus: 'profile_complete',
+      });
+      router.push('/getting-started');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Update Failed",
+        description: "Could not save your name. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -66,11 +91,13 @@ export default function ProfileSetupPage() {
                 value={username}
                 onChange={handleChange}
                 className="h-12 flex-1 rounded-full border-none bg-transparent px-6 text-lg text-white placeholder:text-white/50 focus:ring-0"
+                disabled={isLoading}
               />
               <Button
                 type="submit"
                 size="icon"
                 className="h-12 w-12 flex-shrink-0 rounded-full bg-white/10 text-white transition-all group-hover:bg-white/20"
+                disabled={isLoading}
               >
                 <span className="sr-only">Next</span>
                 <ArrowRight className="h-6 w-6" />
