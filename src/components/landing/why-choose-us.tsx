@@ -34,7 +34,6 @@ export function WhyChooseUs() {
                   </div>
               </div>
 
-              <span className="letter">O</span>
               <span className="letter">S</span>
               <span className="letter">E</span>
             </div>
