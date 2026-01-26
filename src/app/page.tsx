@@ -16,70 +16,92 @@ export default function Home() {
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            if (document.querySelector('.choose-us-section')) {
-                const tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.choose-us-section',
-                        start: 'top top',
-                        end: 'bottom bottom',
-                        scrub: 1.5, // A bit of smoothing
-                        pin: '.sticky-container',
-                    },
+            const targetO = document.querySelector('.choose-o-target');
+            const animator = document.querySelector('.choose-o-animator') as HTMLElement;
+            
+            if (!targetO || !animator) return;
+            
+            const setInitialPosition = () => {
+                const rect = targetO.getBoundingClientRect();
+                gsap.set(animator, {
+                    width: rect.width,
+                    height: rect.height,
+                    left: rect.left,
+                    top: rect.top,
+                    visibility: 'visible',
                 });
+            };
+            
+            setInitialPosition();
+            window.addEventListener('resize', setInitialPosition);
 
-                // Stage 1: Fade out surrounding text and reveal image in 'O'
-                const startFadeTime = 'start';
-                tl.to(['.why-to', '.letter', '.us'], {
-                    opacity: 0,
-                    duration: 1,
-                }, startFadeTime);
-                tl.to('.choose-o-image-wrapper', {
-                    opacity: 1,
-                    duration: 0.5,
-                }, `${startFadeTime}+=0.5`);
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.choose-us-section',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 1.5,
+                    pin: '.sticky-container',
+                },
+            });
 
-                // Stage 2: Zoom 'O' to fill screen and morph to rectangle
-                const zoomTime = 'start+=1';
-                tl.to('.choose-o', {
-                    width: '100vw',
-                    height: '100vh',
-                    borderRadius: '0px',
-                    borderWidth: '0px',
-                    ease: 'power1.inOut',
-                    duration: 2,
-                }, zoomTime);
-                
-                // ALSO MORPH THE INNER IMAGE WRAPPER TO A RECTANGLE
-                tl.to('.choose-o-image-wrapper', {
-                    borderRadius: '0px',
-                    ease: 'power1.inOut',
-                    duration: 2,
-                }, zoomTime);
+            // Stage 1: Fade out text
+            tl.to(['.why-to', '.letter', '.us'], {
+                opacity: 0,
+                duration: 0.5,
+            }, 'start');
 
-                // Stage 3: Hold full screen view for a moment
-                tl.to({}, {duration: 2});
+            // Stage 2: Zoom animator to fill screen
+            const zoomTime = 'start';
+            tl.to(animator, {
+                width: '100vw',
+                height: '100vh',
+                top: 0,
+                left: 0,
+                borderRadius: '0px',
+                borderWidth: '0px',
+                ease: 'power1.inOut',
+                duration: 2,
+            }, zoomTime);
+            
+            // Morph the inner image wrapper to a rectangle
+            tl.to(animator.querySelector('.relative'), {
+                borderRadius: '0px',
+                ease: 'power1.inOut',
+                duration: 2,
+            }, zoomTime);
 
-                // Stage 4: Shrink image down, move to the right, and fade in the final text
-                const shrinkTime = 'shrink';
-                tl.to('.choose-o', {
-                    width: 'min(45vw, 550px)', // The final width of the image
-                    height: 'min(60vh, 420px)',// The final height of the image
-                    x: '27.5vw', // Move it to the right half of the screen
-                    ease: 'power2.inOut',
-                    duration: 2,
-                }, shrinkTime);
+            // Stage 3: Hold full screen view
+            tl.to({}, {duration: 2});
 
-                tl.to('.final-text-container', {
-                    opacity: 1,
-                    ease: 'power2.inOut',
-                    duration: 2,
-                }, `${shrinkTime}+=1`); // Fade in the text after the shrink starts
-                
-                // Fade out the now-empty text container at the end of the shrink
-                tl.to('.animated-text-container', {
-                  opacity: 0,
-                  duration: 1,
-                }, shrinkTime)
+            // Stage 4: Shrink image down to the right
+            const shrinkTime = 'shrink';
+            tl.to(animator, {
+                width: 'min(45vw, 550px)',
+                height: 'min(60vh, 420px)',
+                left: '52.5vw',
+                top: '50%',
+                yPercent: -50,
+                xPercent: 0,
+                ease: 'power2.inOut',
+                duration: 2,
+            }, shrinkTime);
+
+            // Fade in the final text
+            tl.to('.final-text-container', {
+                opacity: 1,
+                ease: 'power2.inOut',
+                duration: 2,
+            }, `${shrinkTime}+=1`);
+            
+            // Fade out the original text container
+            tl.to('.animated-text-container', {
+              opacity: 0,
+              duration: 1,
+            }, shrinkTime);
+
+            return () => {
+                window.removeEventListener('resize', setInitialPosition);
             }
         }, mainRef);
         return () => ctx.revert();
