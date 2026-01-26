@@ -9,7 +9,7 @@ import { Menu, X, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import { UserNav } from './user-nav';
 
 const navLinks = [
@@ -26,6 +26,8 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const isHomePage = pathname === '/';
   const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,17 +82,14 @@ export function Header() {
         {/* Auth Buttons & Mobile Nav */}
         <div className="flex-1 flex justify-end items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
-              {!isUserLoading && (
-                user ? (
-                  <UserNav user={user} />
-                ) : (
-                  <Button asChild size="sm" variant="outline" className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/10 hover:text-primary font-bold", isHomePage && !isScrolled && "border-white/50 text-white hover:bg-white/10 hover:text-white")}>
-                    <Link href="/dashboard">
-                      <ShieldCheck className="mr-2 h-4 w-4" />
-                      CONSOLE
-                    </Link>
-                  </Button>
-                )
+              <Button asChild size="sm" variant="outline" className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/10 hover:text-primary font-bold", isHomePage && !isScrolled && "border-white/50 text-white hover:bg-white/10 hover:text-white")}>
+                <Link href="/dashboard">
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  CONSOLE
+                </Link>
+              </Button>
+              {!isUserLoading && user && (
+                <UserNav user={user} />
               )}
             </div>
             
@@ -136,25 +135,22 @@ export function Header() {
                         </nav>
                         
                         <div className="mt-auto flex flex-col gap-2 border-t p-4">
-                          {!isUserLoading && (
-                            user ? (
-                                <SheetClose asChild>
-                                    <Button asChild className="w-full rounded-full" onClick={() => auth.signOut()}>
-                                        <Link href="#">
-                                          Sign Out
-                                        </Link>
-                                    </Button>
-                                </SheetClose>
-                            ) : (
-                                <SheetClose asChild>
-                                    <Button asChild className="w-full rounded-full">
-                                        <Link href="/login">
-                                          <ShieldCheck className="mr-2 h-4 w-4" />
-                                          CONSOLE
-                                        </Link>
-                                    </Button>
-                                </SheetClose>
-                            )
+                          <SheetClose asChild>
+                            <Button asChild className="w-full rounded-full" variant={user ? "secondary" : "default"}>
+                                <Link href={user ? "/dashboard" : "/login"}>
+                                    <ShieldCheck className="mr-2 h-4 w-4" />
+                                    CONSOLE
+                                </Link>
+                            </Button>
+                          </SheetClose>
+                          {!isUserLoading && user && (
+                              <SheetClose asChild>
+                                  <Button asChild className="w-full rounded-full" onClick={() => auth.signOut()}>
+                                      <Link href="#">
+                                        Sign Out
+                                      </Link>
+                                  </Button>
+                              </SheetClose>
                           )}
                         </div>
                     </div>
