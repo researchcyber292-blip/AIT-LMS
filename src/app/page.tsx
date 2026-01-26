@@ -1,13 +1,44 @@
-
 'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowDown } from 'lucide-react';
+import { useLayoutEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+import { ScrollFeatures } from '@/components/landing/scroll-features';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+    const mainRef = useRef(null);
+
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            const cards = gsap.utils.toArray('.feature-card');
+            if (cards.length > 0) {
+                gsap.fromTo(cards,
+                    { y: 100, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.7,
+                        stagger: 0.2,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: '#features',
+                            start: 'top 80%',
+                            toggleActions: 'play none none none',
+                        }
+                    }
+                );
+            }
+        }, mainRef);
+        return () => ctx.revert();
+    }, []);
+
   return (
-    <>
+    <div ref={mainRef}>
       {/* Hero Section */}
       <div className="relative h-screen w-full overflow-hidden">
         <video
@@ -87,6 +118,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </>
+      <ScrollFeatures />
+    </div>
   );
 }
