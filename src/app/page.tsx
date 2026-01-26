@@ -42,7 +42,7 @@ export default function Home() {
                 tl.to('.choose-o', {
                     width: '100vw',
                     height: '100vh',
-                    borderRadius: '2rem',
+                    borderRadius: '0px',
                     borderWidth: '0px',
                     ease: 'power1.inOut',
                     duration: 2,
