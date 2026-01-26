@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -59,7 +60,7 @@ export default function Home() {
               </div>
               <div className="p-8 text-center flex flex-col flex-1">
                 <h2 className="font-headline text-3xl font-bold flex-1 flex items-center justify-center min-h-[6rem]">Live Testing Environment with our Professional Teachers</h2>
-                <Link href="/courses" className="mt-6 block w-full rounded-full border border-accent/40 bg-accent/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-accent/60 hover:bg-accent/30">
+                <Link href="/courses" className="mt-6 block w-full rounded-full border border-primary/40 bg-primary/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-primary/60 hover:bg-primary/30">
                     Open Workspace
                 </Link>
               </div>
@@ -78,7 +79,7 @@ export default function Home() {
               <div className="p-8 text-center flex flex-col flex-1">
                 <h2 className="font-headline text-3xl font-bold">For Instructors</h2>
                 <p className="mt-4 text-muted-foreground flex-1">Join our team of experts and share your knowledge with the world.</p>
-                <Link href="/about" className="mt-6 block w-full rounded-full border border-accent/40 bg-accent/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-accent/60 hover:bg-accent/30">
+                <Link href="/about" className="mt-6 block w-full rounded-full border border-primary/40 bg-primary/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-primary/60 hover:bg-primary/30">
                     Become an Instructor
                 </Link>
               </div>
