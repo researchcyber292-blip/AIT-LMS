@@ -23,7 +23,7 @@ export default function AdminPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeView, setActiveView] = useState('example1');
+  const [activeView, setActiveView] = useState('students');
   const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
@@ -63,14 +63,14 @@ export default function AdminPage() {
             <SidebarContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton size="lg" onClick={() => setActiveView('example1')} isActive={activeView === 'example1'}>
-                    <LayoutDashboard />
-                    EXAMPLE-1
+                  <SidebarMenuButton size="lg" onClick={() => setActiveView('students')} isActive={activeView === 'students'}>
+                    <Users />
+                    STUDENTS/ENROLL
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton size="lg" onClick={() => setActiveView('example2')} isActive={activeView === 'example2'}>
-                    <Users />
+                    <LayoutDashboard />
                     EXAMPLE-2
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -97,10 +97,10 @@ export default function AdminPage() {
               </div>
               
               <div className="aspect-video bg-card border rounded-lg flex items-center justify-center p-8">
-                {activeView === 'example1' && (
+                {activeView === 'students' && (
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-1</h2>
-                        <p className="text-muted-foreground mt-2">Content for Example 1 is displayed here.</p>
+                        <h2 className="text-2xl font-bold font-headline">Secure View: Students & Enrollment</h2>
+                        <p className="text-muted-foreground mt-2">Student enrollment data will be displayed here.</p>
                     </div>
                 )}
                 {activeView === 'example2' && (
