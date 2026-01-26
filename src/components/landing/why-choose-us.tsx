@@ -57,6 +57,7 @@ export function WhyChooseUs() {
             <div className="final-aviraj-text-container text-center">
                 <h2 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
                     <span>AVIRAJ&nbsp;</span>
+                    {/* This structure is changed to fix spacing and allow for opacity animation */}
                     <span>INF</span><span className="final-o-target-new" style={{ display: 'inline-block' }}>O</span><span>&nbsp;TECH</span>
                 </h2>
             </div>

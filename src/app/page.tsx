@@ -31,6 +31,8 @@ export default function Home() {
             gsap.set(finalContentContainer, { top: '140px', yPercent: 0, opacity: 1 });
             // 2. Get the coordinates of the target 'O' in that final state.
             const finalRect = finalTargetO.getBoundingClientRect();
+            // 2a. Set the text 'O' to be invisible initially.
+            gsap.set(finalTargetO, { opacity: 0 }); 
             const parentRect = animator.parentElement.getBoundingClientRect();
             const finalO_position = {
                 width: finalRect.width,
@@ -129,11 +131,10 @@ export default function Home() {
                 ease: "power2.inOut",
                 duration: 2
             }, finalSequenceTime);
-
+            
             // Step C: After the circle and text are in place, fade the circle image out and the text 'O' in.
             const fadeSwapTime = `${finalSequenceTime}+=1.5`;
             tl.to(animatorImage, { opacity: 0, duration: 0.5 }, fadeSwapTime)
-              .set(finalTargetO, { opacity: 0 }) // ensure it starts at 0 before fading in
               .to(finalTargetO, { opacity: 1, duration: 0.5 }, fadeSwapTime)
               .set(animator, { visibility: 'hidden' });
 
