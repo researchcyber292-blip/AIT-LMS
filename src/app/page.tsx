@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -129,7 +128,7 @@ export default function Home() {
 
             // Stage 8: Move the entire content block up, but not as high.
             tl.to(finalContentContainer, {
-                y: () => -(window.innerHeight / 2) + (finalAvirajTextContainer.offsetHeight / 2) + 120, // More padding from top
+                y: () => -(window.innerHeight / 2) + (finalAvirajTextContainer.offsetHeight / 2) + 180, // Increased padding from top
                 ease: "power2.out",
                 duration: 1.5
             }, featureTransitionTime);
