@@ -6,7 +6,7 @@ import { ArrowDown } from 'lucide-react';
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
-import { ScrollFeatures } from '@/components/landing/scroll-features';
+import { WhyChooseUs } from '@/components/landing/why-choose-us';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,23 +15,28 @@ export default function Home() {
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
-            const cards = gsap.utils.toArray('.feature-card');
-            if (cards.length > 0) {
-                gsap.fromTo(cards,
-                    { y: 100, opacity: 0 },
-                    {
-                        y: 0,
-                        opacity: 1,
-                        duration: 0.7,
-                        stagger: 0.2,
-                        ease: 'power3.out',
-                        scrollTrigger: {
-                            trigger: '#features',
-                            start: 'top 80%',
-                            toggleActions: 'play none none none',
-                        }
-                    }
-                );
+            if (document.querySelector('.choose-us-section')) {
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.choose-us-section',
+                        start: 'top top',
+                        end: '+=3000', // Animation over 3000px of scroll
+                        scrub: 1,
+                        pin: true,
+                    },
+                });
+
+                // Fade out other text elements early
+                tl.to(['.why-to', '.letter', '.us'], {
+                    opacity: 0,
+                    duration: 0.5,
+                }, 0); // at the start of the timeline
+
+                // Zoom into the 'O'
+                tl.to('.choose-o', {
+                    scale: 60, // Zoom factor, adjust as needed
+                    ease: 'power1.inOut',
+                }, 0); // also at the start
             }
         }, mainRef);
         return () => ctx.revert();
@@ -118,7 +123,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <ScrollFeatures />
+      
+      <WhyChooseUs />
     </div>
   );
 }
