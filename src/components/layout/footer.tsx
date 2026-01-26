@@ -3,8 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Linkedin } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
 import { usePathname } from 'next/navigation';
 
 export function Footer() {
@@ -12,10 +10,10 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border/40 bg-card">
-      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-3 md:gap-16">
+      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-2">
         {/* Column 1: Company Info */}
         <div className="flex flex-col items-center text-center md:items-start md:text-left">
-          <Link href="/admin" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
               <Image
                 src="/image.png"
@@ -53,31 +51,19 @@ export function Footer() {
           <div>
             <h4 className="font-headline font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><Link href="/about" className="text-muted-foreground hover:text-primary">ADMINS</Link></li>
+              <li><Link href="/about" className="text-muted-foreground hover:text-primary">About</Link></li>
               <li><Link href="/courses" className="text-muted-foreground hover:text-primary">Courses</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary">Careers</Link></li>
               <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-headline font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
-              <li><Link href="#" className="text-muted-foreground hover:text-primary">Blog</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary">Help Center</Link></li>
+              <li><Link href="/admin" className="text-muted-foreground hover:text-primary">Admin</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-primary">Terms of Service</Link></li>
             </ul>
           </div>
-        </div>
-
-        {/* Column 3: Subscribe */}
-        <div>
-          <h4 className="font-headline font-semibold mb-4">Subscribe for updates</h4>
-          <p className="text-sm text-muted-foreground mb-4">Get the latest news and special offers.</p>
-          <form className="flex flex-col sm:flex-row gap-2">
-            <Input type="email" placeholder="Your email address" className="bg-background flex-1" />
-            <Button type="submit" className="bg-accent hover:bg-accent/90 rounded-full">Subscribe</Button>
-          </form>
         </div>
       </div>
     </footer>
