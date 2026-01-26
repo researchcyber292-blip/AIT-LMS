@@ -35,7 +35,7 @@ export function WhyChooseUs() {
                 src="/CIRCULAR_GSAP.png"
                 alt="Zoom effect image"
                 fill
-                className="animator-image object-contain opacity-0"
+                className="animator-image object-cover opacity-0"
               />
             </div>
         </div>

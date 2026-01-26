@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -20,19 +19,22 @@ export default function Home() {
             const animator = document.querySelector('.choose-o-animator') as HTMLElement;
             const animatorImage = document.querySelector('.animator-image');
             
-            if (!targetO || !animator || !animatorImage) return;
+            if (!targetO || !animator || !animatorImage || !animator.parentElement) return;
             
             const setInitialPosition = () => {
                 const rect = targetO.getBoundingClientRect();
+                const parentRect = animator.parentElement!.getBoundingClientRect();
+
                 gsap.set(animator, {
                     width: rect.width,
                     height: rect.height,
-                    left: rect.left,
-                    top: rect.top,
+                    left: rect.left - parentRect.left,
+                    top: rect.top - parentRect.top,
                     visibility: 'hidden',
                 });
             };
             
+            // Set position immediately and on any window resize.
             setInitialPosition();
             window.addEventListener('resize', setInitialPosition);
 
@@ -40,13 +42,14 @@ export default function Home() {
                 scrollTrigger: {
                     trigger: '.choose-us-section',
                     start: 'top top',
-                    end: 'bottom bottom',
+                    end: '+=400%', // Animate over 400% of viewport height
                     scrub: 1.5,
                     pin: '.sticky-container',
                 },
             });
 
-            // Stage 1: Reveal animator and fade image in, while fading text out
+            // Stage 1: Reveal animator and fade image in, while fading text out.
+            // The text fades, and the animator (which is already positioned over the 'O') becomes visible.
             tl.to(['.why-to', '.letter', '.us'], {
                 opacity: 0,
                 duration: 0.5,
@@ -54,7 +57,7 @@ export default function Home() {
             .set(animator, { visibility: 'visible' }, 'start')
             .to(animatorImage, { opacity: 1, duration: 0.5 }, 'start');
 
-            // Stage 2: Zoom animator to fill screen
+            // Stage 2: Zoom animator to fill the screen.
             const zoomTime = 'start';
             tl.to(animator, {
                 width: '100vw',
@@ -67,17 +70,17 @@ export default function Home() {
                 duration: 2,
             }, zoomTime);
             
-            // Morph the inner image wrapper to a rectangle
+            // Also morph the inner image wrapper to a rectangle.
             tl.to(animator.querySelector('.relative'), {
                 borderRadius: '0px',
                 ease: 'power1.inOut',
                 duration: 2,
             }, zoomTime);
 
-            // Stage 3: Hold full screen view
+            // Stage 3: Hold the full screen view for a bit.
             tl.to({}, {duration: 2});
 
-            // Stage 4: Shrink image down to the right
+            // Stage 4: Shrink the image container to its final position on the right.
             const shrinkTime = 'shrink';
             tl.to(animator, {
                 width: 'min(45vw, 550px)',
@@ -90,19 +93,20 @@ export default function Home() {
                 duration: 2,
             }, shrinkTime);
 
-            // Fade in the final text
+            // Stage 5: As it shrinks, fade in the final text on the left.
             tl.to('.final-text-container', {
                 opacity: 1,
                 ease: 'power2.inOut',
                 duration: 2,
             }, `${shrinkTime}+=1`);
             
-            // Fade out the original text container
+            // Also ensure the original animated text container is gone.
             tl.to('.animated-text-container', {
               opacity: 0,
               duration: 1,
             }, shrinkTime);
 
+            // Cleanup function to remove the event listener.
             return () => {
                 window.removeEventListener('resize', setInitialPosition);
             }
