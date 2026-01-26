@@ -18,12 +18,14 @@ export default function Home() {
             const targetO = document.querySelector('.choose-o-target');
             const animator = document.querySelector('.choose-o-animator') as HTMLElement;
             const animatorImage = document.querySelector('.animator-image');
-            const finalTargetO = document.querySelector('.final-o-target-new');
-            const finalAvirajTextContainer = document.querySelector('.final-aviraj-text-container');
+            
+            // Selectors for new structure
+            const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
+            const finalAvirajTextContainer = document.querySelector('.final-aviraj-text-container') as HTMLElement;
             const featuresGrid = document.querySelector('.features-grid');
             const finalImageWrapper = document.querySelector('.final-image-wrapper');
-            
-            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalTargetO || !finalAvirajTextContainer || !featuresGrid || !finalImageWrapper) return;
+
+            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalAvirajTextContainer || !featuresGrid || !finalImageWrapper) return;
             
             const setInitialPosition = () => {
                 const rect = targetO.getBoundingClientRect();
@@ -86,18 +88,19 @@ export default function Home() {
             const shrinkTime = 'shrink';
             
             // Stage 4: Fade in the new text container (without its 'O')
+            const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
             tl.to('.animated-text-container', { autoAlpha: 0, duration: 0.5 }, shrinkTime)
-              .to(finalAvirajTextContainer, { opacity: 1, duration: 1 }, shrinkTime)
-              .set('.final-o-target-new', { opacity: 0 }, shrinkTime);
+              .to(finalContentContainer, { opacity: 1, duration: 1 }, shrinkTime)
+              .set(finalTargetO, { opacity: 0 }, shrinkTime);
 
             // Stage 5: Shrink the animator to the new 'O' position
             tl.to(animator, {
                 duration: 2,
                 ease: 'power2.inOut',
-                width: () => finalTargetO.getBoundingClientRect().width,
-                height: () => finalTargetO.getBoundingClientRect().height,
-                left: () => finalTargetO.getBoundingClientRect().left - (animator.parentElement?.getBoundingClientRect().left || 0),
-                top: () => finalTargetO.getBoundingClientRect().top - (animator.parentElement?.getBoundingClientRect().top || 0),
+                width: () => finalTargetO!.getBoundingClientRect().width,
+                height: () => finalTargetO!.getBoundingClientRect().height,
+                left: () => finalTargetO!.getBoundingClientRect().left - (animator.parentElement?.getBoundingClientRect().left || 0),
+                top: () => finalTargetO!.getBoundingClientRect().top - (animator.parentElement?.getBoundingClientRect().top || 0),
                 borderRadius: '9999px',
                 borderWidth: '8px'
             }, shrinkTime);
@@ -111,7 +114,7 @@ export default function Home() {
             // Stage 6: Finalize by fading out image and fading in text 'O'
             const finalFadeTime = `${shrinkTime}+=1.5`;
             tl.to(animatorImage, { opacity: 0, duration: 0.5 }, finalFadeTime)
-              .to('.final-o-target-new', { opacity: 1, duration: 0.5 }, finalFadeTime)
+              .to(finalTargetO, { opacity: 1, duration: 0.5 }, finalFadeTime)
               .set(animator, { visibility: 'hidden' });
 
             // Stage 7: Hold the final text for a moment
@@ -120,21 +123,21 @@ export default function Home() {
             // --- NEW STAGE: TRANSITION TO FEATURES ---
             const featureTransitionTime = "featureTransition";
 
-            // Stage 8: Move "AVIRAJ INFO TECH" text up and shrink it, and reveal feature cards
-            tl.to(finalAvirajTextContainer, {
-                y: '-25vh',
-                scale: 0.8,
+            // Stage 8: Move the entire content block up so the text is at the top
+            tl.to(finalContentContainer, {
+                y: () => -(window.innerHeight / 2) + (finalAvirajTextContainer.offsetHeight / 2) + 80, // 80 provides top padding
                 ease: "power2.out",
                 duration: 1.5
             }, featureTransitionTime);
             
+            // Stage 9: Reveal feature cards as the container moves
             tl.to(featuresGrid, {
                 opacity: 1,
                 ease: "power2.out",
                 duration: 1.5
-            }, featureTransitionTime);
+            }, `${featureTransitionTime}+=0.3`); // Stagger the reveal
             
-            // Stage 9: Reveal final image on further scroll
+            // Stage 10: Reveal final image on further scroll
             tl.to(finalImageWrapper, {
                 opacity: 1,
                 ease: 'power2.out',

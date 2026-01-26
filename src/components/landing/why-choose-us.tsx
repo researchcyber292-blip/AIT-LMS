@@ -40,14 +40,6 @@ export function WhyChooseUs() {
             <h2 className="us">US</h2>
         </div>
         
-        {/* Container for the final "AVIRAJ INFO TECH" text. It will be animated. */}
-        <div className="final-aviraj-text-container absolute inset-0 flex items-center justify-center opacity-0">
-          <h2 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
-              <span>AVIRAJ&nbsp;</span>
-              <span>INF</span><span className="final-o-target-new" style={{ display: 'inline-block' }}>O</span><span>&nbsp;TECH</span>
-          </h2>
-        </div>
-
         {/* The div that animates from 'O' to fullscreen image and back to 'O' */}
         <div className="choose-o-animator absolute rounded-full border-[8px] border-foreground bg-background" style={{ visibility: 'hidden' }}>
             <div className="relative h-full w-full overflow-hidden rounded-full">
@@ -60,8 +52,15 @@ export function WhyChooseUs() {
             </div>
         </div>
 
-        <div className="container absolute inset-0 flex flex-col items-center justify-center pt-24">
-            <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-8 opacity-0">
+        {/* NEW: Single container for all final content */}
+        <div className="final-content-container container absolute inset-0 flex flex-col items-center justify-center opacity-0">
+            <div className="final-aviraj-text-container">
+                <h2 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
+                    <span>AVIRAJ&nbsp;</span>
+                    <span>INF</span><span className="final-o-target-new" style={{ display: 'inline-block' }}>O</span><span>&nbsp;TECH</span>
+                </h2>
+            </div>
+            <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 opacity-0">
               {features.map((feature, index) => (
                 <div key={index} className="feature-card bg-card border rounded-lg p-8 text-center shadow-lg">
                   <div className="mx-auto bg-primary/10 text-primary p-4 rounded-full w-fit mb-6">
@@ -73,7 +72,7 @@ export function WhyChooseUs() {
               ))}
             </div>
 
-            <div className="final-image-wrapper relative w-full max-w-6xl aspect-[16/9] rounded-xl overflow-hidden shadow-2xl mt-24 opacity-0">
+            <div className="final-image-wrapper relative w-full max-w-4xl aspect-[16/9] rounded-xl overflow-hidden shadow-2xl mt-16 opacity-0">
                  <Image
                     src="https://picsum.photos/seed/cyber-landscape/1920/1080"
                     alt="Cybersecurity landscape"
@@ -83,6 +82,7 @@ export function WhyChooseUs() {
                 />
             </div>
         </div>
+
       </div>
     </section>
   );
