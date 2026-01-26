@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -27,6 +28,9 @@ export default function Home() {
 
             if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalAvirajTextContainer || !featuresGrid || !finalImageWrapper) return;
             
+            // Set initial state for the slide-up animation
+            gsap.set(featuresGrid, { opacity: 0, y: 50 });
+
             const setInitialPosition = () => {
                 const rect = targetO.getBoundingClientRect();
                 const parentRect = animator.parentElement!.getBoundingClientRect();
@@ -123,19 +127,20 @@ export default function Home() {
             // --- NEW STAGE: TRANSITION TO FEATURES ---
             const featureTransitionTime = "featureTransition";
 
-            // Stage 8: Move the entire content block up so the text is at the top
+            // Stage 8: Move the entire content block up, but not as high.
             tl.to(finalContentContainer, {
-                y: () => -(window.innerHeight / 2) + (finalAvirajTextContainer.offsetHeight / 2) + 80, // 80 provides top padding
+                y: () => -(window.innerHeight / 2) + (finalAvirajTextContainer.offsetHeight / 2) + 120, // More padding from top
                 ease: "power2.out",
                 duration: 1.5
             }, featureTransitionTime);
             
-            // Stage 9: Reveal feature cards as the container moves
+            // Stage 9: Reveal feature cards with a slide-up animation.
             tl.to(featuresGrid, {
                 opacity: 1,
+                y: 0,
                 ease: "power2.out",
                 duration: 1.5
-            }, `${featureTransitionTime}+=0.3`); // Stagger the reveal
+            }, `${featureTransitionTime}+=0.3`);
             
             // Stage 10: Reveal final image on further scroll
             tl.to(finalImageWrapper, {
