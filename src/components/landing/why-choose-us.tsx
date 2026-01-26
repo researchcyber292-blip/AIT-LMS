@@ -15,7 +15,7 @@ export function WhyChooseUs() {
         </div>
         
         {/* This container holds the large text and the animating 'O' */}
-        <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(3rem, 12vw, 10rem)', lineHeight: 1 }}>
+        <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', lineHeight: 1 }}>
             <h2 className="why-to">WHY TO</h2>
             <div className="flex items-center justify-center">
               <span className="letter">C</span>
