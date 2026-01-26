@@ -7,7 +7,6 @@ import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { WhyChooseUs } from '@/components/landing/why-choose-us';
-import { FeaturesSection } from '@/components/landing/features-section';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,8 +19,11 @@ export default function Home() {
             const animator = document.querySelector('.choose-o-animator') as HTMLElement;
             const animatorImage = document.querySelector('.animator-image');
             const finalTargetO = document.querySelector('.final-o-target-new');
+            const finalAvirajTextContainer = document.querySelector('.final-aviraj-text-container');
+            const featuresGrid = document.querySelector('.features-grid');
+            const finalImageWrapper = document.querySelector('.final-image-wrapper');
             
-            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalTargetO) return;
+            if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalTargetO || !finalAvirajTextContainer || !featuresGrid || !finalImageWrapper) return;
             
             const setInitialPosition = () => {
                 const rect = targetO.getBoundingClientRect();
@@ -43,7 +45,7 @@ export default function Home() {
                 scrollTrigger: {
                     trigger: '.choose-us-section',
                     start: 'top top',
-                    end: '+=450%',
+                    end: '+=600%',
                     scrub: 1.5,
                     pin: '.sticky-container',
                     invalidateOnRefresh: true,
@@ -77,15 +79,15 @@ export default function Home() {
                 duration: 2,
             }, zoomTime);
 
-            // Stage 3: Hold the full screen view for a shorter time.
-            tl.to({}, {duration: 0.5});
+            // Stage 3: Hold the full screen view
+            tl.to({}, {duration: 1});
 
             // --- REVERSE ANIMATION ---
             const shrinkTime = 'shrink';
             
             // Stage 4: Fade in the new text container (without its 'O')
             tl.to('.animated-text-container', { autoAlpha: 0, duration: 0.5 }, shrinkTime)
-              .to('.final-aviraj-text-container', { opacity: 1, duration: 1 }, shrinkTime)
+              .to(finalAvirajTextContainer, { opacity: 1, duration: 1 }, shrinkTime)
               .set('.final-o-target-new', { opacity: 0 }, shrinkTime);
 
             // Stage 5: Shrink the animator to the new 'O' position
@@ -109,10 +111,36 @@ export default function Home() {
             // Stage 6: Finalize by fading out image and fading in text 'O'
             const finalFadeTime = `${shrinkTime}+=1.5`;
             tl.to(animatorImage, { opacity: 0, duration: 0.5 }, finalFadeTime)
-              .to('.final-o-target-new', { opacity: 1, duration: 0.5 }, finalFadeTime);
+              .to('.final-o-target-new', { opacity: 1, duration: 0.5 }, finalFadeTime)
+              .set(animator, { visibility: 'hidden' });
 
-            // Hide the animator at the very end
-            tl.set(animator, { visibility: 'hidden' });
+            // Stage 7: Hold the final text for a moment
+            tl.to({}, {duration: 1});
+
+            // --- NEW STAGE: TRANSITION TO FEATURES ---
+            const featureTransitionTime = "featureTransition";
+
+            // Stage 8: Move "AVIRAJ INFO TECH" text up and shrink it, and reveal feature cards
+            tl.to(finalAvirajTextContainer, {
+                y: '-25vh',
+                scale: 0.8,
+                ease: "power2.out",
+                duration: 1.5
+            }, featureTransitionTime);
+            
+            tl.to(featuresGrid, {
+                opacity: 1,
+                ease: "power2.out",
+                duration: 1.5
+            }, featureTransitionTime);
+            
+            // Stage 9: Reveal final image on further scroll
+            tl.to(finalImageWrapper, {
+                opacity: 1,
+                ease: 'power2.out',
+                duration: 1.5
+            });
+
 
             // Cleanup function to remove the event listener.
             return () => {
@@ -205,7 +233,6 @@ export default function Home() {
       </div>
       
       <WhyChooseUs />
-      <FeaturesSection />
     </div>
   );
 }
