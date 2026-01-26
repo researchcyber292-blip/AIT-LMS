@@ -7,6 +7,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { WhyChooseUs } from '@/components/landing/why-choose-us';
+import { FeaturesSection } from '@/components/landing/features-section';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -204,6 +205,7 @@ export default function Home() {
       </div>
       
       <WhyChooseUs />
+      <FeaturesSection />
     </div>
   );
 }
