@@ -139,7 +139,7 @@ export default function Home() {
               .set(animator, { visibility: 'hidden' });
 
 
-            // Step D: Reveal the features and image.
+            // Step D: Reveal the features.
             const revealFeaturesTime = `${finalSequenceTime}+=2.2`;
             gsap.set(featuresGrid, { y: 50, opacity: 0 }); // Set initial state for reveal
             
@@ -150,11 +150,12 @@ export default function Home() {
                 duration: 1.5
             }, revealFeaturesTime);
 
+            // Step E: Reveal the image on more scroll.
             tl.to(finalImageWrapper, {
                 opacity: 1,
                 ease: 'power2.out',
-                duration: 1
-            }, `${revealFeaturesTime}+=0.5`);
+                duration: 1.5
+            }, `${revealFeaturesTime}+=1.5`);
 
             // Cleanup function to remove the event listener.
             return () => {
