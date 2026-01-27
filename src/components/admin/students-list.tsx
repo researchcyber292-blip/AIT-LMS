@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
+import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError, useUser } from '@/firebase';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -40,9 +40,17 @@ export function StudentsList() {
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
   const [studentToDelete, setStudentToDelete] = useState<UserProfile | null>(null);
   const firestore = useFirestore();
+  const { user, isUserLoading: isAuthLoading } = useUser();
   const { toast } = useToast();
-  const studentsQuery = useMemoFirebase(() => collection(firestore, 'users'), [firestore]);
-  const { data: students, isLoading, error } = useCollection<UserProfile>(studentsQuery);
+
+  const studentsQuery = useMemoFirebase(() => {
+    // Only create the query if the user is authenticated.
+    if (!user) return null;
+    return collection(firestore, 'users');
+  }, [firestore, user]);
+
+  const { data: students, isLoading: isCollectionLoading, error } = useCollection<UserProfile>(studentsQuery);
+  const isLoading = isAuthLoading || isCollectionLoading || !user;
 
 
   const getInitials = (name: string) => {
@@ -79,7 +87,6 @@ export function StudentsList() {
     } catch (e: any) {
         // Instead of a generic console log, we create a detailed contextual error
         // to help diagnose the exact security rule that is failing.
-        // The path will now be more accurate based on where the sequential delete fails.
         const permissionError = new FirestorePermissionError({
           path: e.path || `users/${studentToDelete.id}`, // Attempt to use error's path, fallback to user path
           operation: 'delete',
