@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from "next/link";
@@ -7,21 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default function LoginPage() {
   const [role, setRole] = useState<'student' | 'instructor'>('student');
-  const auth = useAuth();
-
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error: any) {
-      console.error("Google Sign-In Error", error);
-    }
-  };
 
   return (
     <div className="min-h-screen w-full bg-black text-gray-200">
@@ -65,7 +52,7 @@ export default function LoginPage() {
                     <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
                     <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Login as a Student</span></div>
                   </div>
-                  <Button onClick={handleGoogleSignIn} size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
+                  <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
                     <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
                         <Image
                             src="/image.png"

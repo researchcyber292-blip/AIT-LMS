@@ -3,31 +3,31 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
-export default function StudentWelcomePage() {
+export default function WelcomeVideo2Page() {
   const router = useRouter();
 
-  const handleStart = () => {
-    router.push('/welcome-video-2');
+  const handleNext = () => {
+    // I'll assume the next step is profile setup for now.
+    router.push('/profile-setup');
   };
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
       <video
-        src="/1.mp4"
+        src="/2.mp4"
         autoPlay
         muted
         loop
         playsInline
         className="absolute top-0 left-0 h-full w-full object-cover"
       />
-      {/* The dark overlay has been removed to make the video full brightness */}
       <div className="relative z-10 flex h-full flex-col items-center justify-end pb-20 text-center">
         <Button 
-          onClick={handleStart} 
+          onClick={handleNext} 
           size="lg" 
           className="rounded-full border-2 border-white/30 bg-white/10 px-12 py-6 text-lg font-bold text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-white/20"
         >
-          Start
+          Next
         </Button>
       </div>
     </div>
