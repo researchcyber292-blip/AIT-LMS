@@ -48,6 +48,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'testsigma.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   env: {

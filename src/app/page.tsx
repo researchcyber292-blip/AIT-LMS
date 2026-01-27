@@ -222,7 +222,7 @@ export default function Home() {
             <div className="bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden">
               <div className="relative w-full aspect-[4/3]">
                 <Image 
-                  src="https://picsum.photos/seed/workspace/600/450"
+                  src="https://testsigma.com/blog/wp-content/uploads/blog-24_6bcd0d8524197c6dd9e305692ac92fc9_2000.jpg"
                   alt="Live testing environment"
                   fill
                   className="object-cover"
