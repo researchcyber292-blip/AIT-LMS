@@ -91,13 +91,17 @@ export default function ActivationPage() {
 
       router.push('/avatar-selection');
     } catch (error: any) {
-        console.error("Activation failed:", error);
+        let errorMessage = 'An unexpected error occurred. Please try again.';
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'This email is already registered. Please use a different email or log in if you have an account.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
         toast({
             variant: 'destructive',
             title: 'Activation Failed',
-            description: error.code === 'auth/email-already-in-use' 
-                ? 'This email address is already in use.' 
-                : error.message || 'An unexpected error occurred.',
+            description: errorMessage,
         });
     }
   }
