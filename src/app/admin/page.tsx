@@ -18,6 +18,8 @@ import {
   SidebarInset 
 } from '@/components/ui/sidebar';
 import { StudentsList } from '@/components/admin/students-list';
+import { useAuth } from '@/firebase';
+import { signInAnonymously } from 'firebase/auth';
 
 
 export default function AdminPage() {
@@ -26,16 +28,37 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeView, setActiveView] = useState('students');
   const { toast } = useToast();
+  const auth = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     // Simple hardcoded credentials as requested
     if (username.toUpperCase() === 'HELLO' && password === 'TEST') {
-      setIsAuthenticated(true);
-      toast({
-        title: 'Login Successful',
-        description: 'Welcome, Admin!',
-      });
+      try {
+        if (!auth) {
+          toast({
+            variant: "destructive",
+            title: "Authentication Error",
+            description: "Firebase Auth is not available. Please try again later.",
+          });
+          return;
+        }
+        // Sign in to Firebase anonymously to get permissions to read the user list
+        await signInAnonymously(auth);
+        
+        setIsAuthenticated(true);
+        toast({
+          title: 'Login Successful',
+          description: 'Welcome, Admin!',
+        });
+      } catch (error) {
+        console.error("Admin sign-in failed:", error);
+        toast({
+          variant: 'destructive',
+          title: 'Firebase Login Failed',
+          description: 'Could not authenticate with Firebase to fetch data.',
+        });
+      }
     } else {
       toast({
         variant: 'destructive',
