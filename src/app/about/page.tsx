@@ -8,7 +8,7 @@ import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/firebase";
-import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default function SignUpPage() {
   const [role, setRole] = useState<'student' | 'instructor'>('student');
@@ -17,8 +17,8 @@ export default function SignUpPage() {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithRedirect(auth, provider);
-      // After redirect, Firebase handles the auth state.
+      await signInWithPopup(auth, provider);
+      // After popup, Firebase handles the auth state.
       // The OnboardingGuard will then redirect the user to the correct page.
     } catch (error: any) {
       console.error("Google Sign-In Error", error);
