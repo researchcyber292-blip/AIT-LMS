@@ -26,7 +26,7 @@ export default function WelcomeVideo2Page() {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative mt-14 h-[calc(100vh-3.5rem)] w-full overflow-hidden">
       <video
         src="/2.mp4"
         autoPlay
