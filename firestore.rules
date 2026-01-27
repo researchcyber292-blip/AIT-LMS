@@ -177,7 +177,7 @@ service cloud.firestore {
         allow get, list: if isOwner(userId) || isAnonymousAdmin();
         allow create: if isOwner(userId) && isStudentIdConsistentOnCreate(userId);
         allow update: if isExistingOwner(userId) && isStudentIdImmutable();
-        allow delete: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId) || isAnonymousAdmin();
       }
     }
   }

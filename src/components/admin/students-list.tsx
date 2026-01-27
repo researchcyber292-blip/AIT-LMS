@@ -30,7 +30,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, deleteDoc, getDocs, writeBatch } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -56,13 +56,32 @@ export function StudentsList() {
   
   const handleDeleteStudent = async () => {
     if (!studentToDelete || !firestore) return;
+
+    const userDocRef = doc(firestore, 'users', studentToDelete.id);
+    const enrollmentsColRef = collection(firestore, 'users', studentToDelete.id, 'enrollments');
+    const batch = writeBatch(firestore);
+
     try {
-      await deleteDoc(doc(firestore, 'users', studentToDelete.id));
+      // Get all enrollment documents for the user
+      const enrollmentsSnapshot = await getDocs(enrollmentsColRef);
+      
+      // Add each enrollment document to the batch for deletion
+      enrollmentsSnapshot.forEach((enrollmentDoc) => {
+        batch.delete(enrollmentDoc.ref);
+      });
+
+      // Add the main user document to the batch for deletion
+      batch.delete(userDocRef);
+
+      // Commit the batch to delete everything atomically
+      await batch.commit();
+
       toast({
         title: 'User Data Deleted',
-        description: `The profile for ${studentToDelete.name} has been removed.`,
+        description: `The profile for ${studentToDelete.name} and all related data have been removed.`,
       });
     } catch (e: any) {
+      console.error("Deletion failed:", e);
       toast({
         variant: 'destructive',
         title: 'Deletion Failed',
@@ -72,6 +91,7 @@ export function StudentsList() {
       setStudentToDelete(null);
     }
   };
+
 
   const renderLoading = () => (
     <TableBody>
@@ -209,8 +229,8 @@ export function StudentsList() {
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This will permanently delete the Firestore document for <strong>{studentToDelete?.name}</strong>. 
-                        This action cannot be undone. The user's authentication record will remain, but they will be unable to use the app.
+                        This will permanently delete the Firestore document for <strong>{studentToDelete?.name}</strong> and all associated data (like enrollments).
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
