@@ -58,13 +58,18 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
     // --- User IS Logged In ---
 
-    // Step 1: Handle email verification. This is the highest priority.
-    if (!user.emailVerified) {
+    // Step 1: Handle email verification for standard (non-anonymous) users.
+    if (!user.isAnonymous && !user.emailVerified) {
       // If email is not verified, force user to the verification page.
       if (pathname !== '/verify-email') {
         router.replace('/verify-email');
       }
       return; // Stop further execution until email is verified.
+    }
+
+    // The anonymous admin should not go through onboarding.
+    if (user.isAnonymous) {
+      return;
     }
 
     // Step 2: Handle onboarding status for VERIFIED users.
