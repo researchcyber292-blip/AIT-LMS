@@ -27,11 +27,11 @@ export function WhyChooseUs() {
     <section className="choose-us-section relative h-[450vh] w-full bg-background">
       <div className="sticky-container sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         <Image
-            src="https://picsum.photos/seed/universe/1920/1080"
+            src="https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?q=80&w=1920&auto=format&fit=crop"
             alt="Universe background"
             fill
             className="object-cover"
-            data-ai-hint="universe stars"
+            data-ai-hint="galaxy nebula"
         />
         <div className="absolute inset-0 bg-black/50" />
         
