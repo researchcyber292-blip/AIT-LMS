@@ -167,7 +167,7 @@ service cloud.firestore {
       allow list: if isAnonymousAdmin();
       allow create: if isOwner(userId) && isUserIdConsistentOnCreate(userId);
       allow update: if isExistingOwner(userId) && isUserIdImmutable();
-      allow delete: if isExistingOwner(userId) || isAnonymousAdmin();
+      allow delete: if isOwner(userId) || isAnonymousAdmin();
 
       /**
        * @description Secures a user's private enrollment records.
@@ -180,7 +180,7 @@ service cloud.firestore {
         allow get, list: if isOwner(userId) || isAnonymousAdmin();
         allow create: if isOwner(userId) && isStudentIdConsistentOnCreate(userId);
         allow update: if isExistingOwner(userId) && isStudentIdImmutable();
-        allow delete: if isExistingOwner(userId) || isAnonymousAdmin();
+        allow delete: if isOwner(userId) || isAnonymousAdmin();
       }
     }
   }
