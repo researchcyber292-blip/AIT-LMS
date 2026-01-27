@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { useUser, useFirestore } from '@/firebase';
-import { updateUserProfile } from '@/firebase/user';
+import { useUser, useFirestore, updateUserProfile } from '@/firebase';
 import Image from 'next/image';
 
 export default function ProfileSetupPage() {
