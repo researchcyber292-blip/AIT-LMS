@@ -17,7 +17,10 @@ const activationSchema = z.object({
   motherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Mother's name is required." }),
   fatherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Father's name is required." }),
   email: z.string().email({ message: 'Invalid email address.' }).min(1, 'Email is required.').refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed.' }),
-  alternateEmail: z.union([z.string().email({ message: 'Invalid email address if provided.' }).refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed if provided.' }), z.string().length(0)]).optional(),
+  password: z.string()
+    .min(8, { message: 'Password must be at least 8 characters.' })
+    .regex(/[a-zA-Z]/, { message: 'Password must contain at least one letter.' })
+    .regex(/[0-9]/, { message: 'Password must contain at least one number.' }),
 });
 
 type ActivationFormValues = z.infer<typeof activationSchema>;
@@ -34,7 +37,7 @@ export default function ActivationPage() {
       motherName: '',
       fatherName: '',
       email: '',
-      alternateEmail: '',
+      password: '',
     },
   });
 
@@ -54,7 +57,7 @@ export default function ActivationPage() {
       { name: 'motherName', placeholder: "ENTER YOUR MOTHER'S NAME", type: 'text' },
       { name: 'fatherName', placeholder: "ENTER YOUR FATHER'S NAME", type: 'text' },
       { name: 'email', placeholder: 'ENTER YOUR VALID GMAIL', type: 'email' },
-      { name: 'alternateEmail', placeholder: 'ALTERNATE GMAIL (OPTIONAL)', type: 'email' },
+      { name: 'password', placeholder: 'CREATE A PASSWORD', type: 'password' },
   ] as const;
 
   return (
