@@ -18,7 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isFullScreenPage = pathname === '/' || pathname === '/student-welcome' || pathname === '/profile-setup' || pathname === '/getting-started' || pathname === '/activation' || pathname === '/admin';
+  const isFullScreenPage = ['/', '/student-welcome', '/welcome-video-2', '/profile-setup', '/getting-started', '/activation', '/admin'].includes(pathname);
+  const showHeader = !['/student-welcome', '/welcome-video-2'].includes(pathname);
+
 
   useEffect(() => {
     console.log("%cSTOP! This Vault is protected by PRINCE.", "color: red; font-size: 30px; font-weight: bold;");
@@ -40,7 +42,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <OnboardingGuard>
             <div className="flex min-h-screen flex-col">
-              <Header />
+              {showHeader && <Header />}
               <main className="flex-1">{children}</main>
               {!isFullScreenPage && <Footer />}
             </div>
