@@ -57,7 +57,9 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
     if (!userProfile) {
       // The useDoc hook will then pick up the new document and re-run this effect.
       // We ensure the profile is created only once.
-      createUserProfile(firestore, user);
+      createUserProfile(firestore, user).catch(err => {
+        console.error("OnboardingGuard: Failed to create user profile, which may block onboarding.", err);
+      });
       // Don't do anything else, wait for the re-render which will handle the redirect.
       return;
     }

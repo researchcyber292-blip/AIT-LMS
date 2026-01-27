@@ -1,4 +1,3 @@
-
 'use client';
 
 import { doc, getDoc, setDoc, updateDoc, Firestore } from 'firebase/firestore';
@@ -9,34 +8,38 @@ import { FirestorePermissionError } from '@/firebase/errors';
 
 /**
  * Creates a new user profile document in Firestore if one doesn't already exist.
- * This is typically called after a user signs in for the first time.
+ * This is an async operation that ensures the document is created before resolving.
  * @param firestore - The Firestore instance.
  * @param user - The Firebase Auth user object.
  */
 export async function createUserProfile(firestore: Firestore, user: User): Promise<void> {
   const userDocRef = doc(firestore, 'users', user.uid);
-  const userDoc = await getDoc(userDocRef);
+  
+  try {
+    const userDoc = await getDoc(userDocRef);
 
-  if (!userDoc.exists()) {
-    const newUserProfile: UserProfile = {
-      id: user.uid,
-      name: user.displayName || 'New User',
-      email: user.email || '',
-      photoURL: user.photoURL || '',
-      onboardingStatus: 'new',
-    };
-    
-    // Non-blocking write with proper error handling
-    setDoc(userDocRef, newUserProfile)
-      .catch((serverError) => {
-        const permissionError = new FirestorePermissionError({
-          path: userDocRef.path,
-          operation: 'create',
-          requestResourceData: newUserProfile,
-        });
-        // Emit the error for the global handler to catch
-        errorEmitter.emit('permission-error', permissionError);
-      });
+    if (!userDoc.exists()) {
+      const newUserProfile: UserProfile = {
+        id: user.uid,
+        name: user.displayName || 'New User',
+        email: user.email || '',
+        photoURL: user.photoURL || '',
+        onboardingStatus: 'new',
+      };
+      
+      // Await the write to ensure it completes before other logic proceeds.
+      await setDoc(userDocRef, newUserProfile);
+    }
+  } catch (serverError: any) {
+    console.error("Failed to create or get user profile:", serverError);
+    // We can't be sure if it was a read or write that failed, so we create a generic error.
+    const permissionError = new FirestorePermissionError({
+      path: userDocRef.path,
+      operation: 'write', // We assume 'write' was the ultimate goal.
+    });
+    errorEmitter.emit('permission-error', permissionError);
+    // Rethrow so the caller knows it failed.
+    throw permissionError;
   }
 }
 
