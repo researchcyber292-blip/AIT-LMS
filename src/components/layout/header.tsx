@@ -17,7 +17,7 @@ const navLinks = [
   { href: '/courses', label: 'Courses' },
   { href: '/programs', label: 'EXPLORE' },
   { href: '/certifications', label: 'Workspace' },
-  { href: '/about', label: 'ADMINS' },
+  { href: '/about', label: 'ACCOUNTS' },
   { href: '/contact', label: 'Contact' },
 ];
 
