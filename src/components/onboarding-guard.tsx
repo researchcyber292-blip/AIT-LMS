@@ -34,64 +34,69 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
 
   useEffect(() => {
-    const handleRedirects = async () => {
-      // Wait for auth and profile loading to settle
-      if (isUserLoading || (user && isProfileLoading)) {
-        return;
+    // Primary guard: Wait for both user auth and profile fetch to settle.
+    if (isUserLoading || (user && isProfileLoading)) {
+      return; // Still loading, do nothing.
+    }
+
+    const isAuthRoute = AUTH_ROUTES.includes(pathname);
+    const isOnboardingRoute = ONBOARDING_ROUTES.includes(pathname);
+    
+    // SCENARIO 1: No authenticated user.
+    if (!user) {
+      // If user is not logged in but tries to access a protected route, redirect to login.
+      if (isOnboardingRoute || pathname === '/dashboard') {
+        router.replace('/login');
       }
+      // Otherwise, allow access to public pages.
+      return;
+    }
 
-      const isAuthRoute = AUTH_ROUTES.includes(pathname);
-      const isOnboardingRoute = ONBOARDING_ROUTES.includes(pathname);
+    // From here, we know `user` is authenticated.
+    
+    // SCENARIO 2: User is authenticated, but their profile doesn't exist in Firestore yet.
+    if (!userProfile) {
+      // Create the profile. The `useDoc` hook will automatically update `userProfile`
+      // on the next render, which will trigger this `useEffect` again.
+      createUserProfile(firestore, user).catch(error => {
+        console.error("OnboardingGuard: Failed to create user profile. User may be stuck.", error);
+        // Optionally, redirect to an error page or show a toast.
+      });
+      // Return here and wait for the re-render caused by profile creation.
+      return;
+    }
 
-      // Case 1: User is NOT authenticated
-      if (!user) {
-        if (isOnboardingRoute || pathname === '/dashboard') {
-          router.replace('/login');
-        }
-        return;
+    // From here, we know `user` is authenticated AND `userProfile` exists.
+
+    // SCENARIO 3: User is authenticated and has a profile. Handle onboarding redirects.
+    const { onboardingStatus } = userProfile;
+    
+    // Define the required page for each onboarding status.
+    const requiredStep = {
+      'new': '/welcome',
+      'profile_complete': '/getting-started',
+      'username_complete': '/activation',
+      'active': null, // null means onboarding is complete.
+    }[onboardingStatus];
+
+    // If onboarding is NOT complete...
+    if (requiredStep) {
+      // ...and the user is not on the correct step, redirect them.
+      if (pathname !== requiredStep) {
+        router.replace(requiredStep);
       }
-
-      // Case 2: User is authenticated, check for profile.
-      let profile = userProfile;
-      if (!profile) {
-        try {
-          // Await profile creation to prevent race conditions.
-          await createUserProfile(firestore, user);
-          // The useDoc hook will cause a re-render with the new profile.
-          // For this first pass, we can assume the status is 'new' to speed up redirection.
-          profile = { onboardingStatus: 'new' } as UserProfile;
-        } catch (error) {
-          console.error("OnboardingGuard: Failed to create user profile, blocking onboarding.", error);
-          // If profile creation fails, we can't proceed.
-          return;
-        }
+    } 
+    // If onboarding IS complete...
+    else {
+      // ...and the user is on an auth or onboarding page, redirect them to the dashboard.
+      if (isAuthRoute || isOnboardingRoute) {
+        router.replace('/dashboard');
       }
-      
-      // If we are still here, we have a user and a profile (or a placeholder for it).
-      const { onboardingStatus } = profile;
-      
-      const requiredStep = {
-        'new': '/welcome',
-        'profile_complete': '/getting-started',
-        'username_complete': '/activation',
-        'active': null, // Onboarding complete
-      }[onboardingStatus];
-
-      if (requiredStep) {
-        if (pathname !== requiredStep) {
-          router.replace(requiredStep);
-        }
-      } else { // Onboarding is complete
-        if (isAuthRoute || isOnboardingRoute) {
-          router.replace('/dashboard');
-        }
-      }
-    };
-
-    handleRedirects();
+    }
 
   }, [user, userProfile, isUserLoading, isProfileLoading, pathname, router, firestore]);
 
+  // Show a loading screen for any non-auth page while we're figuring out the user's state.
   if ((isUserLoading || (user && isProfileLoading)) && !AUTH_ROUTES.includes(pathname)) {
     return <Loading />;
   }
