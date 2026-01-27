@@ -8,22 +8,58 @@ import { Button } from '@/components/ui/button';
 import imageData from '@/lib/placeholder-images.json';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import { useUser, useFirestore, updateUserProfile } from '@/firebase';
+import { updateProfile } from 'firebase/auth';
+import { useToast } from '@/hooks/use-toast';
 
 const { placeholderImages } = imageData;
 const avatars = placeholderImages.filter(img => img.id.startsWith('avatar-'));
 
 export default function AvatarSelectionPage() {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const handleSelectAvatar = (avatarId: string) => {
     setSelectedAvatar(avatarId);
   };
   
-  const handleContinue = () => {
-    if(selectedAvatar) {
-        // In a real app, you would save this avatar preference to the user's profile
-        router.push('/creation-success');
+  const handleContinue = async () => {
+    if (!selectedAvatar) {
+        toast({ variant: 'destructive', title: 'Please select an avatar.' });
+        return;
+    }
+    if (!user) {
+        toast({ variant: 'destructive', title: 'Authentication Error', description: 'You must be logged in to select an avatar.'});
+        router.push('/login');
+        return;
+    }
+
+    setIsLoading(true);
+    const avatarData = avatars.find(a => a.id === selectedAvatar);
+    if (avatarData) {
+        try {
+            // Update Firebase Auth profile
+            await updateProfile(user, { photoURL: avatarData.imageUrl });
+            
+            // Update Firestore document and mark onboarding as complete
+            updateUserProfile(firestore, user.uid, {
+                photoURL: avatarData.imageUrl,
+                onboardingStatus: 'active',
+            });
+            
+            router.push('/creation-success');
+        } catch (error: any) {
+            console.error("Failed to update profile:", error);
+            toast({ variant: 'destructive', title: 'Update Failed', description: error.message });
+            setIsLoading(false);
+        }
+    } else {
+        toast({ variant: 'destructive', title: 'Invalid Avatar', description: 'The selected avatar could not be found.' });
+        setIsLoading(false);
     }
   };
 
@@ -35,7 +71,7 @@ export default function AvatarSelectionPage() {
       </div>
 
       <div className="mt-12 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-6 max-w-5xl mx-auto">
-        {avatars.slice(0, 12).map(avatar => (
+        {avatars.map(avatar => (
           <div
             key={avatar.id}
             onClick={() => handleSelectAvatar(avatar.id)}
@@ -57,8 +93,9 @@ export default function AvatarSelectionPage() {
       </div>
       
       <div className="mt-12 text-center">
-        <Button size="lg" onClick={handleContinue} disabled={!selectedAvatar}>
-          Finish Setup <ArrowRight className="ml-2 h-5 w-5" />
+        <Button size="lg" onClick={handleContinue} disabled={!selectedAvatar || isLoading}>
+          {isLoading ? 'Saving...' : 'Finish Setup'}
+          <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       </div>
     </div>

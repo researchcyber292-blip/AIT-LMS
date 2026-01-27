@@ -9,6 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ArrowRight } from 'lucide-react';
+import { useAuth, useFirestore } from '@/firebase';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import type { UserProfile } from '@/lib/types';
 
 const activationSchema = z.object({
   mobileNumber: z.string().regex(/^\d{10}$/, { message: 'Mobile number must be 10 digits.' }),
@@ -26,6 +31,9 @@ type ActivationFormValues = z.infer<typeof activationSchema>;
 
 export default function ActivationPage() {
   const router = useRouter();
+  const { toast } = useToast();
+  const auth = useAuth();
+  const firestore = useFirestore();
   
   const form = useForm<ActivationFormValues>({
     resolver: zodResolver(activationSchema),
@@ -39,20 +47,68 @@ export default function ActivationPage() {
     },
   });
 
-  const { formState: { errors, isSubmitting } } = form;
+  const { formState: { errors, isSubmitting }, handleSubmit } = form;
 
-  function onSubmit(data: ActivationFormValues) {
-    // In a real app, you'd save this data to Firebase here.
-    router.push('/avatar-selection');
+  async function onSubmit(data: ActivationFormValues) {
+    try {
+      const name = localStorage.getItem('onboardingName');
+      const username = localStorage.getItem('onboardingUsername');
+
+      if (!name || !username) {
+        toast({
+            variant: "destructive",
+            title: "Onboarding Error",
+            description: "Missing name or username. Please start the sign-up process again.",
+        });
+        router.push('/student-welcome');
+        return;
+      }
+      
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+
+      await sendEmailVerification(user);
+
+      const userProfile: UserProfile = {
+        id: user.uid,
+        name,
+        username,
+        email: data.email,
+        mobileNumber: data.mobileNumber,
+        alternateMobileNumber: data.alternateMobileNumber || '',
+        motherName: data.motherName,
+        fatherName: data.fatherName,
+        alternateEmail: '', // This field is no longer on the form
+        onboardingStatus: 'username_complete',
+      };
+
+      await setDoc(doc(firestore, 'users', user.uid), userProfile);
+
+      toast({
+        title: 'Account Created & Verification Email Sent',
+        description: 'Please check your inbox to verify your email address before logging in.',
+      });
+
+      router.push('/avatar-selection');
+    } catch (error: any) {
+        console.error("Activation failed:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Activation Failed',
+            description: error.code === 'auth/email-already-in-use' 
+                ? 'This email address is already in use.' 
+                : error.message || 'An unexpected error occurred.',
+        });
+    }
   }
   
   const inputs = [
       { name: 'mobileNumber', placeholder: 'ENTER YOUR 10-DIGIT MOBILE NUMBER', type: 'text' },
-      { name: 'alternateMobileNumber', placeholder: 'ALTERNATE MOBILE (OPTIONAL)', type: 'text' },
       { name: 'motherName', placeholder: "ENTER YOUR MOTHER'S NAME", type: 'text' },
       { name: 'fatherName', placeholder: "ENTER YOUR FATHER'S NAME", type: 'text' },
       { name: 'email', placeholder: 'ENTER YOUR VALID GMAIL', type: 'email' },
       { name: 'password', placeholder: 'CREATE A PASSWORD', type: 'password' },
+      { name: 'alternateMobileNumber', placeholder: 'ALTERNATE MOBILE (OPTIONAL)', type: 'text' },
   ] as const;
 
   return (
@@ -68,7 +124,7 @@ export default function ActivationPage() {
       <div className="absolute inset-0 flex items-end justify-start bg-black/30 pb-20">
         <div className="w-full max-w-4xl px-8">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {inputs.map(({ name, placeholder, type }) => (
                     <FormField
                         key={name}
@@ -107,7 +163,7 @@ export default function ActivationPage() {
                     className="w-full rounded-full h-12 bg-white/10 text-white transition-all hover:bg-white/20 border-2 border-white/20"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Activating...' : 'Activate Account'}
+                    {isSubmitting ? 'Creating Account...' : 'Create & Verify Account'}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>

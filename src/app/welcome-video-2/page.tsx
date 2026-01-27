@@ -6,17 +6,27 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowRight } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function WelcomeVideo2Page() {
   const router = useRouter();
+  const { toast } = useToast();
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name.trim()) {
+      toast({
+        variant: 'destructive',
+        title: 'Name Required',
+        description: 'Please enter your full name.',
+      });
+      return;
+    }
+
+    localStorage.setItem('onboardingName', name);
     setIsLoading(true);
-    // Since authentication is removed, we'll just navigate.
-    // The next step in the original flow was /getting-started.
     router.push('/getting-started');
   };
 
@@ -26,7 +36,7 @@ export default function WelcomeVideo2Page() {
   };
 
   return (
-    <div className="absolute top-14 left-0 right-0 bottom-0 w-full overflow-hidden">
+    <div className="absolute top-14 left-0 right-0 bottom-0 h-[calc(100vh-3.5rem)] w-full overflow-hidden">
       <video
         src="/2.mp4"
         autoPlay
@@ -35,7 +45,7 @@ export default function WelcomeVideo2Page() {
         playsInline
         className="absolute top-0 left-0 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 flex h-full items-end justify-start pb-48">
+      <div className="relative z-10 flex h-full items-end justify-start pb-40">
         <div className="container">
           <div className="w-full max-w-md">
             <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>

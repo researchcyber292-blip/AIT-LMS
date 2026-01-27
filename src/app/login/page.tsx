@@ -6,9 +6,44 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [role, setRole] = useState<'student' | 'instructor'>('student');
+  const [email, setEmail] =useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const auth = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+        toast({
+            variant: 'destructive',
+            title: 'Login Failed',
+            description: 'Please enter both email and password.',
+        });
+        return;
+    }
+    setIsLoading(true);
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        toast({ title: 'Login Successful' });
+        router.push('/dashboard'); 
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Login Failed', description: error.message });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
 
   return (
     <div className="min-h-screen w-full bg-black text-gray-200">
@@ -47,24 +82,33 @@ export default function LoginPage() {
 
             <div className="flex flex-col gap-4">
               {role === 'student' && (
-                <>
+                <form onSubmit={handleLogin} className="space-y-4">
                   <div className="relative my-2">
                     <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
                     <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Login as a Student</span></div>
                   </div>
-                  <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
-                    <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
-                        <Image
-                            src="/image.png"
-                            alt="Aviraj Info Tech Logo"
-                            width={28}
-                            height={28}
-                            className="object-contain"
-                        />
-                    </div>
-                    LOGIN WITH AIT
+                  
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                    className="h-12 bg-transparent border-white/20"
+                  />
+                   <Input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="h-12 bg-transparent border-white/20"
+                  />
+
+                  <Button type="submit" size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800" disabled={isLoading}>
+                    {isLoading ? 'Logging in...' : 'LOGIN WITH AIT'}
                   </Button>
-                </>
+                </form>
               )}
 
               {role === 'instructor' && (
