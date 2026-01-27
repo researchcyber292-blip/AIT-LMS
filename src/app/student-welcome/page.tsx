@@ -29,9 +29,13 @@ export default function StudentWelcomePage() {
         playsInline
         className="absolute top-0 left-0 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-black/50" />
+      {/* The dark overlay has been removed to make the video full brightness */}
       <div className="relative z-10 flex h-full flex-col items-center justify-end pb-20 text-center">
-        <Button onClick={handleStart} size="lg" className="rounded-full px-12 py-6 text-lg font-bold">
+        <Button 
+          onClick={handleStart} 
+          size="lg" 
+          className="rounded-full border-2 border-white/30 bg-white/10 px-12 py-6 text-lg font-bold text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-white/20"
+        >
           Start
         </Button>
       </div>
