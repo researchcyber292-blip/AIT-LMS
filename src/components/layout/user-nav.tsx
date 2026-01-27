@@ -13,8 +13,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/firebase';
-import { User } from 'firebase/auth';
-import { LogOut, User as UserIcon, Mail } from 'lucide-react';
+import type { User } from 'firebase/auth';
+import { LogOut, User as UserIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface UserNavProps {
   user: User;
@@ -22,6 +23,7 @@ interface UserNavProps {
 
 export function UserNav({ user }: UserNavProps) {
   const auth = useAuth();
+  const router = useRouter();
 
   const handleSignOut = async () => {
     await auth.signOut();
@@ -57,7 +59,7 @@ export function UserNav({ user }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/profile')}>
             <UserIcon className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
