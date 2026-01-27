@@ -29,8 +29,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc, deleteDoc, getDocs, writeBatch } from 'firebase/firestore';
+import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
+import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -59,9 +59,10 @@ export function StudentsList() {
 
     const userDocRef = doc(firestore, 'users', studentToDelete.id);
     const enrollmentsColRef = collection(firestore, 'users', studentToDelete.id, 'enrollments');
-    const batch = writeBatch(firestore);
+    
 
     try {
+      const batch = writeBatch(firestore);
       // Get all enrollment documents for the user
       const enrollmentsSnapshot = await getDocs(enrollmentsColRef);
       
@@ -81,12 +82,21 @@ export function StudentsList() {
         description: `The profile for ${studentToDelete.name} and all related data have been removed.`,
       });
     } catch (e: any) {
-      console.error("Deletion failed:", e);
-      toast({
-        variant: 'destructive',
-        title: 'Deletion Failed',
-        description: e.message || 'Could not remove the user data from Firestore.',
-      });
+        // Instead of a generic console log, we create a detailed contextual error
+        // to help diagnose the exact security rule that is failing.
+        const permissionError = new FirestorePermissionError({
+          path: `users/${studentToDelete.id}`, // The root of the delete operation
+          operation: 'delete',
+        });
+
+        // Emit the error to the global listener, which will display it in the dev overlay.
+        errorEmitter.emit('permission-error', permissionError);
+
+        toast({
+            variant: 'destructive',
+            title: 'Deletion Failed',
+            description: 'Could not remove user data due to insufficient permissions.',
+        });
     } finally {
       setStudentToDelete(null);
     }
