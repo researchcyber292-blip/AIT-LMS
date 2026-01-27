@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -11,9 +10,9 @@ import Loading from '@/app/loading';
 import { createUserProfile } from '@/firebase/user';
 
 // Pages a logged-in user should be redirected AWAY from.
-const AUTH_ROUTES = ['/login', '/about']; 
+const AUTH_ROUTES = ['/login', '/about'];
 // Pages that require a user to be logged in.
-const PROTECTED_ROUTES = ['/dashboard', '/video-vault']; // Added video-vault
+const PROTECTED_ROUTES = ['/dashboard', '/video-vault'];
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
@@ -27,50 +26,50 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   }, [user, firestore]);
 
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
-  
-  const isLoading = isUserLoading || (user && isProfileLoading);
 
   useEffect(() => {
-    if (isLoading) {
-      return; // Wait until all data is loaded.
+    // If we are still checking if the user object exists, do nothing.
+    if (isUserLoading) {
+      return;
     }
 
-    // SCENARIO 1: No authenticated user.
+    // 1. IF NOT LOGGED IN:
+    // If the user is not authenticated, and they are trying to access a protected page,
+    // redirect them to the login page.
     if (!user) {
-      // If user tries to access a protected page, send them to login.
       if (PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
         router.replace('/login');
       }
-      return; // Otherwise, allow access to public pages.
+      return;
     }
 
-    // --- From this point, we know there IS an authenticated user ---
-
-    // SCENARIO 2: New user whose profile doesn't exist yet.
-    if (!userProfile) {
-      // Create their profile. The useDoc hook will cause a re-render once done.
-      createUserProfile(firestore, user).catch(err => {
-        console.error("OnboardingGuard: Failed to create user profile.", err);
-      });
-      // We return here and wait for the profile to be created before deciding on redirects.
-      return; 
-    }
-
-    // SCENARIO 3: Logged-in user is on an auth page (e.g., /login).
-    // Redirect them to the video vault.
+    // 2. THE FIX: IF LOGGED IN BUT ON AN AUTH PAGE (e.g., /login)
+    // The moment the `user` object is available from Firebase Auth, and the user is on
+    // an auth page, we immediately redirect them to the video vault. We do NOT wait
+    // for the Firestore profile to load, as this fixes the race condition.
     if (AUTH_ROUTES.includes(pathname)) {
       router.replace('/video-vault');
+      return;
     }
 
-  }, [isLoading, user, userProfile, pathname, router, firestore]);
+    // 3. PROFILE CREATION (Runs in the background)
+    // If the profile is not loading and we've confirmed it doesn't exist,
+    // create it in the background. This does not block the UI.
+    if (!isProfileLoading && !userProfile) {
+      createUserProfile(firestore, user).catch(console.error);
+    }
+  }, [isUserLoading, user, userProfile, isProfileLoading, pathname, router, firestore]);
 
-  // While loading, show a spinner if on a page that depends on auth state.
+
+  const isLoading = isUserLoading || (user && isProfileLoading);
+  
+  // While loading auth state or profile, show a spinner if on a sensitive route.
   if (isLoading && (PROTECTED_ROUTES.some(r => pathname.startsWith(r)) || AUTH_ROUTES.includes(pathname))) {
     return <Loading />;
   }
 
-  // If a logged-in user lands on an auth page, show a spinner during the redirect.
-  if (!isLoading && user && AUTH_ROUTES.includes(pathname)) {
+  // Also show a spinner during the brief moment of redirection.
+  if (!isUserLoading && user && AUTH_ROUTES.includes(pathname)) {
     return <Loading />;
   }
 

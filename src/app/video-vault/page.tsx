@@ -2,7 +2,7 @@
 
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Loading from '@/app/loading';
 import { Film } from 'lucide-react';
 
@@ -13,10 +13,61 @@ const videos = [
   { id: 4, title: "Module 4: Device & Network Security", src: "/4.mp4" },
 ];
 
+// A client-side component to handle fetching the video as a blob and creating a local URL.
+// This makes it harder for simple tools to find the direct video source link.
+function SecuredVideoPlayer({ src }: { src: string }) {
+  const [videoUrl, setVideoUrl] = useState('');
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchVideo = async () => {
+      try {
+        const response = await fetch(src);
+        if (!response.ok) {
+          throw new Error('Video not found');
+        }
+        const blob = await response.blob();
+        objectUrl = URL.createObjectURL(blob);
+        setVideoUrl(objectUrl);
+      } catch (error) {
+        console.error("Failed to load video:", error);
+        // Handle video loading error if needed
+      }
+    };
+
+    fetchVideo();
+
+    // Cleanup function to revoke the object URL when the component unmounts
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [src]);
+
+  if (!videoUrl) {
+    return (
+      <div className="w-full h-full bg-black flex items-center justify-center text-muted-foreground">
+        Loading Secure Video...
+      </div>
+    );
+  }
+
+  return (
+    <video controls className="h-full w-full" controlsList="nodownload">
+      <source src={videoUrl} type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  );
+}
+
+
 export default function VideoVaultPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
 
+  // This logic is now handled by OnboardingGuard, but we keep it as a fallback.
   useEffect(() => {
     if (!isUserLoading && !user) {
       router.replace('/login');
@@ -41,10 +92,7 @@ export default function VideoVaultPage() {
           {videos.map((video) => (
             <div key={video.id} className="overflow-hidden rounded-lg border bg-background shadow-lg">
                 <div className="aspect-video bg-black">
-                    <video controls className="h-full w-full" controlsList="nodownload">
-                        <source src={video.src} type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
+                    <SecuredVideoPlayer src={video.src} />
                 </div>
                 <div className="p-4">
                     <h3 className="font-headline text-lg font-semibold flex items-center gap-2">
