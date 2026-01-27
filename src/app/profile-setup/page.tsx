@@ -24,9 +24,9 @@ export default function ProfileSetupPage() {
     setUsername(value.toUpperCase());
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
+    if (!user || !firestore) {
       toast({ variant: "destructive", title: "You must be logged in." });
       return;
     }
@@ -52,21 +52,14 @@ export default function ProfileSetupPage() {
     }
 
     setIsLoading(true);
-    try {
-      await updateUserProfile(firestore, user.uid, {
-        name: username,
-        onboardingStatus: 'profile_complete',
-      });
-      router.push('/getting-started');
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description: "Could not save your name. Please try again.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+
+    updateUserProfile(firestore, user.uid, {
+      name: username,
+      onboardingStatus: 'profile_complete',
+    });
+    
+    // Optimistically navigate to the next step.
+    router.push('/getting-started');
   };
 
   return (

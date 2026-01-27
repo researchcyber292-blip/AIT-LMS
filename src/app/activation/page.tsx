@@ -42,29 +42,22 @@ export default function ActivationPage() {
 
   const { formState: { errors, isSubmitting } } = form;
 
-  async function onSubmit(data: ActivationFormValues) {
-    if (!user) {
+  function onSubmit(data: ActivationFormValues) {
+    if (!user || !firestore) {
       toast({ variant: "destructive", title: "You must be logged in." });
       return;
     }
     
-    try {
-      await updateUserProfile(firestore, user.uid, {
-        ...data,
-        onboardingStatus: 'active',
-      });
-      toast({
-        title: 'Activation Complete!',
-        description: 'Your account details have been saved.',
-      });
-      router.push('/dashboard');
-    } catch (error) {
-       toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description: "Could not save your details. Please try again.",
-      });
-    }
+    updateUserProfile(firestore, user.uid, {
+      ...data,
+      onboardingStatus: 'active',
+    });
+
+    toast({
+      title: 'Activation Complete!',
+      description: 'Your account details have been saved.',
+    });
+    router.push('/dashboard');
   }
   
   const inputs = [

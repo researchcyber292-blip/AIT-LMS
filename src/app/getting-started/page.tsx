@@ -22,9 +22,9 @@ export default function GettingStartedPage() {
     setUserId(e.target.value);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
+    if (!user || !firestore) {
       toast({ variant: "destructive", title: "You must be logged in." });
       return;
     }
@@ -51,21 +51,14 @@ export default function GettingStartedPage() {
     }
 
     setIsLoading(true);
-    try {
-      await updateUserProfile(firestore, user.uid, {
-        username: userId,
-        onboardingStatus: 'username_complete',
-      });
-      router.push('/activation');
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description: "Could not save your username. Please try again.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    
+    updateUserProfile(firestore, user.uid, {
+      username: userId,
+      onboardingStatus: 'username_complete',
+    });
+
+    // Optimistically navigate to the next step
+    router.push('/activation');
   };
 
   return (
