@@ -16,7 +16,8 @@ const activationSchema = z.object({
   alternateMobileNumber: z.union([z.string().regex(/^\d{10}$/, { message: 'Must be 10 digits if provided.' }), z.string().length(0)]).optional(),
   motherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Mother's name is required." }),
   fatherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Father's name is required." }),
-  alternateEmail: z.string().email({ message: 'Invalid email address.' }).refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed.' }),
+  email: z.string().email({ message: 'Invalid email address.' }).min(1, 'Email is required.').refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed.' }),
+  alternateEmail: z.union([z.string().email({ message: 'Invalid email address if provided.' }).refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed if provided.' }), z.string().length(0)]).optional(),
 });
 
 type ActivationFormValues = z.infer<typeof activationSchema>;
@@ -32,6 +33,7 @@ export default function ActivationPage() {
       alternateMobileNumber: '',
       motherName: '',
       fatherName: '',
+      email: '',
       alternateEmail: '',
     },
   });
@@ -51,7 +53,8 @@ export default function ActivationPage() {
       { name: 'alternateMobileNumber', placeholder: 'ALTERNATE MOBILE (OPTIONAL)', type: 'text' },
       { name: 'motherName', placeholder: "ENTER YOUR MOTHER'S NAME", type: 'text' },
       { name: 'fatherName', placeholder: "ENTER YOUR FATHER'S NAME", type: 'text' },
-      { name: 'alternateEmail', placeholder: 'ALTERNATE EMAIL (GMAIL ONLY)', type: 'email' },
+      { name: 'email', placeholder: 'ENTER YOUR VALID GMAIL', type: 'email' },
+      { name: 'alternateEmail', placeholder: 'ALTERNATE GMAIL (OPTIONAL)', type: 'email' },
   ] as const;
 
   return (
