@@ -35,7 +35,7 @@ export default function AvatarSelectionPage() {
       </div>
 
       <div className="mt-12 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-6 max-w-5xl mx-auto">
-        {avatars.slice(0, 11).map(avatar => (
+        {avatars.slice(0, 12).map(avatar => (
           <div
             key={avatar.id}
             onClick={() => handleSelectAvatar(avatar.id)}
