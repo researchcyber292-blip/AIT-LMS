@@ -34,13 +34,20 @@ export default function Home() {
                 const targetO = document.querySelector('.choose-o-target');
                 const animator = document.querySelector('.choose-o-animator') as HTMLElement;
                 const animatorImage = document.querySelector('.animator-image');
-                
                 const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
-                const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
                 const featuresGrid = document.querySelector('.features-grid');
                 const footerWrapper = document.querySelector('.footer-wrapper');
 
-                if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !finalTargetO || !featuresGrid || !footerWrapper) return;
+                // Add null checks to ensure all elements are present before starting the animation.
+                if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !featuresGrid || !footerWrapper) {
+                    return;
+                }
+
+                const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
+
+                if (!finalTargetO) {
+                    return;
+                }
                 
                 // --- Pre-calculate final position of the 'O' ---
                 gsap.set(finalContentContainer, { top: '140px', yPercent: 0, opacity: 1 });
