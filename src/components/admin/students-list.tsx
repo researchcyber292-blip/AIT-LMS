@@ -17,17 +17,30 @@ import {
     DialogTitle,
     DialogDescription,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, doc, deleteDoc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 
 export function StudentsList() {
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
+  const [studentToDelete, setStudentToDelete] = useState<UserProfile | null>(null);
   const firestore = useFirestore();
+  const { toast } = useToast();
   const studentsQuery = useMemoFirebase(() => collection(firestore, 'users'), [firestore]);
   const { data: students, isLoading, error } = useCollection<UserProfile>(studentsQuery);
 
@@ -40,6 +53,25 @@ export function StudentsList() {
     }
     return name.substring(0, 2);
   }
+  
+  const handleDeleteStudent = async () => {
+    if (!studentToDelete || !firestore) return;
+    try {
+      await deleteDoc(doc(firestore, 'users', studentToDelete.id));
+      toast({
+        title: 'User Data Deleted',
+        description: `The profile for ${studentToDelete.name} has been removed.`,
+      });
+    } catch (e: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Deletion Failed',
+        description: e.message || 'Could not remove the user data from Firestore.',
+      });
+    } finally {
+      setStudentToDelete(null);
+    }
+  };
 
   const renderLoading = () => (
     <TableBody>
@@ -59,7 +91,7 @@ export function StudentsList() {
                 <Skeleton className="h-6 w-20 rounded-full" />
             </TableCell>
             <TableCell className="text-right">
-                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-8 w-36" />
             </TableCell>
         </TableRow>
       ))}
@@ -104,9 +136,14 @@ export function StudentsList() {
                                 </span>
                             </TableCell>
                             <TableCell className="text-right">
-                                <Button variant="outline" size="sm" onClick={() => setSelectedStudent(student)}>
-                                    View Details
-                                </Button>
+                               <div className="flex justify-end gap-2">
+                                  <Button variant="outline" size="sm" onClick={() => setSelectedStudent(student)}>
+                                      View Details
+                                  </Button>
+                                  <Button variant="destructive" size="sm" onClick={() => setStudentToDelete(student)}>
+                                      Delete
+                                  </Button>
+                               </div>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -118,6 +155,7 @@ export function StudentsList() {
             )}
         </div>
         
+        {/* View Details Dialog */}
         {selectedStudent && (
             <Dialog open={!!selectedStudent} onOpenChange={(open) => !open && setSelectedStudent(null)}>
                 <DialogContent className="sm:max-w-[425px]">
@@ -164,6 +202,25 @@ export function StudentsList() {
                 </DialogContent>
             </Dialog>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!studentToDelete} onOpenChange={(open) => !open && setStudentToDelete(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete the Firestore document for <strong>{studentToDelete?.name}</strong>. 
+                        This action cannot be undone. The user's authentication record will remain, but they will be unable to use the app.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteStudent} className="bg-destructive hover:bg-destructive/90">
+                        Yes, Delete User Data
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     </div>
   );
 }
