@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -207,8 +208,15 @@ export default function Home() {
       </div>
 
       {/* Main Content */}
-      <div id="main-content" className="bg-background scroll-mt-14 py-20 md:py-28">
-        <div className="container">
+      <div id="main-content" className="relative bg-background scroll-mt-14 py-20 md:py-28">
+        <Image
+          src="https://images.unsplash.com/uploads/14116941824817ba1f28e/78c8dff1?q=80&w=1920&auto=format=fit=crop"
+          alt="Abstract network background"
+          fill
+          className="object-cover opacity-20"
+          data-ai-hint="abstract network"
+        />
+        <div className="container relative">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left Rectangle */}
             <div className="bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden">
@@ -223,7 +231,7 @@ export default function Home() {
               </div>
               <div className="p-8 text-center flex flex-col flex-1">
                 <h2 className="font-headline text-3xl font-bold flex-1 flex items-center justify-center min-h-[6rem]">Live Testing Environment with our Professional Teachers</h2>
-                <Link href="/certifications" className="mt-6 block w-full rounded-full border border-primary/40 bg-primary/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-primary/60 hover:bg-primary/30">
+                <Link href="/workspace" className="mt-6 block w-full rounded-full border border-primary/40 bg-primary/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-primary/60 hover:bg-primary/30">
                     Open Workspace
                 </Link>
               </div>
