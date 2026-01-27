@@ -75,7 +75,7 @@ export default function LoginPage() {
                             className="object-contain"
                         />
                     </div>
-                    LOGIN WITH AVT
+                    LOGIN WITH AIT
                   </Button>
                 </>
               )}
