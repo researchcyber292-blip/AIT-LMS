@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -174,13 +173,13 @@ export default function Home() {
     <div ref={mainRef}>
       {/* Hero Section */}
       <div className="relative h-screen w-full overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzNHx8YWJzdHJhY3QlMjB0ZWNobm9sb2d5fGVufDB8fHx8MTc2OTEwNTczM3ww&ixlib=rb-4.1.0&q=80&w=1080"
-          alt="Abstract technology background"
-          fill
-          className="object-cover"
-          data-ai-hint="abstract technology"
-          priority
+        <video
+          src="/video.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
         />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 text-center text-white">
