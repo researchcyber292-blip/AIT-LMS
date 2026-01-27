@@ -85,15 +85,15 @@ export default function ActivationPage() {
       await setDoc(doc(firestore, 'users', user.uid), userProfile);
 
       toast({
-        title: 'Account Created & Verification Email Sent',
-        description: 'Please check your inbox to verify your email address before logging in.',
+        title: 'Account Created! Please Verify Your Email.',
+        description: 'Check your inbox for a verification link to activate your account.',
       });
 
-      router.push('/avatar-selection');
+      router.push('/verify-email');
     } catch (error: any) {
         let errorMessage = 'An unexpected error occurred. Please try again.';
         if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'This email is already registered. Please use a different email or log in if you have an account.';
+            errorMessage = 'This email is already registered. Please use a different email or log in.';
         } else if (error.message) {
             errorMessage = error.message;
         }
