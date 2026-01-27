@@ -42,6 +42,7 @@ export default function GettingStartedPage() {
       return;
     }
 
+    localStorage.setItem('onboardingUsername', userId);
     setIsLoading(true);
 
     // Navigate to the next step
