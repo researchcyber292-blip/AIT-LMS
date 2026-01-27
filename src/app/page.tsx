@@ -210,11 +210,11 @@ export default function Home() {
       {/* Main Content */}
       <div id="main-content" className="relative bg-background scroll-mt-14 py-20 md:py-28">
         <Image
-          src="https://eduvouchers.com/cdn/shop/articles/best_universiies_for_CS_in_USA_main_img.webp?v=1768893270&width=1024"
-          alt="University campus for computer science"
+          src="https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?q=80&w=1920&auto=format&fit=crop"
+          alt="Universe background"
           fill
           className="object-cover opacity-20"
-          data-ai-hint="university campus"
+          data-ai-hint="universe stars"
         />
         <div className="container relative">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -240,11 +240,11 @@ export default function Home() {
             <div className="bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden">
               <div className="relative w-full aspect-[4/3]">
                 <Image 
-                  src="https://picsum.photos/seed/teaching/600/450"
-                  alt="Instructor teaching"
+                  src="https://eduvouchers.com/cdn/shop/articles/best_universiies_for_CS_in_USA_main_img.webp?v=1768893270&width=1024"
+                  alt="University campus for computer science"
                   fill
                   className="object-cover"
-                  data-ai-hint="teaching online"
+                  data-ai-hint="university campus"
                 />
               </div>
               <div className="p-8 text-center flex flex-col flex-1">
