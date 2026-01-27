@@ -26,6 +26,14 @@ export function WhyChooseUs() {
   return (
     <section className="choose-us-section relative h-[450vh] w-full bg-background">
       <div className="sticky-container sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
+        <Image
+            src="https://picsum.photos/seed/universe/1920/1080"
+            alt="Universe background"
+            fill
+            className="object-cover"
+            data-ai-hint="universe stars"
+        />
+        <div className="absolute inset-0 bg-black/50" />
         
         {/* Container for the "WHY TO CHOOSE US" text */}
         <div className="animated-text-container absolute inset-0 flex flex-col items-center justify-center text-center font-headline font-extrabold" style={{ fontSize: 'clamp(6rem, 15vw, 12rem)', lineHeight: 1 }}>
