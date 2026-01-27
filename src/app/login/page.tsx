@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -34,11 +34,34 @@ export default function LoginPage() {
     }
     setIsLoading(true);
     try {
-        await signInWithEmailAndPassword(auth, email, password);
-        toast({ title: 'Login Successful' });
-        router.push('/dashboard'); 
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (!user.emailVerified) {
+            toast({
+                variant: 'destructive',
+                title: 'Email Not Verified',
+                description: 'Please check your inbox for the verification link. A new link has been sent.',
+            });
+            await sendEmailVerification(user); // Resend the link
+            await auth.signOut(); // Sign them out so they can't proceed
+        } else {
+            toast({ title: 'Login Successful' });
+            router.push('/dashboard'); 
+        }
     } catch (error: any) {
-        toast({ variant: 'destructive', title: 'Login Failed', description: error.message });
+        let description = 'An unexpected error occurred.';
+        switch(error.code) {
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential':
+                description = 'Invalid email or password.';
+                break;
+            default:
+                description = error.message;
+                break;
+        }
+        toast({ variant: 'destructive', title: 'Login Failed', description: description });
     } finally {
         setIsLoading(false);
     }
