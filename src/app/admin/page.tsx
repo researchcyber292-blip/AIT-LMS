@@ -150,7 +150,7 @@ export default function AdminPage() {
         className="object-cover"
         data-ai-hint="geometric memphis"
       />
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-black/30" />
       <Card className="w-full max-w-sm z-10 border-white/10 bg-card/50 backdrop-blur-sm">
         <CardHeader className="text-center">
             <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4">
