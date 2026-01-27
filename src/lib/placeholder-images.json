@@ -77,6 +77,72 @@
       "description": "Abstract matrix-style green code on a black background.",
       "imageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjeWJlcnNlY3VyaXR5JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NjkxNzU5MDN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "cybersecurity background"
+    },
+    {
+      "id": "avatar-1",
+      "description": "Neon geometric avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1552516641-551d7a295a0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxuZW9uJTIwZ2VvbWV0cmljfGVufDB8fHx8MTc2OTUyNzEzMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "neon geometric"
+    },
+    {
+      "id": "avatar-2",
+      "description": "Cyberpunk character avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1656761185428-951b06621492?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjeWJlcnB1bmslMjBjaGFyYWN0ZXJ8ZW58MHx8fHwxNzY5NDQ3NTk1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cyberpunk character"
+    },
+    {
+      "id": "avatar-3",
+      "description": "Pixel art avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1576495169018-bd2414046c6b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwaXhlbCUyMGFydHxlbnwwfHx8fDE3Njk0NDQ4MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pixel art"
+    },
+    {
+      "id": "avatar-4",
+      "description": "Glitch effect avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1729760859254-6e01411e1782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxnbGl0Y2glMjBlZmZlY3R8ZW58MHx8fHwxNzY5NTI3MTMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "glitch effect"
+    },
+    {
+      "id": "avatar-5",
+      "description": "Hacker mask avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1583440194369-ac78b451536a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxoYWNrZXIlMjBtYXNrfGVufDB8fHx8MTc2OTUyNzEzMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hacker mask"
+    },
+    {
+      "id": "avatar-6",
+      "description": "Digital matrix avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1728836356903-896cc7b594c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxkaWdpdGFsJTIwbWF0cml4fGVufDB8fHx8MTc2OTUxODQwOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "digital matrix"
+    },
+    {
+      "id": "avatar-7",
+      "description": "Circuit board pattern avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1515630278258-407f66498911?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjaXJjdWl0JTIwYm9hcmR8ZW58MHx8fHwxNzY5NDMxMzU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "circuit board"
+    },
+    {
+      "id": "avatar-8",
+      "description": "Abstract glowing orb avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1712158611994-10a6debdab4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnbG93aW5nJTIwb3JifGVufDB8fHx8MTc2OTQyMTUxMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "glowing orb"
+    },
+    {
+      "id": "avatar-9",
+      "description": "Low poly wolf avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1666017057906-e5c47d26b971?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsb3clMjBwb2x5fGVufDB8fHx8MTc2OTQ4MTQyMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "low poly"
+    },
+    {
+      "id": "avatar-10",
+      "description": "Retro wave avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1604912719650-f395b12832d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyZXRybyUyMHdhdmV8ZW58MHx8fHwxNzY5NTI3MTMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "retro wave"
+    },
+    {
+      "id": "avatar-11",
+      "description": "Astronaut helmet avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1710267224216-8eced3320dac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxhc3Ryb25hdXQlMjBoZWxtZXR8ZW58MHx8fHwxNzY5NTI3MTMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "astronaut helmet"
     }
   ]
 }

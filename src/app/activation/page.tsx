@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ArrowRight } from 'lucide-react';
 
@@ -27,7 +26,6 @@ type ActivationFormValues = z.infer<typeof activationSchema>;
 
 export default function ActivationPage() {
   const router = useRouter();
-  const { toast } = useToast();
   
   const form = useForm<ActivationFormValues>({
     resolver: zodResolver(activationSchema),
@@ -44,11 +42,8 @@ export default function ActivationPage() {
   const { formState: { errors, isSubmitting } } = form;
 
   function onSubmit(data: ActivationFormValues) {
-    toast({
-      title: 'Activation Complete!',
-      description: 'Your account details have been saved.',
-    });
-    router.push('/dashboard');
+    // In a real app, you'd save this data to Firebase here.
+    router.push('/avatar-selection');
   }
   
   const inputs = [
