@@ -138,12 +138,12 @@ export default function Home() {
                     duration: 2
                 }, finalSequenceTime);
                 
-                const fadeSwapTime = `${finalSequenceTime}+=1.5`;
+                const fadeSwapTime = `${'finalSequence'}+=1.5`;
                 tl.to(animatorImage, { opacity: 0, duration: 0.5 }, fadeSwapTime)
                   .to(finalTargetO, { opacity: 1, duration: 0.5 }, fadeSwapTime)
                   .set(animator, { visibility: 'hidden' });
 
-                const revealFeaturesTime = `${finalSequenceTime}+=2.2`;
+                const revealFeaturesTime = `${'finalSequence'}+=2.2`;
                 gsap.set(featuresGrid, { y: 50, opacity: 0 });
                 
                 tl.to(featuresGrid, {
@@ -210,11 +210,11 @@ export default function Home() {
       {/* Main Content */}
       <div id="main-content" className="relative bg-background scroll-mt-14 py-20 md:py-28">
         <Image
-          src="https://images.unsplash.com/uploads/14116941824817ba1f28e/78c8dff1?q=80&w=1920&auto=format=fit=crop"
-          alt="Abstract network background"
+          src="https://eduvouchers.com/cdn/shop/articles/best_universiies_for_CS_in_USA_main_img.webp?v=1768893270&width=1024"
+          alt="University campus for computer science"
           fill
           className="object-cover opacity-20"
-          data-ai-hint="abstract network"
+          data-ai-hint="university campus"
         />
         <div className="container relative">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
