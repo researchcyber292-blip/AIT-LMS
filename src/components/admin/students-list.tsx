@@ -30,7 +30,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -60,22 +60,17 @@ export function StudentsList() {
     const userDocRef = doc(firestore, 'users', studentToDelete.id);
     const enrollmentsColRef = collection(firestore, 'users', studentToDelete.id, 'enrollments');
     
-
     try {
-      const batch = writeBatch(firestore);
-      // Get all enrollment documents for the user
+      // Step 1: Get all enrollment documents for the user
       const enrollmentsSnapshot = await getDocs(enrollmentsColRef);
       
-      // Add each enrollment document to the batch for deletion
-      enrollmentsSnapshot.forEach((enrollmentDoc) => {
-        batch.delete(enrollmentDoc.ref);
-      });
+      // Step 2: Delete each enrollment document sequentially
+      for (const enrollmentDoc of enrollmentsSnapshot.docs) {
+        await deleteDoc(enrollmentDoc.ref);
+      }
 
-      // Add the main user document to the batch for deletion
-      batch.delete(userDocRef);
-
-      // Commit the batch to delete everything atomically
-      await batch.commit();
+      // Step 3: Delete the main user document
+      await deleteDoc(userDocRef);
 
       toast({
         title: 'User Data Deleted',
@@ -84,8 +79,9 @@ export function StudentsList() {
     } catch (e: any) {
         // Instead of a generic console log, we create a detailed contextual error
         // to help diagnose the exact security rule that is failing.
+        // The path will now be more accurate based on where the sequential delete fails.
         const permissionError = new FirestorePermissionError({
-          path: `users/${studentToDelete.id}`, // The root of the delete operation
+          path: e.path || `users/${studentToDelete.id}`, // Attempt to use error's path, fallback to user path
           operation: 'delete',
         });
 
