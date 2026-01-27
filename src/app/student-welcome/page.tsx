@@ -12,7 +12,7 @@ export default function StudentWelcomePage() {
   };
 
   return (
-    <div className="relative mt-14 h-[calc(100vh-3.5rem)] w-full overflow-hidden">
+    <div className="absolute top-14 left-0 right-0 bottom-0 w-full overflow-hidden">
       <video
         src="/1.mp4"
         autoPlay

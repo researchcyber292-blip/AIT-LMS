@@ -11,6 +11,7 @@ import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import Script from 'next/script';
 import { OnboardingGuard } from '@/components/onboarding-guard';
+import { cn } from '@/lib/utils';
 
 export default function RootLayout({
   children,
@@ -41,7 +42,7 @@ export default function RootLayout({
           <OnboardingGuard>
             <div className="flex min-h-screen flex-col">
               <Header />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 relative">{children}</main>
               {!isFullScreenPage && <Footer />}
             </div>
             <SecurityInterceptor />
