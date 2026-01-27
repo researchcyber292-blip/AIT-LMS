@@ -13,7 +13,7 @@ import { createUserProfile } from '@/firebase/user';
 // Pages a logged-in user should be redirected AWAY from.
 const AUTH_ROUTES = ['/login', '/about']; 
 // Pages that require a user to be logged in.
-const PROTECTED_ROUTES = ['/dashboard'];
+const PROTECTED_ROUTES = ['/dashboard', '/video-vault']; // Added video-vault
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
@@ -57,9 +57,9 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
     }
 
     // SCENARIO 3: Logged-in user is on an auth page (e.g., /login).
-    // Redirect them to the homepage.
+    // Redirect them to the video vault.
     if (AUTH_ROUTES.includes(pathname)) {
-      router.replace('/');
+      router.replace('/video-vault');
     }
 
   }, [isLoading, user, userProfile, pathname, router, firestore]);

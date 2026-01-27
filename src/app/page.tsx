@@ -174,16 +174,14 @@ export default function Home() {
     <div ref={mainRef}>
       {/* Hero Section */}
       <div className="relative h-screen w-full overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-1/2 left-1/2 min-h-full min-w-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover"
-        >
-          <source src="/video.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <Image
+          src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzNHx8YWJzdHJhY3QlMjB0ZWNobm9sb2d5fGVufDB8fHx8MTc2OTEwNTczM3ww&ixlib=rb-4.1.0&q=80&w=1080"
+          alt="Abstract technology background"
+          fill
+          className="object-cover"
+          data-ai-hint="abstract technology"
+          priority
+        />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 text-center text-white">
           <h1 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">

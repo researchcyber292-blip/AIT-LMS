@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useUser, useFirestore } from '@/firebase';
 import { updateUserProfile } from '@/firebase/user';
+import Image from 'next/image';
 
 export default function GettingStartedPage() {
   const router = useRouter();
@@ -63,15 +64,13 @@ export default function GettingStartedPage() {
 
   return (
     <div className="relative mt-14 h-[calc(100vh-3.5rem)] w-full overflow-hidden">
-      <video
-        autoPlay
-        muted
-        playsInline
-        className="absolute top-0 left-0 h-full w-full object-cover"
-      >
-        <source src="/3.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <Image
+          src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjeWJlcnNlY3VyaXR5JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NjkxNzU5MDN8MA&ixlib=rb-4.1.0&q=80&w=1080"
+          alt="Cybersecurity background"
+          fill
+          className="object-cover"
+          data-ai-hint="cybersecurity background"
+      />
       <div className="absolute inset-0 flex items-end justify-start pb-40">
         <div className="container">
           <div className="w-full max-w-md">
