@@ -68,10 +68,11 @@ service cloud.firestore {
     
     /**
      * Checks if the user is signed in via the anonymous provider.
-     * Used to grant special admin-level permissions.
+     * Used to grant special admin-level permissions by checking for a null email,
+     * which is unique to the anonymous admin in this application context.
      */
     function isAnonymousAdmin() {
-      return isSignedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous';
+      return isSignedIn() && request.auth.token.email == null;
     }
 
     /**
