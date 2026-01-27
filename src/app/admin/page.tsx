@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -145,11 +144,11 @@ export default function AdminPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background px-4">
       <Image
-        src="https://picsum.photos/seed/universe/1920/1080"
-        alt="Universe background"
+        src="https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80"
+        alt="Geometric background"
         fill
         className="object-cover"
-        data-ai-hint="universe stars"
+        data-ai-hint="geometric memphis"
       />
       <div className="absolute inset-0 bg-black/60" />
       <Card className="w-full max-w-sm z-10 border-white/10 bg-card/50 backdrop-blur-sm">
