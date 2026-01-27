@@ -34,7 +34,7 @@ export default function WelcomeVideo2Page() {
         playsInline
         className="absolute top-0 left-0 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 flex h-full items-end justify-start bg-black/30 pb-48">
+      <div className="absolute inset-0 flex h-full items-end justify-start pb-48">
         <div className="container">
           <div className="w-full max-w-md">
             <form className="group flex items-center gap-4 rounded-full border-2 border-white/20 bg-black/30 p-2 backdrop-blur-sm transition-all focus-within:border-white/50 focus-within:bg-black/50" onSubmit={handleSubmit}>
