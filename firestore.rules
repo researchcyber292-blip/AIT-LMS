@@ -1,3 +1,4 @@
+
 /**
  * Core Philosophy:
  * This ruleset enforces a security model with a clear separation between public and private data.
@@ -148,7 +149,7 @@ service cloud.firestore {
      */
     match /users/{userId} {
       allow get: if isOwner(userId);
-      allow list: if false; // Disallow listing all users for security and privacy.
+      allow list: if isSignedIn();
       allow create: if isOwner(userId) && isUserIdConsistentOnCreate(userId);
       allow update: if isExistingOwner(userId) && isUserIdImmutable();
       allow delete: if isExistingOwner(userId);

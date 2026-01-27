@@ -88,9 +88,9 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
     } 
     // If onboarding IS complete...
     else {
-      // ...and the user is on an auth or onboarding page, redirect them to the dashboard.
+      // ...and the user is on an auth or onboarding page, redirect them to the home page.
       if (isAuthRoute || isOnboardingRoute) {
-        router.replace('/dashboard');
+        router.replace('/');
       }
     }
 

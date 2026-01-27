@@ -1,3 +1,4 @@
+
 'use client';
 
 import { doc, getDoc, setDoc, updateDoc, Firestore } from 'firebase/firestore';
@@ -24,7 +25,7 @@ export async function createUserProfile(firestore: Firestore, user: User): Promi
         name: user.displayName || 'New User',
         email: user.email || '',
         photoURL: user.photoURL || '',
-        onboardingStatus: 'new',
+        onboardingStatus: 'active',
       };
       
       // Await the write to ensure it completes before other logic proceeds.
