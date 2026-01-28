@@ -140,11 +140,11 @@ export default function CourseDetailPage() {
             <h3 className="font-headline text-lg font-semibold">Instructor</h3>
             <div className="mt-4 flex items-center gap-4">
               <Avatar>
-                <AvatarImage src={course.instructor.image} alt={course.instructor.name} data-ai-hint={course.instructor.imageHint} />
-                <AvatarFallback>{course.instructor.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={course.instructor.image} alt={`${course.instructor.firstName} ${course.instructor.lastName}`} data-ai-hint={course.instructor.imageHint} />
+                <AvatarFallback>{`${course.instructor.firstName.charAt(0)}${course.instructor.lastName.charAt(0)}`}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold">{course.instructor.name}</p>
+                <p className="font-semibold">{course.instructor.firstName} {course.instructor.lastName}</p>
                 <p className="text-sm text-muted-foreground">{course.instructor.title}</p>
               </div>
             </div>

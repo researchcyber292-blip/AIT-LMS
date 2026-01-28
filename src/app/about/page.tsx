@@ -76,17 +76,19 @@ export default function SignUpPage() {
                         <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
                         <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Sign up as an Instructor</span></div>
                     </div>
-                    <Button size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
-                        <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
-                            <Image
-                                src="/image.png"
-                                alt="Aviraj Info Tech Logo"
-                                width={28}
-                                height={28}
-                                className="object-contain"
-                            />
-                        </div>
-                        Aviraj Info Tech Console
+                    <Button asChild size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
+                        <Link href="/instructor-signup">
+                            <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
+                                <Image
+                                    src="/image.png"
+                                    alt="Aviraj Info Tech Logo"
+                                    width={28}
+                                    height={28}
+                                    className="object-contain"
+                                />
+                            </div>
+                            Create Instructor Account
+                        </Link>
                     </Button>
                 </>
               )}

@@ -18,13 +18,21 @@ const findImage = (id: string): { url: string; hint: string } => {
 const instructorData: Omit<Instructor, 'image' | 'imageHint'>[] = [
   {
     id: 'inst-1',
-    name: 'Dr. Evelyn Reed',
+    firstName: 'Evelyn',
+    lastName: 'Reed',
+    email: 'evelyn.reed@cyberlearn.com',
+    isVerified: true,
+    accountStatus: 'active',
     title: 'Principal Security Architect',
     bio: 'With over 15 years of experience in cybersecurity, Dr. Reed is a leading expert in threat modeling and secure system design. She holds a Ph.D. in Computer Science and multiple security certifications.',
   },
   {
     id: 'inst-2',
-    name: 'Marcus Chen',
+    firstName: 'Marcus',
+    lastName: 'Chen',
+    email: 'marcus.chen@cyberlearn.com',
+    isVerified: true,
+    accountStatus: 'active',
     title: 'Senior Penetration Tester',
     bio: 'Marcus is a certified ethical hacker who specializes in identifying and exploiting vulnerabilities in complex systems. His hands-on approach to teaching makes complex topics accessible to all.',
   },

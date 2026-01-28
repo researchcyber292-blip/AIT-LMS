@@ -29,12 +29,26 @@ export type Course = {
 };
 
 export type Instructor = {
-  id: string;
-  name: string;
-  title: string;
-  bio: string;
-  image: string;
-  imageHint: string;
+  id: string; // Firebase UID
+  firstName: string;
+  lastName: string;
+  email: string;
+  isVerified: boolean;
+  accountStatus: 'pending' | 'active' | 'rejected';
+
+  // Optional details
+  motherName?: string;
+  fatherName?: string;
+  age?: number;
+  alternateEmail?: string;
+  mobileNumber?: string;
+  alternateMobileNumber?: string;
+  
+  // Public profile details
+  title?: string;
+  bio?: string;
+  image?: string;
+  imageHint?: string;
 };
 
 export type TeamMember = {
@@ -44,3 +58,20 @@ export type TeamMember = {
   image: string;
   imageHint: string;
 };
+
+export type Wallet = {
+  id: string; // Corresponds to instructor UID
+  currentBalance: number;
+  totalEarned: number;
+  pendingWithdrawal: number;
+}
+
+export type PayoutRequest = {
+  id: string;
+  instructorId: string;
+  amount: number;
+  requestDate: string; // ISO string
+  status: 'pending' | 'paid' | 'rejected';
+  paidDate?: string; // ISO string
+  rejectionReason?: string;
+}

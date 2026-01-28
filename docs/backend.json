@@ -58,31 +58,73 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Instructor",
       "type": "object",
-      "description": "Represents an instructor at CyberLearn.",
+      "description": "Represents an instructor's profile and account at CyberLearn.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the instructor."
+          "description": "Unique identifier for the instructor (matches Firebase Auth UID)."
         },
-        "name": {
+        "firstName": {
           "type": "string",
-          "description": "The name of the instructor."
+          "description": "The first name of the instructor."
         },
-        "bio": {
+        "lastName": {
           "type": "string",
-          "description": "A short biography of the instructor."
+          "description": "The last name of the instructor."
+        },
+        "motherName": {
+          "type": "string"
+        },
+        "fatherName": {
+          "type": "string"
+        },
+        "age": {
+          "type": "number"
         },
         "email": {
           "type": "string",
-          "description": "The email address of the instructor.",
+          "description": "The primary email address (Gmail) of the instructor.",
           "format": "email"
+        },
+        "alternateEmail": {
+          "type": "string",
+          "format": "email"
+        },
+        "mobileNumber": {
+          "type": "string"
+        },
+        "alternateMobileNumber": {
+          "type": "string"
+        },
+        "isVerified": {
+          "type": "boolean",
+          "description": "Indicates if the instructor's profile has been verified by an admin."
+        },
+        "accountStatus": {
+          "type": "string",
+          "description": "The current status of the instructor's account.",
+          "enum": [
+            "pending",
+            "active",
+            "rejected"
+          ]
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography of the instructor for public display."
+        },
+        "title": {
+          "type": "string",
+          "description": "The instructor's professional title (e.g., 'Senior Penetration Tester')."
         }
       },
       "required": [
         "id",
-        "name",
-        "bio",
-        "email"
+        "firstName",
+        "lastName",
+        "email",
+        "isVerified",
+        "accountStatus"
       ]
     },
     "Student": {
@@ -105,24 +147,40 @@
           "format": "email"
         },
         "photoURL": {
-            "type": "string",
-            "description": "URL of the user's profile picture.",
-            "format": "uri"
+          "type": "string",
+          "description": "URL of the user's profile picture.",
+          "format": "uri"
         },
         "username": {
-            "type": "string",
-            "description": "The student's chosen username (e.g., user.name@123)."
+          "type": "string",
+          "description": "The student's chosen username (e.g., user.name@123)."
         },
         "onboardingStatus": {
           "type": "string",
           "description": "Tracks the user's progress through the initial setup flow.",
-          "enum": ["new", "profile_complete", "username_complete", "active"]
+          "enum": [
+            "new",
+            "profile_complete",
+            "username_complete",
+            "active"
+          ]
         },
-        "mobileNumber": { "type": "string" },
-        "alternateMobileNumber": { "type": "string" },
-        "motherName": { "type": "string" },
-        "fatherName": { "type": "string" },
-        "alternateEmail": { "type": "string", "format": "email" },
+        "mobileNumber": {
+          "type": "string"
+        },
+        "alternateMobileNumber": {
+          "type": "string"
+        },
+        "motherName": {
+          "type": "string"
+        },
+        "fatherName": {
+          "type": "string"
+        },
+        "alternateEmail": {
+          "type": "string",
+          "format": "email"
+        },
         "enrolledCourseIds": {
           "type": "array",
           "description": "References to Courses the student is enrolled in. (Relationship: Student N:N Course)",
@@ -179,6 +237,77 @@
         "purchaseDate",
         "price"
       ]
+    },
+    "Wallet": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Wallet",
+      "type": "object",
+      "description": "Stores an instructor's earnings and withdrawal information.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the wallet (matches instructor's UID)."
+        },
+        "currentBalance": {
+          "type": "number"
+        },
+        "totalEarned": {
+          "type": "number"
+        },
+        "pendingWithdrawal": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "currentBalance",
+        "totalEarned",
+        "pendingWithdrawal"
+      ]
+    },
+    "PayoutRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PayoutRequest",
+      "type": "object",
+      "description": "Represents an instructor's request to withdraw funds.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the payout request."
+        },
+        "instructorId": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "requestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "paid",
+            "rejected"
+          ]
+        },
+        "paidDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rejectionReason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "instructorId",
+        "amount",
+        "requestDate",
+        "status"
+      ]
     }
   },
   "auth": {
@@ -212,7 +341,7 @@
           "schema": {
             "$ref": "#/backend/entities/Instructor"
           },
-          "description": "Stores information about instructors. Only accessible by admins.",
+          "description": "Stores instructor profile information. Readable by the instructor and admins, but only writeable by admins after creation.",
           "params": [
             {
               "name": "instructorId",
@@ -253,6 +382,38 @@
             {
               "name": "enrollmentId",
               "description": "Unique identifier for the enrollment record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/wallets/{walletId}",
+        "definition": {
+          "entityName": "Wallet",
+          "schema": {
+            "$ref": "#/backend/entities/Wallet"
+          },
+          "description": "Stores an instructor's earnings. Read-only for the instructor, and completely client-unwritable.",
+          "params": [
+            {
+              "name": "walletId",
+              "description": "The instructor's UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/payout_requests/{requestId}",
+        "definition": {
+          "entityName": "PayoutRequest",
+          "schema": {
+            "$ref": "#/backend/entities/PayoutRequest"
+          },
+          "description": "Stores instructor payout requests. Writable by instructors, manageable by admins.",
+          "params": [
+            {
+              "name": "requestId",
+              "description": "Unique ID for the payout request."
             }
           ]
         }

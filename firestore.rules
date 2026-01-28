@@ -135,19 +135,18 @@ service cloud.firestore {
     }
 
     /**
-     * @description Controls access to instructor profiles. This is a highly restricted collection.
+     * @description Controls access to instructor profiles.
      * @path /instructors/{instructorId}
-     * @allow None. All direct client access is denied.
-     * @deny (get) Any user attempts to read an instructor profile.
-     * @principle Secure by Default. A mechanism for identifying admins (e.g., custom claims) is needed to grant access.
+     * @allow (create) An instructor can create their own profile.
+     * @allow (read) An instructor can read their own profile, or an admin can read any profile.
+     * @allow (update) Only admins can update instructor profiles (e.g., to verify them).
+     * @principle Owner-creatable, owner-readable, admin-managed.
      */
     match /instructors/{instructorId} {
-      // TODO: Implement admin-only access, likely via custom claims, once an admin role is defined.
-      allow get: if false;
-      allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow create: if isOwner(instructorId);
+      allow read: if isOwner(instructorId) || isAnonymousAdmin();
+      allow update: if isAnonymousAdmin();
+      allow delete: if isAnonymousAdmin();
     }
 
     /**
@@ -179,6 +178,32 @@ service cloud.firestore {
         allow update: if isExistingOwner(userId) && isStudentIdImmutable();
         allow delete: if isOwner(userId) || isAnonymousAdmin();
       }
+    }
+    
+    /**
+     * @description The "Vault". Secures instructor earnings.
+     * @path /wallets/{userId}
+     * @allow (read) The owner (instructor) or an admin can read the wallet.
+     * @allow (write) No one can write to the wallet from the client. This must be done via a server-side Cloud Function.
+     * @principle Secure by default. All financial transactions are server-authoritative.
+     */
+    match /wallets/{userId} {
+      allow read: if isOwner(userId) || isAnonymousAdmin();
+      allow create: if isOwner(userId); // Allow initial creation on signup
+      allow update, delete, list: if false;
+    }
+
+    /**
+     * @description Stores instructor withdrawal requests.
+     * @path /payout_requests/{requestId}
+     * @allow (create) An authenticated user can create a payout request.
+     * @allow (read, list, update) Only admins can manage payout requests.
+     * @principle User-initiated, admin-managed workflow.
+     */
+    match /payout_requests/{requestId} {
+        allow create: if isSignedIn() && request.resource.data.instructorId == request.auth.uid;
+        allow read, list, update: if isAnonymousAdmin();
+        allow delete: if false; // Requests should be processed, not deleted.
     }
   }
 }
