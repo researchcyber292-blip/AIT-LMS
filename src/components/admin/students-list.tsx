@@ -81,8 +81,8 @@ export function StudentsList() {
       await deleteDoc(userDocRef);
 
       toast({
-        title: 'User Data Deleted',
-        description: `The profile for ${studentToDelete.name} and all related data have been removed.`,
+        title: 'User Data Deleted from Firestore',
+        description: `The data for ${studentToDelete.name} has been removed. To allow re-registration, manually delete the user from the Firebase Authentication console.`,
       });
     } catch (e: any) {
         // Instead of a generic console log, we create a detailed contextual error
