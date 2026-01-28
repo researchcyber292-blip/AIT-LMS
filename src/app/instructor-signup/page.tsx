@@ -21,11 +21,11 @@ const instructorSchema = z.object({
   lastName: z.string().min(1, 'Last name is required.'),
   motherName: z.string().min(1, "Mother's name is required."),
   fatherName: z.string().min(1, "Father's name is required."),
-  age: z.coerce.number().min(13, 'You must be at least 13 years old.'),
+  age: z.coerce.number().min(13, 'You must be at least 13 years old.').max(60, 'Age must not be greater than 60.'),
   email: z.string().email('Invalid Gmail address.').refine(val => val.endsWith('@gmail.com'), 'Only @gmail.com addresses are allowed.'),
   alternateEmail: z.string().email('Invalid alternate email.').optional().or(z.literal('')),
-  mobileNumber: z.string().regex(/^\d{10}$/, 'Mobile number must be 10 digits.'),
-  alternateMobileNumber: z.string().regex(/^\d{10}$/, 'Alternate mobile must be 10 digits.').optional().or(z.literal('')),
+  mobileNumber: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number.'),
+  alternateMobileNumber: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number.').optional().or(z.literal('')),
   password: z.string().min(8, 'Password must be at least 8 characters.'),
 });
 
@@ -128,7 +128,7 @@ export default function InstructorSignUpPage() {
                 <FormItem><FormLabel>Father's Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="age" render={({ field }) => (
-                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" min="13" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" min="13" max="60" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
                <FormField control={form.control} name="mobileNumber" render={({ field }) => (
                 <FormItem><FormLabel>Mobile Number</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>

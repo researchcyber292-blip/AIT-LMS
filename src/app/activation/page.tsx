@@ -16,8 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/lib/types';
 
 const activationSchema = z.object({
-  mobileNumber: z.string().regex(/^\d{10}$/, { message: 'Mobile number must be 10 digits.' }),
-  alternateMobileNumber: z.union([z.string().regex(/^\d{10}$/, { message: 'Must be 10 digits if provided.' }), z.string().length(0)]).optional(),
+  mobileNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Please enter a valid 10-digit Indian mobile number.' }),
+  alternateMobileNumber: z.union([z.string().regex(/^[6-9]\d{9}$/, { message: 'Please enter a valid 10-digit Indian mobile number.' }), z.string().length(0)]).optional(),
   motherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Mother's name is required." }),
   fatherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Father's name is required." }),
   email: z.string().email({ message: 'Invalid email address.' }).min(1, 'Email is required.').refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed.' }),
