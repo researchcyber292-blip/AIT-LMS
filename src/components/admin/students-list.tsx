@@ -44,8 +44,8 @@ export function StudentsList() {
   const { toast } = useToast();
 
   const studentsQuery = useMemoFirebase(() => {
-    // Only create the query if the admin user is authenticated.
-    if (!user || user.uid !== 'SjUfWSzEuef6JRHeePybF7qV7TB3') return null;
+    // Only create the query if the admin user is authenticated via an anonymous session.
+    if (!user || !user.isAnonymous) return null;
     return collection(firestore, 'users');
   }, [firestore, user]);
 
