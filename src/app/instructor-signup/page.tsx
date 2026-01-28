@@ -94,7 +94,7 @@ export default function InstructorSignUpPage() {
     } catch (error: any) {
       let errorMessage = 'An unexpected error occurred. Please try again.';
       if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'This email is already registered. Please use a different email or log in.';
+        errorMessage = 'This email is already registered. If you deleted this user, you must also remove them from the Firebase Authentication console to sign up again.';
       }
       toast({
         variant: 'destructive',
