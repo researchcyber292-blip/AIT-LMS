@@ -43,7 +43,7 @@ export default function InstructorSignUpPage() {
       lastName: '',
       motherName: '',
       fatherName: '',
-      age: undefined,
+      age: '' as any, // Changed from undefined to fix controlled input error
       email: '',
       alternateEmail: '',
       mobileNumber: '',
