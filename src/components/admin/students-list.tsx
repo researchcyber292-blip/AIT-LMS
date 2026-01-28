@@ -44,13 +44,13 @@ export function StudentsList() {
   const { toast } = useToast();
 
   const studentsQuery = useMemoFirebase(() => {
-    // Only create the query if the user is authenticated.
-    if (!user) return null;
+    // Only create the query if the admin user is authenticated.
+    if (!user || user.uid !== 'SjUfWSzEuef6JRHeePybF7qV7TB3') return null;
     return collection(firestore, 'users');
   }, [firestore, user]);
 
   const { data: students, isLoading: isCollectionLoading, error } = useCollection<UserProfile>(studentsQuery);
-  const isLoading = isAuthLoading || isCollectionLoading || !user;
+  const isLoading = isAuthLoading || isCollectionLoading;
 
 
   const getInitials = (name: string) => {
@@ -184,7 +184,7 @@ export function StudentsList() {
                 )}
             </Table>
              {(!isLoading && (!students || students.length === 0)) && (
-                <div className="text-center p-8 text-muted-foreground">No student data found.</div>
+                <div className="text-center p-8 text-muted-foreground">No student data found. The admin user may not be authenticated.</div>
             )}
         </div>
         
