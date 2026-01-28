@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -20,7 +21,7 @@ const instructorSchema = z.object({
   lastName: z.string().min(1, 'Last name is required.'),
   motherName: z.string().min(1, "Mother's name is required."),
   fatherName: z.string().min(1, "Father's name is required."),
-  age: z.coerce.number().min(18, 'You must be at least 18 years old.'),
+  age: z.coerce.number().min(13, 'You must be at least 13 years old.'),
   email: z.string().email('Invalid Gmail address.').refine(val => val.endsWith('@gmail.com'), 'Only @gmail.com addresses are allowed.'),
   alternateEmail: z.string().email('Invalid alternate email.').optional().or(z.literal('')),
   mobileNumber: z.string().regex(/^\d{10}$/, 'Mobile number must be 10 digits.'),
@@ -43,7 +44,7 @@ export default function InstructorSignUpPage() {
       lastName: '',
       motherName: '',
       fatherName: '',
-      age: '' as any, // Changed from undefined to fix controlled input error
+      age: '' as any,
       email: '',
       alternateEmail: '',
       mobileNumber: '',
@@ -127,7 +128,7 @@ export default function InstructorSignUpPage() {
                 <FormItem><FormLabel>Father's Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="age" render={({ field }) => (
-                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" min="18" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" min="13" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
                <FormField control={form.control} name="mobileNumber" render={({ field }) => (
                 <FormItem><FormLabel>Mobile Number</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
