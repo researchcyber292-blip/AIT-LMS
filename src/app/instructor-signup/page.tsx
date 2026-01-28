@@ -44,8 +44,7 @@ export default function InstructorSignUpPage() {
       lastName: '',
       motherName: '',
       fatherName: '',
-      age: '' as any,
-      email: '',
+      age: '',
       alternateEmail: '',
       mobileNumber: '',
       alternateMobileNumber: '',
@@ -55,6 +54,8 @@ export default function InstructorSignUpPage() {
 
   async function onSubmit(data: InstructorFormValues) {
     try {
+      localStorage.setItem('onboardingPassword', data.password);
+
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
@@ -87,14 +88,15 @@ export default function InstructorSignUpPage() {
 
       toast({
         title: 'Application Submitted!',
-        description: 'Please check your email to verify your account. Your application is now pending review.',
+        description: 'Please save your password and verify your email.',
       });
 
-      router.push('/instructor-pending-verification');
+      router.push('/password-reminder');
     } catch (error: any) {
+      localStorage.removeItem('onboardingPassword');
       let errorMessage = 'An unexpected error occurred. Please try again.';
       if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'This email is already registered. If you deleted this user, you must also remove them from the Firebase Authentication console to sign up again.';
+        errorMessage = 'This email is already registered. To sign up again, you must first delete the existing user from the Firebase Authentication console.';
       }
       toast({
         variant: 'destructive',

@@ -20,11 +20,12 @@ const PRE_AUTH_ONBOARDING_PAGES = [
 const POST_AUTH_ONBOARDING_PAGES = [
   '/avatar-selection',
   '/creation-success',
-  '/verify-email' // The new verification page is part of the post-auth flow.
+  '/verify-email',
+  '/password-reminder'
 ];
 
 // Pages accessible to anyone, logged in or not.
-const PUBLIC_PAGES = ['/', '/login', '/about', '/courses', '/programs', '/certifications', '/contact', '/admin'];
+const PUBLIC_PAGES = ['/', '/login', '/about', '/courses', '/programs', '/certifications', '/contact', '/admin', '/instructor-signup', '/instructor-pending-verification'];
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
@@ -60,8 +61,9 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
     // Step 1: Handle email verification for standard (non-anonymous) users.
     if (!user.isAnonymous && !user.emailVerified) {
-      // If email is not verified, force user to the verification page.
-      if (pathname !== '/verify-email') {
+      // If email is not verified, user must be on the verification or password reminder page.
+      const allowedUnverifiedPages = ['/verify-email', '/password-reminder'];
+      if (!allowedUnverifiedPages.includes(pathname)) {
         router.replace('/verify-email');
       }
       return; // Stop further execution until email is verified.

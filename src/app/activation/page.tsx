@@ -64,6 +64,8 @@ export default function ActivationPage() {
         return;
       }
       
+      localStorage.setItem('onboardingPassword', data.password);
+
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
@@ -85,15 +87,16 @@ export default function ActivationPage() {
       await setDoc(doc(firestore, 'users', user.uid), userProfile);
 
       toast({
-        title: 'Account Created! Please Verify Your Email.',
-        description: 'Check your inbox for a verification link to activate your account.',
+        title: 'Account Created!',
+        description: 'Next, please save your password and verify your email.',
       });
 
-      router.push('/verify-email');
+      router.push('/password-reminder');
     } catch (error: any) {
+        localStorage.removeItem('onboardingPassword');
         let errorMessage = 'An unexpected error occurred. Please try again.';
         if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'This email is already registered. If you deleted this user, you must also remove them from the Firebase Authentication console to sign up again.';
+            errorMessage = 'This email is already registered. To sign up again, you must first delete the existing user from the Firebase Authentication console.';
         } else if (error.message) {
             errorMessage = error.message;
         }
