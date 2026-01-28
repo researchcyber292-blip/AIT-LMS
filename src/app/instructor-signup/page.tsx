@@ -127,7 +127,7 @@ export default function InstructorSignUpPage() {
                 <FormItem><FormLabel>Father's Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="age" render={({ field }) => (
-                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" min="18" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
                <FormField control={form.control} name="mobileNumber" render={({ field }) => (
                 <FormItem><FormLabel>Mobile Number</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
