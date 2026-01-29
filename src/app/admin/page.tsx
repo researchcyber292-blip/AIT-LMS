@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, LayoutDashboard, Users, Settings, Bell } from 'lucide-react';
+import { Shield, LayoutDashboard, Users, Settings, Bell, LogOut } from 'lucide-react';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -18,17 +18,18 @@ import {
   SidebarInset 
 } from '@/components/ui/sidebar';
 import { StudentsList } from '@/components/admin/students-list';
-import { useAuth } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import { signInAnonymously } from 'firebase/auth';
+import Loading from '@/app/loading';
 
 
 export default function AdminPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeView, setActiveView] = useState('students');
   const { toast } = useToast();
   const auth = useAuth();
+  const { user, isUserLoading } = useUser();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,10 +44,14 @@ export default function AdminPage() {
           });
           return;
         }
-        // Sign in to Firebase anonymously to get permissions to read the user list
+        
+        // Ensure any existing non-admin user is signed out first
+        if (auth.currentUser && !auth.currentUser.isAnonymous) {
+          await auth.signOut();
+        }
+        
         await signInAnonymously(auth);
         
-        setIsAuthenticated(true);
         toast({
           title: 'Login Successful',
           description: 'Welcome, Admin!',
@@ -68,20 +73,37 @@ export default function AdminPage() {
     }
   };
 
+  const handleLogout = async () => {
+    if (auth) {
+      await auth.signOut();
+    }
+  }
+
+  const isAuthenticated = !isUserLoading && user?.isAnonymous;
+  
+  if (isUserLoading) {
+    return <Loading />;
+  }
+
   if (isAuthenticated) {
     return (
       <div className="mt-14 min-h-[calc(100vh-3.5rem)]">
         <SidebarProvider>
           <Sidebar>
             <SidebarHeader>
-              <div className="flex items-center gap-2">
-                <div className="bg-primary/10 text-primary p-2 rounded-lg">
-                  <Shield className="h-5 w-5" />
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2">
+                  <div className="bg-primary/10 text-primary p-2 rounded-lg">
+                    <Shield className="h-5 w-5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-semibold tracking-tight">Admin Panel</span>
+                    <span className="text-xs text-muted-foreground">Owner View</span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold tracking-tight">Admin Panel</span>
-                  <span className="text-xs text-muted-foreground">Owner View</span>
-                </div>
+                 <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleLogout}>
+                    <LogOut className="h-4 w-4" />
+                 </Button>
               </div>
             </SidebarHeader>
             <SidebarContent>
