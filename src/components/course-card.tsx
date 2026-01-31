@@ -31,11 +31,14 @@ export function CourseCard({ course }: CourseCardProps) {
         <p className="text-sm text-muted-foreground flex-1">
           {course.description}
         </p>
+         <div className="mt-4 flex items-center">
+            <p className="text-xl font-bold text-foreground">₹{course.price}</p>
+        </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button asChild size="sm" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground rounded-full">
             <Link href={`/courses/${course.id}`}>
-                Read More <ArrowRight className="ml-2 h-4 w-4" />
+                View Course <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
         </Button>
       </CardFooter>

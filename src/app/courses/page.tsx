@@ -5,6 +5,9 @@ import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { INSTRUCTORS } from '@/data/content';
 
 // Note: Metadata export is for server components, but we keep it for potential future static generation.
 // In a client component, document title would be set via useEffect if needed.
@@ -198,6 +201,44 @@ export default function CoursesPage() {
                         </Button>
                     </div>
                 </div>
+            </div>
+
+            {/* Instructors Section */}
+            <div className="mt-24 text-center">
+                <h2 className="font-headline text-4xl font-bold uppercase tracking-wider text-white">
+                    Our Instructors
+                </h2>
+                <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                    Learn from a diverse group of industry experts who are passionate about sharing their knowledge.
+                </p>
+            </div>
+
+            <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 gap-12">
+                {INSTRUCTORS.map((instructor) => (
+                    <div key={instructor.id} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg overflow-hidden md:flex transition-all hover:shadow-primary/20 hover:border-primary/40">
+                        <div className="md:w-1/3 relative aspect-square md:aspect-auto flex-shrink-0">
+                            <Image
+                                src={instructor.image || '/placeholder.png'}
+                                alt={`${instructor.firstName} ${instructor.lastName}`}
+                                fill
+                                className="object-cover"
+                                data-ai-hint={instructor.imageHint}
+                            />
+                        </div>
+                        <div className="p-6 md:p-8 md:w-2/3 flex flex-col items-start">
+                            <h3 className="font-headline text-2xl font-bold">{instructor.firstName} {instructor.lastName}</h3>
+                            <p className="text-sm text-primary font-semibold mt-1">{instructor.title}</p>
+                            <p className="mt-4 text-muted-foreground text-sm flex-grow">{instructor.bio}</p>
+                            <div className="mt-6">
+                                <Button asChild size="lg">
+                                    <Link href={`/instructors/${instructor.id}`}>
+                                        View Profile & Courses
+                                    </Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
 
         </div>
