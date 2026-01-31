@@ -1,4 +1,3 @@
-
 'use client';
 
 import { CheckCircle, XCircle } from 'lucide-react';
@@ -38,7 +37,7 @@ const plans = [
             { text: 'Priority support', included: true },
         ],
         tier: 'silver',
-        isPopular: false,
+        isPopular: true,
     },
     {
         title: 'Advanced',
@@ -54,16 +53,16 @@ const plans = [
             { text: '1-on-1 mentorship sessions', included: true},
         ],
         tier: 'gold',
-        isPopular: true,
+        isPopular: false,
     }
 ];
 
 const tierStyles = {
     bronze: {
-        card: 'border-amber-700/50 bg-stone-900',
-        header: 'bg-gradient-to-r from-amber-800 to-yellow-900',
-        button: 'bg-amber-700 hover:bg-amber-600 border-amber-800',
-        peel: 'from-amber-800/80 to-stone-900/10'
+        card: 'border-orange-900/50 bg-stone-900',
+        header: 'bg-gradient-to-r from-orange-800 to-amber-900',
+        button: 'bg-orange-700 hover:bg-orange-600 border-orange-800',
+        peel: 'from-orange-800/80 to-stone-900/10'
     },
     silver: {
         card: 'border-slate-400/50 bg-slate-900',
@@ -95,11 +94,11 @@ export default function CoursesPage() {
                     <div key={plan.title} className={cn(
                         "rounded-lg shadow-2xl flex flex-col border-2 relative transition-transform transform hover:-translate-y-2",
                         tierStyles[plan.tier as keyof typeof tierStyles].card,
-                        plan.isPopular && "scale-105 md:scale-110 z-10 border-4 border-yellow-400 shadow-yellow-400/20"
+                        plan.isPopular && "scale-105 md:scale-110 z-10 border-4 border-slate-400 shadow-slate-400/20"
                     )}>
                         {plan.isPopular && (
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                                <div className="bg-yellow-400 text-black px-4 py-1 rounded-full text-sm font-bold uppercase shadow-lg">
+                                <div className="bg-slate-300 text-black px-4 py-1 rounded-full text-sm font-bold uppercase shadow-lg">
                                     Best Value
                                 </div>
                             </div>
