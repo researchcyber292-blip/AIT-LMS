@@ -1,3 +1,4 @@
+
 'use client';
 
 import { CheckCircle, XCircle, Crown } from 'lucide-react';
@@ -39,23 +40,25 @@ const plans = [
             { text: 'WEEKLY DOUBT CLASSES', included: true },
             { text: '24 LIVE CLASSES IN 6 MONTHS AVAILABLE', included: true },
             { text: 'AFTER 6 MONTHS VERIFIED BADGES + CERTIFICATIONS + TITLE', included: true },
-            { text: '44 LIVE CLASSES IN 6 MONTHS', included: false },
-            { text: 'CLOUD LIVE TESTING ENVIRONMENT', included: false },
-            { text: 'Exclusive workshops', included: false },
+            { text: 'Priority Support', included: false },
+            { text: '1-on-1 Mentorship', included: false },
         ],
         tier: 'silver',
         isPopular: true,
     },
     {
         title: 'Advanced',
-        price: '₹999/mo',
+        price: '₹4999/PER 6 MONTHS',
         description: 'For professionals seeking mastery with specialized content and 1-on-1 mentorship.',
         features: [
-            { text: 'Access to introductory courses', included: true },
-            { text: 'Basic cybersecurity concepts', included: true },
-            { text: 'Community forum access', included: true },
-            { text: 'Intermediate & Advanced topics', included: true },
+            { text: 'Full access to all courses (Beginner to Advanced)', included: true },
             { text: 'Hands-on labs & projects', included: true },
+            { text: 'Cloud live testing environment', included: true },
+            { text: 'Weekly doubt classes', included: true },
+            { text: '24+ live classes in 6 months', included: true },
+            { text: 'Verified Badges + Certifications + Title', included: true },
+            { text: 'Community forum access', included: true },
+            { text: '24/7 Live Support [AI]', included: true },
             { text: 'Priority support', included: true },
             { text: '1-on-1 mentorship sessions', included: true},
         ],
