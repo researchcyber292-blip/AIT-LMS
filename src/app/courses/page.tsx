@@ -18,7 +18,7 @@ const plans = [
             { text: 'Access to all Beginner courses', included: true },
             { text: 'Learn Cybersecurity from scratch', included: true },
             { text: 'Quizzes & knowledge checks', included: true },
-            { text: 'Downloadable course materials', included: true },
+            { text: 'Weekly progress reports', included: true },
             { text: 'Community Access', included: true },
             { text: 'Certification', included: true },
             { text: '24/7 Live Support [AI]', included: true },
