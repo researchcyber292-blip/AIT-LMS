@@ -1,3 +1,4 @@
+
 'use client';
 
 import { CheckCircle, XCircle, Crown } from 'lucide-react';
@@ -29,7 +30,7 @@ const plans = [
     },
     {
         title: 'Pro',
-        price: '₹3333/PER 3 MONTHS',
+        price: '₹2999 / per 3 monts',
         description: 'For learners aiming to advance their skills with practical labs and expert guidance.',
         features: [
             { text: 'Access to introductory courses', included: true },
