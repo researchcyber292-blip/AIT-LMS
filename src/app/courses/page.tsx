@@ -1,3 +1,4 @@
+
 'use client';
 
 import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
@@ -68,7 +69,7 @@ const plans = [
 
 const tierStyles = {
     orange: {
-        card: 'border-orange-500/50 bg-neutral-900',
+        card: 'border-orange-500/50 bg-neutral-900 shadow-orange-500/20',
         header: 'bg-gradient-to-r from-orange-500 to-orange-600',
         button: 'bg-orange-500 hover:bg-orange-400 border-orange-600 text-white',
         peel: 'from-orange-500/80 to-neutral-900/10'
@@ -80,7 +81,7 @@ const tierStyles = {
         peel: 'from-slate-500/80 to-slate-900/10'
     },
     gold: {
-        card: 'border-yellow-500/50 bg-neutral-900',
+        card: 'border-yellow-500/50 bg-neutral-900 shadow-yellow-500/20',
         header: 'bg-gradient-to-r from-yellow-500 to-amber-600',
         button: 'bg-yellow-500 hover:bg-yellow-400 text-black border-yellow-600',
         peel: 'from-yellow-500/80 to-neutral-900/10'
@@ -115,7 +116,7 @@ export default function CoursesPage() {
                     <div key={plan.title} className={cn(
                         "rounded-lg shadow-2xl flex flex-col border-2 relative transition-transform transform hover:-translate-y-2",
                         tierStyles[plan.tier as keyof typeof tierStyles].card,
-                        plan.isPopular && "scale-105 md:scale-110 z-10 border-4 border-slate-400 shadow-slate-400/20"
+                        plan.isPopular && "scale-105 md:scale-110 z-10 border-4 border-slate-400 shadow-xl shadow-slate-400/30"
                     )}>
                         {plan.isPopular && (
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
