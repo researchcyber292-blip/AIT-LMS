@@ -13,7 +13,7 @@ const plans = [
     {
         title: 'Beginner',
         price: '₹399/mo',
-        description: 'This is the course for beginners who are interested to learn Cyber Security but no money......................',
+        description: 'Ideal for those new to cybersecurity, providing the essential concepts and tools to start your journey.',
         features: [
             { text: 'Access to all Beginner courses', included: true },
             { text: 'Learn Cybersecurity from scratch', included: true },
@@ -30,7 +30,7 @@ const plans = [
     },
     {
         title: 'Pro',
-        price: '₹2999 / per 3 monts',
+        price: '₹2999 / 3 months',
         description: 'For learners aiming to advance their skills with practical labs and expert guidance.',
         features: [
             { text: 'Access to introductory courses', included: true },
