@@ -17,6 +17,8 @@ const plans = [
         features: [
             { text: 'Access to all Beginner courses', included: true },
             { text: 'Learn Cybersecurity from scratch', included: true },
+            { text: 'Quizzes & knowledge checks', included: true },
+            { text: 'Downloadable course materials', included: true },
             { text: 'Community Access', included: true },
             { text: 'Certification', included: true },
             { text: '24/7 Live Support [AI]', included: true },
@@ -75,7 +77,7 @@ const tierStyles = {
         peel: 'from-orange-500/80 to-neutral-900/10'
     },
     silver: {
-        card: 'border-slate-400/50 bg-slate-900',
+        card: 'border-slate-400/50 bg-slate-900 shadow-slate-500/20',
         header: 'bg-gradient-to-r from-slate-500 to-slate-700',
         button: 'bg-slate-500 hover:bg-slate-400 border-slate-600',
         peel: 'from-slate-500/80 to-slate-900/10'
