@@ -165,8 +165,8 @@ export default function CoursesPage() {
                     <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-cyan-600/30 rounded-full blur-3xl animate-[spin-slow_10s_linear_infinite_reverse]"></div>
                     
                     <div className="relative z-10">
-                        <div className="mx-auto bg-gradient-to-r from-cyan-500 to-purple-600 p-3 rounded-full w-fit mb-4 shadow-lg">
-                            <Rocket className="h-8 w-8 text-white" />
+                        <div className="mx-auto bg-gradient-to-r from-cyan-500 to-purple-600 p-3 rounded-full w-fit mb-4 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-purple-500/30">
+                            <Rocket className="h-8 w-8 text-white transition-transform duration-300 group-hover:-rotate-12" />
                         </div>
                         <h2 className="text-4xl font-bold uppercase font-headline tracking-widest text-white">
                             Premium++
@@ -175,10 +175,10 @@ export default function CoursesPage() {
                             NO LIMIT LEARNING WITH OUR ADVANCED FEATURES AND THE COURCE WILL GET REDESIGNE FOR YOU PERSONALLY WITH A HYPER FEEL.
                         </p>
                         <div className="my-8">
-                            <span className="text-5xl font-bold font-headline text-white">₹9,999</span>
+                            <span className="text-5xl font-bold font-headline text-white">₹12,999</span>
                             <span className="text-xl font-semibold text-muted-foreground"> / 6 months</span>
                         </div>
-                        <Button size="lg" className="w-full max-w-xs mx-auto uppercase font-bold bg-transparent border-2 border-cyan-400 text-cyan-300 hover:bg-cyan-400/10 hover:text-white hover:border-cyan-300 transition-all duration-300">
+                        <Button size="lg" className="w-full max-w-xs mx-auto uppercase font-bold bg-transparent border-2 border-cyan-400 text-cyan-300 hover:bg-cyan-400/10 hover:text-white hover:border-cyan-300 transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:shadow-xl hover:shadow-cyan-400/40">
                             Contact to Order
                         </Button>
                     </div>
