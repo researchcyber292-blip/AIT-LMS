@@ -12,7 +12,7 @@ import type { Metadata } from 'next';
 const plans = [
     {
         title: 'Beginner',
-        price: 'Free',
+        price: '₹199/mo',
         description: 'Perfect for those new to cybersecurity, providing the essential concepts to get you started.',
         features: [
             { text: 'Access to introductory courses', included: true },
@@ -38,7 +38,7 @@ const plans = [
             { text: 'Priority support', included: true },
         ],
         tier: 'silver',
-        isPopular: true,
+        isPopular: false,
     },
     {
         title: 'Advanced',
@@ -54,7 +54,7 @@ const plans = [
             { text: '1-on-1 mentorship sessions', included: true},
         ],
         tier: 'gold',
-        isPopular: false,
+        isPopular: true,
     }
 ];
 
@@ -93,15 +93,18 @@ export default function CoursesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-center max-w-6xl mx-auto">
                 {plans.map((plan) => (
                     <div key={plan.title} className={cn(
-                        "rounded-lg shadow-2xl flex flex-col border-2 relative overflow-hidden transition-transform transform hover:-translate-y-2",
+                        "rounded-lg shadow-2xl flex flex-col border-2 relative transition-transform transform hover:-translate-y-2",
                         tierStyles[plan.tier as keyof typeof tierStyles].card,
-                        plan.isPopular && "scale-105 md:scale-110 z-10 border-4 border-slate-300 shadow-slate-400/30"
+                        plan.isPopular && "scale-105 md:scale-110 z-10 border-4 border-yellow-400 shadow-yellow-400/20"
                     )}>
-                        {/* Header */}
-                        <div className={cn("p-6 text-center rounded-t-md", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
-                            <h2 className="text-3xl font-bold uppercase font-headline tracking-widest">{plan.title}</h2>
-                        </div>
-                        
+                        {plan.isPopular && (
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                                <div className="bg-yellow-400 text-black px-4 py-1 rounded-full text-sm font-bold uppercase shadow-lg">
+                                    Best Value
+                                </div>
+                            </div>
+                        )}
+
                         {/* A simplified visual flair to mimic a curled corner */}
                         <div className={cn(
                             "absolute top-0 right-0 h-24 w-24 bg-gradient-to-bl rounded-bl-full opacity-50",
@@ -110,6 +113,11 @@ export default function CoursesPage() {
                         <div className="absolute top-[3px] right-[3px] h-8 w-8 bg-gray-900 rounded-bl-full"></div>
 
 
+                        {/* Header */}
+                        <div className={cn("p-6 text-center rounded-t-md", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
+                            <h2 className="text-3xl font-bold uppercase font-headline tracking-widest">{plan.title}</h2>
+                        </div>
+                        
                         {/* Content */}
                         <div className="p-8 flex flex-col flex-grow">
                             <p className="text-muted-foreground min-h-[4rem] text-sm">{plan.description}</p>
