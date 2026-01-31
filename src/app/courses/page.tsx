@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle, XCircle, Crown, Rocket } from 'lucide-react';
+import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -91,11 +91,23 @@ export default function CoursesPage() {
   return (
     <div className="bg-gray-900 text-white min-h-[calc(100vh-3.5rem)] py-12 md:py-24">
         <div className="container">
-            <div className="text-center mb-16">
-                <h1 className="font-headline text-4xl font-bold uppercase tracking-wider">Our Subscription Plans</h1>
-                <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                    Choose the plan that best fits your learning goals.
-                </p>
+            <div className="relative text-center mb-16 overflow-hidden rounded-2xl border border-border/10 py-12">
+                {/* Background animations */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-cyan-600/10 opacity-30"></div>
+                <div className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-[spin-slow_9s_linear_infinite]"></div>
+                <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-[spin-slow_11s_linear_infinite_reverse]"></div>
+                
+                <div className="relative z-10">
+                    <div className="mx-auto bg-gradient-to-r from-primary to-accent p-3 rounded-full w-fit mb-4 shadow-lg">
+                        <Gem className="h-8 w-8 text-white" />
+                    </div>
+                    <h1 className="font-headline text-4xl font-bold uppercase tracking-wider text-white">
+                        Our Subscription Plans
+                    </h1>
+                    <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                        Choose the plan that best fits your learning goals and unlock your potential.
+                    </p>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-center max-w-6xl mx-auto">
