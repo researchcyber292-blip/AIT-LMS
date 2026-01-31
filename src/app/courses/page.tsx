@@ -1,4 +1,3 @@
-
 'use client';
 
 import { CheckCircle, XCircle, Crown } from 'lucide-react';
@@ -23,7 +22,7 @@ const plans = [
             { text: 'Live Classes', included: false },
             { text: 'Live Lab Tests', included: false },
             { text: 'Priority Support', included: false },
-            { text: 'More...', included: false },
+            { text: '1-on-1 Mentorship', included: false },
         ],
         tier: 'orange',
         isPopular: false,
@@ -42,7 +41,7 @@ const plans = [
             { text: 'AFTER 6 MONTHS VERIFIED BADGES + CERTIFICATIONS + TITLE', included: true },
             { text: '44 LIVE CLASSES IN 6 MONTHS', included: false },
             { text: 'CLOUD LIVE TESTING ENVIRONMENT', included: false },
-            { text: 'MORE.....', included: false },
+            { text: 'Exclusive workshops', included: false },
         ],
         tier: 'silver',
         isPopular: true,
@@ -140,7 +139,7 @@ export default function CoursesPage() {
                                         ) : (
                                             <XCircle className="w-5 h-5 text-red-500/70 flex-shrink-0" />
                                         )}
-                                        <span className={cn('text-sm', !feature.included && 'text-muted-foreground/60 line-through')}>{feature.text}</span>
+                                        <span className={cn('text-sm', !feature.included && 'text-muted-foreground/60')}>{feature.text}</span>
                                     </li>
                                 ))}
                             </ul>
