@@ -11,17 +11,20 @@ import type { Metadata } from 'next';
 const plans = [
     {
         title: 'Beginner',
-        price: '₹199/mo',
-        description: 'Perfect for those new to cybersecurity, providing the essential concepts to get you started.',
+        price: '₹399/mo',
+        description: 'This is the course for beginners who are interested to learn Cyber Security but no money......................',
         features: [
-            { text: 'Access to introductory courses', included: true },
-            { text: 'Basic cybersecurity concepts', included: true },
-            { text: 'Community forum access', included: true },
-            { text: 'Intermediate & Advanced topics', included: false },
-            { text: 'Hands-on labs & projects', included: false },
-            { text: 'Priority support', included: false },
+            { text: 'Access to all Beginner courses', included: true },
+            { text: 'Learn Cybersecurity from scratch', included: true },
+            { text: 'Community Access', included: true },
+            { text: 'Certification', included: true },
+            { text: '24/7 Live Support [AI]', included: true },
+            { text: 'Live Classes', included: false },
+            { text: 'Live Lab Tests', included: false },
+            { text: 'Priority Support', included: false },
+            { text: 'More...', included: false },
         ],
-        tier: 'bronze',
+        tier: 'orange',
         isPopular: false,
     },
     {
@@ -58,7 +61,7 @@ const plans = [
 ];
 
 const tierStyles = {
-    bronze: {
+    orange: {
         card: 'border-orange-500/50 bg-neutral-900',
         header: 'bg-gradient-to-r from-orange-500 to-orange-600',
         button: 'bg-orange-500 hover:bg-orange-400 border-orange-600 text-white',
