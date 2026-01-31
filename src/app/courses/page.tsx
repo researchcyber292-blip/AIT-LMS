@@ -8,6 +8,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { INSTRUCTORS } from '@/data/content';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // Note: Metadata export is for server components, but we keep it for potential future static generation.
 // In a client component, document title would be set via useEffect if needed.
@@ -213,29 +214,26 @@ export default function CoursesPage() {
                 </p>
             </div>
 
-            <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 gap-12">
+            <div className="mt-12 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                 {INSTRUCTORS.map((instructor) => (
-                    <div key={instructor.id} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg overflow-hidden md:flex transition-all hover:shadow-primary/20 hover:border-primary/40">
-                        <div className="md:w-1/3 relative aspect-square md:aspect-auto flex-shrink-0">
-                            <Image
-                                src={instructor.image || '/placeholder.png'}
-                                alt={`${instructor.firstName} ${instructor.lastName}`}
-                                fill
-                                className="object-cover"
-                                data-ai-hint={instructor.imageHint}
-                            />
-                        </div>
-                        <div className="p-6 md:p-8 md:w-2/3 flex flex-col items-start">
+                    <div key={instructor.id} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-8 text-center flex flex-col items-center transition-all hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1">
+                        <Avatar className="h-32 w-32 border-4 border-primary/50">
+                            <AvatarImage src={instructor.image} alt={`${instructor.firstName} ${instructor.lastName}`} data-ai-hint={instructor.imageHint} />
+                            <AvatarFallback className="text-4xl">{`${instructor.firstName.charAt(0)}${instructor.lastName.charAt(0)}`}</AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="mt-6 flex-grow flex flex-col">
                             <h3 className="font-headline text-2xl font-bold">{instructor.firstName} {instructor.lastName}</h3>
                             <p className="text-sm text-primary font-semibold mt-1">{instructor.title}</p>
-                            <p className="mt-4 text-muted-foreground text-sm flex-grow">{instructor.bio}</p>
-                            <div className="mt-6">
-                                <Button asChild size="lg">
-                                    <Link href={`/instructors/${instructor.id}`}>
-                                        View Profile & Courses
-                                    </Link>
-                                </Button>
-                            </div>
+                            <p className="mt-4 text-muted-foreground text-sm max-w-xs mx-auto flex-grow">{instructor.bio}</p>
+                        </div>
+                        
+                        <div className="mt-8 w-full">
+                            <Button asChild size="lg" className="w-full">
+                                <Link href={`/instructors/${instructor.id}`}>
+                                    View Profile & Courses
+                                </Link>
+                            </Button>
                         </div>
                     </div>
                 ))}
