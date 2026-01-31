@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
@@ -59,10 +59,10 @@ const plans = [
 
 const tierStyles = {
     bronze: {
-        card: 'border-orange-900/50 bg-stone-900',
-        header: 'bg-gradient-to-r from-orange-800 to-amber-900',
-        button: 'bg-orange-700 hover:bg-orange-600 border-orange-800',
-        peel: 'from-orange-800/80 to-stone-900/10'
+        card: 'border-orange-500/50 bg-neutral-900',
+        header: 'bg-gradient-to-r from-orange-500 to-orange-600',
+        button: 'bg-orange-500 hover:bg-orange-400 border-orange-600 text-white',
+        peel: 'from-orange-500/80 to-neutral-900/10'
     },
     silver: {
         card: 'border-slate-400/50 bg-slate-900',
@@ -114,7 +114,10 @@ export default function CoursesPage() {
 
                         {/* Header */}
                         <div className={cn("p-6 text-center rounded-t-md", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
-                            <h2 className="text-3xl font-bold uppercase font-headline tracking-widest">{plan.title}</h2>
+                            <h2 className="text-3xl font-bold uppercase font-headline tracking-widest flex items-center justify-center gap-2">
+                                {plan.tier === 'gold' && <Crown className="w-8 h-8 text-yellow-300" />}
+                                {plan.title}
+                            </h2>
                         </div>
                         
                         {/* Content */}
