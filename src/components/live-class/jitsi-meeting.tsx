@@ -14,10 +14,10 @@ declare global {
 interface JitsiMeetingProps {
   roomName: string;
   userName: string;
-  isInstructor: boolean;
+  onMeetingEnd: () => void;
 }
 
-export default function JitsiMeeting({ roomName, userName, isInstructor }: JitsiMeetingProps) {
+export default function JitsiMeeting({ roomName, userName, onMeetingEnd }: JitsiMeetingProps) {
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
   const { toast } = useToast();
@@ -37,52 +37,33 @@ export default function JitsiMeeting({ roomName, userName, isInstructor }: Jitsi
           },
           configOverwrite: {
             startWithAudioMuted: true,
-            startWithVideoMuted: false, // Start with video on for a better experience
-            disableInviteFunctions: true, // Prevents students from inviting others
-            prejoinPageEnabled: false, // Go straight into the meeting
+            startWithVideoMuted: false,
+            prejoinPageEnabled: false,
           },
           interfaceConfigOverwrite: {
-            // Customize the toolbar for students vs instructors
-            TOOLBAR_BUTTONS: isInstructor
-              ? [
-                  'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-                  'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-                  'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-                  'videoquality', 'filmstrip', 'feedback', 'stats', 'shortcuts',
-                  'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-                  'security' // Enable security options for instructor (lobby, password)
-                ]
-              : [
-                  'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-                  'fodeviceselection', 'hangup', 'profile', 'chat', 'raisehand',
-                  'videoquality', 'filmstrip', 'feedback', 'stats', 'shortcuts',
-                  'tileview', 'videobackgroundblur', 'help'
-                ],
-            SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'sounds' ],
-            SHOW_CHROME_EXTENSION_BANNER: false,
-            SHOW_JITSI_WATERMARK: false, // Hide Jitsi watermark
+            SHOW_JITSI_WATERMARK: false,
+            SHOW_WATERMARK_FOR_GUESTS: false,
             TILE_VIEW_MAX_COLUMNS: 8,
           },
         };
 
         const api = new window.JitsiMeetExternalAPI(domain, options);
         jitsiApiRef.current = api;
-
-        // When the instructor (moderator) joins, they can be prompted to set up lobby
-        if (isInstructor) {
-          api.addEventListener('videoConferenceJoined', () => {
-            toast({
-              title: "You are the instructor",
-              description: "Click the shield icon to enable the lobby and secure your class.",
-            });
-          });
-        }
         
-        // Clean up the meeting when the component unmounts
-        return () => {
-          jitsiApiRef.current?.dispose();
-        };
+        api.addEventListener('videoConferenceLeft', () => {
+          onMeetingEnd();
+        });
 
+        api.addEventListener('videoConferenceJoined', () => {
+            if (api.isModerator()) {
+                toast({
+                    title: "You are the session moderator",
+                    description: "Click the shield icon to enable the lobby and secure your class.",
+                    duration: 10000,
+                });
+            }
+        });
+        
       } catch (error) {
         console.error('Failed to initialize Jitsi Meet:', error);
         toast({
@@ -93,31 +74,28 @@ export default function JitsiMeeting({ roomName, userName, isInstructor }: Jitsi
       }
     };
     
-    // Check if the Jitsi API script is already loaded
-    if (window.JitsiMeetExternalAPI) {
-        if (jitsiContainerRef.current) {
-            startJitsi();
-        }
-    } else {
-        // Jitsi script not loaded, this should not happen if added to layout
-        console.error('Jitsi script not found.');
+    if (!window.JitsiMeetExternalAPI) {
         toast({
             variant: 'destructive',
             title: 'Loading Error',
-            description: 'Failed to load the live class script. Please refresh the page.',
+            description: 'Live class script not found. Please refresh the page.',
         });
+        return;
+    }
+    
+    if (jitsiContainerRef.current) {
+        startJitsi();
     }
 
-    // Cleanup function to remove API
     return () => {
       jitsiApiRef.current?.dispose();
     };
 
-  }, [roomName, userName, isInstructor, toast]);
+  }, [roomName, userName, toast, onMeetingEnd]);
   
   if (!jitsiContainerRef) {
       return <Loading />;
   }
 
-  return <div ref={jitsiContainerRef} style={{ height: '100%', width: '100%' }} />;
+  return <div ref={jitsiContainerRef} className="h-full w-full" />;
 }
