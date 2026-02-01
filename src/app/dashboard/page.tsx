@@ -1,28 +1,39 @@
+
 'use client';
 
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Video } from 'lucide-react';
+import { BookOpen, Video, Mic } from 'lucide-react';
 import { COURSES } from '@/data/content';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
-import type { Enrollment } from '@/lib/types';
+import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
+import type { Enrollment, Instructor } from '@/lib/types';
 import Loading from '@/app/loading';
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
-  const enrollmentsQuery = useMemoFirebase(() => {
+  // Check if the user is an instructor
+  const instructorDocRef = useMemoFirebase(() => {
     if (!user) return null;
-    return collection(firestore, 'users', user.uid, 'enrollments');
+    return doc(firestore, 'instructors', user.uid);
   }, [firestore, user]);
+  const { data: instructor, isLoading: isInstructorLoading } = useDoc<Instructor>(instructorDocRef);
+
+  // Get student enrollments
+  const enrollmentsQuery = useMemoFirebase(() => {
+    if (!user || instructor) return null; // Don't fetch for instructors
+    return collection(firestore, 'users', user.uid, 'enrollments');
+  }, [firestore, user, instructor]);
 
   const { data: enrollments, isLoading: enrollmentsLoading } = useCollection<Enrollment>(enrollmentsQuery);
 
-  if (isUserLoading || (user && enrollmentsLoading)) {
+  const isLoading = isUserLoading || (user && (isInstructorLoading || enrollmentsLoading));
+
+  if (isLoading) {
     return <Loading />;
   }
 
@@ -37,6 +48,34 @@ export default function DashboardPage() {
     })
     .filter((c): c is NonNullable<typeof c> => c !== null);
 
+  // Instructor Dashboard
+  if (instructor) {
+    return (
+      <div className="container py-12 md:py-16">
+        <div className="mb-10">
+          <h1 className="font-headline text-4xl font-bold">Welcome Back, Instructor {instructor.firstName}!</h1>
+          <p className="mt-2 text-muted-foreground">
+            Manage your courses and start live sessions from your control panel.
+          </p>
+        </div>
+        
+        <div className="p-8 border rounded-lg bg-card max-w-2xl mx-auto text-center">
+            <h2 className="font-headline text-3xl font-bold flex items-center justify-center gap-3">
+                <Mic className="h-8 w-8" />
+                Instructor Control Panel
+            </h2>
+            <p className="mt-4 text-muted-foreground">Start the live session for students. This will open the classroom in a new view.</p>
+            <Button asChild size="lg" className="mt-8 px-10 py-7 text-lg">
+                <Link href="/live-classroom?room=avirajinfotech-cybersecurity-classlive&courseTitle=Live%20Session&instructor=true">
+                    Start Live Stream
+                </Link>
+            </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Student Dashboard
   return (
     <div className="container py-12 md:py-16">
       <div className="mb-10">

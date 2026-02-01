@@ -7,7 +7,8 @@ import JitsiMeeting from '@/components/live-class/jitsi-meeting';
 import { useUser } from '@/firebase';
 import Loading from '@/app/loading';
 import { Button } from '@/components/ui/button';
-import { Radio } from 'lucide-react';
+import { Radio, Info } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function LiveClassroom() {
     const searchParams = useSearchParams();
@@ -18,10 +19,8 @@ function LiveClassroom() {
     const courseTitle = searchParams.get('courseTitle');
     const isInstructor = searchParams.get('instructor') === 'true';
 
-    // Set a default user name if the user is not logged in
-    const userName = isInstructor 
-        ? user?.displayName || 'Instructor' 
-        : user?.displayName || `Guest-${Math.random().toString(36).substring(2, 6)}`;
+    // Set a default user name if the user is not logged in or name is not available
+    const userName = user?.displayName || `Guest-${Math.random().toString(36).substring(2, 6)}`;
 
     if (isUserLoading) {
         return <Loading />;
@@ -49,11 +48,21 @@ function LiveClassroom() {
                 </div>
                 <Button variant="destructive" onClick={() => router.back()}>Leave Stream</Button>
             </div>
+            
+            {isInstructor && (
+              <Alert variant="default" className="m-4 border-amber-500/50 bg-amber-500/10 text-amber-200 [&>svg]:text-amber-400">
+                <Info className="h-4 w-4" />
+                <AlertTitle className="font-bold">Instructor Moderator Guide</AlertTitle>
+                <AlertDescription className="text-amber-300/90">
+                  To get moderator controls (mute users, screen share), click the **"I am the host"** button that appears in the meeting window. If a login popup is blocked, open <a href="https://meet.jit.si" target="_blank" rel="noopener noreferrer" className="underline font-semibold">meet.jit.si</a> in a new tab, log in with Google, then return here and refresh the page.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="flex-1 w-full bg-black">
                 <JitsiMeeting
                     roomName={roomName}
                     userName={userName}
-                    isInstructor={isInstructor}
                 />
             </div>
         </div>
