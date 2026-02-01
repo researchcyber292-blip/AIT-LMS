@@ -96,12 +96,6 @@ export default function SignUpPage() {
              <p className="mt-4 text-center text-xs text-gray-500">
                 By signing up, you agree to the <Link href="#" className="underline hover:text-white">Terms of Service</Link> and <Link href="#" className="underline hover:text-white">Privacy Policy</Link>, including <Link href="#" className="underline hover:text-white">Cookie Use</Link>.
             </p>
-            <p className="mt-8 text-center text-sm text-gray-400">
-              Already have an account?{" "}
-              <Link href="/login" className="font-semibold text-white hover:underline">
-                Sign in
-              </Link>
-            </p>
           </div>
         </div>
 
