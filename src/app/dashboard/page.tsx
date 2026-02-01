@@ -1,32 +1,52 @@
+'use client';
+
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Video } from 'lucide-react';
 import { COURSES } from '@/data/content';
-
-export const metadata: Metadata = {
-  title: 'Dashboard - CyberLearn',
-  description: 'Access your courses and track your learning progress.',
-};
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import type { Enrollment } from '@/lib/types';
+import Loading from '@/app/loading';
 
 export default function DashboardPage() {
-  const enrolledCourses = [
-    { ...COURSES[0], progress: 75 },
-    { ...COURSES[2], progress: 20 },
-  ];
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const enrollmentsQuery = useMemoFirebase(() => {
+    if (!user) return null;
+    return collection(firestore, 'users', user.uid, 'enrollments');
+  }, [firestore, user]);
+
+  const { data: enrollments, isLoading: enrollmentsLoading } = useCollection<Enrollment>(enrollmentsQuery);
+
+  if (isUserLoading || (user && enrollmentsLoading)) {
+    return <Loading />;
+  }
+
+  const enrolledCourses = (enrollments || [])
+    .map(enrollment => {
+      const course = COURSES.find(c => c.id === enrollment.courseId);
+      if (course) {
+        // Just using a placeholder progress for now.
+        return { ...course, progress: Math.floor(Math.random() * 80) + 10 };
+      }
+      return null;
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== null);
 
   return (
     <div className="container py-12 md:py-16">
       <div className="mb-10">
-        <h1 className="font-headline text-4xl font-bold">Welcome Back!</h1>
+        <h1 className="font-headline text-4xl font-bold">Welcome Back, {user?.displayName || 'Student'}!</h1>
         <p className="mt-2 text-muted-foreground">
           Continue your learning journey and sharpen your cybersecurity skills.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-8">
+      <div className="grid grid-cols-1 gap-12">
         <section>
           <h2 className="font-headline text-2xl font-semibold mb-4">My Courses</h2>
           {enrolledCourses.length > 0 ? (
@@ -63,6 +83,22 @@ export default function DashboardPage() {
               </Button>
             </div>
           )}
+        </section>
+
+        <section>
+          <h2 className="font-headline text-2xl font-semibold mb-4">Featured Videos</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className="overflow-hidden bg-card/50">
+                <div className="aspect-video w-full bg-muted flex items-center justify-center">
+                  <Video className="h-12 w-12 text-muted-foreground" />
+                </div>
+                <CardHeader>
+                  <CardTitle className="font-headline text-base h-10">Placeholder Video Title {i+1}</CardTitle>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
         </section>
       </div>
     </div>
