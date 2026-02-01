@@ -13,9 +13,10 @@ import JitsiMeeting from '@/components/live-class/jitsi-meeting';
 export default function LiveClassesPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-  const [session, setSession] = useState<{roomName: string, isInstructor: boolean, password?: string} | null>(null);
+  const [isJoining, setIsJoining] = useState(false);
   
   const roomName = 'avirajinfotech-cybersecurity-classlive';
+  const moderatorUrl = `https://meet.jit.si/${roomName}`;
 
   const instructorDocRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -25,21 +26,15 @@ export default function LiveClassesPage() {
 
   const isLoading = isUserLoading || isInstructorProfileLoading;
 
-  const handleStartSession = () => {
-    // Generate a simple password to claim moderator status automatically
-    const sessionPassword = Math.random().toString(36).substring(2, 10);
-    setSession({ roomName: roomName, isInstructor: true, password: sessionPassword });
+  const handleJoinSession = () => {
+    setIsJoining(true);
   };
   
-  const handleJoinSession = () => {
-    setSession({ roomName: roomName, isInstructor: false });
-  };
-
   const handleEndSession = () => {
-      setSession(null);
+      setIsJoining(false);
   }
 
-  if (session) {
+  if (isJoining) {
     return (
         <div className="w-full h-[calc(100vh-3.5rem)] flex flex-col pt-14">
             <div className="flex justify-between items-center p-4 border-b bg-card gap-4">
@@ -48,17 +43,15 @@ export default function LiveClassesPage() {
                         <Radio className="h-5 w-5 text-red-500 animate-pulse" />
                         Live Session
                     </h1>
-                    <p className="text-xs text-muted-foreground">Room: {session.roomName}</p>
+                    <p className="text-xs text-muted-foreground">Room: {roomName}</p>
                 </div>
-                <Button variant="destructive" onClick={handleEndSession}>End Session</Button>
+                <Button variant="destructive" onClick={handleEndSession}>Leave Session</Button>
             </div>
             <div className="flex-1 w-full bg-black">
                 <JitsiMeeting
-                    roomName={session.roomName}
+                    roomName={roomName}
                     userName={user?.displayName || `Guest-${Math.random().toString(36).substring(2, 6)}`}
                     onMeetingEnd={handleEndSession}
-                    isInstructor={session.isInstructor}
-                    password={session.password}
                 />
             </div>
         </div>
@@ -90,11 +83,13 @@ export default function LiveClassesPage() {
                         Instructor Control Panel
                     </h2>
                     <p className="mt-2 text-muted-foreground">Start a new secure, moderated live session.</p>
-                    <Button onClick={handleStartSession} size="lg" className="mt-6 px-10 py-6 text-lg">
-                        Start a Live Stream
+                    <Button asChild size="lg" className="mt-6 px-10 py-6 text-lg">
+                        <a href={moderatorUrl} target="_blank" rel="noopener noreferrer">
+                            Start a Live Stream
+                        </a>
                     </Button>
                      <p className="text-xs text-muted-foreground mt-4">
-                        You will automatically become the moderator.
+                        This opens in a new tab. Click "I am the host" and log in to gain moderator control.
                     </p>
                 </div>
             )}

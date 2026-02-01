@@ -13,12 +13,10 @@ declare global {
 interface JitsiMeetingProps {
   roomName: string;
   userName: string;
-  onMeetingEnd: () => void;
-  isInstructor?: boolean;
-  password?: string;
+  onMeetingEnd?: () => void;
 }
 
-export default function JitsiMeeting({ roomName, userName, onMeetingEnd, isInstructor, password }: JitsiMeetingProps) {
+export default function JitsiMeeting({ roomName, userName, onMeetingEnd }: JitsiMeetingProps) {
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
   const { toast } = useToast();
@@ -51,34 +49,11 @@ export default function JitsiMeeting({ roomName, userName, onMeetingEnd, isInstr
         const api = new window.JitsiMeetExternalAPI(domain, options);
         jitsiApiRef.current = api;
         
-        api.addEventListener('videoConferenceLeft', () => {
-          onMeetingEnd();
-        });
-
-        api.addEventListener('videoConferenceJoined', () => {
-            // For instructors, automatically set the password to claim moderator status.
-            if (isInstructor && password) {
-                api.executeCommand('password', password);
-            }
-        });
-        
-        // This listener is a fallback in case the room already required a password.
-        api.addEventListener('passwordRequired', () => {
-             if (isInstructor && password) {
-                api.executeCommand('password', password);
-            }
-        });
-
-        // This listener gives us explicit confirmation of moderator status.
-        api.addEventListener('moderationStatusChanged', (event: { status: 'granted' | 'revoked' }) => {
-            if (event.status === 'granted' && isInstructor) {
-                 toast({
-                    title: "You are the session moderator",
-                    description: "You have full control. Use the shield icon to enable the lobby, mute others, and manage the class.",
-                    duration: 15000,
-                });
-            }
-        });
+        if (onMeetingEnd) {
+            api.addEventListener('videoConferenceLeft', () => {
+              onMeetingEnd();
+            });
+        }
         
       } catch (error) {
         console.error('Failed to initialize Jitsi Meet:', error);
@@ -107,7 +82,7 @@ export default function JitsiMeeting({ roomName, userName, onMeetingEnd, isInstr
       jitsiApiRef.current?.dispose();
     };
 
-  }, [roomName, userName, toast, onMeetingEnd, isInstructor, password]);
+  }, [roomName, userName, toast, onMeetingEnd]);
   
   if (!jitsiContainerRef) {
       return <Loading />;
