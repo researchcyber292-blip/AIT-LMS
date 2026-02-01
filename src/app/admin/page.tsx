@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -112,19 +113,13 @@ export default function AdminPage() {
                 <SidebarMenuItem>
                   <SidebarMenuButton size="lg" onClick={() => setActiveView('students')} isActive={activeView === 'students'}>
                     <Users />
-                    STUDENTS/ENROLL
+                    STUDENTS & PURCHASES
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton size="lg" onClick={() => setActiveView('instructors')} isActive={activeView === 'instructors'}>
                     <Briefcase />
                     INSTRUCTORS MANAGEMENTS
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton size="lg" onClick={() => setActiveView('example3')} isActive={activeView === 'example3'}>
-                    <Settings />
-                    EXAMPLE-3
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
@@ -149,14 +144,6 @@ export default function AdminPage() {
                 )}
                 {activeView === 'instructors' && (
                     <InstructorsList />
-                )}
-                {activeView === 'example3' && (
-                    <div className="text-center aspect-video flex items-center justify-center">
-                        <div>
-                            <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-3</h2>
-                            <p className="text-muted-foreground mt-2">Content for Example 3 is displayed here.</p>
-                        </div>
-                    </div>
                 )}
                 {activeView === 'notifications' && (
                     <div className="text-center aspect-video flex items-center justify-center">

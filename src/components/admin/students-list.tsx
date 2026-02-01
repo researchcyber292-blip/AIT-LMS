@@ -31,26 +31,59 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError, useUser } from '@/firebase';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
-import type { UserProfile } from '@/lib/types';
+import type { UserProfile, Enrollment } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
+import { COURSES } from '@/data/content';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 export function StudentsList() {
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
   const [studentToDelete, setStudentToDelete] = useState<UserProfile | null>(null);
+  const [studentEnrollments, setStudentEnrollments] = useState<Enrollment[]>([]);
+  const [isLoadingEnrollments, setIsLoadingEnrollments] = useState(false);
   const firestore = useFirestore();
   const { user, isUserLoading: isAuthLoading } = useUser();
   const { toast } = useToast();
 
   const studentsQuery = useMemoFirebase(() => {
-    // Only create the query if the admin user is authenticated via an anonymous session.
     if (!user || !user.isAnonymous) return null;
     return collection(firestore, 'users');
   }, [firestore, user]);
 
   const { data: students, isLoading: isCollectionLoading, error } = useCollection<UserProfile>(studentsQuery);
   const isLoading = isAuthLoading || isCollectionLoading;
+
+  const handleViewDetails = async (student: UserProfile) => {
+    setSelectedStudent(student);
+    if (student) {
+      setIsLoadingEnrollments(true);
+      setStudentEnrollments([]);
+      if (firestore) {
+        const enrollmentsQuery = collection(firestore, 'users', student.id, 'enrollments');
+        try {
+          const snapshot = await getDocs(enrollmentsQuery);
+          const enrollments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Enrollment));
+          setStudentEnrollments(enrollments);
+        } catch (err: any) {
+          const permissionError = new FirestorePermissionError({
+            path: `users/${student.id}/enrollments`,
+            operation: 'list',
+          });
+          errorEmitter.emit('permission-error', permissionError);
+          toast({
+            variant: 'destructive',
+            title: 'Error loading enrollments',
+            description: 'Could not fetch enrollment data due to insufficient permissions.',
+          });
+        } finally {
+          setIsLoadingEnrollments(false);
+        }
+      }
+    }
+  };
 
 
   const getInitials = (name: string) => {
@@ -69,15 +102,10 @@ export function StudentsList() {
     const enrollmentsColRef = collection(firestore, 'users', studentToDelete.id, 'enrollments');
     
     try {
-      // Step 1: Get all enrollment documents for the user
       const enrollmentsSnapshot = await getDocs(enrollmentsColRef);
-      
-      // Step 2: Delete each enrollment document sequentially
       for (const enrollmentDoc of enrollmentsSnapshot.docs) {
         await deleteDoc(enrollmentDoc.ref);
       }
-
-      // Step 3: Delete the main user document
       await deleteDoc(userDocRef);
 
       toast({
@@ -85,16 +113,11 @@ export function StudentsList() {
         description: `The data for ${studentToDelete.name} has been removed. To allow re-registration, manually delete the user from the Firebase Authentication console.`,
       });
     } catch (e: any) {
-        // Instead of a generic console log, we create a detailed contextual error
-        // to help diagnose the exact security rule that is failing.
         const permissionError = new FirestorePermissionError({
-          path: e.path || `users/${studentToDelete.id}`, // Attempt to use error's path, fallback to user path
+          path: e.path || `users/${studentToDelete.id}`,
           operation: 'delete',
         });
-
-        // Emit the error to the global listener, which will display it in the dev overlay.
         errorEmitter.emit('permission-error', permissionError);
-
         toast({
             variant: 'destructive',
             title: 'Deletion Failed',
@@ -133,7 +156,7 @@ export function StudentsList() {
 
   return (
     <div>
-        <h2 className="text-2xl font-bold font-headline mb-4">Secure View: Students & Enrollment</h2>
+        <h2 className="text-2xl font-bold font-headline mb-4">Secure View: Students & Purchases</h2>
         
         {error && <div className="text-destructive-foreground bg-destructive p-4 rounded-md">Error loading students: {error.message}</div>}
 
@@ -170,7 +193,7 @@ export function StudentsList() {
                             </TableCell>
                             <TableCell className="text-right">
                                <div className="flex justify-end gap-2">
-                                  <Button variant="outline" size="sm" onClick={() => setSelectedStudent(student)}>
+                                  <Button variant="outline" size="sm" onClick={() => handleViewDetails(student)}>
                                       View Details
                                   </Button>
                                   <Button variant="destructive" size="sm" onClick={() => setStudentToDelete(student)}>
@@ -188,14 +211,13 @@ export function StudentsList() {
             )}
         </div>
         
-        {/* View Details Dialog */}
         {selectedStudent && (
             <Dialog open={!!selectedStudent} onOpenChange={(open) => !open && setSelectedStudent(null)}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>Student Details</DialogTitle>
                         <DialogDescription>
-                            Full information for {selectedStudent.name}.
+                            Full information and purchase history for {selectedStudent.name}.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4 text-sm">
@@ -216,27 +238,50 @@ export function StudentsList() {
                             <span className="break-all">{selectedStudent.email}</span>
                         </div>
                         <div className="grid grid-cols-[150px_1fr] items-center gap-4">
-                            <span className="text-muted-foreground">Alternate Email</span>
-                            <span>{selectedStudent.alternateEmail || 'N/A'}</span>
-                        </div>
-                         <div className="grid grid-cols-[150px_1fr] items-center gap-4">
                             <span className="text-muted-foreground">Mobile Number</span>
                             <span>{selectedStudent.mobileNumber || 'N/A'}</span>
                         </div>
-                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
-                            <span className="text-muted-foreground">Mother's Name</span>
-                            <span>{selectedStudent.motherName || 'N/A'}</span>
-                        </div>
-                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
-                            <span className="text-muted-foreground">Father's Name</span>
-                            <span>{selectedStudent.fatherName || 'N/A'}</span>
-                        </div>
+                    </div>
+                    <Separator />
+                    <div>
+                        <h4 className="mb-2 font-medium">Course Enrollments</h4>
+                        {isLoadingEnrollments ? (
+                            <div className="text-center p-4 text-sm text-muted-foreground">Loading enrollments...</div>
+                        ) : studentEnrollments.length > 0 ? (
+                            <ScrollArea className="h-64">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Course</TableHead>
+                                            <TableHead>Instructor</TableHead>
+                                            <TableHead>Price</TableHead>
+                                            <TableHead>Date</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {studentEnrollments.map((enrollment) => {
+                                            const course = COURSES.find(c => c.id === enrollment.courseId);
+                                            const instructorName = course?.instructor ? `${course.instructor.firstName} ${course.instructor.lastName}` : 'Official';
+                                            return (
+                                                <TableRow key={enrollment.id}>
+                                                    <TableCell className="font-medium">{course?.title || enrollment.courseId}</TableCell>
+                                                    <TableCell>{instructorName}</TableCell>
+                                                    <TableCell>₹{enrollment.price}</TableCell>
+                                                    <TableCell>{new Date(enrollment.purchaseDate).toLocaleDateString()}</TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </ScrollArea>
+                        ) : (
+                            <div className="text-center p-4 text-sm text-muted-foreground">No enrollments found.</div>
+                        )}
                     </div>
                 </DialogContent>
             </Dialog>
         )}
 
-        {/* Delete Confirmation Dialog */}
         <AlertDialog open={!!studentToDelete} onOpenChange={(open) => !open && setStudentToDelete(null)}>
             <AlertDialogContent>
                 <AlertDialogHeader>

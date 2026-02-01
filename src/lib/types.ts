@@ -59,6 +59,15 @@ export type TeamMember = {
   imageHint: string;
 };
 
+export type Enrollment = {
+  id: string;
+  studentId: string;
+  courseId: string;
+  enrollmentDate: string; // ISO string
+  purchaseDate: string; // ISO string
+  price: number;
+};
+
 export type Wallet = {
   id: string; // Corresponds to instructor UID
   currentBalance: number;
