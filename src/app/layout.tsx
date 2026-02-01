@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isFullScreenPage = ['/', '/student-welcome', '/welcome-video-2', '/profile-setup', '/getting-started', '/activation', '/admin', '/creation-success'].includes(pathname);
+  const isFullScreenPage = ['/', '/student-welcome', '/welcome-video-2', '/profile-setup', '/getting-started', '/activation', '/admin', '/creation-success', '/live-classroom'].includes(pathname);
 
   useEffect(() => {
     console.log("%c████████ STOP! ████████", "color: red; font-size: 40px; font-weight: bold; font-family: monospace;");
@@ -51,6 +51,7 @@ export default function RootLayout({
           </OnboardingGuard>
         </FirebaseClientProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+        <Script src="https://meet.jit.si/external_api.js" async />
       </body>
     </html>
   );

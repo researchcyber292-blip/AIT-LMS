@@ -1,27 +1,70 @@
 
 'use client';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Info } from 'lucide-react';
 
-export default function LiveClassroomRedirectPage() {
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense } from 'react';
+import JitsiMeeting from '@/components/live-class/jitsi-meeting';
+import { useUser } from '@/firebase';
+import Loading from '@/app/loading';
+import { Button } from '@/components/ui/button';
+import { Radio } from 'lucide-react';
+
+function LiveClassroom() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const { user, isUserLoading } = useUser();
+
+    const roomName = searchParams.get('room');
+    const courseTitle = searchParams.get('courseTitle');
+    const isInstructor = searchParams.get('instructor') === 'true';
+
+    // Set a default user name if the user is not logged in
+    const userName = isInstructor 
+        ? user?.displayName || 'Instructor' 
+        : user?.displayName || `Guest-${Math.random().toString(36).substring(2, 6)}`;
+
+    if (isUserLoading) {
+        return <Loading />;
+    }
+
+    if (!roomName) {
+        return (
+            <div className="container py-24 text-center">
+                <h1 className="text-2xl font-bold">Invalid Classroom</h1>
+                <p className="text-muted-foreground mt-2">No room name was provided.</p>
+                <Button onClick={() => router.back()} className="mt-4">Go Back</Button>
+            </div>
+        );
+    }
+    
     return (
-        <div className="container flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
-            <Card className="w-full max-w-lg text-center">
-                <CardHeader>
-                    <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4">
-                        <Info className="h-8 w-8" />
-                    </div>
-                    <CardTitle>Page Moved</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">The live classroom functionality has been moved. Please use the new live classes hub.</p>
-                    <Button asChild className="mt-6">
-                        <Link href="/live-classes">Go to Live Classes</Link>
-                    </Button>
-                </CardContent>
-            </Card>
+        <div className="h-screen w-screen flex flex-col bg-background">
+             <div className="flex justify-between items-center p-4 border-b">
+                <div>
+                    <h1 className="font-headline text-xl font-bold flex items-center gap-2">
+                        <Radio className="h-5 w-5 text-red-500 animate-pulse" />
+                        {courseTitle || 'Live Class'}
+                    </h1>
+                    <p className="text-xs text-muted-foreground">Room: {roomName}</p>
+                </div>
+                <Button variant="destructive" onClick={() => router.back()}>Leave Stream</Button>
+            </div>
+            <div className="flex-1 w-full bg-black">
+                <JitsiMeeting
+                    roomName={roomName}
+                    userName={userName}
+                    isInstructor={isInstructor}
+                />
+            </div>
         </div>
+    );
+}
+
+// Wrap the main component in Suspense to handle the useSearchParams hook
+export default function LiveClassroomPage() {
+    return (
+        <Suspense fallback={<Loading />}>
+            <LiveClassroom />
+        </Suspense>
     );
 }

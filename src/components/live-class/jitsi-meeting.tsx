@@ -37,7 +37,7 @@ export default function JitsiMeeting({ roomName, userName, isInstructor }: Jitsi
           },
           configOverwrite: {
             startWithAudioMuted: true,
-            startWithVideoMuted: true,
+            startWithVideoMuted: false, // Start with video on for a better experience
             disableInviteFunctions: true, // Prevents students from inviting others
             prejoinPageEnabled: false, // Go straight into the meeting
           },
@@ -60,6 +60,8 @@ export default function JitsiMeeting({ roomName, userName, isInstructor }: Jitsi
                 ],
             SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'sounds' ],
             SHOW_CHROME_EXTENSION_BANNER: false,
+            SHOW_JITSI_WATERMARK: false, // Hide Jitsi watermark
+            TILE_VIEW_MAX_COLUMNS: 8,
           },
         };
 
@@ -97,29 +99,16 @@ export default function JitsiMeeting({ roomName, userName, isInstructor }: Jitsi
             startJitsi();
         }
     } else {
-        // Load the Jitsi API script
-        const script = document.createElement('script');
-        script.src = 'https://meet.jit.si/external_api.js';
-        script.async = true;
-        document.body.appendChild(script);
-
-        script.onload = () => {
-            if (jitsiContainerRef.current) {
-                startJitsi();
-            }
-        };
-
-        script.onerror = () => {
-            console.error('Jitsi script could not be loaded.');
-            toast({
-                variant: 'destructive',
-                title: 'Loading Error',
-                description: 'Failed to load the live class script. Please check your connection.',
-            });
-        };
+        // Jitsi script not loaded, this should not happen if added to layout
+        console.error('Jitsi script not found.');
+        toast({
+            variant: 'destructive',
+            title: 'Loading Error',
+            description: 'Failed to load the live class script. Please refresh the page.',
+        });
     }
 
-    // Cleanup function to remove API and script
+    // Cleanup function to remove API
     return () => {
       jitsiApiRef.current?.dispose();
     };
