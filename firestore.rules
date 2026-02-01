@@ -67,11 +67,11 @@ service cloud.firestore {
     }
     
     /**
-     * Checks if the user is the specific admin UID.
-     * This is a simplified and more robust check for admin permissions.
+     * Checks if the user is an admin by verifying their sign-in provider.
+     * This aligns with the front-end's use of signInAnonymously for the admin panel.
      */
     function isAnonymousAdmin() {
-      return isSignedIn() && request.auth.uid == "SjUfWSzEuef6JRHeePybF7qV7TB3";
+      return isSignedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous';
     }
 
     /**
