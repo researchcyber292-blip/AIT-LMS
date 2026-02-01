@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, LayoutDashboard, Users, Settings, Bell, LogOut } from 'lucide-react';
+import { Shield, Users, Settings, Bell, LogOut, Briefcase } from 'lucide-react';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -18,6 +18,7 @@ import {
   SidebarInset 
 } from '@/components/ui/sidebar';
 import { StudentsList } from '@/components/admin/students-list';
+import { InstructorsList } from '@/components/admin/instructors-list';
 import { useAuth, useUser } from '@/firebase';
 import { signInAnonymously } from 'firebase/auth';
 import Loading from '@/app/loading';
@@ -115,9 +116,9 @@ export default function AdminPage() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton size="lg" onClick={() => setActiveView('example2')} isActive={activeView === 'example2'}>
-                    <LayoutDashboard />
-                    EXAMPLE-2
+                  <SidebarMenuButton size="lg" onClick={() => setActiveView('instructors')} isActive={activeView === 'instructors'}>
+                    <Briefcase />
+                    INSTRUCTORS MANAGEMENTS
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
@@ -146,13 +147,8 @@ export default function AdminPage() {
                 {activeView === 'students' && (
                     <StudentsList />
                 )}
-                {activeView === 'example2' && (
-                    <div className="text-center aspect-video flex items-center justify-center">
-                        <div>
-                            <h2 className="text-2xl font-bold font-headline">Secure View: EXAMPLE-2</h2>
-                            <p className="text-muted-foreground mt-2">Content for Example 2 is displayed here.</p>
-                        </div>
-                    </div>
+                {activeView === 'instructors' && (
+                    <InstructorsList />
                 )}
                 {activeView === 'example3' && (
                     <div className="text-center aspect-video flex items-center justify-center">
