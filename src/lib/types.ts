@@ -66,6 +66,8 @@ export type Enrollment = {
   enrollmentDate: string; // ISO string
   purchaseDate: string; // ISO string
   price: number;
+  razorpayPaymentId: string;
+  razorpayOrderId: string;
 };
 
 export type Wallet = {
@@ -83,4 +85,11 @@ export type PayoutRequest = {
   status: 'pending' | 'paid' | 'rejected';
   paidDate?: string; // ISO string
   rejectionReason?: string;
+}
+
+export type LiveSession = {
+    isLive: boolean;
+    roomName: string;
+    instructorId: string;
+    courseId: string;
 }

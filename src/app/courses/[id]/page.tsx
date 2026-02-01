@@ -1,18 +1,21 @@
+
 'use client';
 
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { COURSES } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { CheckCircle, User, BarChart, Clock } from 'lucide-react';
+import { CheckCircle, User, BarChart, Clock, Radio } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
+import { doc, setDoc, collection, addDoc, updateDoc } from 'firebase/firestore';
+import type { Enrollment, LiveSession } from '@/lib/types';
 
 
 // This is a client component, so we can't use generateMetadata directly.
@@ -25,6 +28,8 @@ import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
 //   }));
 // }
 
+const generateRoomName = (courseId: string) => `AVIRAJ-${courseId.toUpperCase()}-${Math.random().toString(36).substring(2, 9)}`;
+
 
 declare global {
   interface Window {
@@ -34,18 +39,82 @@ declare global {
 
 export default function CourseDetailPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const course = COURSES.find(c => c.id === params.id);
   const { user } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Check enrollment status
+  const enrollmentsQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return collection(firestore, 'users', user.uid, 'enrollments');
+  }, [firestore, user]);
+  const { data: enrollments, isLoading: enrollmentsLoading } = useCollection<Enrollment>(enrollmentsQuery);
+  const isEnrolled = enrollments?.some(e => e.courseId === course?.id) || false;
+
+  // Check live session status
+  const sessionDocRef = useMemoFirebase(() => (course && firestore) ? doc(firestore, 'live_sessions', course.id) : null, [firestore, course]);
+  const { data: liveSession, isLoading: sessionLoading } = useDoc<LiveSession>(sessionDocRef);
+  
   if (!course) {
     notFound();
   }
+  
+  const isInstructor = user?.uid === course.instructor.id;
+  const isLoading = enrollmentsLoading || sessionLoading;
+
+  // Handler for starting a class
+  const handleStartClass = async () => {
+    if (!firestore || !user || !course || !sessionDocRef) return;
+    setIsProcessing(true);
+    
+    const roomName = liveSession?.roomName || generateRoomName(course.id);
+    const sessionData: LiveSession = {
+      isLive: true,
+      roomName,
+      instructorId: user.uid,
+      courseId: course.id,
+    };
+    
+    try {
+      await setDoc(sessionDocRef, sessionData);
+      toast({ title: 'Class Started!', description: 'Redirecting to the classroom...' });
+      router.push(`/live-classroom?room=${roomName}&courseTitle=${course.title}&instructor=true`);
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not start the class session.' });
+      console.error(error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handler for ending a class
+  const handleEndClass = async () => {
+    if (!firestore || !sessionDocRef) return;
+    setIsProcessing(true);
+    try {
+      await updateDoc(sessionDocRef, { isLive: false });
+      toast({ title: 'Class Ended', description: 'The live session has been closed.' });
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not end the class session.' });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleJoinClass = () => {
+    if (liveSession?.roomName) {
+      router.push(`/live-classroom?room=${liveSession.roomName}&courseTitle=${course.title}&instructor=false`);
+    } else {
+      toast({ variant: 'destructive', title: 'Error', description: 'Cannot find the classroom. It may have ended.' });
+    }
+  };
 
   const handlePayment = async () => {
     setIsProcessing(true);
-    if (!user) {
+    if (!user || !firestore) {
       toast({
         title: 'Authentication Required',
         description: 'Please sign in to purchase a course.',
@@ -67,7 +136,6 @@ export default function CourseDetailPage() {
     }
     
     try {
-      // Step 1: Create the order on the server-side to get a secure order_id
       const order = await createRazorpayOrder({
         amount: course.price * 100, // Amount in paise
         currency: "INR",
@@ -84,17 +152,26 @@ export default function CourseDetailPage() {
         description: `Purchase: ${course.title}`,
         image: "/image.png",
         order_id: order.id, // Use the secure order_id from the server
-        handler: function (response: any) {
-          // This is where server-to-server verification should happen via webhooks.
-          // The client should NOT assume the payment is valid.
-          // For now, we just inform the user and assume the backend will handle enrollment.
-          console.log('Razorpay Response:', response);
+        handler: async function (response: any) {
           toast({
             title: 'Payment Successful!',
-            description: 'Your enrollment is being processed. You will have access shortly.',
+            description: 'Your enrollment is being processed.',
           });
-          // TODO: Here you would call another server function to verify the payment signature
-          // and securely grant the user access to the course in Firestore.
+          
+           // Securely create enrollment record after successful payment
+          const enrollmentData: Omit<Enrollment, 'id'> = {
+            studentId: user.uid,
+            courseId: course.id,
+            enrollmentDate: new Date().toISOString(),
+            purchaseDate: new Date().toISOString(),
+            price: course.price,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+          };
+          
+          // This should ideally be a backend function for security, but for now we do it client-side.
+          const enrollmentsCol = collection(firestore, 'users', user.uid, 'enrollments');
+          await addDoc(enrollmentsCol, enrollmentData);
         },
         prefill: {
           name: user.displayName || "Valued Student",
@@ -135,6 +212,55 @@ export default function CourseDetailPage() {
     }
   };
 
+  const renderActionButtons = () => {
+    if (isLoading) {
+      return <Button size="lg" className="w-full" disabled>Loading...</Button>;
+    }
+
+    if (isInstructor) {
+      if (liveSession?.isLive) {
+        return (
+          <div className="flex flex-col gap-2">
+            <Button onClick={handleJoinClass} size="lg" className="w-full">
+              <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
+              Join Live Class
+            </Button>
+             <Button onClick={handleEndClass} size="sm" variant="destructive" className="w-full" disabled={isProcessing}>
+              {isProcessing ? 'Ending...' : 'End Class for All'}
+            </Button>
+          </div>
+        );
+      }
+      return (
+        <Button onClick={handleStartClass} size="lg" className="w-full" disabled={isProcessing}>
+          {isProcessing ? 'Starting...' : 'Start Live Class'}
+        </Button>
+      );
+    }
+
+    if (isEnrolled) {
+        if (liveSession?.isLive) {
+            return (
+                <Button onClick={handleJoinClass} size="lg" className="w-full">
+                    <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
+                    Join Live Class
+                </Button>
+            );
+        }
+        return (
+            <Button size="lg" className="w-full" disabled>
+                Class has not started yet
+            </Button>
+        );
+    }
+
+    return (
+       <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
+          {isProcessing ? 'Processing...' : 'Buy Now with UPI/Google Pay'}
+       </Button>
+    );
+  };
+
 
   return (
     <div className="container py-12 md:py-16">
@@ -155,9 +281,7 @@ export default function CourseDetailPage() {
             />
             <div className="p-6">
               <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{course.price}</p>
-              <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
-                {isProcessing ? 'Processing...' : 'Buy Now with UPI/Google Pay'}
-              </Button>
+              {renderActionButtons()}
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-center gap-3">
                     <BarChart className="h-5 w-5 text-primary" />

@@ -228,6 +228,12 @@
         "price": {
           "type": "number",
           "description": "Price paid for enrollment."
+        },
+        "razorpayPaymentId": {
+            "type": "string"
+        },
+        "razorpayOrderId": {
+            "type": "string"
         }
       },
       "required": [
@@ -308,6 +314,36 @@
         "amount",
         "requestDate",
         "status"
+      ]
+    },
+    "LiveSession": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LiveSession",
+      "type": "object",
+      "description": "Represents an active live class session for a course.",
+      "properties": {
+        "isLive": {
+          "type": "boolean",
+          "description": "Whether the class is currently live."
+        },
+        "roomName": {
+          "type": "string",
+          "description": "The unique name for the Jitsi meeting room."
+        },
+        "instructorId": {
+          "type": "string",
+          "description": "The UID of the instructor hosting the session."
+        },
+        "courseId": {
+          "type": "string",
+          "description": "The ID of the course this session is for."
+        }
+      },
+      "required": [
+        "isLive",
+        "roomName",
+        "instructorId",
+        "courseId"
       ]
     }
   },
@@ -415,6 +451,22 @@
             {
               "name": "requestId",
               "description": "Unique ID for the payout request."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/live_sessions/{courseId}",
+        "definition": {
+          "entityName": "LiveSession",
+          "schema": {
+            "$ref": "#/backend/entities/LiveSession"
+          },
+          "description": "Stores the status of live class sessions. Writable only by the course's designated instructor.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "Unique identifier for the course."
             }
           ]
         }
