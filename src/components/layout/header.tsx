@@ -83,7 +83,7 @@ export function Header() {
         <div className="flex-1 flex justify-end items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
               <Button asChild size="sm" variant="outline" className={cn("rounded-full border-primary/50 text-primary hover:bg-primary/10 hover:text-primary font-bold", isHomePage && !isScrolled && "border-white/50 text-white hover:bg-white/10 hover:text-white")}>
-                <Link href="/dashboard">
+                <Link href={user ? "/dashboard" : "/login"}>
                   <ShieldCheck className="mr-2 h-4 w-4" />
                   CONSOLE
                 </Link>
