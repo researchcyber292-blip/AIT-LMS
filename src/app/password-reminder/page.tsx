@@ -13,7 +13,6 @@ export default function PasswordReminderPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [password, setPassword] = useState('');
-  const [countdown, setCountdown] = useState(12);
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
@@ -24,22 +23,6 @@ export default function PasswordReminderPage() {
       return;
     }
     setPassword(storedPassword);
-
-    const countdownInterval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(countdownInterval);
-          router.push('/avatar-selection');
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(countdownInterval);
-      localStorage.removeItem('onboardingPassword'); // Clean up password from storage
-    };
   }, [router]);
 
   const handleCopy = () => {
@@ -50,6 +33,7 @@ export default function PasswordReminderPage() {
   };
   
   const handleConfirm = () => {
+      localStorage.removeItem('onboardingPassword'); // Clean up password from storage
       router.push('/avatar-selection');
   }
 
@@ -79,9 +63,9 @@ export default function PasswordReminderPage() {
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button onClick={handleConfirm} className="w-full">
-            Confirm & Continue ({countdown}s)
+            Confirm & Continue
           </Button>
-          <p className="text-xs text-muted-foreground">You will be automatically redirected to choose your avatar.</p>
+          <p className="text-xs text-muted-foreground">Click continue to choose your avatar.</p>
         </CardFooter>
       </Card>
     </div>
