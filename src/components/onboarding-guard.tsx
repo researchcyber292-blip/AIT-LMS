@@ -4,7 +4,7 @@
 import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { usePathname, useRouter } from 'next/navigation';
-import type { UserProfile } from '@/lib/types';
+import type { UserProfile, Instructor } from '@/lib/types';
 import Loading from '@/app/loading';
 import { useEffect } from 'react';
 
@@ -20,7 +20,6 @@ const PRE_AUTH_ONBOARDING_PAGES = [
 const POST_AUTH_ONBOARDING_PAGES = [
   '/avatar-selection',
   '/creation-success',
-  '/verify-email',
   '/password-reminder'
 ];
 
@@ -33,10 +32,14 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Check for both student and instructor profiles.
   const userDocRef = useMemoFirebase(() => user ? doc(firestore, 'users', user.uid) : null, [firestore, user]);
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
+  
+  const instructorDocRef = useMemoFirebase(() => user ? doc(firestore, 'instructors', user.uid) : null, [firestore, user]);
+  const { data: instructorProfile, isLoading: isInstructorProfileLoading } = useDoc<Instructor>(instructorDocRef);
 
-  const isLoading = isUserLoading || (user && isProfileLoading);
+  const isLoading = isUserLoading || (user && (isProfileLoading || isInstructorProfileLoading));
 
   useEffect(() => {
     if (isLoading) {
@@ -48,6 +51,7 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
       const isAllowedGuestPage = 
         PUBLIC_PAGES.includes(pathname) || 
         pathname.startsWith('/courses/') || 
+        pathname.startsWith('/instructors/') || 
         PRE_AUTH_ONBOARDING_PAGES.includes(pathname);
 
       // If trying to access a protected page, redirect to login.
@@ -59,12 +63,17 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
     // --- User IS Logged In ---
 
-    // The anonymous admin should not go through onboarding.
-    if (user.isAnonymous) {
+    // If it's an admin or an instructor, the student onboarding guard should not apply.
+    if (user.isAnonymous || instructorProfile) {
+        // But if an instructor tries to access a student-only onboarding page, redirect them.
+        const isStudentOnboardingPage = PRE_AUTH_ONBOARDING_PAGES.includes(pathname) || POST_AUTH_ONBOARDING_PAGES.includes(pathname);
+        if (instructorProfile && isStudentOnboardingPage) {
+            router.replace('/dashboard'); // or instructor dashboard
+        }
       return;
     }
 
-    // Handle onboarding status.
+    // Handle student onboarding status.
     const status = userProfile?.onboardingStatus || 'new';
 
     if (status === 'active') {
@@ -76,21 +85,24 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
     } else {
       // Onboarding is IN-PROGRESS.
       const requiredStepMap: { [key: string]: string } = {
-        'new': '/student-welcome', // Should not be hit if profile exists, but as a fallback.
+        'new': '/student-welcome',
         'profile_complete': '/getting-started',
         'username_complete': '/avatar-selection',
       };
       const requiredStep = requiredStepMap[status] || '/student-welcome';
       
-      const isPublicPage = PUBLIC_PAGES.includes(pathname) || pathname.startsWith('/courses/');
+      const isAllowedInProgressPage = 
+        PUBLIC_PAGES.includes(pathname) || 
+        pathname.startsWith('/courses/') || 
+        pathname.startsWith('/instructors/') || 
+        POST_AUTH_ONBOARDING_PAGES.includes(pathname);
 
-      // If the user is not on their required step, redirect them.
-      // We allow them to browse public pages freely.
-      if (pathname !== requiredStep && !isPublicPage) {
+      // If the user is not on their required step OR a page they are allowed to see while onboarding, redirect them.
+      if (pathname !== requiredStep && !isAllowedInProgressPage) {
          router.replace(requiredStep);
       }
     }
-  }, [isLoading, user, userProfile, pathname, router]);
+  }, [isLoading, user, userProfile, instructorProfile, pathname, router]);
 
   if (isLoading) {
     return <Loading />;

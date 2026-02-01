@@ -11,6 +11,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from '@/components/ui/dialog';
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -27,9 +34,11 @@ import type { Instructor } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, Ban, Trash2 } from 'lucide-react';
+import { Check, X, Ban, Trash2, Eye } from 'lucide-react';
+import { Separator } from '../ui/separator';
 
 export function InstructorsList() {
+  const [selectedInstructor, setSelectedInstructor] = useState<Instructor | null>(null);
   const [instructorToBan, setInstructorToBan] = useState<Instructor | null>(null);
   const [instructorToDelete, setInstructorToDelete] = useState<Instructor | null>(null);
   const firestore = useFirestore();
@@ -120,7 +129,7 @@ export function InstructorsList() {
                 <Skeleton className="h-6 w-20 rounded-full" />
             </TableCell>
             <TableCell className="text-right">
-                <Skeleton className="h-8 w-36" />
+                <Skeleton className="h-8 w-48" />
             </TableCell>
         </TableRow>
       ))}
@@ -169,6 +178,10 @@ export function InstructorsList() {
                             </TableCell>
                             <TableCell className="text-right">
                                <div className="flex justify-end gap-2">
+                                  <Button variant="outline" size="icon" onClick={() => setSelectedInstructor(instructor)}>
+                                    <Eye className="h-4 w-4" />
+                                    <span className="sr-only">View Details</span>
+                                  </Button>
                                   {instructor.accountStatus === 'pending' && (
                                       <>
                                           <Button variant="outline" size="sm" onClick={() => handleUpdateStatus(instructor.id, 'active')}>
@@ -204,6 +217,59 @@ export function InstructorsList() {
                 <div className="text-center p-8 text-muted-foreground">No instructor data found.</div>
             )}
         </div>
+
+        {selectedInstructor && (
+            <Dialog open={!!selectedInstructor} onOpenChange={(open) => !open && setSelectedInstructor(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Instructor Details</DialogTitle>
+                        <DialogDescription>
+                            Full information for {selectedInstructor.firstName} {selectedInstructor.lastName}.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4 text-sm">
+                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">First Name</span>
+                            <span>{selectedInstructor.firstName}</span>
+                        </div>
+                         <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Last Name</span>
+                            <span>{selectedInstructor.lastName}</span>
+                        </div>
+                        <Separator />
+                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Mother's Name</span>
+                            <span>{selectedInstructor.motherName}</span>
+                        </div>
+                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Father's Name</span>
+                            <span>{selectedInstructor.fatherName}</span>
+                        </div>
+                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Age</span>
+                            <span>{selectedInstructor.age}</span>
+                        </div>
+                        <Separator />
+                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Email</span>
+                            <span className="break-all">{selectedInstructor.email}</span>
+                        </div>
+                         <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Alternate Email</span>
+                            <span className="break-all">{selectedInstructor.alternateEmail || 'N/A'}</span>
+                        </div>
+                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Mobile Number</span>
+                            <span>{selectedInstructor.mobileNumber || 'N/A'}</span>
+                        </div>
+                        <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                            <span className="text-muted-foreground">Alternate Mobile</span>
+                            <span>{selectedInstructor.alternateMobileNumber || 'N/A'}</span>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+        )}
 
         <AlertDialog open={!!instructorToBan} onOpenChange={(open) => !open && setInstructorToBan(null)}>
             <AlertDialogContent>

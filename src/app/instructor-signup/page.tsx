@@ -44,7 +44,7 @@ export default function InstructorSignUpPage() {
       lastName: '',
       motherName: '',
       fatherName: '',
-      age: '',
+      age: undefined,
       email: '',
       alternateEmail: '',
       mobileNumber: '',
@@ -82,10 +82,13 @@ export default function InstructorSignUpPage() {
 
       await setDoc(doc(firestore, 'instructors', user.uid), instructorProfile);
       await setDoc(doc(firestore, 'wallets', user.uid), walletData);
+      
+      // Sign out the user immediately after registration
+      await auth.signOut();
 
       toast({
         title: 'Application Submitted',
-        description: 'Your application is under review by our team.',
+        description: 'Your application is under review. You will be notified via email upon approval.',
       });
 
       router.push('/instructor-pending-verification');
