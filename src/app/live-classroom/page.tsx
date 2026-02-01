@@ -19,11 +19,13 @@ function ClassroomContent() {
     const courseTitle = searchParams.get('courseTitle');
     const isInstructorParam = searchParams.get('instructor') === 'true';
 
+    // Still show loading until we know if a user is logged in or not
     if (isUserLoading) {
         return <Loading />;
     }
 
-    if (!roomName || !user) {
+    // The only hard requirement is a room name.
+    if (!roomName) {
         return (
             <div className="container flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
                 <Card className="w-full max-w-lg text-center">
@@ -42,12 +44,16 @@ function ClassroomContent() {
         );
     }
     
+    // A guest can never be an instructor. Only a logged-in user can be.
+    const isInstructor = !!user && isInstructorParam;
+    const userName = user?.displayName || 'Guest';
+
     return (
         <div className="relative pt-14">
              <JitsiMeeting
                 roomName={roomName}
-                userName={user.displayName || 'Student'}
-                isInstructor={isInstructorParam}
+                userName={userName}
+                isInstructor={isInstructor}
             />
         </div>
     );

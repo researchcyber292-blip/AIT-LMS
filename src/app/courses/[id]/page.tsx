@@ -217,6 +217,7 @@ export default function CourseDetailPage() {
       return <Button size="lg" className="w-full" disabled>Loading...</Button>;
     }
 
+    // Instructor has top priority
     if (isInstructor) {
       if (liveSession?.isLive) {
         return (
@@ -237,23 +238,28 @@ export default function CourseDetailPage() {
         </Button>
       );
     }
-
+    
+    // --- TEMPORARY CHANGE FOR TESTING ---
+    // Anyone can join if a class is live.
+    if (liveSession?.isLive) {
+        return (
+            <Button onClick={handleJoinClass} size="lg" className="w-full">
+                <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
+                Join Live Class {user ? '' : '(Guest)'}
+            </Button>
+        );
+    }
+    
+    // If user is enrolled but class isn't live
     if (isEnrolled) {
-        if (liveSession?.isLive) {
-            return (
-                <Button onClick={handleJoinClass} size="lg" className="w-full">
-                    <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
-                    Join Live Class
-                </Button>
-            );
-        }
         return (
             <Button size="lg" className="w-full" disabled>
                 Class has not started yet
             </Button>
         );
     }
-
+    
+    // Default for anyone not enrolled when class is not live
     return (
        <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
           {isProcessing ? 'Processing...' : 'Buy Now with UPI/Google Pay'}
