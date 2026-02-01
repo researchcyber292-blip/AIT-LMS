@@ -130,5 +130,5 @@ export default function JitsiMeeting({ roomName, userName, isInstructor }: Jitsi
       return <Loading />;
   }
 
-  return <div ref={jitsiContainerRef} style={{ height: 'calc(100vh - 3.5rem)', width: '100%' }} />;
+  return <div ref={jitsiContainerRef} style={{ height: '100%', width: '100%' }} />;
 }
