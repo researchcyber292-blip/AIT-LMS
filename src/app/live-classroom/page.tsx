@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -7,8 +6,7 @@ import JitsiMeeting from '@/components/live-class/jitsi-meeting';
 import { useUser } from '@/firebase';
 import Loading from '@/app/loading';
 import { Button } from '@/components/ui/button';
-import { Radio, Info } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Radio } from 'lucide-react';
 
 function LiveClassroom() {
     const searchParams = useSearchParams();
@@ -49,16 +47,6 @@ function LiveClassroom() {
                 <Button variant="destructive" onClick={() => router.back()}>Leave Stream</Button>
             </div>
             
-            {isInstructor && (
-              <Alert variant="default" className="m-4 border-amber-500/50 bg-amber-500/10 text-amber-200 [&>svg]:text-amber-400">
-                <Info className="h-4 w-4" />
-                <AlertTitle className="font-bold">Instructor Moderator Guide</AlertTitle>
-                <AlertDescription className="text-amber-300/90">
-                  To get moderator controls (mute users, screen share), click the **"I am the host"** button that appears in the meeting window. If a login popup is blocked, open <a href="https://meet.jit.si" target="_blank" rel="noopener noreferrer" className="underline font-semibold">meet.jit.si</a> in a new tab, log in with Google, then return here and refresh the page.
-                </AlertDescription>
-              </Alert>
-            )}
-
             <div className="flex-1 w-full bg-black">
                 <JitsiMeeting
                     roomName={roomName}
