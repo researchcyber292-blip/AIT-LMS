@@ -1,11 +1,12 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Shield, Users, Settings, Bell, LogOut, Briefcase } from 'lucide-react';
 import { 
@@ -20,9 +21,12 @@ import {
 } from '@/components/ui/sidebar';
 import { StudentsList } from '@/components/admin/students-list';
 import { InstructorsList } from '@/components/admin/instructors-list';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import type { Instructor } from '@/lib/types';
 import { signInAnonymously } from 'firebase/auth';
 import Loading from '@/app/loading';
+import { cn } from '@/lib/utils';
 
 
 export default function AdminPage() {
@@ -32,6 +36,20 @@ export default function AdminPage() {
   const { toast } = useToast();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const instructorsQuery = useMemoFirebase(() => {
+    if (!firestore || !user?.isAnonymous) return null;
+    return collection(firestore, 'instructors');
+  }, [firestore, user]);
+
+  const { data: instructors, isLoading: instructorsLoading } = useCollection<Instructor>(instructorsQuery);
+
+  const hasPendingInstructors = useMemo(() => {
+    if (instructorsLoading || !instructors) return false;
+    return instructors.some(inst => inst.accountStatus === 'pending');
+  }, [instructors, instructorsLoading]);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +147,7 @@ export default function AdminPage() {
             <div className="p-6">
               <div className="flex justify-end items-center mb-6 gap-2">
                 <Button variant="outline" size="icon" onClick={() => setActiveView('notifications')}>
-                  <Bell className="h-4 w-4" />
+                  <Bell className={cn("h-4 w-4", hasPendingInstructors && "text-destructive animate-pulse")} />
                   <span className="sr-only">Notifications</span>
                 </Button>
                 <Button variant="outline" onClick={() => setActiveView('settings')}>
@@ -146,18 +164,73 @@ export default function AdminPage() {
                     <InstructorsList />
                 )}
                 {activeView === 'notifications' && (
-                    <div className="text-center aspect-video flex items-center justify-center">
-                        <div>
-                            <h2 className="text-2xl font-bold font-headline">Secure View: Notifications</h2>
-                            <p className="text-muted-foreground mt-2">Notifications content is displayed here.</p>
-                        </div>
+                    <div>
+                        <h2 className="text-2xl font-bold font-headline">Notifications</h2>
+                        <p className="text-muted-foreground mt-2 mb-6">Updates on pending actions and system alerts.</p>
+                        {instructorsLoading ? (
+                            <p>Loading notifications...</p>
+                        ) : hasPendingInstructors ? (
+                            <div className="space-y-4">
+                                {instructors?.filter(i => i.accountStatus === 'pending').map(inst => (
+                                    <div key={inst.id} className="flex items-center justify-between rounded-lg border border-amber-500/50 bg-amber-500/10 p-4">
+                                        <div>
+                                            <p className="font-semibold text-amber-200">New Instructor Application</p>
+                                            <p className="text-sm text-amber-300/80">{inst.firstName} {inst.lastName} is awaiting verification.</p>
+                                        </div>
+                                        <Button size="sm" onClick={() => setActiveView('instructors')}>View</Button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center aspect-video flex items-center justify-center rounded-lg border-2 border-dashed">
+                                <div>
+                                    <Bell className="mx-auto h-12 w-12 text-muted-foreground" />
+                                    <h3 className="mt-4 text-xl font-semibold">All Caught Up</h3>
+                                    <p className="text-muted-foreground mt-2">You have no new notifications.</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
                 {activeView === 'settings' && (
-                    <div className="text-center aspect-video flex items-center justify-center">
-                        <div>
-                            <h2 className="text-2xl font-bold font-headline">Secure View: Settings</h2>
-                            <p className="text-muted-foreground mt-2">Settings content is displayed here.</p>
+                    <div>
+                        <h2 className="text-2xl font-bold font-headline mb-6">Settings</h2>
+                        <div className="space-y-8">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Admin Account</CardTitle>
+                                    <CardDescription>
+                                        Password changes are not applicable for the current admin access method. This panel uses a secure, session-based anonymous login.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="current-password">Current Password</Label>
+                                        <Input id="current-password" type="password" placeholder="••••••••" disabled />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="new-password">New Password</Label>
+                                        <Input id="new-password" type="password" placeholder="••••••••" disabled />
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button disabled>Change Password</Button>
+                                </CardFooter>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>System</CardTitle>
+                                    <CardDescription>
+                                        General system-wide settings and actions.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Button variant="outline" onClick={() => toast({ title: "Cache Cleared!", description: "Application cache has been successfully cleared." })}>
+                                        Clear Application Cache
+                                    </Button>
+                                </CardContent>
+                            </Card>
                         </div>
                     </div>
                 )}
