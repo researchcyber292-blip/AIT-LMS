@@ -66,9 +66,9 @@ export default function DashboardPage() {
             </h2>
             <p className="mt-4 text-muted-foreground">Start the live session for students. This will open the classroom in a new view.</p>
             <Button asChild size="lg" className="mt-8 px-10 py-7 text-lg">
-                <Link href="/live-classroom?room=avirajinfotech-cybersecurity-classlive&courseTitle=Live%20Session&instructor=true">
+                <a href="https://moderated.jitsi.net/" target="_blank" rel="noopener noreferrer">
                     Start Live Stream
-                </Link>
+                </a>
             </Button>
         </div>
       </div>
