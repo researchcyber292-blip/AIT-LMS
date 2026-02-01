@@ -239,32 +239,18 @@ export default function CourseDetailPage() {
       );
     }
     
-    // Handle Student and Guest views
+    // Public view for non-instructors
     if (liveSession?.isLive) {
-      if (!user) {
-        return (
-            <Button asChild size="lg" className="w-full">
-                <Link href="/login">Login to Join Stream</Link>
-            </Button>
-        );
-      }
-      if (isEnrolled) {
-        return (
-            <Button onClick={handleJoinClass} size="lg" className="w-full">
-                <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
-                Join Live Stream
-            </Button>
-        );
-      }
-      // User is logged in, but not enrolled
+      // If class is live, ANYONE can join.
       return (
-           <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
-              {isProcessing ? 'Processing...' : 'Buy Now to Join Stream'}
-           </Button>
+          <Button onClick={handleJoinClass} size="lg" className="w-full">
+              <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
+              Join Live Stream
+          </Button>
       );
     }
     
-    // Class is NOT live
+    // Class is NOT live. Show enrollment status for logged-in users, or buy button for guests.
     if (isEnrolled) {
         return (
             <Button size="lg" className="w-full" disabled>
