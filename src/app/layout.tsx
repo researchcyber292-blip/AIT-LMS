@@ -22,8 +22,9 @@ export default function RootLayout({
   const isFullScreenPage = ['/', '/student-welcome', '/welcome-video-2', '/profile-setup', '/getting-started', '/activation', '/admin', '/creation-success'].includes(pathname);
 
   useEffect(() => {
-    console.log("%cSTOP! This Vault is protected by PRINCE.", "color: red; font-size: 30px; font-weight: bold;");
-    console.log("%cTrying to intercept? Our AI has already logged your IP and browser fingerprint. 😂", "color: yellow; font-size: 15px;");
+    console.log("%c████████ STOP! ████████", "color: red; font-size: 40px; font-weight: bold; font-family: monospace;");
+    console.log("%cThis is a secure system. All activity is monitored.", "color: yellow; font-size: 16px; font-family: monospace;");
+    console.log("%cUnauthorized access attempts, including use of developer tools for inspection or network interception, are strictly prohibited and will be logged.", "color: orange; font-size: 12px;");
   }, []);
 
   return (
