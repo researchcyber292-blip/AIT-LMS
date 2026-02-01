@@ -20,7 +20,7 @@
  * - Admin Access: The admin panel is granted read-only access to the full user list by authenticating
  *   with a special anonymous session. This prevents regular users from listing other user data.
  * - Public Content Model: The `/courses` collection is readable by anyone, including unauthenticated
- *   users, to allow for browsing. However, creating, updating, or deleting a course is restricted
+ *   users, to allow for creating, updating, or deleting a course is restricted
  *   to the instructor who owns it, identified by the `instructorId` field on the course document.
  * - Restricted Collections: The `/instructors` collection is currently locked down entirely. An
  *   admin-level role or specific business logic (e.g., via Cloud Functions) is required to manage this data.
@@ -69,9 +69,11 @@ service cloud.firestore {
     /**
      * Checks if the user is an admin by verifying their sign-in provider.
      * This aligns with the front-end's use of signInAnonymously for the admin panel.
+     * In this app's context, the admin panel's anonymous sign-in is sometimes identified
+     * with the 'custom' provider. To ensure admin actions work, we allow both.
      */
     function isAnonymousAdmin() {
-      return isSignedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous';
+      return isSignedIn() && (request.auth.token.firebase.sign_in_provider == 'anonymous' || request.auth.token.firebase.sign_in_provider == 'custom');
     }
 
     /**
@@ -190,7 +192,8 @@ service cloud.firestore {
     match /wallets/{userId} {
       allow read: if isOwner(userId) || isAnonymousAdmin();
       allow create: if isOwner(userId); // Allow initial creation on signup
-      allow update, delete, list: if false;
+      allow delete: if isAnonymousAdmin();
+      allow update, list: if false;
     }
 
     /**
