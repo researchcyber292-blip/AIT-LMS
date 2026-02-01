@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { Mic, Radio, Video } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Mic, Radio, Video, Info } from 'lucide-react';
 import Loading from '@/app/loading';
 import type { Instructor } from '@/lib/types';
 import Link from 'next/link';
@@ -16,7 +17,6 @@ export default function LiveClassesPage() {
   const [isJoining, setIsJoining] = useState(false);
   
   const roomName = 'avirajinfotech-cybersecurity-classlive';
-  const moderatorUrl = `https://meet.jit.si/${roomName}`;
 
   const instructorDocRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -26,6 +26,10 @@ export default function LiveClassesPage() {
 
   const isLoading = isUserLoading || isInstructorProfileLoading;
 
+  const handleStartSession = () => {
+    setIsJoining(true);
+  };
+  
   const handleJoinSession = () => {
     setIsJoining(true);
   };
@@ -33,6 +37,8 @@ export default function LiveClassesPage() {
   const handleEndSession = () => {
       setIsJoining(false);
   }
+
+  const isInstructor = user && instructor;
 
   if (isJoining) {
     return (
@@ -47,6 +53,17 @@ export default function LiveClassesPage() {
                 </div>
                 <Button variant="destructive" onClick={handleEndSession}>Leave Session</Button>
             </div>
+            
+            {isInstructor && (
+              <Alert variant="default" className="m-4 border-amber-500/50 bg-amber-500/10 text-amber-200 [&>svg]:text-amber-400">
+                <Info className="h-4 w-4" />
+                <AlertTitle className="font-bold">Instructor Moderator Guide</AlertTitle>
+                <AlertDescription className="text-amber-300/90">
+                  To get moderator controls (mute users, screen share), click the **"I am the host"** button that appears in the meeting window. If a login popup is blocked, open <a href="https://meet.jit.si" target="_blank" rel="noopener noreferrer" className="underline font-semibold">meet.jit.si</a> in a new tab, log in with Google, then return here and refresh the page.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="flex-1 w-full bg-black">
                 <JitsiMeeting
                     roomName={roomName}
@@ -61,8 +78,6 @@ export default function LiveClassesPage() {
   if (isLoading) {
     return <Loading />;
   }
-  
-  const isInstructor = user && instructor;
 
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-3.5rem)] py-12 md:py-16 text-center">
@@ -72,7 +87,7 @@ export default function LiveClassesPage() {
         </div>
         <h1 className="font-headline text-4xl font-bold">Live Classroom</h1>
         <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-          Start or join the live cybersecurity session. Instructors can start a new class, and students can join.
+          Start or join the live cybersecurity session.
         </p>
         
         <div className="mt-12 space-y-8">
@@ -82,15 +97,10 @@ export default function LiveClassesPage() {
                         <Mic className="h-6 w-6" />
                         Instructor Control Panel
                     </h2>
-                    <p className="mt-2 text-muted-foreground">Start a new secure, moderated live session.</p>
-                    <Button asChild size="lg" className="mt-6 px-10 py-6 text-lg">
-                        <a href={moderatorUrl} target="_blank" rel="noopener noreferrer">
-                            Start a Live Stream
-                        </a>
+                    <p className="mt-2 text-muted-foreground">Start the live session for students.</p>
+                    <Button onClick={handleStartSession} size="lg" className="mt-6 px-10 py-6 text-lg">
+                        Start Live Stream
                     </Button>
-                     <p className="text-xs text-muted-foreground mt-4">
-                        This opens in a new tab. Click "I am the host" and log in to gain moderator control.
-                    </p>
                 </div>
             )}
 
