@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -6,7 +5,7 @@ import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Mic, Radio, Video, ShieldAlert } from 'lucide-react';
+import { Mic, Radio, Video } from 'lucide-react';
 import Loading from '@/app/loading';
 import type { Instructor } from '@/lib/types';
 import Link from 'next/link';
@@ -15,7 +14,7 @@ import JitsiMeeting from '@/components/live-class/jitsi-meeting';
 export default function LiveClassesPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-  const [session, setSession] = useState<{roomName: string, isInstructor: boolean} | null>(null);
+  const [session, setSession] = useState<{roomName: string, isInstructor: boolean, password?: string} | null>(null);
   const [roomNameInput, setRoomNameInput] = useState('');
 
 
@@ -28,9 +27,11 @@ export default function LiveClassesPage() {
   const isLoading = isUserLoading || isInstructorProfileLoading;
 
   const handleStartSession = () => {
-    // Generate a unique room name for the instructor's session
-    const uniqueRoomName = `aviraj-infotech-${user?.uid.substring(0, 5)}-${Math.random().toString(36).substring(2, 8)}`;
-    setSession({ roomName: uniqueRoomName, isInstructor: true });
+    // Generate a unique room name to avoid collisions and ensure moderation
+    const uniqueRoomName = `aviraj-infotech-${user?.uid.substring(0, 5)}-${Date.now()}`;
+    // Generate a simple password to claim moderator status automatically
+    const sessionPassword = Math.random().toString(36).substring(2, 10);
+    setSession({ roomName: uniqueRoomName, isInstructor: true, password: sessionPassword });
   };
   
   const handleJoinSession = (e: React.FormEvent) => {
@@ -55,14 +56,6 @@ export default function LiveClassesPage() {
                     </h1>
                     <p className="text-xs text-muted-foreground">Room: {session.roomName}</p>
                 </div>
-                {session.isInstructor && (
-                    <div className="hidden md:flex items-center gap-2 text-sm text-amber-400 bg-amber-900/50 border border-amber-500/50 rounded-md px-3 py-1.5">
-                        <ShieldAlert className="h-5 w-5" />
-                        <p>
-                            <span className="font-bold">You are the moderator.</span> Use the shield icon in the meeting to secure your room.
-                        </p>
-                    </div>
-                )}
                 <Button variant="destructive" onClick={handleEndSession}>End Session</Button>
             </div>
             <div className="flex-1 w-full bg-black">
@@ -70,6 +63,8 @@ export default function LiveClassesPage() {
                     roomName={session.roomName}
                     userName={user?.displayName || `Guest-${Math.random().toString(36).substring(2, 6)}`}
                     onMeetingEnd={handleEndSession}
+                    isInstructor={session.isInstructor}
+                    password={session.password}
                 />
             </div>
         </div>
@@ -125,7 +120,7 @@ export default function LiveClassesPage() {
                  </form>
             </div>
             
-            {!user && (
+            {!isLoading && !isInstructor && (
                  <p className="text-sm text-muted-foreground">
                     Want to host your own sessions? <Link href="/instructor-signup" className="underline text-primary">Become an instructor</Link>.
                  </p>

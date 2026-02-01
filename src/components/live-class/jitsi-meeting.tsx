@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useRef } from 'react';
@@ -15,9 +14,11 @@ interface JitsiMeetingProps {
   roomName: string;
   userName: string;
   onMeetingEnd: () => void;
+  isInstructor?: boolean;
+  password?: string;
 }
 
-export default function JitsiMeeting({ roomName, userName, onMeetingEnd }: JitsiMeetingProps) {
+export default function JitsiMeeting({ roomName, userName, onMeetingEnd, isInstructor, password }: JitsiMeetingProps) {
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
   const { toast } = useToast();
@@ -55,11 +56,26 @@ export default function JitsiMeeting({ roomName, userName, onMeetingEnd }: Jitsi
         });
 
         api.addEventListener('videoConferenceJoined', () => {
-            if (api.isModerator()) {
-                toast({
+            // For instructors, automatically set the password to claim moderator status.
+            if (isInstructor && password) {
+                api.executeCommand('password', password);
+            }
+        });
+        
+        // This listener is a fallback in case the room already required a password.
+        api.addEventListener('passwordRequired', () => {
+             if (isInstructor && password) {
+                api.executeCommand('password', password);
+            }
+        });
+
+        // This listener gives us explicit confirmation of moderator status.
+        api.addEventListener('moderationStatusChanged', (event: { status: 'granted' | 'revoked' }) => {
+            if (event.status === 'granted' && isInstructor) {
+                 toast({
                     title: "You are the session moderator",
-                    description: "Click the shield icon to enable the lobby and secure your class.",
-                    duration: 10000,
+                    description: "You have full control. Use the shield icon to enable the lobby, mute others, and manage the class.",
+                    duration: 15000,
                 });
             }
         });
@@ -91,7 +107,7 @@ export default function JitsiMeeting({ roomName, userName, onMeetingEnd }: Jitsi
       jitsiApiRef.current?.dispose();
     };
 
-  }, [roomName, userName, toast, onMeetingEnd]);
+  }, [roomName, userName, toast, onMeetingEnd, isInstructor, password]);
   
   if (!jitsiContainerRef) {
       return <Loading />;
