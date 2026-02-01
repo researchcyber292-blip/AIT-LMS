@@ -24,7 +24,7 @@ import { InstructorsList } from '@/components/admin/instructors-list';
 import { useAuth, useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import type { Instructor } from '@/lib/types';
-import { signInAnonymously } from 'firebase/auth';
+import { signInAnonymously, setPersistence, inMemoryPersistence } from 'firebase/auth';
 import Loading from '@/app/loading';
 import { cn } from '@/lib/utils';
 
@@ -69,6 +69,10 @@ export default function AdminPage() {
         if (auth.currentUser && !auth.currentUser.isAnonymous) {
           await auth.signOut();
         }
+
+        // Set persistence to in-memory. This ensures the admin is logged out
+        // on refresh or when the tab is closed, requiring a login every time.
+        await setPersistence(auth, inMemoryPersistence);
         
         await signInAnonymously(auth);
         
