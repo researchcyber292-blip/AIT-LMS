@@ -80,10 +80,10 @@ export default function CourseDetailPage() {
     
     try {
       await setDoc(sessionDocRef, sessionData);
-      toast({ title: 'Class Started!', description: 'Redirecting to the classroom...' });
+      toast({ title: 'Stream Started!', description: 'Redirecting to the classroom...' });
       router.push(`/live-classroom?room=${roomName}&courseTitle=${course.title}&instructor=true`);
     } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not start the class session.' });
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not start the stream.' });
       console.error(error);
     } finally {
       setIsProcessing(false);
@@ -96,9 +96,9 @@ export default function CourseDetailPage() {
     setIsProcessing(true);
     try {
       await updateDoc(sessionDocRef, { isLive: false });
-      toast({ title: 'Class Ended', description: 'The live session has been closed.' });
+      toast({ title: 'Stream Ended', description: 'The live session has been closed.' });
     } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not end the class session.' });
+      toast({ variant: 'destructive', title: 'Error', description: 'Could not end the stream.' });
     } finally {
       setIsProcessing(false);
     }
@@ -106,7 +106,7 @@ export default function CourseDetailPage() {
 
   const handleJoinClass = () => {
     if (liveSession?.roomName) {
-      router.push(`/live-classroom?room=${liveSession.roomName}&courseTitle=${course.title}&instructor=false`);
+      router.push(`/live-classroom?room=${liveSession.roomName}&courseTitle=${course.title}&instructor=${isInstructor}`);
     } else {
       toast({ variant: 'destructive', title: 'Error', description: 'Cannot find the classroom. It may have ended.' });
     }
@@ -224,37 +224,51 @@ export default function CourseDetailPage() {
           <div className="flex flex-col gap-2">
             <Button onClick={handleJoinClass} size="lg" className="w-full">
               <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
-              Join Live Class
+              Join Live Stream
             </Button>
              <Button onClick={handleEndClass} size="sm" variant="destructive" className="w-full" disabled={isProcessing}>
-              {isProcessing ? 'Ending...' : 'End Class for All'}
+              {isProcessing ? 'Ending...' : 'End Stream for All'}
             </Button>
           </div>
         );
       }
       return (
         <Button onClick={handleStartClass} size="lg" className="w-full" disabled={isProcessing}>
-          {isProcessing ? 'Starting...' : 'Start Live Class'}
+          {isProcessing ? 'Starting...' : 'Start Live Stream'}
         </Button>
       );
     }
     
-    // --- TEMPORARY CHANGE FOR TESTING ---
-    // Anyone can join if a class is live.
+    // Handle Student and Guest views
     if (liveSession?.isLive) {
+      if (!user) {
+        return (
+            <Button asChild size="lg" className="w-full">
+                <Link href="/login">Login to Join Stream</Link>
+            </Button>
+        );
+      }
+      if (isEnrolled) {
         return (
             <Button onClick={handleJoinClass} size="lg" className="w-full">
                 <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
-                Join Live Class {user ? '' : '(Guest)'}
+                Join Live Stream
             </Button>
         );
+      }
+      // User is logged in, but not enrolled
+      return (
+           <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
+              {isProcessing ? 'Processing...' : 'Buy Now to Join Stream'}
+           </Button>
+      );
     }
     
-    // If user is enrolled but class isn't live
+    // Class is NOT live
     if (isEnrolled) {
         return (
             <Button size="lg" className="w-full" disabled>
-                Class has not started yet
+                Stream has not started yet
             </Button>
         );
     }
