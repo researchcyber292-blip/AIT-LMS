@@ -129,7 +129,7 @@ export default function InstructorSignUpPage() {
                 <FormItem><FormLabel>Father's Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="age" render={({ field }) => (
-                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" min="13" max="60" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" min="13" max="60" {...field} value={isNaN(field.value) ? '' : field.value} /></FormControl><FormMessage /></FormItem>
               )} />
                <FormField control={form.control} name="mobileNumber" render={({ field }) => (
                 <FormItem><FormLabel>Mobile Number</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
