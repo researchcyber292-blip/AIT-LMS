@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -10,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ArrowRight } from 'lucide-react';
 import { useAuth, useFirestore } from '@/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/lib/types';
@@ -69,8 +68,6 @@ export default function ActivationPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
-      await sendEmailVerification(user);
-
       const userProfile: UserProfile = {
         id: user.uid,
         name,
@@ -88,7 +85,7 @@ export default function ActivationPage() {
 
       toast({
         title: 'Account Created!',
-        description: 'Next, please save your password and verify your email.',
+        description: 'Next, please save your password.',
       });
 
       router.push('/password-reminder');
@@ -170,7 +167,7 @@ export default function ActivationPage() {
                     className="w-full rounded-full h-12 bg-white/10 text-white transition-all hover:bg-white/20 border-2 border-white/20"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Creating Account...' : 'Create & Verify Account'}
+                    {isSubmitting ? 'Creating Account...' : 'Create Account & Continue'}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </div>

@@ -29,7 +29,7 @@ export default function PasswordReminderPage() {
       setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(countdownInterval);
-          router.push('/verify-email');
+          router.push('/avatar-selection');
           return 0;
         }
         return prev - 1;
@@ -50,7 +50,7 @@ export default function PasswordReminderPage() {
   };
   
   const handleConfirm = () => {
-      router.push('/verify-email');
+      router.push('/avatar-selection');
   }
 
   return (
@@ -81,7 +81,7 @@ export default function PasswordReminderPage() {
           <Button onClick={handleConfirm} className="w-full">
             Confirm & Continue ({countdown}s)
           </Button>
-          <p className="text-xs text-muted-foreground">You will be automatically redirected to email verification.</p>
+          <p className="text-xs text-muted-foreground">You will be automatically redirected to choose your avatar.</p>
         </CardFooter>
       </Card>
     </div>

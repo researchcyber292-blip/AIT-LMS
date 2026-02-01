@@ -59,22 +59,12 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
     // --- User IS Logged In ---
 
-    // Step 1: Handle email verification for standard (non-anonymous) users.
-    if (!user.isAnonymous && !user.emailVerified) {
-      // If email is not verified, user must be on the verification or password reminder page.
-      const allowedUnverifiedPages = ['/verify-email', '/password-reminder'];
-      if (!allowedUnverifiedPages.includes(pathname)) {
-        router.replace('/verify-email');
-      }
-      return; // Stop further execution until email is verified.
-    }
-
     // The anonymous admin should not go through onboarding.
     if (user.isAnonymous) {
       return;
     }
 
-    // Step 2: Handle onboarding status for VERIFIED users.
+    // Handle onboarding status.
     const status = userProfile?.onboardingStatus || 'new';
 
     if (status === 'active') {
@@ -84,7 +74,7 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
           router.replace('/dashboard');
       }
     } else {
-      // Onboarding is IN-PROGRESS for a verified user.
+      // Onboarding is IN-PROGRESS.
       const requiredStepMap: { [key: string]: string } = {
         'new': '/student-welcome', // Should not be hit if profile exists, but as a fallback.
         'profile_complete': '/getting-started',

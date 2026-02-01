@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/firebase";
-import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -34,21 +34,9 @@ export default function LoginPage() {
     }
     setIsLoading(true);
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        if (!user.emailVerified) {
-            toast({
-                variant: 'destructive',
-                title: 'Email Not Verified',
-                description: 'Please check your inbox for the verification link. A new link has been sent.',
-            });
-            await sendEmailVerification(user); // Resend the link
-            await auth.signOut(); // Sign them out so they can't proceed
-        } else {
-            toast({ title: 'Login Successful' });
-            router.push('/dashboard'); 
-        }
+        await signInWithEmailAndPassword(auth, email, password);
+        toast({ title: 'Login Successful' });
+        router.push('/dashboard'); 
     } catch (error: any) {
         let description = 'An unexpected error occurred.';
         switch(error.code) {

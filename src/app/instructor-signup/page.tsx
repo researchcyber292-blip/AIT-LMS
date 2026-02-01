@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth, useFirestore } from '@/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { Instructor, Wallet } from '@/lib/types';
@@ -55,12 +55,8 @@ export default function InstructorSignUpPage() {
 
   async function onSubmit(data: InstructorFormValues) {
     try {
-      localStorage.setItem('onboardingPassword', data.password);
-
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
-
-      await sendEmailVerification(user);
 
       const instructorProfile: Instructor = {
         id: user.uid,
@@ -88,13 +84,12 @@ export default function InstructorSignUpPage() {
       await setDoc(doc(firestore, 'wallets', user.uid), walletData);
 
       toast({
-        title: 'Application Submitted!',
-        description: 'Please save your password and verify your email.',
+        title: 'Application Submitted',
+        description: 'Your application is under review by our team.',
       });
 
-      router.push('/password-reminder');
+      router.push('/instructor-pending-verification');
     } catch (error: any) {
-      localStorage.removeItem('onboardingPassword');
       let errorMessage = 'An unexpected error occurred. Please try again.';
       if (error.code === 'auth/email-already-in-use') {
         errorMessage = 'This email is already registered. To sign up again, you must first delete the existing user from the Firebase Authentication console.';
