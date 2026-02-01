@@ -6,7 +6,7 @@ import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Mic, Radio, Video } from 'lucide-react';
+import { Mic, Radio, Video, ShieldAlert } from 'lucide-react';
 import Loading from '@/app/loading';
 import type { Instructor } from '@/lib/types';
 import Link from 'next/link';
@@ -23,9 +23,9 @@ export default function LiveClassesPage() {
     if (!user) return null;
     return doc(firestore, 'instructors', user.uid);
   }, [firestore, user]);
-  const { data: instructor, isLoading: isInstructorLoading } = useDoc<Instructor>(instructorDocRef);
+  const { data: instructor, isLoading: isInstructorProfileLoading } = useDoc<Instructor>(instructorDocRef);
 
-  const isLoading = isUserLoading || isInstructorLoading;
+  const isLoading = isUserLoading || isInstructorProfileLoading;
 
   const handleStartSession = () => {
     // Generate a unique room name for the instructor's session
@@ -47,7 +47,7 @@ export default function LiveClassesPage() {
   if (session) {
     return (
         <div className="w-full h-[calc(100vh-3.5rem)] flex flex-col pt-14">
-            <div className="flex justify-between items-center p-4 border-b bg-card">
+            <div className="flex justify-between items-center p-4 border-b bg-card gap-4">
                 <div className="flex items-center gap-4">
                     <h1 className="font-headline text-xl font-bold flex items-center gap-2">
                         <Radio className="h-5 w-5 text-red-500 animate-pulse" />
@@ -55,6 +55,14 @@ export default function LiveClassesPage() {
                     </h1>
                     <p className="text-xs text-muted-foreground">Room: {session.roomName}</p>
                 </div>
+                {session.isInstructor && (
+                    <div className="hidden md:flex items-center gap-2 text-sm text-amber-400 bg-amber-900/50 border border-amber-500/50 rounded-md px-3 py-1.5">
+                        <ShieldAlert className="h-5 w-5" />
+                        <p>
+                            <span className="font-bold">You are the moderator.</span> Use the shield icon in the meeting to secure your room.
+                        </p>
+                    </div>
+                )}
                 <Button variant="destructive" onClick={handleEndSession}>End Session</Button>
             </div>
             <div className="flex-1 w-full bg-black">
@@ -117,7 +125,7 @@ export default function LiveClassesPage() {
                  </form>
             </div>
             
-            {!isInstructor && (
+            {!user && (
                  <p className="text-sm text-muted-foreground">
                     Want to host your own sessions? <Link href="/instructor-signup" className="underline text-primary">Become an instructor</Link>.
                  </p>
