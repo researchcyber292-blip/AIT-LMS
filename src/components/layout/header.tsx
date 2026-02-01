@@ -15,7 +15,7 @@ import { UserNav } from './user-nav';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/courses', label: 'Courses' },
-  { href: '/programs', label: 'EXPLORE' },
+  { href: '/courses', label: 'EXPLORE' },
   { href: '/live-classes', label: 'LIVE CLASSES' },
   { href: '/about', label: 'ACCOUNTS' },
   { href: '/contact', label: 'Contact' },
@@ -73,7 +73,7 @@ export function Header() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex flex-1 justify-center items-center gap-8">
             {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className={cn("text-sm font-medium transition-colors whitespace-nowrap", linkDynamicClasses, pathname === link.href ? 'text-primary' : '')}>
+                <Link key={link.label} href={link.href} className={cn("text-sm font-medium transition-colors whitespace-nowrap", linkDynamicClasses, pathname === link.href && link.href !== '/courses' ? 'text-primary' : (pathname === '/courses' && link.label === 'Courses' ? 'text-primary' : ''))}>
                     {link.label}
                 </Link>
             ))}

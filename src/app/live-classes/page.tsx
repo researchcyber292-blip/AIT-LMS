@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Mic, Radio, Video } from 'lucide-react';
 import Loading from '@/app/loading';
 import type { Instructor } from '@/lib/types';
@@ -15,8 +14,8 @@ export default function LiveClassesPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const [session, setSession] = useState<{roomName: string, isInstructor: boolean, password?: string} | null>(null);
-  const [roomNameInput, setRoomNameInput] = useState('');
-
+  
+  const roomName = 'avirajinfotech-cybersecurity-classlive';
 
   const instructorDocRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -27,18 +26,13 @@ export default function LiveClassesPage() {
   const isLoading = isUserLoading || isInstructorProfileLoading;
 
   const handleStartSession = () => {
-    // Generate a unique room name to avoid collisions and ensure moderation
-    const uniqueRoomName = `aviraj-infotech-${user?.uid.substring(0, 5)}-${Date.now()}`;
     // Generate a simple password to claim moderator status automatically
     const sessionPassword = Math.random().toString(36).substring(2, 10);
-    setSession({ roomName: uniqueRoomName, isInstructor: true, password: sessionPassword });
+    setSession({ roomName: roomName, isInstructor: true, password: sessionPassword });
   };
   
-  const handleJoinSession = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (roomNameInput.trim()) {
-      setSession({ roomName: roomNameInput.trim(), isInstructor: false });
-    }
+  const handleJoinSession = () => {
+    setSession({ roomName: roomName, isInstructor: false });
   };
 
   const handleEndSession = () => {
@@ -85,7 +79,7 @@ export default function LiveClassesPage() {
         </div>
         <h1 className="font-headline text-4xl font-bold">Live Classroom</h1>
         <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-          Start or join a live session. Instructors can start new sessions, and students can join with a room name.
+          Start or join the live cybersecurity session. Instructors can start a new class, and students can join.
         </p>
         
         <div className="mt-12 space-y-8">
@@ -97,27 +91,20 @@ export default function LiveClassesPage() {
                     </h2>
                     <p className="mt-2 text-muted-foreground">Start a new secure, moderated live session.</p>
                     <Button onClick={handleStartSession} size="lg" className="mt-6 px-10 py-6 text-lg">
-                        Start a Live Session
+                        Start a Live Stream
                     </Button>
                      <p className="text-xs text-muted-foreground mt-4">
-                        A unique room will be created automatically. <br/>
-                        Share the room name with your students to have them join.
+                        You will automatically become the moderator.
                     </p>
                 </div>
             )}
 
             <div className="p-6 border rounded-lg bg-card">
-                 <h2 className="font-headline text-2xl font-bold">Join a Session</h2>
-                 <p className="mt-2 text-muted-foreground">Enter the room name provided by your instructor.</p>
-                 <form onSubmit={handleJoinSession} className="mt-6 flex gap-2 max-w-sm mx-auto">
-                    <Input 
-                        value={roomNameInput}
-                        onChange={(e) => setRoomNameInput(e.target.value)}
-                        placeholder="Enter room name..."
-                        className="text-center"
-                    />
-                    <Button type="submit">Join</Button>
-                 </form>
+                 <h2 className="font-headline text-2xl font-bold">Join the Public Stream</h2>
+                 <p className="mt-2 text-muted-foreground">Click the button below to enter the live session.</p>
+                 <Button onClick={handleJoinSession} size="lg" className="mt-6">
+                    Join Live Stream
+                 </Button>
             </div>
             
             {!isLoading && !isInstructor && (
