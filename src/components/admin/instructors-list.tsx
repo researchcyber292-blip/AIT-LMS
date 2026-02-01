@@ -184,6 +184,11 @@ export function InstructorsList() {
                                         <Ban className="mr-2 h-4 w-4" /> Ban
                                     </Button>
                                   )}
+                                  {(instructor.accountStatus === 'banned' || instructor.accountStatus === 'rejected') && (
+                                    <Button variant="outline" size="sm" onClick={() => handleUpdateStatus(instructor.id, 'active')}>
+                                        <Check className="mr-2 h-4 w-4" /> {instructor.accountStatus === 'banned' ? 'Unban' : 'Approve'}
+                                    </Button>
+                                  )}
                                   <Button variant="destructive" size="icon" onClick={() => setInstructorToDelete(instructor)}>
                                       <Trash2 className="h-4 w-4" />
                                       <span className="sr-only">Delete Instructor</span>
