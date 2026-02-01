@@ -22,15 +22,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError, useUser } from '@/firebase';
-import { collection, doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import type { Instructor } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, Ban } from 'lucide-react';
+import { Check, X, Ban, Trash2 } from 'lucide-react';
 
 export function InstructorsList() {
   const [instructorToBan, setInstructorToBan] = useState<Instructor | null>(null);
+  const [instructorToDelete, setInstructorToDelete] = useState<Instructor | null>(null);
   const firestore = useFirestore();
   const { user, isUserLoading: isAuthLoading } = useUser();
   const { toast } = useToast();
@@ -51,7 +52,6 @@ export function InstructorsList() {
     try {
       await updateDoc(instructorDocRef, { 
         accountStatus: newStatus,
-        // When activating, they become verified. When rejecting or banning, they are no longer considered verified.
         isVerified: newStatus === 'active'
       });
       toast({
@@ -71,6 +71,37 @@ export function InstructorsList() {
             title: 'Update Failed',
             description: 'Could not update instructor due to insufficient permissions.',
         });
+    }
+  };
+
+  const handleDeleteInstructor = async (instructor: Instructor) => {
+    if (!firestore) return;
+
+    const instructorDocRef = doc(firestore, 'instructors', instructor.id);
+    const walletDocRef = doc(firestore, 'wallets', instructor.id);
+    
+    try {
+      await deleteDoc(instructorDocRef);
+      await deleteDoc(walletDocRef);
+      
+      toast({
+        title: 'Instructor Data Deleted',
+        description: `Firestore data for ${instructor.firstName} ${instructor.lastName} has been removed. To complete deletion, remove them from Firebase Authentication manually.`,
+      });
+    } catch (e: any) {
+        const permissionError = new FirestorePermissionError({
+          path: e.path || `instructors/${instructor.id}`,
+          operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+
+        toast({
+            variant: 'destructive',
+            title: 'Deletion Failed',
+            description: 'Could not remove instructor data due to insufficient permissions.',
+        });
+    } finally {
+      setInstructorToDelete(null);
     }
   };
 
@@ -137,21 +168,27 @@ export function InstructorsList() {
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
-                                {instructor.accountStatus === 'pending' && (
-                                    <div className="flex justify-end gap-2">
-                                        <Button variant="outline" size="sm" onClick={() => handleUpdateStatus(instructor.id, 'active')}>
-                                            <Check className="mr-2 h-4 w-4" /> Approve
-                                        </Button>
-                                        <Button variant="destructive" size="sm" onClick={() => handleUpdateStatus(instructor.id, 'rejected')}>
-                                            <X className="mr-2 h-4 w-4" /> Reject
-                                        </Button>
-                                    </div>
-                                )}
-                                {instructor.accountStatus === 'active' && (
-                                  <Button variant="destructive" size="sm" onClick={() => setInstructorToBan(instructor)}>
-                                      <Ban className="mr-2 h-4 w-4" /> Ban
+                               <div className="flex justify-end gap-2">
+                                  {instructor.accountStatus === 'pending' && (
+                                      <>
+                                          <Button variant="outline" size="sm" onClick={() => handleUpdateStatus(instructor.id, 'active')}>
+                                              <Check className="mr-2 h-4 w-4" /> Approve
+                                          </Button>
+                                          <Button variant="destructive" size="sm" onClick={() => handleUpdateStatus(instructor.id, 'rejected')}>
+                                              <X className="mr-2 h-4 w-4" /> Reject
+                                          </Button>
+                                      </>
+                                  )}
+                                  {instructor.accountStatus === 'active' && (
+                                    <Button variant="destructive" size="sm" onClick={() => setInstructorToBan(instructor)}>
+                                        <Ban className="mr-2 h-4 w-4" /> Ban
+                                    </Button>
+                                  )}
+                                  <Button variant="destructive" size="icon" onClick={() => setInstructorToDelete(instructor)}>
+                                      <Trash2 className="h-4 w-4" />
+                                      <span className="sr-only">Delete Instructor</span>
                                   </Button>
-                                )}
+                               </div>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -183,6 +220,30 @@ export function InstructorsList() {
                         className="bg-destructive hover:bg-destructive/90"
                     >
                         Yes, Ban Instructor
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog open={!!instructorToDelete} onOpenChange={(open) => !open && setInstructorToDelete(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete the Firestore data for <strong>{instructorToDelete?.firstName} {instructorToDelete?.lastName}</strong> (including their Profile and Wallet). This action cannot be undone. You must also manually delete them from Firebase Authentication.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                        onClick={() => {
+                            if (instructorToDelete) {
+                                handleDeleteInstructor(instructorToDelete);
+                            }
+                        }}
+                        className="bg-destructive hover:bg-destructive/90"
+                    >
+                        Yes, Delete Instructor Data
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
