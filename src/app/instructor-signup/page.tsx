@@ -44,7 +44,7 @@ export default function InstructorSignUpPage() {
       lastName: '',
       motherName: '',
       fatherName: '',
-      age: undefined,
+      age: NaN,
       email: '',
       alternateEmail: '',
       mobileNumber: '',
