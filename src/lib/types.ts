@@ -34,7 +34,7 @@ export type Instructor = {
   lastName: string;
   email: string;
   isVerified: boolean;
-  accountStatus: 'pending' | 'active' | 'rejected';
+  accountStatus: 'pending' | 'active' | 'rejected' | 'banned';
 
   // Optional details
   motherName?: string;

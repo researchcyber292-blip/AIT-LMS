@@ -106,7 +106,8 @@
           "enum": [
             "pending",
             "active",
-            "rejected"
+            "rejected",
+            "banned"
           ]
         },
         "bio": {
