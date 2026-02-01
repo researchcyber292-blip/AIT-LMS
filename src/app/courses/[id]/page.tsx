@@ -11,6 +11,8 @@ import { CheckCircle, User, BarChart, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
+import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
 
 
 // This is a client component, so we can't use generateMetadata directly.
@@ -35,19 +37,21 @@ export default function CourseDetailPage() {
   const course = COURSES.find(c => c.id === params.id);
   const { user } = useUser();
   const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   if (!course) {
     notFound();
   }
 
   const handlePayment = async () => {
+    setIsProcessing(true);
     if (!user) {
       toast({
         title: 'Authentication Required',
         description: 'Please sign in to purchase a course.',
         variant: 'destructive',
       });
-      // Here you might want to redirect to a login page
+      setIsProcessing(false);
       return;
     }
 
@@ -58,46 +62,77 @@ export default function CourseDetailPage() {
         description: 'Payment system is not configured. Please contact support.',
         variant: 'destructive',
       });
+      setIsProcessing(false);
       return;
     }
     
-    // In a real application, you would first create an order on your server
-    // and get the order_id. The server would call Razorpay's Orders API.
-    // For this example, we'll proceed directly to checkout, which is not recommended for production.
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: course.price * 100, // Amount in paise
-      currency: "INR",
-      name: "Aviraj Info Tech",
-      description: `Purchase: ${course.title}`,
-      image: "/image.png", // Your logo
-      // order_id: order.id, // From your server
-      handler: function (response: any) {
-        // This is where the server-to-server verification happens.
-        // The client should NOT assume the payment is valid.
-        // We just inform the user and wait for the backend to update Firestore.
-        console.log('Razorpay Response:', response);
-        toast({
-          title: 'Payment Successful!',
-          description: 'Your enrollment is being processed. You will have access shortly.',
-        });
-      },
-      prefill: {
-        name: user.displayName || "Valued Student",
-        email: user.email || "",
-        contact: user.phoneNumber || "",
-      },
-      notes: {
-        courseId: course.id,
-        userId: user.uid,
-      },
-      theme: {
-        color: "#3498db"
-      }
-    };
+    try {
+      // Step 1: Create the order on the server-side to get a secure order_id
+      const order = await createRazorpayOrder({
+        amount: course.price * 100, // Amount in paise
+        currency: "INR",
+        // A unique receipt ID for this transaction
+        receipt: `receipt_${course.id}_${user.uid}_${Date.now()}`
+      });
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+      // Step 2: Use the server-generated order_id to open the checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount, // Use amount from server response
+        currency: order.currency,
+        name: "Aviraj Info Tech",
+        description: `Purchase: ${course.title}`,
+        image: "/image.png",
+        order_id: order.id, // Use the secure order_id from the server
+        handler: function (response: any) {
+          // This is where server-to-server verification should happen via webhooks.
+          // The client should NOT assume the payment is valid.
+          // For now, we just inform the user and assume the backend will handle enrollment.
+          console.log('Razorpay Response:', response);
+          toast({
+            title: 'Payment Successful!',
+            description: 'Your enrollment is being processed. You will have access shortly.',
+          });
+          // TODO: Here you would call another server function to verify the payment signature
+          // and securely grant the user access to the course in Firestore.
+        },
+        prefill: {
+          name: user.displayName || "Valued Student",
+          email: user.email || "",
+          contact: user.phoneNumber || "",
+        },
+        notes: {
+          courseId: course.id,
+          userId: user.uid,
+        },
+        theme: {
+          color: "#3498db"
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', function (response: any) {
+          console.error("Payment Failed:", response);
+          toast({
+              variant: "destructive",
+              title: "Payment Failed",
+              description: response.error.description || "An unknown error occurred.",
+          });
+      });
+
+      rzp.open();
+
+    } catch (error: any) {
+        console.error("Failed to create Razorpay order:", error);
+        toast({
+          variant: 'destructive',
+          title: 'Payment Error',
+          description: error.message || 'Could not initiate the payment process. Please try again.',
+        });
+    } finally {
+        setIsProcessing(false);
+    }
   };
 
 
@@ -120,8 +155,8 @@ export default function CourseDetailPage() {
             />
             <div className="p-6">
               <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{course.price}</p>
-              <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-                Buy Now with UPI/Google Pay
+              <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
+                {isProcessing ? 'Processing...' : 'Buy Now with UPI/Google Pay'}
               </Button>
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-center gap-3">
