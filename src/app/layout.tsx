@@ -51,7 +51,6 @@ export default function RootLayout({
           </OnboardingGuard>
         </FirebaseClientProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-        <Script src="https://meet.jit.si/external_api.js" async />
       </body>
     </html>
   );

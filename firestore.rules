@@ -208,17 +208,5 @@ service cloud.firestore {
         allow read, list, update: if isAnonymousAdmin();
         allow delete: if false; // Requests should be processed, not deleted.
     }
-    
-    /**
-     * @description Controls who can manage live class sessions.
-     * @path /live_sessions/{courseId}
-     * @allow (read) Any user can check if a class is live. (Temporary for testing)
-     * @allow (write) Only the designated instructor for a course can start or stop a session.
-     * @principle Owner-Only Writes. The incoming data must match the user's auth UID.
-     */
-    match /live_sessions/{courseId} {
-      allow read: if true;
-      allow write: if isSignedIn() && request.resource.data.instructorId == request.auth.uid;
-    }
   }
 }

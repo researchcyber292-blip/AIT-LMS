@@ -86,10 +86,3 @@ export type PayoutRequest = {
   paidDate?: string; // ISO string
   rejectionReason?: string;
 }
-
-export type LiveSession = {
-    isLive: boolean;
-    roomName: string;
-    instructorId: string;
-    courseId: string;
-}

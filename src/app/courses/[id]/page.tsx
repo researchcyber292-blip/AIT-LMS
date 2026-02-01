@@ -1,4 +1,3 @@
-
 'use client';
 
 import { notFound, useParams, useRouter } from 'next/navigation';
@@ -8,27 +7,14 @@ import { COURSES } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { CheckCircle, User, BarChart, Clock, Radio } from 'lucide-react';
+import { CheckCircle, BarChart, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
-import { doc, setDoc, collection, addDoc, updateDoc } from 'firebase/firestore';
-import type { Enrollment, LiveSession } from '@/lib/types';
-
-
-// This is a client component, so we can't use generateMetadata directly.
-// However, we can fetch the data and set the title dynamically in the component.
-// For SEO, it would be better to fetch this data in a parent Server Component if possible.
-
-// export async function generateStaticParams() {
-//   return COURSES.map(course => ({
-//     id: course.id,
-//   }));
-// }
-
-const generateRoomName = (courseId: string) => `AVIRAJ-${courseId.toUpperCase()}-${Math.random().toString(36).substring(2, 9)}`;
+import { collection, addDoc } from 'firebase/firestore';
+import type { Enrollment } from '@/lib/types';
 
 
 declare global {
@@ -53,64 +39,12 @@ export default function CourseDetailPage() {
   }, [firestore, user]);
   const { data: enrollments, isLoading: enrollmentsLoading } = useCollection<Enrollment>(enrollmentsQuery);
   const isEnrolled = enrollments?.some(e => e.courseId === course?.id) || false;
-
-  // Check live session status
-  const sessionDocRef = useMemoFirebase(() => (course && firestore) ? doc(firestore, 'live_sessions', course.id) : null, [firestore, course]);
-  const { data: liveSession, isLoading: sessionLoading } = useDoc<LiveSession>(sessionDocRef);
   
   if (!course) {
     notFound();
   }
   
-  const isInstructor = user?.uid === course.instructor.id;
-  const isLoading = enrollmentsLoading || sessionLoading;
-
-  // Handler for starting a class
-  const handleStartClass = async () => {
-    if (!firestore || !user || !course || !sessionDocRef) return;
-    setIsProcessing(true);
-    
-    const roomName = liveSession?.roomName || generateRoomName(course.id);
-    const sessionData: LiveSession = {
-      isLive: true,
-      roomName,
-      instructorId: user.uid,
-      courseId: course.id,
-    };
-    
-    try {
-      await setDoc(sessionDocRef, sessionData);
-      toast({ title: 'Stream Started!', description: 'Redirecting to the classroom...' });
-      router.push(`/live-classroom?room=${roomName}&courseTitle=${course.title}&instructor=true`);
-    } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not start the stream.' });
-      console.error(error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Handler for ending a class
-  const handleEndClass = async () => {
-    if (!firestore || !sessionDocRef) return;
-    setIsProcessing(true);
-    try {
-      await updateDoc(sessionDocRef, { isLive: false });
-      toast({ title: 'Stream Ended', description: 'The live session has been closed.' });
-    } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not end the stream.' });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleJoinClass = () => {
-    if (liveSession?.roomName) {
-      router.push(`/live-classroom?room=${liveSession.roomName}&courseTitle=${course.title}&instructor=${isInstructor}`);
-    } else {
-      toast({ variant: 'destructive', title: 'Error', description: 'Cannot find the classroom. It may have ended.' });
-    }
-  };
+  const isLoading = enrollmentsLoading;
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -121,6 +55,7 @@ export default function CourseDetailPage() {
         variant: 'destructive',
       });
       setIsProcessing(false);
+      router.push('/login');
       return;
     }
 
@@ -143,23 +78,21 @@ export default function CourseDetailPage() {
         receipt: `receipt_${course.id}_${user.uid}_${Date.now()}`
       });
 
-      // Step 2: Use the server-generated order_id to open the checkout
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: order.amount, // Use amount from server response
+        amount: order.amount,
         currency: order.currency,
         name: "Aviraj Info Tech",
         description: `Purchase: ${course.title}`,
         image: "/image.png",
-        order_id: order.id, // Use the secure order_id from the server
+        order_id: order.id,
         handler: async function (response: any) {
           toast({
             title: 'Payment Successful!',
             description: 'Your enrollment is being processed.',
           });
           
-           // Securely create enrollment record after successful payment
-          const enrollmentData: Omit<Enrollment, 'id'> = {
+           const enrollmentData: Omit<Enrollment, 'id'> = {
             studentId: user.uid,
             courseId: course.id,
             enrollmentDate: new Date().toISOString(),
@@ -169,7 +102,6 @@ export default function CourseDetailPage() {
             razorpayOrderId: response.razorpay_order_id,
           };
           
-          // This should ideally be a backend function for security, but for now we do it client-side.
           const enrollmentsCol = collection(firestore, 'users', user.uid, 'enrollments');
           await addDoc(enrollmentsCol, enrollmentData);
         },
@@ -216,50 +148,15 @@ export default function CourseDetailPage() {
     if (isLoading) {
       return <Button size="lg" className="w-full" disabled>Loading...</Button>;
     }
-
-    // Instructor has top priority
-    if (isInstructor) {
-      if (liveSession?.isLive) {
-        return (
-          <div className="flex flex-col gap-2">
-            <Button onClick={handleJoinClass} size="lg" className="w-full">
-              <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
-              Join Live Stream
-            </Button>
-             <Button onClick={handleEndClass} size="sm" variant="destructive" className="w-full" disabled={isProcessing}>
-              {isProcessing ? 'Ending...' : 'End Stream for All'}
-            </Button>
-          </div>
-        );
-      }
-      return (
-        <Button onClick={handleStartClass} size="lg" className="w-full" disabled={isProcessing}>
-          {isProcessing ? 'Starting...' : 'Start Live Stream'}
-        </Button>
-      );
-    }
     
-    // Public view for non-instructors
-    if (liveSession?.isLive) {
-      // If class is live, ANYONE can join.
-      return (
-          <Button onClick={handleJoinClass} size="lg" className="w-full">
-              <Radio className="mr-2 h-5 w-5 animate-pulse text-red-500" />
-              Join Live Stream
-          </Button>
-      );
-    }
-    
-    // Class is NOT live. Show enrollment status for logged-in users, or buy button for guests.
     if (isEnrolled) {
         return (
             <Button size="lg" className="w-full" disabled>
-                Stream has not started yet
+                You are Enrolled
             </Button>
         );
     }
     
-    // Default for anyone not enrolled when class is not live
     return (
        <Button onClick={handlePayment} size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isProcessing}>
           {isProcessing ? 'Processing...' : 'Buy Now with UPI/Google Pay'}
@@ -274,7 +171,6 @@ export default function CourseDetailPage() {
         <title>{`${course.title} - CyberLearn`}</title>
       )}
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-        {/* Left column (sticky on desktop) */}
         <div className="md:col-span-1 md:sticky md:top-24 h-fit">
           <div className="rounded-xl border bg-card shadow-lg overflow-hidden">
             <Image
@@ -317,7 +213,6 @@ export default function CourseDetailPage() {
           </div>
         </div>
         
-        {/* Right column */}
         <div className="md:col-span-2">
             <Badge variant="secondary" className="mb-2">{course.category}</Badge>
             <h1 className="font-headline text-4xl font-bold tracking-tight lg:text-5xl">{course.title}</h1>
