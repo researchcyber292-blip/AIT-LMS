@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -378,14 +377,9 @@ export default function StudioPage() {
                                 <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="course-video">Introduction Video (Optional)</Label>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-48 h-27 bg-muted rounded-md flex items-center justify-center">
-                                        <Video className="h-8 w-8 text-muted-foreground" />
-                                    </div>
-                                    <Input id="course-video" type="file" className="max-w-sm" />
-                                </div>
-                                 <p className="text-sm text-muted-foreground">A short video to attract students.</p>
+                                <Label htmlFor="youtube-url">YouTube Video URL (Optional)</Label>
+                                <Input id="youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+                                <p className="text-sm text-muted-foreground">Link to your course's introduction video on YouTube.</p>
                             </div>
                         </CardContent>
                         <CardFooter className="flex justify-between">
