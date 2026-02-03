@@ -1,14 +1,14 @@
+
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Ban, Mail } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
-// This is now a Server Component and can directly access searchParams
-export default function InstructorAccessDeniedPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-    const status = searchParams?.status || 'restricted';
+export default function InstructorAccessDeniedPage() {
+    const searchParams = useSearchParams();
+    const status = searchParams.get('status') || 'restricted';
 
     const messages = {
         banned: {
