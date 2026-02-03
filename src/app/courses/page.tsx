@@ -1,15 +1,14 @@
-
-
 'use client';
 
 import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
-import { INSTRUCTORS } from '@/data/content';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import type { Instructor } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Note: Metadata export is for server components, but we keep it for potential future static generation.
 // In a client component, document title would be set via useEffect if needed.
@@ -96,6 +95,17 @@ const tierStyles = {
 }
 
 export default function CoursesPage() {
+  const firestore = useFirestore();
+
+  const instructorsQuery = useMemoFirebase(
+    () => (firestore ? collection(firestore, 'instructors') : null),
+    [firestore]
+  );
+
+  const { data: instructors, isLoading } = useCollection<Instructor>(instructorsQuery);
+  
+  const activeInstructors = instructors?.filter(inst => inst.accountStatus === 'active' && inst.bio && inst.title);
+
   return (
     <div className="bg-gray-900 text-white min-h-[calc(100vh-3.5rem)] py-12 md:py-24">
         <div className="container">
@@ -216,10 +226,31 @@ export default function CoursesPage() {
             </div>
 
             <div className="mt-12 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                {INSTRUCTORS.map((instructor) => (
+                {isLoading ? (
+                  <>
+                    {[...Array(2)].map((_, i) => (
+                      <div key={i} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-8 flex flex-col items-center">
+                        <Skeleton className="h-32 w-32 rounded-full border-4 border-primary/50" />
+                        <div className="mt-6 flex-grow flex flex-col items-center">
+                          <Skeleton className="h-7 w-40" />
+                          <Skeleton className="h-4 w-48 mt-2" />
+                          <div className="mt-4 space-y-2 w-full max-w-xs">
+                            <Skeleton className="h-3 w-full" />
+                            <Skeleton className="h-3 w-full" />
+                            <Skeleton className="h-3 w-3/4" />
+                          </div>
+                        </div>
+                        <div className="mt-8 w-full">
+                          <Skeleton className="h-11 w-full rounded-full" />
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  activeInstructors?.map((instructor) => (
                     <div key={instructor.id} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-8 text-center flex flex-col items-center transition-all hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1">
                         <Avatar className="h-32 w-32 border-4 border-primary/50">
-                            <AvatarImage src={instructor.image} alt={`${instructor.firstName} ${instructor.lastName}`} data-ai-hint={instructor.imageHint} />
+                            <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
                             <AvatarFallback className="text-4xl">{`${instructor.firstName.charAt(0)}${instructor.lastName.charAt(0)}`}</AvatarFallback>
                         </Avatar>
                         
@@ -237,7 +268,13 @@ export default function CoursesPage() {
                             </Button>
                         </div>
                     </div>
-                ))}
+                  ))
+                )}
+                 {!isLoading && (!activeInstructors || activeInstructors.length === 0) && (
+                    <div className="md:col-span-2 text-center text-muted-foreground py-8">
+                        No active instructors found.
+                    </div>
+                )}
             </div>
 
         </div>

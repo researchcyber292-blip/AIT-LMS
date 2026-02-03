@@ -140,13 +140,13 @@ service cloud.firestore {
      * @description Controls access to instructor profiles.
      * @path /instructors/{instructorId}
      * @allow (create) An instructor can create their own profile.
-     * @allow (read) An instructor can read their own profile, or an admin can read any profile.
+     * @allow (get, list) Publicly readable to display on course and instructor pages.
      * @allow (update) An instructor can update their own profile, or an admin can update any profile.
-     * @principle Owner-creatable, owner-readable, owner/admin-managed.
+     * @principle Owner-creatable, public-readable, owner/admin-managed.
      */
     match /instructors/{instructorId} {
       allow create: if isOwner(instructorId);
-      allow read: if isOwner(instructorId) || isAnonymousAdmin();
+      allow get, list: if true;
       allow update: if isOwner(instructorId) || isAnonymousAdmin();
       allow delete: if isAnonymousAdmin();
     }
