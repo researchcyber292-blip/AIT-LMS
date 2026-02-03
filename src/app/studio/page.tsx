@@ -1,18 +1,20 @@
 
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function StudioPage() {
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState('details');
 
     return (
         <div className="container py-12 md:py-16">
@@ -26,13 +28,14 @@ export default function StudioPage() {
                 </div>
             </div>
 
-            <Tabs defaultValue="details" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-4">
                     <TabsTrigger value="details">
                         <BookOpen className="mr-2 h-4 w-4" />
                         Details
                     </TabsTrigger>
-                    <TabsTrigger value="curriculum" disabled>
+                    <TabsTrigger value="curriculum">
+                        <ListVideo className="mr-2 h-4 w-4" />
                         Curriculum
                     </TabsTrigger>
                     <TabsTrigger value="media" disabled>
@@ -85,7 +88,20 @@ export default function StudioPage() {
                                 </RadioGroup>
                             </div>
                             <div className="flex justify-end">
-                                <Button disabled>Save & Continue</Button>
+                                <Button onClick={() => setActiveTab('curriculum')}>Next</Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="curriculum">
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle>Course Curriculum</CardTitle>
+                            <CardDescription>Build out the sections and lectures for your course.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-center p-8 border-2 border-dashed rounded-lg">
+                                <p className="text-muted-foreground">Curriculum builder coming soon.</p>
                             </div>
                         </CardContent>
                     </Card>
