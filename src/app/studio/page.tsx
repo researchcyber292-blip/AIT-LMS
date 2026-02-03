@@ -16,6 +16,7 @@ export default function StudioPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState('details');
     const [priceType, setPriceType] = useState<'paid' | 'free'>('paid');
+    const [paymentMethod, setPaymentMethod] = useState<'direct' | 'templates'>('direct');
 
     return (
         <div className="container py-12 md:py-16">
@@ -131,22 +132,95 @@ export default function StudioPage() {
                             </div>
 
                             {priceType === 'paid' && (
-                                <div className="space-y-4">
-                                    <Label className="text-lg font-medium">Payment Board Method</Label>
-                                     <RadioGroup defaultValue="direct" className="grid grid-cols-2 gap-4 pt-2">
-                                        <div>
-                                            <RadioGroupItem value="direct" id="payment-direct" className="peer sr-only" />
-                                            <Label htmlFor="payment-direct" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
-                                                Direct Way
-                                            </Label>
+                                <div className="space-y-8">
+                                    <div className="space-y-4">
+                                        <Label className="text-lg font-medium">Payment Board Method</Label>
+                                        <RadioGroup
+                                            value={paymentMethod}
+                                            onValueChange={(value: 'direct' | 'templates') => setPaymentMethod(value)}
+                                            className="grid grid-cols-2 gap-4 pt-2"
+                                        >
+                                            <div>
+                                                <RadioGroupItem value="direct" id="payment-direct" className="peer sr-only" />
+                                                <Label htmlFor="payment-direct" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
+                                                    Direct Way
+                                                </Label>
+                                            </div>
+                                            <div>
+                                                <RadioGroupItem value="templates" id="payment-templates" className="peer sr-only" />
+                                                <Label htmlFor="payment-templates" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
+                                                    Templates
+                                                </Label>
+                                            </div>
+                                        </RadioGroup>
+                                    </div>
+
+                                    {paymentMethod === 'direct' && (
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle>Direct Pricing</CardTitle>
+                                                <CardDescription>Set a one-time price for your course.</CardDescription>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <Label htmlFor="course-price">Course Price (INR)</Label>
+                                                <Input id="course-price" type="number" placeholder="e.g., 499" />
+                                            </CardContent>
+                                        </Card>
+                                    )}
+
+                                    {paymentMethod === 'templates' && (
+                                        <div className="space-y-6">
+                                            <h3 className="text-lg font-medium">Subscription Templates</h3>
+                                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                                <Card className="border-yellow-500/50 bg-yellow-500/5">
+                                                    <CardHeader>
+                                                        <CardTitle className="text-yellow-400">Gold Plan</CardTitle>
+                                                    </CardHeader>
+                                                    <CardContent className="space-y-4">
+                                                        <div>
+                                                            <Label htmlFor="gold-price">Price</Label>
+                                                            <Input id="gold-price" placeholder="e.g., 4999 / 6 months" />
+                                                        </div>
+                                                        <div>
+                                                            <Label htmlFor="gold-desc">Description</Label>
+                                                            <Textarea id="gold-desc" placeholder="Describe the plan features..." />
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                                <Card className="border-slate-400/50 bg-slate-500/5">
+                                                    <CardHeader>
+                                                        <CardTitle className="text-slate-300">Platinum Plan</CardTitle>
+                                                    </CardHeader>
+                                                    <CardContent className="space-y-4">
+                                                        <div>
+                                                            <Label htmlFor="platinum-price">Price</Label>
+                                                            <Input id="platinum-price" placeholder="e.g., 2999 / 3 months" />
+                                                        </div>
+                                                        <div>
+                                                            <Label htmlFor="platinum-desc">Description</Label>
+                                                            <Textarea id="platinum-desc" placeholder="Describe the plan features..." />
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                                <Card>
+                                                    <CardHeader>
+                                                        <CardTitle>Silver Plan</CardTitle>
+                                                    </CardHeader>
+                                                    <CardContent className="space-y-4">
+                                                        <div>
+                                                            <Label htmlFor="silver-price">Price</Label>
+                                                            <Input id="silver-price" placeholder="e.g., 599 / month" />
+                                                        </div>
+                                                        <div>
+                                                            <Label htmlFor="silver-desc">Description</Label>
+                                                            <Textarea id="silver-desc" placeholder="Describe the plan features..." />
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <RadioGroupItem value="templates" id="payment-templates" className="peer sr-only" />
-                                            <Label htmlFor="payment-templates" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
-                                                Templates
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
+                                    )}
+
                                 </div>
                             )}
                         </CardContent>
