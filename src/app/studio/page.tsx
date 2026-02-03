@@ -511,30 +511,83 @@ export default function StudioPage() {
                                                 </div>
                                             )}
 
-                                            <div className="p-6">
-                                                {priceType === 'free' ? (
-                                                     <p className="mb-4 text-4xl font-bold font-headline text-primary">Free</p>
-                                                ) : (
-                                                    paymentMethod === 'direct' && directPrice ? (
-                                                        <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{directPrice}</p>
+                                            {priceType === 'paid' && paymentMethod === 'templates' ? (
+                                                <div className="p-4 space-y-4">
+                                                    <h3 className="font-headline text-xl font-semibold text-center">Subscription Plans</h3>
+                                                    {goldPrice && <Card className="border-yellow-500/50 bg-yellow-500/5">
+                                                        <CardHeader className="p-4">
+                                                            <CardTitle className="text-yellow-400 text-lg">Gold Plan</CardTitle>
+                                                            <p className="text-base font-bold">{goldPrice}</p>
+                                                        </CardHeader>
+                                                        <CardContent className="p-4 pt-0 text-sm">
+                                                            <p className="text-muted-foreground italic mb-2">{goldDescription}</p>
+                                                            <ul className="space-y-1 pt-2">
+                                                            {goldFeatures.filter(f => f.trim()).map((feature, i) => (
+                                                                <li key={`gold-${i}`} className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-4 w-4 text-green-500" />
+                                                                    <span>{feature}</span>
+                                                                </li>
+                                                            ))}
+                                                            </ul>
+                                                        </CardContent>
+                                                    </Card>}
+                                                    {platinumPrice && <Card className="border-slate-400/50 bg-slate-500/5 mt-2">
+                                                        <CardHeader className="p-4">
+                                                            <CardTitle className="text-slate-300 text-lg">Platinum Plan</CardTitle>
+                                                            <p className="text-base font-bold">{platinumPrice}</p>
+                                                        </CardHeader>
+                                                        <CardContent className="p-4 pt-0 text-sm">
+                                                            <p className="text-muted-foreground italic mb-2">{platinumDescription}</p>
+                                                            <ul className="space-y-1 pt-2">
+                                                            {platinumFeatures.filter(f => f.trim()).map((feature, i) => (
+                                                                <li key={`plat-${i}`} className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-4 w-4 text-green-500" />
+                                                                    <span>{feature}</span>
+                                                                </li>
+                                                            ))}
+                                                            </ul>
+                                                        </CardContent>
+                                                    </Card>}
+                                                    {silverPrice && <Card className="mt-2">
+                                                         <CardHeader className="p-4">
+                                                            <CardTitle className="text-lg">Silver Plan</CardTitle>
+                                                            <p className="text-base font-bold">{silverPrice}</p>
+                                                        </CardHeader>
+                                                        <CardContent className="p-4 pt-0 text-sm">
+                                                            <p className="text-muted-foreground italic mb-2">{silverDescription}</p>
+                                                            <ul className="space-y-1 pt-2">
+                                                            {silverFeatures.filter(f => f.trim()).map((feature, i) => (
+                                                                <li key={`silv-${i}`} className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-4 w-4 text-green-500" />
+                                                                    <span>{feature}</span>
+                                                                </li>
+                                                            ))}
+                                                            </ul>
+                                                        </CardContent>
+                                                    </Card>}
+                                                </div>
+                                            ) : (
+                                                <div className="p-6">
+                                                    {priceType === 'free' ? (
+                                                        <p className="mb-4 text-4xl font-bold font-headline text-primary">Free</p>
                                                     ) : (
-                                                        <p className="mb-4 text-2xl font-bold font-headline text-primary">Subscription</p>
-                                                    )
-                                                )}
-                                                <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled>
-                                                    Buy Now (Preview)
-                                                </Button>
-                                                <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-                                                    <li className="flex items-center gap-3">
-                                                        <BarChart className="h-5 w-5 text-primary" />
-                                                        <span className="capitalize">Level: {category.replace('-', ' ')}</span>
-                                                    </li>
-                                                    <li className="flex items-center gap-3">
-                                                        <Clock className="h-5 w-5 text-primary" />
-                                                        <span>~20 Hours to complete</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                                        <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{directPrice || '0.00'}</p>
+                                                    )}
+                                                    <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled>
+                                                        {priceType === 'free' ? 'Enroll for Free (Preview)' : 'Buy Now (Preview)'}
+                                                    </Button>
+                                                    <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
+                                                        <li className="flex items-center gap-3">
+                                                            <BarChart className="h-5 w-5 text-primary" />
+                                                            <span className="capitalize">Level: {category.replace('-', ' ')}</span>
+                                                        </li>
+                                                        <li className="flex items-center gap-3">
+                                                            <Clock className="h-5 w-5 text-primary" />
+                                                            <span>~20 Hours to complete</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     
