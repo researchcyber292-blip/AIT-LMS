@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,11 +8,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video, Eye, BarChart, Clock } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video, Eye, BarChart, Clock, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 
 export default function StudioPage() {
@@ -46,6 +54,10 @@ export default function StudioPage() {
     // Media Tab
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
     const [youtubeUrl, setYoutubeUrl] = useState('');
+    
+    // Publish Tab
+    const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
     
     // --- HANDLER FUNCTIONS ---
 
@@ -512,59 +524,21 @@ export default function StudioPage() {
                                             )}
 
                                             {priceType === 'paid' && paymentMethod === 'templates' ? (
-                                                <div className="p-4 space-y-4">
-                                                    <h3 className="font-headline text-xl font-semibold text-center">Subscription Plans</h3>
-                                                    {goldPrice && <Card className="border-yellow-500/50 bg-yellow-500/5">
-                                                        <CardHeader className="p-4">
-                                                            <CardTitle className="text-yellow-400 text-lg">Gold Plan</CardTitle>
-                                                            <p className="text-base font-bold">{goldPrice}</p>
-                                                        </CardHeader>
-                                                        <CardContent className="p-4 pt-0 text-sm">
-                                                            <p className="text-muted-foreground italic mb-2">{goldDescription}</p>
-                                                            <ul className="space-y-1 pt-2">
-                                                            {goldFeatures.filter(f => f.trim()).map((feature, i) => (
-                                                                <li key={`gold-${i}`} className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-4 w-4 text-green-500" />
-                                                                    <span>{feature}</span>
-                                                                </li>
-                                                            ))}
-                                                            </ul>
-                                                        </CardContent>
-                                                    </Card>}
-                                                    {platinumPrice && <Card className="border-slate-400/50 bg-slate-500/5 mt-2">
-                                                        <CardHeader className="p-4">
-                                                            <CardTitle className="text-slate-300 text-lg">Platinum Plan</CardTitle>
-                                                            <p className="text-base font-bold">{platinumPrice}</p>
-                                                        </CardHeader>
-                                                        <CardContent className="p-4 pt-0 text-sm">
-                                                            <p className="text-muted-foreground italic mb-2">{platinumDescription}</p>
-                                                            <ul className="space-y-1 pt-2">
-                                                            {platinumFeatures.filter(f => f.trim()).map((feature, i) => (
-                                                                <li key={`plat-${i}`} className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-4 w-4 text-green-500" />
-                                                                    <span>{feature}</span>
-                                                                </li>
-                                                            ))}
-                                                            </ul>
-                                                        </CardContent>
-                                                    </Card>}
-                                                    {silverPrice && <Card className="mt-2">
-                                                         <CardHeader className="p-4">
-                                                            <CardTitle className="text-lg">Silver Plan</CardTitle>
-                                                            <p className="text-base font-bold">{silverPrice}</p>
-                                                        </CardHeader>
-                                                        <CardContent className="p-4 pt-0 text-sm">
-                                                            <p className="text-muted-foreground italic mb-2">{silverDescription}</p>
-                                                            <ul className="space-y-1 pt-2">
-                                                            {silverFeatures.filter(f => f.trim()).map((feature, i) => (
-                                                                <li key={`silv-${i}`} className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-4 w-4 text-green-500" />
-                                                                    <span>{feature}</span>
-                                                                </li>
-                                                            ))}
-                                                            </ul>
-                                                        </CardContent>
-                                                    </Card>}
+                                                 <div className="p-6">
+                                                    <p className="mb-4 text-4xl font-bold font-headline text-primary">Subscription</p>
+                                                    <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => setIsPricingModalOpen(true)}>
+                                                        View Subscription Plans
+                                                    </Button>
+                                                    <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
+                                                        <li className="flex items-center gap-3">
+                                                            <BarChart className="h-5 w-5 text-primary" />
+                                                            <span className="capitalize">Level: {category.replace('-', ' ')}</span>
+                                                        </li>
+                                                        <li className="flex items-center gap-3">
+                                                            <Clock className="h-5 w-5 text-primary" />
+                                                            <span>~20 Hours to complete</span>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                             ) : (
                                                 <div className="p-6">
@@ -627,6 +601,85 @@ export default function StudioPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            <Dialog open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
+                <DialogContent className="max-w-5xl bg-background border-border">
+                    <DialogHeader>
+                        <DialogTitle className="font-headline text-3xl text-center">Subscription Plans</DialogTitle>
+                        <DialogDescription className="text-center">
+                            Choose the plan that's right for you.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-6">
+                        {goldPrice && (
+                            <Card className="border-yellow-500/50 bg-yellow-500/10 flex flex-col">
+                                <CardHeader>
+                                    <CardTitle className="text-yellow-400 font-headline text-2xl flex items-center gap-2"><Crown /> Gold Plan</CardTitle>
+                                    <p className="text-3xl font-bold pt-2">{goldPrice}</p>
+                                </CardHeader>
+                                <CardContent className="flex-grow space-y-4">
+                                    <p className="text-muted-foreground text-sm italic">{goldDescription}</p>
+                                    <ul className="space-y-2 pt-2">
+                                    {goldFeatures.filter(f => f.trim()).map((feature, i) => (
+                                        <li key={`modal-gold-${i}`} className="flex items-start gap-2 text-sm">
+                                            <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                    </ul>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold" disabled>Select Plan</Button>
+                                </CardFooter>
+                            </Card>
+                        )}
+                        {platinumPrice && (
+                             <Card className="border-slate-400/50 bg-slate-400/10 flex flex-col">
+                                <CardHeader>
+                                    <CardTitle className="text-slate-300 font-headline text-2xl">Platinum Plan</CardTitle>
+                                    <p className="text-3xl font-bold pt-2">{platinumPrice}</p>
+                                </CardHeader>
+                                <CardContent className="flex-grow space-y-4">
+                                    <p className="text-muted-foreground text-sm italic">{platinumDescription}</p>
+                                    <ul className="space-y-2 pt-2">
+                                    {platinumFeatures.filter(f => f.trim()).map((feature, i) => (
+                                        <li key={`modal-plat-${i}`} className="flex items-start gap-2 text-sm">
+                                            <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                    </ul>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button className="w-full bg-slate-500 hover:bg-slate-600 font-bold" disabled>Select Plan</Button>
+                                </CardFooter>
+                            </Card>
+                        )}
+                        {silverPrice && (
+                            <Card className="border-zinc-500/50 bg-zinc-500/10 flex flex-col">
+                                <CardHeader>
+                                    <CardTitle className="text-zinc-300 font-headline text-2xl">Silver Plan</CardTitle>
+                                    <p className="text-3xl font-bold pt-2">{silverPrice}</p>
+                                </CardHeader>
+                                <CardContent className="flex-grow space-y-4">
+                                    <p className="text-muted-foreground text-sm italic">{silverDescription}</p>
+                                    <ul className="space-y-2 pt-2">
+                                    {silverFeatures.filter(f => f.trim()).map((feature, i) => (
+                                        <li key={`modal-silv-${i}`} className="flex items-start gap-2 text-sm">
+                                            <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                    </ul>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button className="w-full bg-zinc-500 hover:bg-zinc-600 font-bold" disabled>Select Plan</Button>
+                                </CardFooter>
+                            </Card>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
