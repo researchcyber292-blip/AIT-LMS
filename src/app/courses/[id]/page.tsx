@@ -2,7 +2,6 @@
 
 import { notFound, useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
 import { COURSES } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +12,11 @@ import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebas
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
+import { verifyRazorpayPayment } from '@/ai/flows/verify-razorpay-payment';
 import { collection, addDoc } from 'firebase/firestore';
 import type { Enrollment } from '@/lib/types';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 
 declare global {
@@ -87,23 +89,56 @@ export default function CourseDetailPage() {
         image: "/image.png",
         order_id: order.id,
         handler: async function (response: any) {
-          toast({
-            title: 'Payment Successful!',
-            description: 'Your enrollment is being processed.',
-          });
-          
-           const enrollmentData: Omit<Enrollment, 'id'> = {
-            studentId: user.uid,
-            courseId: course.id,
-            enrollmentDate: new Date().toISOString(),
-            purchaseDate: new Date().toISOString(),
-            price: course.price,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpayOrderId: response.razorpay_order_id,
-          };
-          
-          const enrollmentsCol = collection(firestore, 'users', user.uid, 'enrollments');
-          await addDoc(enrollmentsCol, enrollmentData);
+          // Verification happens here. isProcessing is already true.
+          // It will be set to false in this handler's finally block.
+          try {
+            const verification = await verifyRazorpayPayment({
+              order_id: response.razorpay_order_id,
+              payment_id: response.razorpay_payment_id,
+              signature: response.razorpay_signature,
+            });
+
+            if (verification.isVerified) {
+              toast({
+                title: 'Payment Verified!',
+                description: 'Your enrollment is being processed.',
+              });
+
+              const enrollmentData: Omit<Enrollment, 'id'> = {
+                studentId: user.uid,
+                courseId: course.id,
+                enrollmentDate: new Date().toISOString(),
+                purchaseDate: new Date().toISOString(),
+                price: course.price,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpayOrderId: response.razorpay_order_id,
+                razorpaySignature: response.razorpay_signature,
+              };
+
+              const enrollmentsCol = collection(firestore, 'users', user.uid, 'enrollments');
+              await addDoc(enrollmentsCol, enrollmentData);
+              toast({
+                  title: "Enrollment Successful!",
+                  description: "You now have access to this course."
+              });
+
+            } else {
+              toast({
+                variant: "destructive",
+                title: "Payment Verification Failed",
+                description: "Signature mismatch. If you have been charged, please contact support.",
+              });
+            }
+          } catch (error: any) {
+            console.error("Payment verification error:", error);
+            toast({
+              variant: "destructive",
+              title: "Verification Error",
+              description: error.message || "An error occurred during payment verification. Please contact support.",
+            });
+          } finally {
+            setIsProcessing(false);
+          }
         },
         prefill: {
           name: user.displayName || "Valued Student",
@@ -116,6 +151,11 @@ export default function CourseDetailPage() {
         },
         theme: {
           color: "#3498db"
+        },
+        modal: {
+            ondismiss: function() {
+                setIsProcessing(false);
+            }
         }
       };
 
@@ -128,6 +168,7 @@ export default function CourseDetailPage() {
               title: "Payment Failed",
               description: response.error.description || "An unknown error occurred.",
           });
+          setIsProcessing(false);
       });
 
       rzp.open();
@@ -139,7 +180,6 @@ export default function CourseDetailPage() {
           title: 'Payment Error',
           description: error.message || 'Could not initiate the payment process. Please try again.',
         });
-    } finally {
         setIsProcessing(false);
     }
   };
@@ -184,6 +224,25 @@ export default function CourseDetailPage() {
             <div className="p-6">
               <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{course.price}</p>
               {renderActionButtons()}
+
+              <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                      <div className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                      <span className="bg-card px-2 text-muted-foreground">OR</span>
+                  </div>
+              </div>
+
+              <div className="space-y-2">
+                  <Label htmlFor="redeem-code">Have a Code?</Label>
+                  <div className="flex gap-2">
+                      <Input id="redeem-code" placeholder="Enter Redeem Code" disabled />
+                      <Button variant="secondary" disabled>Apply</Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Redeem code functionality is coming soon.</p>
+              </div>
+
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-center gap-3">
                     <BarChart className="h-5 w-5 text-primary" />

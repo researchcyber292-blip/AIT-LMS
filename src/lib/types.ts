@@ -68,6 +68,7 @@ export type Enrollment = {
   price: number;
   razorpayPaymentId: string;
   razorpayOrderId: string;
+  razorpaySignature?: string;
 };
 
 export type Wallet = {
