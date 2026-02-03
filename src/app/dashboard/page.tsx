@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart, ArrowLeft, BookUser, LayoutGrid } from 'lucide-react';
+import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart, ArrowLeft, BookUser, LayoutGrid, Trash2 } from 'lucide-react';
 import { COURSES } from '@/data/content';
-import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
-import { collection, doc, updateDoc } from 'firebase/firestore';
+import { useAuth, useUser, useFirestore, useCollection, useDoc, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
+import { collection, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { deleteUser } from 'firebase/auth';
 import type { Enrollment, Instructor, Wallet as WalletType } from '@/lib/types';
 import Loading from '@/app/loading';
 import { useState } from 'react';
@@ -22,6 +23,18 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import imageData from '@/lib/placeholder-images.json';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Label } from '@/components/ui/label';
 
 
 const { placeholderImages } = imageData;
@@ -31,7 +44,7 @@ const avatars = placeholderImages.filter(img => img.id.startsWith('avatar-'));
 const profileSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters.").max(50, "Title is too long."),
     qualifications: z.string().optional(),
-    bio: z.string().min(150, "Bio must be at least 30 words long to be effective.").max(500, "Bio is too long."),
+    bio: z.string().min(30, "Bio must be at least 30 characters long to be effective.").max(500, "Bio is too long."),
     photoURL: z.string({ required_error: "Please select a profile picture." }).min(1, "Please select a profile picture."),
 });
 
@@ -152,7 +165,7 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
                                             <FormLabel>Biography</FormLabel>
                                             <FormControl>
                                                 <Textarea
-                                                    placeholder="Tell students about your experience, passion, and what makes your teaching unique. (Minimum 30 words)"
+                                                    placeholder="Tell students about your experience, passion, and what makes your teaching unique. (Minimum 30 characters)"
                                                     className="flex-grow min-h-[250px]"
                                                     {...field}
                                                 />
@@ -210,9 +223,138 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
     );
 }
 
+function InstructorManagementView({ onBack }: { onBack: () => void; }) {
+    const auth = useAuth();
+    const firestore = useFirestore();
+    const { toast } = useToast();
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [confirmationText, setConfirmationText] = useState('');
+
+    const handleDeleteAccount = async () => {
+        const user = auth.currentUser;
+        if (!user || !firestore) return;
+
+        setIsDeleting(true);
+
+        try {
+            const instructorDocRef = doc(firestore, 'instructors', user.uid);
+            const walletDocRef = doc(firestore, 'wallets', user.uid);
+
+            await deleteDoc(instructorDocRef);
+            await deleteDoc(walletDocRef);
+
+            await deleteUser(user);
+            
+            toast({
+                title: 'Account Deleted',
+                description: 'Your instructor account has been permanently deleted.',
+            });
+        } catch (error: any) {
+            console.error('Error deleting instructor account:', error);
+            let description = 'An unexpected error occurred. Please try again.';
+            if (error.code === 'auth/requires-recent-login') {
+                description = 'This is a sensitive operation. Please sign out and sign back in before trying again.';
+            }
+             toast({
+                variant: 'destructive',
+                title: 'Deletion Failed',
+                description,
+            });
+        } finally {
+            setIsDeleting(false);
+            setConfirmationText('');
+        }
+    };
+    
+    const isConfirmationMatch = confirmationText === 'DELETE';
+
+    return (
+        <div className="container py-12 md:py-16">
+            <div className="flex items-center gap-4 mb-10">
+                <Button variant="outline" size="icon" onClick={onBack}>
+                    <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                    <h1 className="font-headline text-4xl font-bold">My Courses &amp; Management</h1>
+                    <p className="mt-2 text-muted-foreground">Manage your content and account settings.</p>
+                </div>
+            </div>
+
+            <Card className="mb-8">
+                <CardHeader>
+                    <CardTitle>Course Management</CardTitle>
+                    <CardDescription>Create, edit, and publish your courses.</CardDescription>
+                </CardHeader>
+                <CardContent className="text-center text-muted-foreground p-12">
+                    <p>Course creation tools are coming soon!</p>
+                </CardContent>
+            </Card>
+
+            <Card className="border-destructive/50 bg-destructive/5">
+                <CardHeader>
+                    <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                    <CardDescription className="text-destructive/80">
+                    These actions are permanent and cannot be undone.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center justify-between rounded-lg border border-destructive/20 bg-card p-4">
+                        <div className="space-y-0.5">
+                            <p className="font-medium text-destructive">Delete Account</p>
+                            <p className="text-sm text-muted-foreground">
+                            Permanently delete your instructor account and all associated data.
+                            </p>
+                        </div>
+                        <AlertDialog onOpenChange={(open) => !open && setConfirmationText('')}>
+                            <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="sm">
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your
+                                account, your courses, and your earnings data. To confirm, please type{' '}
+                                <span className="font-bold text-foreground">DELETE</span> in the box below.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="py-4">
+                                <Label htmlFor="delete-confirm" className="sr-only">
+                                Confirmation
+                                </Label>
+                                <Input
+                                id="delete-confirm"
+                                value={confirmationText}
+                                onChange={(e) => setConfirmationText(e.target.value)}
+                                placeholder="DELETE"
+                                className="border-destructive focus-visible:ring-destructive"
+                                autoComplete="off"
+                                />
+                            </div>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                onClick={handleDeleteAccount}
+                                disabled={!isConfirmationMatch || isDeleting}
+                                className="bg-destructive hover:bg-destructive/90"
+                                >
+                                {isDeleting ? 'Deleting...' : 'I understand, delete my account'}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
 // Instructor Dashboard Component
 function InstructorDashboard({ instructor }: { instructor: Instructor }) {
-  const [view, setView] = useState('main');
+  const [view, setView] = useState<'main' | 'profile' | 'management'>('main');
   const firestore = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
@@ -255,8 +397,8 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
       { title: "Launch Live Class", description: "Start a real-time session for your students.", onClick: () => window.open('https://moderated.jitsi.net/', '_blank'), icon: Mic, isEnabled: true },
       { 
         title: hasCompletedProfile ? "My Courses & Management" : "START SELLING COURSES TO EARN", 
-        description: hasCompletedProfile ? "Manage your existing courses and create new ones." : "Create your public profile to display on course pages.", 
-        onClick: () => hasCompletedProfile ? showNotImplementedToast() : setView('profile'),
+        description: hasCompletedProfile ? "Manage your courses, profile, and account settings." : "Create your public profile to display on course pages.", 
+        onClick: () => hasCompletedProfile ? setView('management') : setView('profile'),
         icon: hasCompletedProfile ? LayoutGrid : BookUser,
         isEnabled: true
       },
@@ -266,6 +408,10 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
 
   if (view === 'profile') {
       return <InstructorProfileForm instructor={instructor} onBack={() => setView('main')} />
+  }
+
+  if (view === 'management') {
+      return <InstructorManagementView onBack={() => setView('main')} />
   }
 
   return (
