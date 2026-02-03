@@ -54,7 +54,7 @@ export default function StudioPage() {
     const [silverDescription, setSilverDescription] = useState('');
 
     // Additional Details Tab
-    const [courseDuration, setCourseDuration] = useState([7]);
+    const [courseDuration, setCourseDuration] = useState([1]);
     const [wantsToGoLive, setWantsToGoLive] = useState(false);
     const [providesResources, setProvidesResources] = useState(false);
 
@@ -68,20 +68,21 @@ export default function StudioPage() {
     
     // --- HANDLER FUNCTIONS ---
 
-    const formatDuration = (weeks: number): string => {
-        if (weeks === 52) {
-          return '1 Year';
+    const formatDuration = (value: number): string => {
+        if (value <= 3) {
+            return `${value} week${value !== 1 ? 's' : ''}`;
         }
-        if (weeks >= 4) {
-          const months = Math.floor(weeks / 4);
-          const remainingWeeks = weeks % 4;
-          let durationString = `${months} month${months > 1 ? 's' : ''}`;
-          if (remainingWeeks > 0) {
-            durationString += ` & ${remainingWeeks} week${remainingWeeks !== 1 ? 's' : ''}`;
-          }
-          return durationString;
+        if (value === 4) {
+            return '4 weeks';
         }
-        return `${weeks} week${weeks !== 1 ? 's' : ''}`;
+        if (value <= 15) { // 5 to 15
+            const months = value - 4;
+            return `${months} month${months !== 1 ? 's' : ''}`;
+        }
+        if (value === 16) {
+            return '1 Year';
+        }
+        return `${value} weeks`; // Fallback
     };
 
     const handleObjectiveChange = (index: number, value: string) => {
@@ -491,13 +492,13 @@ export default function StudioPage() {
                                 <Label htmlFor="course-duration">Course Duration: {formatDuration(courseDuration[0])}</Label>
                                 <Slider
                                     id="course-duration"
-                                    min={7}
-                                    max={52}
+                                    min={1}
+                                    max={16}
                                     step={1}
                                     value={courseDuration}
                                     onValueChange={setCourseDuration}
                                 />
-                                <p className="text-sm text-muted-foreground">Set the estimated time to complete the course, from 7 weeks to 1 year (52 weeks).</p>
+                                <p className="text-sm text-muted-foreground">Set the estimated time to complete the course.</p>
                             </div>
 
                             <div className="flex items-center justify-between rounded-lg border p-4">
@@ -773,5 +774,7 @@ export default function StudioPage() {
         </div>
     );
 }
+
+    
 
     
