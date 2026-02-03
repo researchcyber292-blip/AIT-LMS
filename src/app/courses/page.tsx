@@ -225,7 +225,7 @@ export default function CoursesPage() {
                 </p>
             </div>
 
-            <div className="mt-12 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                 {isLoading ? (
                   <>
                     {[...Array(2)].map((_, i) => (
@@ -257,7 +257,7 @@ export default function CoursesPage() {
                         <div className="mt-6 flex-grow flex flex-col">
                             <h3 className="font-headline text-2xl font-bold">{instructor.firstName} {instructor.lastName}</h3>
                             <p className="text-sm text-primary font-semibold mt-1">{instructor.title}</p>
-                            <p className="mt-4 text-muted-foreground text-sm max-w-xs mx-auto flex-grow">{instructor.bio}</p>
+                            <p className="mt-4 text-muted-foreground text-sm flex-grow line-clamp-4">{instructor.bio}</p>
                         </div>
                         
                         <div className="mt-8 w-full">
