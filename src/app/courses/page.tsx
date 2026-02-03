@@ -269,13 +269,13 @@ export default function CoursesPage() {
                         </div>
 
                         {/* Right Side */}
-                        <div className="flex flex-col items-center text-center flex-grow w-full">
+                        <div className="flex flex-col items-center flex-grow w-full">
                             <div className="w-full animated-glowing-border">
-                                <ScrollArea className="h-32 w-full rounded-md bg-card p-4">
-                                    <p className="text-muted-foreground text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
+                                <ScrollArea className="h-32 w-full rounded-md bg-gradient-to-br from-slate-700 via-slate-800 to-gray-900 p-4">
+                                    <p className="text-slate-300 text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
                                 </ScrollArea>
                             </div>
-                            <Button asChild size="lg" className="mt-6">
+                            <Button asChild size="lg" className="mt-6 self-center">
                                 <Link href={`/instructors/${instructor.id}`}>
                                     View Profile & Courses
                                 </Link>

@@ -23,7 +23,6 @@
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 207 73% 53%;
-    --radius: 0.5rem;
   }
  
   .dark {
@@ -67,8 +66,13 @@
     content: '';
     @apply absolute -top-1/2 -left-1/2 -z-10 h-[200%] w-[200%] animate-rotate-border;
     background: conic-gradient(
-      transparent,
-      hsl(var(--primary))
+      hsl(var(--primary) / 0.2),
+      hsl(var(--primary) / 0.2),
+      hsl(var(--primary) / 0.2),
+      hsl(var(--primary)),
+      hsl(var(--primary) / 0.2),
+      hsl(var(--primary) / 0.2),
+      hsl(var(--primary) / 0.2)
     );
   }
 }
