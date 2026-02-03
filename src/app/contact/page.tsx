@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Mail, Phone, Clock, MapPin } from 'lucide-react';
@@ -29,7 +30,13 @@ const formSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
   lastName: z.string().min(1, 'Last name is required.'),
   email: z.string().email('Please enter a valid email.'),
+  mobileNumber: z.string().regex(/^[6-9]\d{9}$/, { message: 'Please enter a valid 10-digit mobile number.' }),
   companySize: z.string().optional(),
+  message: z.string()
+    .min(1, 'A message is required.')
+    .refine((value) => value.trim().split(/\s+/).length >= 25, {
+      message: 'Your message must be at least 25 words long.',
+    }),
   scheduleDemo: z.boolean().default(false),
 });
 
@@ -44,7 +51,9 @@ export default function ContactPage() {
       firstName: '',
       lastName: '',
       email: '',
+      mobileNumber: '',
       companySize: undefined,
+      message: '',
       scheduleDemo: false,
     },
   });
@@ -183,31 +192,64 @@ export default function ContactPage() {
                           </FormItem>
                         )}
                       />
-                      <FormField
+                       <FormField
                         control={form.control}
-                        name="companySize"
+                        name="mobileNumber"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Company size</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-white/5 border-white/20">
-                                  <SelectValue placeholder="Select Company size" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="1-10">1-10 employees</SelectItem>
-                                <SelectItem value="11-50">11-50 employees</SelectItem>
-                                <SelectItem value="51-200">51-200 employees</SelectItem>
-                                <SelectItem value="201-1000">201-1000 employees</SelectItem>
-                                <SelectItem value="1000+">1000+ employees</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <FormLabel>Mobile Number</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your mobile number" {...field} className="bg-white/5 border-white/20" />
+                            </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+                      <div className="sm:col-span-2">
+                        <FormField
+                          control={form.control}
+                          name="companySize"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Company size</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="bg-white/5 border-white/20">
+                                    <SelectValue placeholder="Select Company size" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="1-10">1-10 employees</SelectItem>
+                                  <SelectItem value="11-50">11-50 employees</SelectItem>
+                                  <SelectItem value="51-200">51-200 employees</SelectItem>
+                                  <SelectItem value="201-1000">201-1000 employees</SelectItem>
+                                  <SelectItem value="1000+">1000+ employees</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </div>
+
+                    <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Message</FormLabel>
+                            <FormControl>
+                                <Textarea
+                                placeholder="Please describe your needs in at least 25 words."
+                                className="bg-white/5 border-white/20 min-h-[120px]"
+                                {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <div className="my-6 border-t border-white/10"></div>
 
