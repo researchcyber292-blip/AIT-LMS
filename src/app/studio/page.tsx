@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -165,13 +164,6 @@ export default function StudioPage() {
                             <CardDescription>Build out the sections, define pricing, and choose a payment method.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-8">
-                             <div>
-                                <h3 className="text-lg font-medium mb-2">Course Content</h3>
-                                <div className="text-center p-8 border-2 border-dashed rounded-lg">
-                                    <p className="text-muted-foreground">Curriculum builder coming soon.</p>
-                                </div>
-                            </div>
-                            
                             <div className="space-y-4">
                                 <Label className="text-lg font-medium">Make the Course</Label>
                                 <RadioGroup 
