@@ -60,6 +60,10 @@ export default function StudioPage() {
     // Media Tab
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
     const [youtubeUrls, setYoutubeUrls] = useState(['']);
+    const [goldYoutubeUrls, setGoldYoutubeUrls] = useState(['']);
+    const [platinumYoutubeUrls, setPlatinumYoutubeUrls] = useState(['']);
+    const [silverYoutubeUrls, setSilverYoutubeUrls] = useState(['']);
+
     
     // Publish Tab
     const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
@@ -68,20 +72,17 @@ export default function StudioPage() {
     // --- HANDLER FUNCTIONS ---
 
     const formatDuration = (value: number): string => {
-        if (value <= 3) {
+        if (value <= 4) {
             return `${value} week${value !== 1 ? 's' : ''}`;
         }
-        if (value === 4) {
-            return '4 weeks';
-        }
-        if (value <= 15) { // 5 to 15
-            const months = value - 4;
+        if (value < 16) {
+            const months = value - 3;
             return `${months} month${months !== 1 ? 's' : ''}`;
         }
         if (value === 16) {
             return '1 Year';
         }
-        return `${value} weeks`; // Fallback
+        return `${value} weeks`; // Fallback should not be reached
     };
 
     const handleObjectiveChange = (index: number, value: string) => {
@@ -173,7 +174,7 @@ export default function StudioPage() {
         }
     };
     
-    // Handlers for youtube urls
+    // Handlers for general youtube urls
     const handleYoutubeUrlChange = (index: number, value: string) => {
         const newUrls = [...youtubeUrls];
         newUrls[index] = value;
@@ -193,6 +194,70 @@ export default function StudioPage() {
             setYoutubeUrls(newUrls);
         }
     };
+    
+    // Handlers for Gold youtube urls
+    const handleGoldYoutubeUrlChange = (index: number, value: string) => {
+        const newUrls = [...goldYoutubeUrls];
+        newUrls[index] = value;
+        setGoldYoutubeUrls(newUrls);
+    };
+
+    const addGoldYoutubeUrl = () => {
+        if (goldYoutubeUrls.length < 111) {
+            setGoldYoutubeUrls([...goldYoutubeUrls, '']);
+        }
+    };
+
+    const removeGoldYoutubeUrl = (index: number) => {
+        if (goldYoutubeUrls.length > 1) {
+            const newUrls = [...goldYoutubeUrls];
+            newUrls.splice(index, 1);
+            setGoldYoutubeUrls(newUrls);
+        }
+    };
+
+    // Handlers for Platinum youtube urls
+    const handlePlatinumYoutubeUrlChange = (index: number, value: string) => {
+        const newUrls = [...platinumYoutubeUrls];
+        newUrls[index] = value;
+        setPlatinumYoutubeUrls(newUrls);
+    };
+
+    const addPlatinumYoutubeUrl = () => {
+        if (platinumYoutubeUrls.length < 111) {
+            setPlatinumYoutubeUrls([...platinumYoutubeUrls, '']);
+        }
+    };
+
+    const removePlatinumYoutubeUrl = (index: number) => {
+        if (platinumYoutubeUrls.length > 1) {
+            const newUrls = [...platinumYoutubeUrls];
+            newUrls.splice(index, 1);
+            setPlatinumYoutubeUrls(newUrls);
+        }
+    };
+
+    // Handlers for Silver youtube urls
+    const handleSilverYoutubeUrlChange = (index: number, value: string) => {
+        const newUrls = [...silverYoutubeUrls];
+        newUrls[index] = value;
+        setSilverYoutubeUrls(newUrls);
+    };
+
+    const addSilverYoutubeUrl = () => {
+        if (silverYoutubeUrls.length < 111) {
+            setSilverYoutubeUrls([...silverYoutubeUrls, '']);
+        }
+    };
+
+    const removeSilverYoutubeUrl = (index: number) => {
+        if (silverYoutubeUrls.length > 1) {
+            const newUrls = [...silverYoutubeUrls];
+            newUrls.splice(index, 1);
+            setSilverYoutubeUrls(newUrls);
+        }
+    };
+
 
     return (
         <div className="container py-12 md:py-16">
@@ -560,7 +625,7 @@ export default function StudioPage() {
                     <Card className="mt-6">
                         <CardHeader>
                             <CardTitle>Course Media</CardTitle>
-                            <CardDescription>Upload assets for your course like a thumbnail image and introduction video.</CardDescription>
+                            <CardDescription>Upload assets for your course like a thumbnail image and video content.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
@@ -588,43 +653,162 @@ export default function StudioPage() {
                                 </div>
                                 <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
                             </div>
-                            <div className="space-y-4">
-                                <Label>Course Videos (YouTube URLs)</Label>
-                                <div className="space-y-2">
-                                    {youtubeUrls.map((url, index) => (
-                                        <div key={index} className="flex items-center gap-2">
-                                            <Input
-                                                type="url"
-                                                placeholder={`https://www.youtube.com/watch?v=...`}
-                                                value={url}
-                                                onChange={(e) => handleYoutubeUrlChange(index, e.target.value)}
-                                            />
+                            
+                            {priceType === 'paid' && paymentMethod === 'templates' ? (
+                                <div className="space-y-8">
+                                    <div className="space-y-4 rounded-lg border border-yellow-500/50 bg-yellow-500/5 p-4">
+                                        <Label className="text-lg font-medium text-yellow-400">Gold Plan Videos</Label>
+                                        <div className="space-y-2">
+                                            {goldYoutubeUrls.map((url, index) => (
+                                                <div key={index} className="flex items-center gap-2">
+                                                    <Input
+                                                        type="url"
+                                                        placeholder={`https://www.youtube.com/watch?v=...`}
+                                                        value={url}
+                                                        onChange={(e) => handleGoldYoutubeUrlChange(index, e.target.value)}
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => removeGoldYoutubeUrl(index)}
+                                                        className="h-8 w-8 flex-shrink-0"
+                                                        disabled={goldYoutubeUrls.length <= 1}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {goldYoutubeUrls.length < 111 && (
                                             <Button
                                                 type="button"
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => removeYoutubeUrl(index)}
-                                                className="h-8 w-8 flex-shrink-0"
-                                                disabled={youtubeUrls.length <= 1}
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={addGoldYoutubeUrl}
+                                                className="mt-2"
                                             >
-                                                <Trash2 className="h-4 w-4" />
+                                                <Plus className="mr-2 h-4 w-4" /> Add Video URL
                                             </Button>
+                                        )}
+                                        <p className="text-sm text-muted-foreground">Add YouTube links for the Gold plan. Max 111 videos.</p>
+                                    </div>
+                                    
+                                    <div className="space-y-4 rounded-lg border border-slate-400/50 bg-slate-500/5 p-4">
+                                        <Label className="text-lg font-medium text-slate-300">Platinum Plan Videos</Label>
+                                        <div className="space-y-2">
+                                            {platinumYoutubeUrls.map((url, index) => (
+                                                <div key={index} className="flex items-center gap-2">
+                                                    <Input
+                                                        type="url"
+                                                        placeholder={`https://www.youtube.com/watch?v=...`}
+                                                        value={url}
+                                                        onChange={(e) => handlePlatinumYoutubeUrlChange(index, e.target.value)}
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => removePlatinumYoutubeUrl(index)}
+                                                        className="h-8 w-8 flex-shrink-0"
+                                                        disabled={platinumYoutubeUrls.length <= 1}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                        {platinumYoutubeUrls.length < 111 && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={addPlatinumYoutubeUrl}
+                                                className="mt-2"
+                                            >
+                                                <Plus className="mr-2 h-4 w-4" /> Add Video URL
+                                            </Button>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-4 rounded-lg border border-zinc-500/50 bg-zinc-500/10 p-4">
+                                        <Label className="text-lg font-medium text-zinc-300">Silver Plan Videos</Label>
+                                        <div className="space-y-2">
+                                            {silverYoutubeUrls.map((url, index) => (
+                                                <div key={index} className="flex items-center gap-2">
+                                                    <Input
+                                                        type="url"
+                                                        placeholder={`https://www.youtube.com/watch?v=...`}
+                                                        value={url}
+                                                        onChange={(e) => handleSilverYoutubeUrlChange(index, e.target.value)}
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => removeSilverYoutubeUrl(index)}
+                                                        className="h-8 w-8 flex-shrink-0"
+                                                        disabled={silverYoutubeUrls.length <= 1}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {silverYoutubeUrls.length < 111 && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={addSilverYoutubeUrl}
+                                                className="mt-2"
+                                            >
+                                                <Plus className="mr-2 h-4 w-4" /> Add Video URL
+                                            </Button>
+                                        )}
+                                    </div>
+
                                 </div>
-                                {youtubeUrls.length < 111 && (
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={addYoutubeUrl}
-                                        className="mt-2"
-                                    >
-                                        <Plus className="mr-2 h-4 w-4" /> Add Video URL
-                                    </Button>
-                                )}
-                                <p className="text-sm text-muted-foreground">Add links to your course videos from YouTube. You can add up to 111 videos.</p>
-                            </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <Label>Course Videos (YouTube URLs)</Label>
+                                    <div className="space-y-2">
+                                        {youtubeUrls.map((url, index) => (
+                                            <div key={index} className="flex items-center gap-2">
+                                                <Input
+                                                    type="url"
+                                                    placeholder={`https://www.youtube.com/watch?v=...`}
+                                                    value={url}
+                                                    onChange={(e) => handleYoutubeUrlChange(index, e.target.value)}
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => removeYoutubeUrl(index)}
+                                                    className="h-8 w-8 flex-shrink-0"
+                                                    disabled={youtubeUrls.length <= 1}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {youtubeUrls.length < 111 && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={addYoutubeUrl}
+                                            className="mt-2"
+                                        >
+                                            <Plus className="mr-2 h-4 w-4" /> Add Video URL
+                                        </Button>
+                                    )}
+                                    <p className="text-sm text-muted-foreground">Add links to your course videos from YouTube. You can add up to 111 videos.</p>
+                                </div>
+                            )}
+
                         </CardContent>
                         <CardFooter className="flex justify-between">
                             <Button variant="outline" onClick={() => setActiveTab('additional-details')}>Back</Button>
