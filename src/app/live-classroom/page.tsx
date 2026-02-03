@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import JitsiMeeting from '@/components/live-class/jitsi-meeting';
 import { useUser } from '@/firebase';
 import Loading from '@/app/loading';
@@ -12,15 +12,23 @@ function LiveClassroom() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { user, isUserLoading } = useUser();
+    const [userName, setUserName] = useState('');
 
     const roomName = searchParams.get('room');
     const courseTitle = searchParams.get('courseTitle');
-    const isInstructor = searchParams.get('instructor') === 'true';
 
-    // Set a default user name if the user is not logged in or name is not available
-    const userName = user?.displayName || `Guest-${Math.random().toString(36).substring(2, 6)}`;
+    // Generate a stable guest name only on the client to avoid hydration mismatch
+    useEffect(() => {
+        if (user?.displayName) {
+            setUserName(user.displayName);
+        } else if (!isUserLoading) {
+            // This now only runs on the client after the initial render
+            setUserName(`Guest-${Math.random().toString(36).substring(2, 6)}`);
+        }
+    }, [user, isUserLoading]);
 
-    if (isUserLoading) {
+
+    if (isUserLoading || !userName) {
         return <Loading />;
     }
 
