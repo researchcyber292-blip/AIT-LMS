@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
@@ -21,6 +21,10 @@ export default function StudioPage() {
     const [goldFeatures, setGoldFeatures] = useState(() => Array(5).fill(''));
     const [platinumFeatures, setPlatinumFeatures] = useState(() => Array(5).fill(''));
     const [silverFeatures, setSilverFeatures] = useState(() => Array(5).fill(''));
+
+    const [goldDescription, setGoldDescription] = useState('');
+    const [platinumDescription, setPlatinumDescription] = useState('');
+    const [silverDescription, setSilverDescription] = useState('');
 
     const handleFeatureChange = (
         plan: 'gold' | 'platinum' | 'silver',
@@ -49,6 +53,31 @@ export default function StudioPage() {
             setPlatinumFeatures([...platinumFeatures, '']);
         } else if (plan === 'silver' && silverFeatures.length < 11) {
             setSilverFeatures([...silverFeatures, '']);
+        }
+    };
+    
+    const handleRemoveFeature = (
+        plan: 'gold' | 'platinum' | 'silver',
+        index: number
+    ) => {
+        if (plan === 'gold') {
+            if (goldFeatures.length > 1) {
+                const newFeatures = [...goldFeatures];
+                newFeatures.splice(index, 1);
+                setGoldFeatures(newFeatures);
+            }
+        } else if (plan === 'platinum') {
+            if (platinumFeatures.length > 1) {
+                const newFeatures = [...platinumFeatures];
+                newFeatures.splice(index, 1);
+                setPlatinumFeatures(newFeatures);
+            }
+        } else { // silver
+            if (silverFeatures.length > 1) {
+                const newFeatures = [...silverFeatures];
+                newFeatures.splice(index, 1);
+                setSilverFeatures(newFeatures);
+            }
         }
     };
 
@@ -226,6 +255,9 @@ export default function StudioPage() {
                                                                             value={feature}
                                                                             onChange={(e) => handleFeatureChange('gold', index, e.target.value)}
                                                                         />
+                                                                         <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveFeature('gold', index)} className="h-8 w-8 flex-shrink-0" disabled={goldFeatures.length <= 1}>
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                        </Button>
                                                                     </div>
                                                                 ))}
                                                             </div>
@@ -234,6 +266,10 @@ export default function StudioPage() {
                                                                     <Plus className="mr-2 h-4 w-4" /> Add Line
                                                                 </Button>
                                                             )}
+                                                        </div>
+                                                        <div className="space-y-2 pt-4">
+                                                            <Label htmlFor="gold-description">Description</Label>
+                                                            <Textarea id="gold-description" placeholder="Briefly describe this plan..." value={goldDescription} onChange={(e) => setGoldDescription(e.target.value)} />
                                                         </div>
                                                     </CardContent>
                                                 </Card>
@@ -257,6 +293,9 @@ export default function StudioPage() {
                                                                             value={feature}
                                                                             onChange={(e) => handleFeatureChange('platinum', index, e.target.value)}
                                                                         />
+                                                                        <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveFeature('platinum', index)} className="h-8 w-8 flex-shrink-0" disabled={platinumFeatures.length <= 1}>
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                        </Button>
                                                                     </div>
                                                                 ))}
                                                             </div>
@@ -265,6 +304,10 @@ export default function StudioPage() {
                                                                     <Plus className="mr-2 h-4 w-4" /> Add Line
                                                                 </Button>
                                                             )}
+                                                        </div>
+                                                        <div className="space-y-2 pt-4">
+                                                            <Label htmlFor="platinum-description">Description</Label>
+                                                            <Textarea id="platinum-description" placeholder="Briefly describe this plan..." value={platinumDescription} onChange={(e) => setPlatinumDescription(e.target.value)} />
                                                         </div>
                                                     </CardContent>
                                                 </Card>
@@ -288,6 +331,9 @@ export default function StudioPage() {
                                                                             value={feature}
                                                                             onChange={(e) => handleFeatureChange('silver', index, e.target.value)}
                                                                         />
+                                                                        <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveFeature('silver', index)} className="h-8 w-8 flex-shrink-0" disabled={silverFeatures.length <= 1}>
+                                                                            <Trash2 className="h-4 w-4" />
+                                                                        </Button>
                                                                     </div>
                                                                 ))}
                                                             </div>
@@ -296,6 +342,10 @@ export default function StudioPage() {
                                                                     <Plus className="mr-2 h-4 w-4" /> Add Line
                                                                 </Button>
                                                             )}
+                                                        </div>
+                                                        <div className="space-y-2 pt-4">
+                                                            <Label htmlFor="silver-description">Description</Label>
+                                                            <Textarea id="silver-description" placeholder="Briefly describe this plan..." value={silverDescription} onChange={(e) => setSilverDescription(e.target.value)} />
                                                         </div>
                                                     </CardContent>
                                                 </Card>
