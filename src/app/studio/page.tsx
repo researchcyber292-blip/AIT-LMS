@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image, Video } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function StudioPage() {
@@ -102,7 +103,8 @@ export default function StudioPage() {
                         <ListVideo className="mr-2 h-4 w-4" />
                         Curriculum
                     </TabsTrigger>
-                    <TabsTrigger value="media" disabled>
+                    <TabsTrigger value="media">
+                        <Image className="mr-2 h-4 w-4" />
                         Media
                     </TabsTrigger>
                     <TabsTrigger value="publish" disabled>
@@ -151,10 +153,10 @@ export default function StudioPage() {
                                     </div>
                                 </RadioGroup>
                             </div>
-                            <div className="flex justify-end">
-                                <Button onClick={() => setActiveTab('curriculum')}>Next</Button>
-                            </div>
                         </CardContent>
+                        <CardFooter className="flex justify-end">
+                            <Button onClick={() => setActiveTab('curriculum')}>Next</Button>
+                        </CardFooter>
                     </Card>
                 </TabsContent>
                 <TabsContent value="curriculum">
@@ -348,6 +350,48 @@ export default function StudioPage() {
                                 </div>
                             )}
                         </CardContent>
+                        <CardFooter className="flex justify-between mt-8">
+                            <Button variant="outline" onClick={() => setActiveTab('details')}>
+                                Back
+                            </Button>
+                            <Button onClick={() => setActiveTab('media')}>
+                                Next
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="media">
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle>Course Media</CardTitle>
+                            <CardDescription>Upload assets for your course like a thumbnail image and introduction video.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="course-thumbnail">Course Thumbnail</Label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-48 h-27 bg-muted rounded-md flex items-center justify-center">
+                                        <Image className="h-8 w-8 text-muted-foreground" />
+                                    </div>
+                                    <Input id="course-thumbnail" type="file" className="max-w-sm" />
+                                </div>
+                                <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="course-video">Introduction Video (Optional)</Label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-48 h-27 bg-muted rounded-md flex items-center justify-center">
+                                        <Video className="h-8 w-8 text-muted-foreground" />
+                                    </div>
+                                    <Input id="course-video" type="file" className="max-w-sm" />
+                                </div>
+                                 <p className="text-sm text-muted-foreground">A short video to attract students.</p>
+                            </div>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button variant="outline" onClick={() => setActiveTab('curriculum')}>Back</Button>
+                            <Button onClick={() => setActiveTab('publish')}>Save & Continue</Button>
+                        </CardFooter>
                     </Card>
                 </TabsContent>
             </Tabs>
