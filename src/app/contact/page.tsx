@@ -79,52 +79,63 @@ export default function ContactPage() {
         <div className="mt-16 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 items-start">
             
             {/* Left side: Contact Info */}
-            <div className="md:sticky md:top-28 text-left h-full flex flex-col justify-center">
-                 <div className="space-y-8">
-                    {/* Email */}
-                    <div className="flex items-start gap-4">
-                        <div className="bg-blue-500/10 p-3 rounded-lg mt-1 shrink-0">
-                            <Mail className="h-5 w-5 text-blue-300"/>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-lg">Email</h3>
-                            <p className="text-gray-400 mt-1 hover:text-blue-300 transition-colors"><a href="mailto:contact@avirajinfotech.com">contact@avirajinfotech.com</a></p>
-                            <p className="text-gray-400 hover:text-blue-300 transition-colors"><a href="mailto:info@avirajinfotech.com">info@avirajinfotech.com</a></p>
-                        </div>
+            <div className="md:sticky md:top-28">
+              <div className="space-y-8">
+                {/* Card for Email */}
+                <div className="rounded-2xl border border-white/10 bg-gray-900/50 p-6 shadow-xl shadow-blue-500/10 backdrop-blur-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-blue-500/10 p-3 rounded-lg shrink-0">
+                      <Mail className="h-6 w-6 text-blue-300"/>
                     </div>
-                    {/* Phone */}
-                    <div className="flex items-start gap-4">
-                        <div className="bg-blue-500/10 p-3 rounded-lg mt-1 shrink-0">
-                            <Phone className="h-5 w-5 text-blue-300"/>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-lg">Phone</h3>
-                            <p className="text-gray-400 mt-1 hover:text-blue-300 transition-colors"><a href="tel:+919389477179">+91 9389477179</a></p>
-                            <p className="text-gray-400 hover:text-blue-300 transition-colors"><a href="tel:+917531941016">+91 7531941016</a></p>
-                        </div>
-                    </div>
-                    {/* Office Hour */}
-                    <div className="flex items-start gap-4">
-                        <div className="bg-blue-500/10 p-3 rounded-lg mt-1 shrink-0">
-                            <Clock className="h-5 w-5 text-blue-300"/>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-lg">Office Hour</h3>
-                            <p className="text-gray-400 mt-1">9AM - 6PM (Mon-Sat)</p>
-                            <p className="text-gray-400">Online Support: 24/7</p>
-                        </div>
-                    </div>
-                    {/* Location */}
-                    <div className="flex items-start gap-4">
-                        <div className="bg-blue-500/10 p-3 rounded-lg mt-1 shrink-0">
-                            <MapPin className="h-5 w-5 text-blue-300"/>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-lg">Location</h3>
-                            <p className="text-gray-400 mt-1">Pithoragarh, Uttarakhand, India</p>
-                        </div>
-                    </div>
+                    <h3 className="font-semibold text-xl">Email</h3>
+                  </div>
+                  <div className="mt-4 pl-16 space-y-2 text-gray-300">
+                    <p><a href="mailto:contact@avirajinfotech.com" className="hover:text-blue-300 transition-colors">contact@avirajinfotech.com</a></p>
+                    <p><a href="mailto:info@avirajinfotech.com" className="hover:text-blue-300 transition-colors">info@avirajinfotech.com</a></p>
+                  </div>
                 </div>
+  
+                {/* Card for Phone */}
+                <div className="rounded-2xl border border-white/10 bg-gray-900/50 p-6 shadow-xl shadow-blue-500/10 backdrop-blur-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-blue-500/10 p-3 rounded-lg shrink-0">
+                      <Phone className="h-6 w-6 text-blue-300"/>
+                    </div>
+                    <h3 className="font-semibold text-xl">Phone</h3>
+                  </div>
+                  <div className="mt-4 pl-16 space-y-2 text-gray-300">
+                    <p><a href="tel:+919389477179" className="hover:text-blue-300 transition-colors">+91 9389477179</a></p>
+                    <p><a href="tel:+917531941016" className="hover:text-blue-300 transition-colors">+91 7531941016</a></p>
+                  </div>
+                </div>
+                
+                {/* Card for Office Hour */}
+                <div className="rounded-2xl border border-white/10 bg-gray-900/50 p-6 shadow-xl shadow-blue-500/10 backdrop-blur-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-blue-500/10 p-3 rounded-lg shrink-0">
+                      <Clock className="h-6 w-6 text-blue-300"/>
+                    </div>
+                    <h3 className="font-semibold text-xl">Office Hour</h3>
+                  </div>
+                  <div className="mt-4 pl-16 space-y-2 text-gray-300">
+                    <p>9AM - 6PM (Mon-Sat)</p>
+                    <p>Online Support: 24/7</p>
+                  </div>
+                </div>
+  
+                {/* Card for Location */}
+                <div className="rounded-2xl border border-white/10 bg-gray-900/50 p-6 shadow-xl shadow-blue-500/10 backdrop-blur-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-blue-500/10 p-3 rounded-lg shrink-0">
+                      <MapPin className="h-6 w-6 text-blue-300"/>
+                    </div>
+                    <h3 className="font-semibold text-xl">Location</h3>
+                  </div>
+                  <div className="mt-4 pl-16 space-y-2 text-gray-300">
+                    <p>Pithoragarh, Uttarakhand, India</p>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Right side: Form */}
