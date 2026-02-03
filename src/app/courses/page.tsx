@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
@@ -16,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const plans = [
     {
         title: 'Beginner',
-        price: '₹399/mo',
+        price: '₹599/m',
         description: 'Ideal for those new to cybersecurity, providing the essential concepts and tools to start your journey.',
         features: [
             { text: 'Access to all Beginner courses', included: true },
