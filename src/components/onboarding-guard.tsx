@@ -24,7 +24,7 @@ const POST_AUTH_ONBOARDING_PAGES = [
 ];
 
 // Pages accessible to anyone, logged in or not.
-const PUBLIC_PAGES = ['/', '/login', '/about', '/courses', '/programs', '/certifications', '/contact', '/admin', '/instructor-signup', '/instructor-pending-verification', '/live-classes'];
+const PUBLIC_PAGES = ['/', '/login', '/about', '/courses', '/explore', '/programs', '/certifications', '/contact', '/admin', '/instructor-signup', '/instructor-pending-verification', '/live-classes'];
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
