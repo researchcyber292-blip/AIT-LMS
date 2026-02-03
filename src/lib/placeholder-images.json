@@ -149,6 +149,114 @@
       "description": "Hacker in hoodie with anonymous mask using a laptop",
       "imageUrl": "https://images.unsplash.com/photo-1562860149-691401a306f8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aGFja2VyfGVufDB8fDB8fHww",
       "imageHint": "anonymous hacker"
+    },
+    {
+      "id": "avatar-13",
+      "description": "Abstract blue light trails",
+      "imageUrl": "https://images.unsplash.com/photo-1682220784379-e0ce4380db64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhYnN0cmFjdCUyMGxpZ2h0fGVufDB8fHx8MTc2OTk5MDU0Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract light"
+    },
+    {
+      "id": "avatar-14",
+      "description": "Geometric pattern in grayscale",
+      "imageUrl": "https://images.unsplash.com/photo-1572756317709-fe9c15ced298?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnZW9tZXRyaWMlMjBwYXR0ZXJufGVufDB8fHx8MTc3MDA0MDM1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "geometric pattern"
+    },
+    {
+      "id": "avatar-15",
+      "description": "City skyline at night",
+      "imageUrl": "https://images.unsplash.com/photo-1505811210036-052144988918?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaXR5JTIwbmlnaHR8ZW58MHx8fHwxNzcwMDEyNTUzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city night"
+    },
+    {
+      "id": "avatar-16",
+      "description": "Close-up of an eye with digital overlay",
+      "imageUrl": "https://images.unsplash.com/photo-1758656321452-0d3b91acb371?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkaWdpdGFsJTIwZXllfGVufDB8fHx8MTc3MDA5OTQ4MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "digital eye"
+    },
+    {
+      "id": "avatar-17",
+      "description": "A dark forest with a single light source",
+      "imageUrl": "https://images.unsplash.com/photo-1483982258113-b72862e6cff6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkYXJrJTIwZm9yZXN0fGVufDB8fHx8MTc3MDAxMzQxNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dark forest"
+    },
+    {
+      "id": "avatar-18",
+      "description": "A vintage computer terminal screen",
+      "imageUrl": "https://images.unsplash.com/photo-1532799118157-9fef52fdbc5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx2aW50YWdlJTIwY29tcHV0ZXJ8ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vintage computer"
+    },
+    {
+      "id": "avatar-19",
+      "description": "A robot face illustration",
+      "imageUrl": "https://images.unsplash.com/photo-1535378620166-273708d44e4c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxyb2JvdCUyMGZhY2V8ZW58MHx8fHwxNzcwMDc5NzQ3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot face"
+    },
+    {
+      "id": "avatar-20",
+      "description": "A fingerprint scan graphic",
+      "imageUrl": "https://images.unsplash.com/photo-1637934015475-90784961592f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZmluZ2VycHJpbnQlMjBzY2FufGVufDB8fHx8MTc3MDA5OTQ4MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fingerprint scan"
+    },
+    {
+      "id": "avatar-21",
+      "description": "A world map with connection lines",
+      "imageUrl": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b3JsZCUyMG1hcHxlbnwwfHx8fDE3NzAwNzQ3NTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "world map"
+    },
+    {
+      "id": "avatar-22",
+      "description": "A neon sign in a dark alley",
+      "imageUrl": "https://images.unsplash.com/photo-1543332164-6e82f355badc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxuZW9uJTIwc2lnbnxlbnwwfHx8fDE3NzAwOTk0ODB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "neon sign"
+    },
+    {
+      "id": "avatar-23",
+      "description": "A stylized digital brain",
+      "imageUrl": "https://images.unsplash.com/photo-1488229297570-58520851e868?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkaWdpdGFsJTIwYnJhaW58ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "digital brain"
+    },
+    {
+      "id": "avatar-24",
+      "description": "A skull made of digital code",
+      "imageUrl": "https://images.unsplash.com/photo-1769001800015-00c68971aafa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb2RlJTIwc2t1bGx8ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "code skull"
+    },
+    {
+      "id": "avatar-25",
+      "description": "An abstract colorful smoke pattern",
+      "imageUrl": "https://images.unsplash.com/photo-1549744587-3b663f325b85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb2xvcmZ1bCUyMHNtb2tlfGVufDB8fHx8MTc3MDA5OTQ4MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "colorful smoke"
+    },
+    {
+      "id": "avatar-26",
+      "description": "A lone wolf silhouette against a moon",
+      "imageUrl": "https://images.unsplash.com/photo-1609383327846-037bbc072c84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3b2xmJTIwbW9vbnxlbnwwfHx8fDE3NzAwMjMzMDR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wolf moon"
+    },
+    {
+      "id": "avatar-27",
+      "description": "A person wearing VR goggles",
+      "imageUrl": "https://images.unsplash.com/photo-1535223289827-42f1e9919769?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx2ciUyMGdvZ2dsZXN8ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vr goggles"
+    },
+    {
+      "id": "avatar-28",
+      "description": "A galaxy spiral",
+      "imageUrl": "https://images.unsplash.com/photo-1555083031-2cf4be8fce8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxnYWxheHklMjBzcGlyYWx8ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "galaxy spiral"
+    },
+    {
+      "id": "avatar-29",
+      "description": "A minimalist black and white mountain range",
+      "imageUrl": "https://images.unsplash.com/reserve/aOcWqRTfQ12uwr3wWevA_14401305508_804b300054_o.jpg?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtaW5pbWFsaXN0JTIwbW91bnRhaW5zfGVufDB8fHx8MTc3MDA5OTQ4MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist mountains"
+    },
+    {
+      "id": "avatar-30",
+      "description": "An eagle head close-up",
+      "imageUrl": "https://images.unsplash.com/photo-1612218432649-c36a1de7fedb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxlYWdsZSUyMGhlYWR8ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "eagle head"
     }
   ]
 }
