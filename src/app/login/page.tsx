@@ -91,14 +91,13 @@ export default function LoginPage() {
             // Handle different account statuses
             if (instructorData.accountStatus === 'pending') {
                 await auth.signOut();
-                toast({ title: 'Application Pending', description: 'Your instructor application is still under review.' });
                 router.push('/instructor-pending-verification');
             } else if (instructorData.accountStatus === 'rejected' || instructorData.accountStatus === 'banned') {
                 await auth.signOut();
-                toast({ variant: 'destructive', title: 'Access Denied', description: `Your account has been ${instructorData.accountStatus}. Please contact support.` });
+                router.push(`/instructor-access-denied?status=${instructorData.accountStatus}`);
             } else if (instructorData.accountStatus === 'active') {
                 toast({ title: 'Instructor Login Successful' });
-                router.push('/dashboard'); // Redirect to a common dashboard for now
+                router.push('/dashboard');
             } else {
                  await auth.signOut();
                  toast({ variant: 'destructive', title: 'Login Failed', description: 'Unknown account status. Please contact support.' });
