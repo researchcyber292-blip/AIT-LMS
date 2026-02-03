@@ -36,6 +36,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Check, X, Ban, Trash2, Eye } from 'lucide-react';
 import { Separator } from '../ui/separator';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+
 
 export function InstructorsList() {
   const [selectedInstructor, setSelectedInstructor] = useState<Instructor | null>(null);
@@ -114,14 +116,21 @@ export function InstructorsList() {
       setInstructorToDelete(null);
     }
   };
+  
+  const getInitials = (firstName?: string, lastName?: string) => {
+    if (!firstName || !lastName) return '??';
+    return `${firstName[0]}${lastName[0]}`.toUpperCase();
+  }
 
   const renderLoading = () => (
     <TableBody>
       {[...Array(3)].map((_, i) => (
         <TableRow key={i}>
             <TableCell>
-                <Skeleton className="h-4 w-40 mb-2" />
-                <Skeleton className="h-3 w-24" />
+                <div className="flex items-center gap-3">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <Skeleton className="h-4 w-32" />
+                </div>
             </TableCell>
             <TableCell>
                 <Skeleton className="h-4 w-48" />
@@ -169,7 +178,13 @@ export function InstructorsList() {
                     {(instructors || []).map((instructor) => (
                         <TableRow key={instructor.id}>
                             <TableCell>
-                                <div className="font-medium">{instructor.firstName} {instructor.lastName}</div>
+                                <div className="flex items-center gap-3">
+                                    <Avatar>
+                                        <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
+                                        <AvatarFallback>{getInitials(instructor.firstName, instructor.lastName)}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="font-medium">{instructor.firstName} {instructor.lastName}</div>
+                                </div>
                             </TableCell>
                             <TableCell>{instructor.email}</TableCell>
                             <TableCell>
@@ -223,10 +238,16 @@ export function InstructorsList() {
             <Dialog open={!!selectedInstructor} onOpenChange={(open) => !open && setSelectedInstructor(null)}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                        <DialogTitle>Instructor Details</DialogTitle>
-                        <DialogDescription>
-                            Full information for {selectedInstructor.firstName} {selectedInstructor.lastName}.
-                        </DialogDescription>
+                        <div className="flex flex-col items-center gap-4">
+                            <Avatar className="h-20 w-20">
+                                <AvatarImage src={selectedInstructor.photoURL} />
+                                <AvatarFallback className="text-2xl">{getInitials(selectedInstructor.firstName, selectedInstructor.lastName)}</AvatarFallback>
+                            </Avatar>
+                             <div>
+                                <DialogTitle>{selectedInstructor.firstName} {selectedInstructor.lastName}</DialogTitle>
+                                <DialogDescription>{selectedInstructor.email}</DialogDescription>
+                            </div>
+                        </div>
                     </DialogHeader>
                     <div className="grid gap-4 py-4 text-sm">
                         <div className="grid grid-cols-[150px_1fr] items-center gap-4">
@@ -323,5 +344,3 @@ export function InstructorsList() {
     </div>
   );
 }
-
-    

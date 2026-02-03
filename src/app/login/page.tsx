@@ -87,21 +87,10 @@ export default function LoginPage() {
         const instructorDoc = await getDoc(instructorDocRef);
 
         if (instructorDoc.exists()) {
-            const instructorData = instructorDoc.data();
-            // Handle different account statuses
-            if (instructorData.accountStatus === 'pending') {
-                await auth.signOut();
-                router.push('/instructor-pending-verification');
-            } else if (instructorData.accountStatus === 'rejected' || instructorData.accountStatus === 'banned') {
-                await auth.signOut();
-                router.push(`/instructor-access-denied?status=${instructorData.accountStatus}`);
-            } else if (instructorData.accountStatus === 'active') {
-                toast({ title: 'Instructor Login Successful' });
-                router.push('/dashboard');
-            } else {
-                 await auth.signOut();
-                 toast({ variant: 'destructive', title: 'Login Failed', description: 'Unknown account status. Please contact support.' });
-            }
+            // The OnboardingGuard will handle redirects based on status.
+            // Just log in and go to the main entry point.
+            toast({ title: 'Instructor Login Successful' });
+            router.push('/dashboard');
         } else {
             await auth.signOut();
             toast({ variant: 'destructive', title: 'Login Failed', description: 'This account is not registered as an instructor.' });

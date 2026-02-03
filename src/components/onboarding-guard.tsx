@@ -23,8 +23,14 @@ const POST_AUTH_ONBOARDING_PAGES = [
   '/password-reminder'
 ];
 
+const INSTRUCTOR_ONBOARDING_PAGES = [
+  '/instructor-avatar-selection',
+  '/instructor-pending-verification',
+  '/instructor-access-denied',
+];
+
 // Pages accessible to anyone, logged in or not.
-const PUBLIC_PAGES = ['/', '/login', '/about', '/courses', '/explore', '/programs', '/certifications', '/contact', '/admin', '/instructor-signup', '/instructor-pending-verification', '/live-classes'];
+const PUBLIC_PAGES = ['/', '/login', '/about', '/courses', '/explore', '/programs', '/certifications', '/contact', '/admin', '/instructor-signup'];
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
@@ -32,7 +38,6 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Check for both student and instructor profiles.
   const userDocRef = useMemoFirebase(() => user ? doc(firestore, 'users', user.uid) : null, [firestore, user]);
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
   
@@ -43,7 +48,7 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoading) {
-      return; // Wait until all auth and profile data is loaded.
+      return;
     }
     
     // --- User is NOT Logged In ---
@@ -51,10 +56,11 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
       const isAllowedGuestPage = 
         PUBLIC_PAGES.includes(pathname) || 
         pathname.startsWith('/courses/') || 
-        pathname.startsWith('/instructors/') || 
-        PRE_AUTH_ONBOARDING_PAGES.includes(pathname);
+        pathname.startsWith('/instructors/') ||
+        PRE_AUTH_ONBOARDING_PAGES.includes(pathname) ||
+        // Allow access to status pages if they somehow land there logged out
+        INSTRUCTOR_ONBOARDING_PAGES.includes(pathname);
 
-      // If trying to access a protected page, redirect to login.
       if (!isAllowedGuestPage) {
         router.replace('/login');
       }
@@ -63,45 +69,73 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
 
     // --- User IS Logged In ---
 
-    // If it's an admin or an instructor, the student onboarding guard should not apply.
-    if (user.isAnonymous || instructorProfile) {
-        // But if an instructor tries to access a student-only onboarding page, redirect them.
-        const isStudentOnboardingPage = PRE_AUTH_ONBOARDING_PAGES.includes(pathname) || POST_AUTH_ONBOARDING_PAGES.includes(pathname);
-        if (instructorProfile && isStudentOnboardingPage) {
-            router.replace('/dashboard'); // or instructor dashboard
+    // Handle Admin
+    if (user.isAnonymous) {
+      return; 
+    }
+
+    // Handle Instructor Flow
+    if (instructorProfile) {
+        const { accountStatus, photoURL } = instructorProfile;
+
+        if (accountStatus === 'pending') {
+            if (pathname !== '/instructor-pending-verification') router.replace('/instructor-pending-verification');
+            return;
         }
-      return;
+        if (accountStatus === 'rejected' || accountStatus === 'banned') {
+            const targetPath = `/instructor-access-denied?status=${accountStatus}`;
+            // use startsWith to handle potential query param changes
+            if (!pathname.startsWith('/instructor-access-denied')) {
+                router.replace(targetPath);
+            }
+            return;
+        }
+        if (accountStatus === 'active') {
+            if (!photoURL) {
+                // First time login after approval, needs to select avatar
+                if (pathname !== '/instructor-avatar-selection') {
+                    router.replace('/instructor-avatar-selection');
+                }
+            } else {
+                // Fully onboarded instructor, should not be on setup pages
+                if (INSTRUCTOR_ONBOARDING_PAGES.includes(pathname)) {
+                    router.replace('/dashboard');
+                }
+            }
+        }
+        return; // Allow access to other pages if active and onboarded
     }
 
-    // Handle student onboarding status.
-    const status = userProfile?.onboardingStatus || 'new';
+    // Handle Student Flow
+    if (userProfile) {
+        const status = userProfile.onboardingStatus || 'new';
 
-    if (status === 'active') {
-      // Onboarding is complete. Redirect away from any onboarding page.
-      const isOnboardingPage = PRE_AUTH_ONBOARDING_PAGES.includes(pathname) || POST_AUTH_ONBOARDING_PAGES.includes(pathname);
-      if (isOnboardingPage) {
-          router.replace('/dashboard');
-      }
-    } else {
-      // Onboarding is IN-PROGRESS.
-      const requiredStepMap: { [key: string]: string } = {
-        'new': '/student-welcome',
-        'profile_complete': '/getting-started',
-        'username_complete': '/avatar-selection',
-      };
-      const requiredStep = requiredStepMap[status] || '/student-welcome';
-      
-      const isAllowedInProgressPage = 
-        PUBLIC_PAGES.includes(pathname) || 
-        pathname.startsWith('/courses/') || 
-        pathname.startsWith('/instructors/') || 
-        POST_AUTH_ONBOARDING_PAGES.includes(pathname);
+        if (status === 'active') {
+            const isOnboardingPage = PRE_AUTH_ONBOARDING_PAGES.includes(pathname) || POST_AUTH_ONBOARDING_PAGES.includes(pathname);
+            if (isOnboardingPage) {
+                router.replace('/dashboard');
+            }
+        } else {
+            const requiredStepMap: { [key: string]: string } = {
+                'new': '/student-welcome',
+                'profile_complete': '/getting-started',
+                'username_complete': '/avatar-selection',
+            };
+            const requiredStep = requiredStepMap[status] || '/student-welcome';
+            
+            const isAllowedInProgressPage = 
+                PUBLIC_PAGES.includes(pathname) || 
+                pathname.startsWith('/courses/') || 
+                pathname.startsWith('/instructors/') || 
+                POST_AUTH_ONBOARDING_PAGES.includes(pathname);
 
-      // If the user is not on their required step OR a page they are allowed to see while onboarding, redirect them.
-      if (pathname !== requiredStep && !isAllowedInProgressPage) {
-         router.replace(requiredStep);
-      }
+            if (pathname !== requiredStep && !isAllowedInProgressPage) {
+                router.replace(requiredStep);
+            }
+        }
+        return;
     }
+
   }, [isLoading, user, userProfile, instructorProfile, pathname, router]);
 
   if (isLoading) {
