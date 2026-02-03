@@ -95,7 +95,8 @@ export function InstructorsList() {
       
       toast({
         title: 'Instructor Data Deleted',
-        description: `Firestore data for ${instructor.firstName} ${instructor.lastName} has been removed. To complete deletion, remove them from Firebase Authentication manually.`,
+        description: `IMPORTANT: Firestore data for ${instructor.firstName} ${instructor.lastName} has been removed. To complete deletion, you must now manually delete this user from the Firebase Authentication console.`,
+        duration: 9000,
       });
     } catch (e: any) {
         const permissionError = new FirestorePermissionError({
@@ -322,3 +323,5 @@ export function InstructorsList() {
     </div>
   );
 }
+
+    

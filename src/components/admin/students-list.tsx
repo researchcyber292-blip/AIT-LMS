@@ -110,7 +110,8 @@ export function StudentsList() {
 
       toast({
         title: 'User Data Deleted from Firestore',
-        description: `The data for ${studentToDelete.name} has been removed. To allow re-registration, manually delete the user from the Firebase Authentication console.`,
+        description: `IMPORTANT: The data for ${studentToDelete.name} has been removed. To complete deletion and allow this email to be re-used, you must now manually delete this user from the Firebase Authentication console.`,
+        duration: 9000,
       });
     } catch (e: any) {
         const permissionError = new FirestorePermissionError({
@@ -302,3 +303,5 @@ export function StudentsList() {
     </div>
   );
 }
+
+    
