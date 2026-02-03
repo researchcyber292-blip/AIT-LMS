@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, Users, Settings, Bell, LogOut, Briefcase } from 'lucide-react';
+import { Shield, Users, Settings, Bell, LogOut, Briefcase, Mail, Zap } from 'lucide-react';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -144,6 +144,18 @@ export default function AdminPage() {
                     INSTRUCTORS MANAGEMENTS
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton size="lg" onClick={() => setActiveView('contact-mails')} isActive={activeView === 'contact-mails'}>
+                    <Mail />
+                    CONTACT-MAILS
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton size="lg" onClick={() => setActiveView('auto-approving')} isActive={activeView === 'auto-approving'}>
+                    <Zap />
+                    AUTO APPROVING
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarContent>
           </Sidebar>
@@ -166,6 +178,32 @@ export default function AdminPage() {
                 )}
                 {activeView === 'instructors' && (
                     <InstructorsList />
+                )}
+                {activeView === 'contact-mails' && (
+                    <div>
+                        <h2 className="text-2xl font-bold font-headline">Contact Mails</h2>
+                        <p className="text-muted-foreground mt-2 mb-6">View and manage contact form submissions.</p>
+                        <div className="text-center aspect-video flex items-center justify-center rounded-lg border-2 border-dashed">
+                            <div>
+                                <Mail className="mx-auto h-12 w-12 text-muted-foreground" />
+                                <h3 className="mt-4 text-xl font-semibold">Under Construction</h3>
+                                <p className="text-muted-foreground mt-2">This section will display contact mail submissions.</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {activeView === 'auto-approving' && (
+                     <div>
+                        <h2 className="text-2xl font-bold font-headline">Auto-Approving Settings</h2>
+                        <p className="text-muted-foreground mt-2 mb-6">Configure automatic approval settings.</p>
+                        <div className="text-center aspect-video flex items-center justify-center rounded-lg border-2 border-dashed">
+                             <div>
+                                <Zap className="mx-auto h-12 w-12 text-muted-foreground" />
+                                <h3 className="mt-4 text-xl font-semibold">Under Construction</h3>
+                                <p className="text-muted-foreground mt-2">This section will contain auto-approval settings.</p>
+                            </div>
+                        </div>
+                    </div>
                 )}
                 {activeView === 'notifications' && (
                     <div>
@@ -299,3 +337,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
+    
