@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -8,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
@@ -181,9 +180,22 @@ export default function StudioPage() {
                                                             <Label htmlFor="gold-price">Price</Label>
                                                             <Input id="gold-price" placeholder="e.g., 4999 / 6 months" />
                                                         </div>
-                                                        <div>
-                                                            <Label htmlFor="gold-desc">Description</Label>
-                                                            <Textarea id="gold-desc" placeholder="Describe the plan features..." />
+                                                        <div className="space-y-2">
+                                                            <Label>Features</Label>
+                                                            <div className="space-y-2">
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 1..." />
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 2..." />
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 3..." />
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </CardContent>
                                                 </Card>
@@ -196,9 +208,22 @@ export default function StudioPage() {
                                                             <Label htmlFor="platinum-price">Price</Label>
                                                             <Input id="platinum-price" placeholder="e.g., 2999 / 3 months" />
                                                         </div>
-                                                        <div>
-                                                            <Label htmlFor="platinum-desc">Description</Label>
-                                                            <Textarea id="platinum-desc" placeholder="Describe the plan features..." />
+                                                        <div className="space-y-2">
+                                                            <Label>Features</Label>
+                                                            <div className="space-y-2">
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 1..." />
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 2..." />
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 3..." />
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </CardContent>
                                                 </Card>
@@ -211,9 +236,22 @@ export default function StudioPage() {
                                                             <Label htmlFor="silver-price">Price</Label>
                                                             <Input id="silver-price" placeholder="e.g., 599 / month" />
                                                         </div>
-                                                        <div>
-                                                            <Label htmlFor="silver-desc">Description</Label>
-                                                            <Textarea id="silver-desc" placeholder="Describe the plan features..." />
+                                                         <div className="space-y-2">
+                                                            <Label>Features</Label>
+                                                            <div className="space-y-2">
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 1..." />
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 2..." />
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                                    <Input placeholder="Line 3..." />
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </CardContent>
                                                 </Card>
