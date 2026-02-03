@@ -96,12 +96,43 @@ export default function StudioPage() {
                 <TabsContent value="curriculum">
                     <Card className="mt-6">
                         <CardHeader>
-                            <CardTitle>Course Curriculum</CardTitle>
-                            <CardDescription>Build out the sections and lectures for your course.</CardDescription>
+                            <CardTitle>Course Curriculum & Pricing</CardTitle>
+                            <CardDescription>Build out the sections, define pricing, and choose a payment method.</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <div className="text-center p-8 border-2 border-dashed rounded-lg">
-                                <p className="text-muted-foreground">Curriculum builder coming soon.</p>
+                        <CardContent className="space-y-8">
+                             <div>
+                                <h3 className="text-lg font-medium mb-2">Course Content</h3>
+                                <div className="text-center p-8 border-2 border-dashed rounded-lg">
+                                    <p className="text-muted-foreground">Curriculum builder coming soon.</p>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <Label className="text-lg font-medium">Make the Course</Label>
+                                <RadioGroup defaultValue="paid" className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="paid" id="price-paid" />
+                                        <Label htmlFor="price-paid">Paid</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="free" id="price-free" />
+                                        <Label htmlFor="price-free">Free</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+
+                            <div className="space-y-4">
+                                <Label className="text-lg font-medium">Payment Board Method</Label>
+                                 <RadioGroup defaultValue="direct" className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="direct" id="payment-direct" />
+                                        <Label htmlFor="payment-direct">Direct Way</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="templates" id="payment-templates" />
+                                        <Label htmlFor="payment-templates">Templates</Label>
+                                    </div>
+                                </RadioGroup>
                             </div>
                         </CardContent>
                     </Card>
