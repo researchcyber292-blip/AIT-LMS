@@ -11,10 +11,15 @@ import { COURSES } from '@/data/content';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus } from 'lucide-react';
+import { Plus, Eye } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 
 export function ManualEnrollment() {
   const [selectedStudent, setSelectedStudent] = useState<UserProfile | null>(null);
+  const [studentDetails, setStudentDetails] = useState<UserProfile | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [studentEnrollments, setStudentEnrollments] = useState<Enrollment[]>([]);
   const [isLoadingEnrollments, setIsLoadingEnrollments] = useState(false);
   const firestore = useFirestore();
@@ -28,6 +33,10 @@ export function ManualEnrollment() {
 
   const { data: students, isLoading: isCollectionLoading } = useCollection<UserProfile>(studentsQuery);
   const isLoading = isAuthLoading || isCollectionLoading;
+
+  const filteredStudents = (students || []).filter(student =>
+    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const plans = [
     { name: 'Beginner', price: '599/M', category: 'Beginner' as const },
@@ -118,6 +127,15 @@ export function ManualEnrollment() {
     }
   };
 
+  const getInitials = (name: string) => {
+    if (!name) return '??';
+    const names = name.split(' ');
+    if (names.length > 1) {
+        return `${names[0][0]}${names[names.length - 1][0]}`;
+    }
+    return name.substring(0, 2);
+  }
+
   const renderLoading = () => (
     <TableBody>
       {[...Array(5)].map((_, i) => (
@@ -135,6 +153,15 @@ export function ManualEnrollment() {
       <h2 className="text-2xl font-bold font-headline mb-4">Manual Course Enrollment</h2>
       <p className="text-muted-foreground mb-6">Manually enroll or unenroll students from any course plan.</p>
       
+      <div className="mb-4">
+        <Input
+          placeholder="Search by student name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
+      
       <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
@@ -146,22 +173,30 @@ export function ManualEnrollment() {
           </TableHeader>
           {isLoading ? renderLoading() : (
             <TableBody>
-              {(students || []).map((student) => (
+              {filteredStudents.map((student) => (
                 <TableRow key={student.id}>
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.email}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" onClick={() => handleManageClick(student)}>
-                      Manage Plans
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => setStudentDetails(student)}>
+                        <Eye className="h-4 w-4" />
+                        <span className="sr-only">View Details</span>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleManageClick(student)}>
+                        Manage Plans
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           )}
         </Table>
-        {(!isLoading && (!students || students.length === 0)) && (
-          <div className="text-center p-8 text-muted-foreground">No students found.</div>
+        {(!isLoading && filteredStudents.length === 0) && (
+          <div className="text-center p-8 text-muted-foreground">
+             {students && students.length > 0 ? 'No students match your search.' : 'No students found.'}
+          </div>
         )}
       </div>
 
@@ -206,6 +241,59 @@ export function ManualEnrollment() {
           </DialogContent>
         </Dialog>
       )}
+
+      {studentDetails && (
+        <Dialog open={!!studentDetails} onOpenChange={(open) => !open && setStudentDetails(null)}>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+                <div className="flex items-center gap-4 mb-4">
+                    <Avatar className="h-16 w-16">
+                        <AvatarImage src={studentDetails.photoURL} />
+                        <AvatarFallback className="text-xl">{getInitials(studentDetails.name)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <DialogTitle>{studentDetails.name}</DialogTitle>
+                        <DialogDescription>{studentDetails.email}</DialogDescription>
+                    </div>
+                </div>
+            </DialogHeader>
+            <Separator />
+            <div className="grid gap-4 py-4 text-sm max-h-[60vh] overflow-y-auto pr-4">
+                <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                    <span className="text-muted-foreground">User ID</span>
+                    <span className="font-mono text-xs break-all">{studentDetails.id}</span>
+                </div>
+                <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                    <span className="text-muted-foreground">Username</span>
+                    <span>{studentDetails.username || 'N/A'}</span>
+                </div>
+                <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                    <span className="text-muted-foreground">Mobile Number</span>
+                    <span>{studentDetails.mobileNumber || 'N/A'}</span>
+                </div>
+                 <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                    <span className="text-muted-foreground">Alternate Mobile</span>
+                    <span>{studentDetails.alternateMobileNumber || 'N/A'}</span>
+                </div>
+                 <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                    <span className="text-muted-foreground">Mother's Name</span>
+                    <span>{studentDetails.motherName || 'N/A'}</span>
+                </div>
+                 <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                    <span className="text-muted-foreground">Father's Name</span>
+                    <span>{studentDetails.fatherName || 'N/A'}</span>
+                </div>
+                <div className="grid grid-cols-[150px_1fr] items-center gap-4">
+                    <span className="text-muted-foreground">Onboarding Status</span>
+                     <span className={`capitalize`}>
+                        {studentDetails.onboardingStatus.replace('_', ' ')}
+                    </span>
+                </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
     </div>
   );
 }
