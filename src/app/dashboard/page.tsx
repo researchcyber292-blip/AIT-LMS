@@ -223,7 +223,7 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
     );
 }
 
-function InstructorManagementView({ onBack }: { onBack: () => void; }) {
+function InstructorManagementView({ onBack, onEditProfile }: { onBack: () => void; onEditProfile: () => void; }) {
     const auth = useAuth();
     const firestore = useFirestore();
     const { toast } = useToast();
@@ -280,13 +280,24 @@ function InstructorManagementView({ onBack }: { onBack: () => void; }) {
                 </div>
             </div>
 
-            <Card className="mb-8">
+             <Card className="mb-8">
                 <CardHeader>
-                    <CardTitle>Course Management</CardTitle>
-                    <CardDescription>Create, edit, and publish your courses.</CardDescription>
+                    <CardTitle>Content & Profile Management</CardTitle>
+                    <CardDescription>Manage your courses and public instructor profile.</CardDescription>
                 </CardHeader>
-                <CardContent className="text-center text-muted-foreground p-12">
-                    <p>Course creation tools are coming soon!</p>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                    <div className="rounded-lg border bg-card/70 p-6 text-center flex flex-col items-center justify-center">
+                        <h3 className="text-lg font-semibold font-headline">Course Studio</h3>
+                        <p className="text-sm text-muted-foreground mt-2 mb-4 flex-grow">Create, edit, and publish your video courses.</p>
+                        <Button disabled>Coming Soon</Button>
+                    </div>
+                    <div className="rounded-lg border bg-card/70 p-6 text-center flex flex-col items-center justify-center">
+                        <h3 className="text-lg font-semibold font-headline">Edit Profile Preview</h3>
+                        <p className="text-sm text-muted-foreground mt-2 mb-4 flex-grow">Update your public name, bio, and picture.</p>
+                        <Button onClick={onEditProfile} variant="outline">
+                            Edit Your Profile
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -411,7 +422,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
   }
 
   if (view === 'management') {
-      return <InstructorManagementView onBack={() => setView('main')} />
+      return <InstructorManagementView onBack={() => setView('main')} onEditProfile={() => setView('profile')} />
   }
 
   return (
