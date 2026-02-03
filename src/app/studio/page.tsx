@@ -367,7 +367,7 @@ export default function StudioPage() {
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="course-thumbnail">Course Thumbnail</Label>
+                                <Label htmlFor="course-thumbnail">Upload Thumbnail</Label>
                                 <div className="flex items-center gap-4">
                                     <div className="w-48 h-27 bg-muted rounded-md flex items-center justify-center">
                                         <Image className="h-8 w-8 text-muted-foreground" />
