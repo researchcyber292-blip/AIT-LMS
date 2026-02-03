@@ -227,7 +227,7 @@ export default function CoursesPage() {
                 </p>
             </div>
 
-            <div className="mt-12 max-w-6xl mx-auto grid grid-cols-1 gap-8">
+            <div className="mt-12 max-w-7xl mx-auto grid grid-cols-1 gap-8">
                 {isLoading ? (
                   <>
                     {[...Array(2)].map((_, i) => (
@@ -244,7 +244,7 @@ export default function CoursesPage() {
                             </div>
                             {/* Right Skeleton */}
                              <div className="flex flex-col items-center flex-grow w-full">
-                                <Skeleton className="h-32 w-full rounded-md" />
+                                <div className="w-full p-[2px] rounded-lg"><Skeleton className="h-32 w-full rounded-md" /></div>
                                 <Skeleton className="h-11 w-48 mt-6" />
                             </div>
                         </div>
@@ -269,10 +269,12 @@ export default function CoursesPage() {
                         </div>
 
                         {/* Right Side */}
-                        <div className="flex flex-col items-center text-left flex-grow w-full">
-                             <ScrollArea className="h-32 w-full rounded-md border bg-black/20 p-4">
-                                <p className="text-muted-foreground text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
-                            </ScrollArea>
+                        <div className="flex flex-col items-center text-center flex-grow w-full">
+                            <div className="w-full animated-glowing-border">
+                                <ScrollArea className="h-32 w-full rounded-md bg-card p-4">
+                                    <p className="text-muted-foreground text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
+                                </ScrollArea>
+                            </div>
                             <Button asChild size="lg" className="mt-6">
                                 <Link href={`/instructors/${instructor.id}`}>
                                     View Profile & Courses
