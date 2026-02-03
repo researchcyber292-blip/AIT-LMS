@@ -28,6 +28,7 @@ import { signInAnonymously, setPersistence, inMemoryPersistence } from 'firebase
 import Loading from '@/app/loading';
 import { cn } from '@/lib/utils';
 import { ContactMailsList } from '@/components/admin/contact-mails-list';
+import { ManualEnrollment } from '@/components/admin/manual-enrollment';
 
 
 export default function AdminPage() {
@@ -184,17 +185,7 @@ export default function AdminPage() {
                     <ContactMailsList />
                 )}
                 {activeView === 'auto-approving' && (
-                     <div>
-                        <h2 className="text-2xl font-bold font-headline">Auto-Approving Settings</h2>
-                        <p className="text-muted-foreground mt-2 mb-6">Configure automatic approval settings.</p>
-                        <div className="text-center aspect-video flex items-center justify-center rounded-lg border-2 border-dashed">
-                             <div>
-                                <Zap className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <h3 className="mt-4 text-xl font-semibold">Under Construction</h3>
-                                <p className="text-muted-foreground mt-2">This section will contain auto-approval settings.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <ManualEnrollment />
                 )}
                 {activeView === 'notifications' && (
                     <div>
