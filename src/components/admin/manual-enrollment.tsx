@@ -29,6 +29,12 @@ export function ManualEnrollment() {
   const { data: students, isLoading: isCollectionLoading } = useCollection<UserProfile>(studentsQuery);
   const isLoading = isAuthLoading || isCollectionLoading;
 
+  const plans = [
+    { name: 'Beginner', price: '599/M', category: 'Beginner' as const },
+    { name: 'Pro', price: '2999/3M', category: 'Intermediate' as const },
+    { name: 'Advanced', price: '4999/6M', category: 'Advanced' as const }
+  ];
+
   const handleManageClick = async (student: UserProfile) => {
     setSelectedStudent(student);
     if (firestore) {
@@ -48,12 +54,20 @@ export function ManualEnrollment() {
     }
   };
 
-  const handleEnroll = async (student: UserProfile, courseId: string) => {
+  const handleEnrollInPlan = async (student: UserProfile, category: 'Beginner' | 'Intermediate' | 'Advanced') => {
     if (!firestore) return;
-    const course = COURSES.find(c => c.id === courseId);
-    if (!course) return;
+
+    const coursesToEnroll = COURSES.filter(c => c.category === category);
+    if (coursesToEnroll.length === 0) {
+      toast({ variant: 'destructive', title: 'No Courses', description: `No courses found for the ${category} plan.` });
+      return;
+    }
 
     try {
+      const newEnrollments: Enrollment[] = [];
+      for (const course of coursesToEnroll) {
+        if (studentEnrollments.some(e => e.courseId === course.id)) continue;
+
         const enrollmentsCol = collection(firestore, 'users', student.id, 'enrollments');
         const enrollmentData: Omit<Enrollment, 'id'> = {
           studentId: student.id,
@@ -61,37 +75,49 @@ export function ManualEnrollment() {
           enrollmentDate: new Date().toISOString(),
           purchaseDate: new Date().toISOString(),
           price: 0, // Admin grant
-          razorpayPaymentId: 'admin_grant',
-          razorpayOrderId: `admin_${Date.now()}`,
+          razorpayPaymentId: 'admin_grant_plan',
+          razorpayOrderId: `admin_plan_${Date.now()}`,
         };
         const newDocRef = await addDoc(enrollmentsCol, enrollmentData);
-        setStudentEnrollments([...studentEnrollments, { id: newDocRef.id, ...enrollmentData }]);
-        toast({ title: "Enrollment Successful", description: `${student.name} has been enrolled in ${course.title}.` });
+        newEnrollments.push({ id: newDocRef.id, ...enrollmentData });
+      }
+      setStudentEnrollments(prev => [...prev, ...newEnrollments]);
+      toast({ title: "Enrollment Successful", description: `${student.name} has been enrolled in the ${category} plan.` });
     } catch(e) {
-        const permissionError = new FirestorePermissionError({ path: `users/${student.id}/enrollments`, operation: 'create', requestResourceData: { courseId } });
-        errorEmitter.emit('permission-error', permissionError);
-        toast({ variant: 'destructive', title: 'Enrollment Failed', description: 'Could not enroll student. Check permissions.' });
+      const permissionError = new FirestorePermissionError({ path: `users/${student.id}/enrollments`, operation: 'create' });
+      errorEmitter.emit('permission-error', permissionError);
+      toast({ variant: 'destructive', title: 'Enrollment Failed', description: 'Could not enroll student. Check permissions.' });
     }
   };
-
-  const handleUnenroll = async (student: UserProfile, courseId: string) => {
+  
+  const handleUnenrollFromPlan = async (student: UserProfile, category: 'Beginner' | 'Intermediate' | 'Advanced') => {
     if (!firestore) return;
-    const course = COURSES.find(c => c.id === courseId);
-    const enrollment = studentEnrollments.find(e => e.courseId === courseId);
-    if (!enrollment || !course) return;
     
+    const enrollmentsToCancel = studentEnrollments.filter(e => {
+        const course = COURSES.find(c => c.id === e.courseId);
+        return course?.category === category;
+    });
+
+    if (enrollmentsToCancel.length === 0) {
+        toast({ variant: "destructive", title: "Not Enrolled", description: `${student.name} is not enrolled in any ${category} courses.` });
+        return;
+    }
+
     try {
-        const enrollmentDocRef = doc(firestore, 'users', student.id, 'enrollments', enrollment.id);
-        await deleteDoc(enrollmentDocRef);
-        setStudentEnrollments(studentEnrollments.filter(e => e.id !== enrollment.id));
-        toast({ title: "Unenrolled", description: `${student.name} has been unenrolled from ${course.title}.` });
+        for (const enrollment of enrollmentsToCancel) {
+            const enrollmentDocRef = doc(firestore, 'users', student.id, 'enrollments', enrollment.id);
+            await deleteDoc(enrollmentDocRef);
+        }
+        
+        setStudentEnrollments(prev => prev.filter(e => !enrollmentsToCancel.some(cancelled => cancelled.id === e.id)));
+        toast({ title: "Unenrolled from Plan", description: `${student.name} has been unenrolled from the ${category} plan.` });
     } catch (e) {
-        const permissionError = new FirestorePermissionError({ path: `users/${student.id}/enrollments/${enrollment.id}`, operation: 'delete' });
+        const permissionError = new FirestorePermissionError({ path: `users/${student.id}/enrollments`, operation: 'delete' });
         errorEmitter.emit('permission-error', permissionError);
         toast({ variant: 'destructive', title: 'Unenroll Failed', description: 'Could not unenroll student. Check permissions.' });
     }
   };
-  
+
   const renderLoading = () => (
     <TableBody>
       {[...Array(5)].map((_, i) => (
@@ -107,7 +133,7 @@ export function ManualEnrollment() {
   return (
     <div>
       <h2 className="text-2xl font-bold font-headline mb-4">Manual Course Enrollment</h2>
-      <p className="text-muted-foreground mb-6">Manually enroll or unenroll students from any course.</p>
+      <p className="text-muted-foreground mb-6">Manually enroll or unenroll students from any course plan.</p>
       
       <div className="rounded-lg border bg-card">
         <Table>
@@ -126,7 +152,7 @@ export function ManualEnrollment() {
                   <TableCell>{student.email}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm" onClick={() => handleManageClick(student)}>
-                      Manage Courses
+                      Manage Plans
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -143,28 +169,31 @@ export function ManualEnrollment() {
         <Dialog open={!!selectedStudent} onOpenChange={(open) => !open && setSelectedStudent(null)}>
           <DialogContent className="sm:max-w-xl">
             <DialogHeader>
-              <DialogTitle>Manage Enrollments for {selectedStudent.name}</DialogTitle>
+              <DialogTitle>Manage Plans for {selectedStudent.name}</DialogTitle>
               <DialogDescription>
-                Select courses to enroll or unenroll this student.
+                Select plans to enroll or unenroll this student.
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="h-96 pr-6">
-               {isLoadingEnrollments ? <div className="text-center p-8">Loading courses...</div> : (
+               {isLoadingEnrollments ? <div className="text-center p-8">Loading plans...</div> : (
                   <div className="py-4 space-y-2">
-                    {COURSES.map(course => {
-                      const isEnrolled = studentEnrollments.some(e => e.courseId === course.id);
+                    {plans.map(plan => {
+                      const planCourses = COURSES.filter(c => c.category === plan.category);
+                      const enrolledInPlanCourses = studentEnrollments.filter(e => planCourses.some(pc => pc.id === e.courseId));
+                      const isEnrolled = planCourses.length > 0 && enrolledInPlanCourses.length >= planCourses.length;
+                      
                       return (
-                        <div key={course.id} className="flex items-center justify-between rounded-md border p-4">
+                        <div key={plan.name} className="flex items-center justify-between rounded-md border p-4">
                           <div>
-                            <p className="font-semibold">{course.title}</p>
-                            <p className="text-sm text-muted-foreground">{course.category} - ₹{course.price}</p>
+                            <p className="font-semibold">{plan.name}</p>
+                            <p className="text-sm text-muted-foreground">{plan.price}</p>
                           </div>
                           {isEnrolled ? (
-                            <Button variant="destructive" size="sm" onClick={() => handleUnenroll(selectedStudent, course.id)}>
+                            <Button variant="destructive" size="sm" onClick={() => handleUnenrollFromPlan(selectedStudent, plan.category)}>
                               Unenroll
                             </Button>
                           ) : (
-                            <Button variant="default" size="sm" onClick={() => handleEnroll(selectedStudent, course.id)}>
+                            <Button variant="default" size="sm" onClick={() => handleEnrollInPlan(selectedStudent, plan.category)}>
                               <Plus className="mr-2 h-4 w-4" /> Enroll
                             </Button>
                           )}
