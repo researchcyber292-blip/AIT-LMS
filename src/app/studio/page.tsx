@@ -7,25 +7,68 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video, Eye, BarChart, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
+
 
 export default function StudioPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState('details');
+
+    // --- STATE MANAGEMENT FOR THE ENTIRE FORM ---
+    // Details Tab
+    const [title, setTitle] = useState('');
+    const [shortDescription, setShortDescription] = useState('');
+    const [longDescription, setLongDescription] = useState('');
+    const [category, setCategory] = useState<'beginner' | 'intermediate' | 'advanced' | 'highly-advanced'>('beginner');
+    const [learningObjectives, setLearningObjectives] = useState(['']);
+
+    // Curriculum Tab
     const [priceType, setPriceType] = useState<'paid' | 'free'>('paid');
     const [paymentMethod, setPaymentMethod] = useState<'direct' | 'templates'>('direct');
+    const [directPrice, setDirectPrice] = useState('');
     
     const [goldFeatures, setGoldFeatures] = useState(() => Array(5).fill(''));
     const [platinumFeatures, setPlatinumFeatures] = useState(() => Array(5).fill(''));
     const [silverFeatures, setSilverFeatures] = useState(() => Array(5).fill(''));
 
+    const [goldPrice, setGoldPrice] = useState('');
+    const [platinumPrice, setPlatinumPrice] = useState('');
+    const [silverPrice, setSilverPrice] = useState('');
+
     const [goldDescription, setGoldDescription] = useState('');
     const [platinumDescription, setPlatinumDescription] = useState('');
     const [silverDescription, setSilverDescription] = useState('');
 
+    // Media Tab
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+    const [youtubeUrl, setYoutubeUrl] = useState('');
+    
+    // --- HANDLER FUNCTIONS ---
+
+    const handleObjectiveChange = (index: number, value: string) => {
+        const newObjectives = [...learningObjectives];
+        newObjectives[index] = value;
+        setLearningObjectives(newObjectives);
+    };
+
+    const addObjective = () => {
+        if (learningObjectives.length < 10) {
+            setLearningObjectives([...learningObjectives, '']);
+        }
+    };
+
+    const removeObjective = (index: number) => {
+        if (learningObjectives.length > 1) {
+            const newObjectives = [...learningObjectives];
+            newObjectives.splice(index, 1);
+            setLearningObjectives(newObjectives);
+        }
+    };
+
 
     const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -121,8 +164,8 @@ export default function StudioPage() {
                         <ImageIcon className="mr-2 h-4 w-4" />
                         Media
                     </TabsTrigger>
-                    <TabsTrigger value="publish" disabled>
-                        <Send className="mr-2 h-4 w-4" />
+                    <TabsTrigger value="publish">
+                        <Eye className="mr-2 h-4 w-4" />
                         Publish
                     </TabsTrigger>
                 </TabsList>
@@ -136,19 +179,43 @@ export default function StudioPage() {
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="course-title">Course Title</Label>
-                                <Input id="course-title" placeholder="e.g., Advanced Penetration Testing" />
+                                <Input id="course-title" placeholder="e.g., Advanced Penetration Testing" value={title} onChange={(e) => setTitle(e.target.value)} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="course-description">Short Description</Label>
-                                <Textarea id="course-description" placeholder="A brief summary that will appear on the course card." className="min-h-[100px]" />
+                                <Textarea id="course-description" placeholder="A brief summary that will appear on the course card." value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} className="min-h-[100px]" />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="course-long-description">Detailed Description</Label>
-                                <Textarea id="course-long-description" placeholder="A comprehensive overview of the course content, goals, and target audience." className="min-h-[200px]" />
+                                <Textarea id="course-long-description" placeholder="A comprehensive overview of the course content, goals, and target audience." value={longDescription} onChange={(e) => setLongDescription(e.target.value)} className="min-h-[200px]" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>What You'll Learn</Label>
+                                <p className="text-sm text-muted-foreground">List the key skills and knowledge students will gain. (Max 10)</p>
+                                <div className="space-y-2">
+                                    {learningObjectives.map((objective, index) => (
+                                        <div key={index} className="flex items-center gap-2">
+                                            <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                            <Input
+                                                placeholder={`Objective #${index + 1}`}
+                                                value={objective}
+                                                onChange={(e) => handleObjectiveChange(index, e.target.value)}
+                                            />
+                                            <Button type="button" variant="ghost" size="icon" onClick={() => removeObjective(index)} className="h-8 w-8 flex-shrink-0" disabled={learningObjectives.length <= 1}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                                {learningObjectives.length < 10 && (
+                                    <Button type="button" variant="outline" size="sm" onClick={addObjective} className="mt-2">
+                                        <Plus className="mr-2 h-4 w-4" /> Add Objective
+                                    </Button>
+                                )}
                             </div>
                              <div className="space-y-2">
                                 <Label>Category</Label>
-                                <RadioGroup defaultValue="beginner" className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
+                                <RadioGroup value={category} onValueChange={(v) => setCategory(v as any)} className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
                                     <div className="flex items-center space-x-2">
                                         <RadioGroupItem value="beginner" id="cat-beginner" />
                                         <Label htmlFor="cat-beginner">Beginner</Label>
@@ -234,7 +301,7 @@ export default function StudioPage() {
                                             </CardHeader>
                                             <CardContent>
                                                 <Label htmlFor="course-price">Course Price (INR)</Label>
-                                                <Input id="course-price" type="number" placeholder="e.g., 499" />
+                                                <Input id="course-price" type="number" placeholder="e.g., 499" value={directPrice} onChange={(e) => setDirectPrice(e.target.value)} />
                                             </CardContent>
                                         </Card>
                                     )}
@@ -250,7 +317,7 @@ export default function StudioPage() {
                                                     <CardContent className="space-y-4">
                                                         <div>
                                                             <Label htmlFor="gold-price">Price</Label>
-                                                            <Input id="gold-price" placeholder="e.g., 4999 / 6 months" />
+                                                            <Input id="gold-price" placeholder="e.g., 4999 / 6 months" value={goldPrice} onChange={(e) => setGoldPrice(e.target.value)} />
                                                         </div>
                                                         <div className="space-y-2">
                                                             <Label>Features</Label>
@@ -288,7 +355,7 @@ export default function StudioPage() {
                                                     <CardContent className="space-y-4">
                                                         <div>
                                                             <Label htmlFor="platinum-price">Price</Label>
-                                                            <Input id="platinum-price" placeholder="e.g., 2999 / 3 months" />
+                                                            <Input id="platinum-price" placeholder="e.g., 2999 / 3 months" value={platinumPrice} onChange={(e) => setPlatinumPrice(e.target.value)} />
                                                         </div>
                                                         <div className="space-y-2">
                                                             <Label>Features</Label>
@@ -326,7 +393,7 @@ export default function StudioPage() {
                                                     <CardContent className="space-y-4">
                                                         <div>
                                                             <Label htmlFor="silver-price">Price</Label>
-                                                            <Input id="silver-price" placeholder="e.g., 599 / month" />
+                                                            <Input id="silver-price" placeholder="e.g., 599 / month" value={silverPrice} onChange={(e) => setSilverPrice(e.target.value)} />
                                                         </div>
                                                          <div className="space-y-2">
                                                             <Label>Features</Label>
@@ -386,7 +453,7 @@ export default function StudioPage() {
                                 <div className="flex items-center gap-4">
                                     {thumbnailPreview && (
                                         <div className="relative w-48 aspect-video rounded-md overflow-hidden border bg-muted">
-                                            <img src={thumbnailPreview} alt="Thumbnail preview" className="h-full w-full object-cover" />
+                                            <Image src={thumbnailPreview} alt="Thumbnail preview" fill className="h-full w-full object-cover" />
                                         </div>
                                     )}
                                     <Input 
@@ -408,13 +475,101 @@ export default function StudioPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="youtube-url">YouTube Video URL (Optional)</Label>
-                                <Input id="youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+                                <Input id="youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=..." value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
                                 <p className="text-sm text-muted-foreground">Link to your course's introduction video on YouTube.</p>
                             </div>
                         </CardContent>
                         <CardFooter className="flex justify-between">
                             <Button variant="outline" onClick={() => setActiveTab('curriculum')}>Back</Button>
                             <Button onClick={() => setActiveTab('publish')}>Save & Continue</Button>
+                        </CardFooter>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="publish">
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle>Preview & Publish</CardTitle>
+                            <CardDescription>Review how your course will look to students. When you're ready, publish it.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="bg-background p-4 sm:p-8 rounded-lg border">
+                                <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+                                    <div className="md:col-span-1 h-fit md:sticky md:top-24">
+                                        <div className="rounded-xl border bg-card shadow-lg overflow-hidden">
+                                            {thumbnailPreview ? (
+                                                <div className="aspect-video w-full relative">
+                                                    <Image
+                                                        src={thumbnailPreview}
+                                                        alt={title || "Course thumbnail"}
+                                                        fill
+                                                        className="w-full object-cover"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="aspect-video w-full bg-muted flex items-center justify-center">
+                                                    <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                                                </div>
+                                            )}
+
+                                            <div className="p-6">
+                                                {priceType === 'free' ? (
+                                                     <p className="mb-4 text-4xl font-bold font-headline text-primary">Free</p>
+                                                ) : (
+                                                    paymentMethod === 'direct' && directPrice ? (
+                                                        <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{directPrice}</p>
+                                                    ) : (
+                                                        <p className="mb-4 text-2xl font-bold font-headline text-primary">Subscription</p>
+                                                    )
+                                                )}
+                                                <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled>
+                                                    Buy Now (Preview)
+                                                </Button>
+                                                <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
+                                                    <li className="flex items-center gap-3">
+                                                        <BarChart className="h-5 w-5 text-primary" />
+                                                        <span className="capitalize">Level: {category.replace('-', ' ')}</span>
+                                                    </li>
+                                                    <li className="flex items-center gap-3">
+                                                        <Clock className="h-5 w-5 text-primary" />
+                                                        <span>~20 Hours to complete</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="md:col-span-2">
+                                        <Badge variant="secondary" className="mb-2 capitalize">{category.replace('-', ' ')}</Badge>
+                                        <h1 className="font-headline text-4xl font-bold tracking-tight lg:text-5xl">{title || "Your Course Title"}</h1>
+                                        <p className="mt-4 text-lg text-muted-foreground">{longDescription || "Your detailed course description will appear here."}</p>
+
+                                        <div className="mt-10">
+                                            <h2 className="font-headline text-2xl font-semibold border-l-4 border-primary pl-4">What You'll Learn</h2>
+                                            {learningObjectives.filter(o => o.trim() !== '').length > 0 ? (
+                                                <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                    {learningObjectives.filter(o => o.trim() !== '').map((obj, i) => (
+                                                        <li key={i} className="flex items-start gap-3">
+                                                            <CheckCircle className="mt-1 h-5 w-5 flex-shrink-0 text-accent" />
+                                                            <span>{obj}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p className="mt-4 text-muted-foreground">Add learning objectives in the 'Details' tab.</p>
+                                            )}
+                                        </div>
+
+                                         <div className="mt-10">
+                                            <h2 className="font-headline text-2xl font-semibold border-l-4 border-primary pl-4">Course Curriculum</h2>
+                                            <p className="mt-4 text-muted-foreground">The full curriculum will be displayed here once the builder is implemented.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                         <CardFooter className="flex justify-between">
+                            <Button variant="outline" onClick={() => setActiveTab('media')}>Back</Button>
+                            <Button disabled>Publish Course (Coming Soon)</Button>
                         </CardFooter>
                     </Card>
                 </TabsContent>
