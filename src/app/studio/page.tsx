@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video, Eye, BarChart, Clock, Crown } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video, Eye, BarChart, Clock, Crown, Settings } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Image from 'next/image';
@@ -20,6 +20,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 
 
 export default function StudioPage() {
@@ -50,6 +52,11 @@ export default function StudioPage() {
     const [goldDescription, setGoldDescription] = useState('');
     const [platinumDescription, setPlatinumDescription] = useState('');
     const [silverDescription, setSilverDescription] = useState('');
+
+    // Additional Details Tab
+    const [courseDuration, setCourseDuration] = useState([7]);
+    const [wantsToGoLive, setWantsToGoLive] = useState(false);
+    const [providesResources, setProvidesResources] = useState(false);
 
     // Media Tab
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
@@ -163,7 +170,7 @@ export default function StudioPage() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-5">
                     <TabsTrigger value="details">
                         <BookOpen className="mr-2 h-4 w-4" />
                         Details
@@ -171,6 +178,10 @@ export default function StudioPage() {
                     <TabsTrigger value="curriculum">
                         <ListVideo className="mr-2 h-4 w-4" />
                         Curriculum
+                    </TabsTrigger>
+                    <TabsTrigger value="additional-details">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Additional
                     </TabsTrigger>
                     <TabsTrigger value="media">
                         <ImageIcon className="mr-2 h-4 w-4" />
@@ -447,9 +458,64 @@ export default function StudioPage() {
                             <Button variant="outline" onClick={() => setActiveTab('details')}>
                                 Back
                             </Button>
-                            <Button onClick={() => setActiveTab('media')}>
+                            <Button onClick={() => setActiveTab('additional-details')}>
                                 Next
                             </Button>
+                        </CardFooter>
+                    </Card>
+                </TabsContent>
+                 <TabsContent value="additional-details">
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle>Additional Details</CardTitle>
+                            <CardDescription>Configure duration, live sessions, and other course options.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-8">
+                            <div className="space-y-4">
+                                <Label htmlFor="course-duration">Course Duration: {courseDuration[0]} weeks</Label>
+                                <Slider
+                                    id="course-duration"
+                                    min={7}
+                                    max={52}
+                                    step={1}
+                                    value={courseDuration}
+                                    onValueChange={setCourseDuration}
+                                />
+                                <p className="text-sm text-muted-foreground">Set the estimated time to complete the course, from 7 weeks to 1 year (52 weeks).</p>
+                            </div>
+
+                            <div className="flex items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="live-sessions" className="text-base">Enable Live Teaching Sessions</Label>
+                                    <p className="text-sm text-muted-foreground">
+                                    Offer live video sessions to interact with your students directly.
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="live-sessions"
+                                    checked={wantsToGoLive}
+                                    onCheckedChange={setWantsToGoLive}
+                                />
+                            </div>
+                            
+                            <div className="flex items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="downloadable-resources" className="text-base">Provide Downloadable Resources</Label>
+                                    <p className="text-sm text-muted-foreground">
+                                    Allow students to download materials like PDFs, code files, etc.
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="downloadable-resources"
+                                    checked={providesResources}
+                                    onCheckedChange={setProvidesResources}
+                                />
+                            </div>
+
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                            <Button variant="outline" onClick={() => setActiveTab('curriculum')}>Back</Button>
+                            <Button onClick={() => setActiveTab('media')}>Next</Button>
                         </CardFooter>
                     </Card>
                 </TabsContent>
@@ -492,7 +558,7 @@ export default function StudioPage() {
                             </div>
                         </CardContent>
                         <CardFooter className="flex justify-between">
-                            <Button variant="outline" onClick={() => setActiveTab('curriculum')}>Back</Button>
+                            <Button variant="outline" onClick={() => setActiveTab('additional-details')}>Back</Button>
                             <Button onClick={() => setActiveTab('publish')}>Save & Continue</Button>
                         </CardFooter>
                     </Card>
@@ -534,6 +600,10 @@ export default function StudioPage() {
                                                             <BarChart className="h-5 w-5 text-primary" />
                                                             <span className="capitalize">Level: {category.replace('-', ' ')}</span>
                                                         </li>
+                                                         <li className="flex items-center gap-3">
+                                                            <Clock className="h-5 w-5 text-primary" />
+                                                            <span>Duration: {courseDuration[0]} weeks</span>
+                                                        </li>
                                                         <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
                                                             <span>~20 Hours to complete</span>
@@ -554,6 +624,10 @@ export default function StudioPage() {
                                                         <li className="flex items-center gap-3">
                                                             <BarChart className="h-5 w-5 text-primary" />
                                                             <span className="capitalize">Level: {category.replace('-', ' ')}</span>
+                                                        </li>
+                                                        <li className="flex items-center gap-3">
+                                                            <Clock className="h-5 w-5 text-primary" />
+                                                            <span>Duration: {courseDuration[0]} weeks</span>
                                                         </li>
                                                         <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
