@@ -68,6 +68,22 @@ export default function StudioPage() {
     
     // --- HANDLER FUNCTIONS ---
 
+    const formatDuration = (weeks: number): string => {
+        if (weeks === 52) {
+          return '1 Year';
+        }
+        if (weeks >= 4) {
+          const months = Math.floor(weeks / 4);
+          const remainingWeeks = weeks % 4;
+          let durationString = `${months} month${months > 1 ? 's' : ''}`;
+          if (remainingWeeks > 0) {
+            durationString += ` & ${remainingWeeks} week${remainingWeeks !== 1 ? 's' : ''}`;
+          }
+          return durationString;
+        }
+        return `${weeks} week${weeks !== 1 ? 's' : ''}`;
+    };
+
     const handleObjectiveChange = (index: number, value: string) => {
         const newObjectives = [...learningObjectives];
         newObjectives[index] = value;
@@ -472,7 +488,7 @@ export default function StudioPage() {
                         </CardHeader>
                         <CardContent className="space-y-8">
                             <div className="space-y-4">
-                                <Label htmlFor="course-duration">Course Duration: {courseDuration[0]} weeks</Label>
+                                <Label htmlFor="course-duration">Course Duration: {formatDuration(courseDuration[0])}</Label>
                                 <Slider
                                     id="course-duration"
                                     min={7}
@@ -602,7 +618,7 @@ export default function StudioPage() {
                                                         </li>
                                                          <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
-                                                            <span>Duration: {courseDuration[0]} weeks</span>
+                                                            <span>Duration: {formatDuration(courseDuration[0])}</span>
                                                         </li>
                                                         <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
@@ -627,7 +643,7 @@ export default function StudioPage() {
                                                         </li>
                                                         <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
-                                                            <span>Duration: {courseDuration[0]} weeks</span>
+                                                            <span>Duration: {formatDuration(courseDuration[0])}</span>
                                                         </li>
                                                         <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
@@ -757,3 +773,5 @@ export default function StudioPage() {
         </div>
     );
 }
+
+    
