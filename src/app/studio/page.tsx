@@ -367,12 +367,16 @@ export default function StudioPage() {
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="course-thumbnail">Upload Thumbnail</Label>
+                                <Label>Upload Thumbnail</Label>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-48 h-27 bg-muted rounded-md flex items-center justify-center">
-                                        <Image className="h-8 w-8 text-muted-foreground" />
-                                    </div>
-                                    <Input id="course-thumbnail" type="file" className="max-w-sm" />
+                                    <Input id="thumbnail-upload-input" type="file" className="hidden" />
+                                    <Label
+                                        htmlFor="thumbnail-upload-input"
+                                        className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 cursor-pointer"
+                                    >
+                                        <Image className="mr-2 h-4 w-4" />
+                                        Choose File
+                                    </Label>
                                 </div>
                                 <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
                             </div>
