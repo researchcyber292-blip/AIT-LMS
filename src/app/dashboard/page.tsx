@@ -5,17 +5,134 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart } from 'lucide-react';
+import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart, ArrowLeft, Briefcase } from 'lucide-react';
 import { COURSES } from '@/data/content';
-import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, doc } from 'firebase/firestore';
+import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
+import { collection, doc, updateDoc } from 'firebase/firestore';
 import type { Enrollment, Instructor, Wallet as WalletType } from '@/lib/types';
 import Loading from '@/app/loading';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+
+
+const profileSchema = z.object({
+    title: z.string().min(5, "Title must be at least 5 characters.").max(50, "Title is too long."),
+    bio: z.string().min(50, "Bio must be at least 50 characters.").max(500, "Bio is too long."),
+});
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
+
+function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor; onBack: () => void; }) {
+    const firestore = useFirestore();
+    const { toast } = useToast();
+
+    const form = useForm<ProfileFormValues>({
+        resolver: zodResolver(profileSchema),
+        defaultValues: {
+            title: instructor.title || '',
+            bio: instructor.bio || '',
+        }
+    });
+
+    const onSubmit = async (data: ProfileFormValues) => {
+        if (!firestore || !instructor) return;
+        
+        const instructorDocRef = doc(firestore, 'instructors', instructor.id);
+
+        try {
+            await updateDoc(instructorDocRef, {
+                title: data.title,
+                bio: data.bio
+            });
+            toast({ title: "Profile Updated!", description: "Your public profile has been saved." });
+            onBack();
+        } catch (error: any) {
+            console.error("Profile update failed:", error);
+            const permissionError = new FirestorePermissionError({
+                path: instructorDocRef.path,
+                operation: 'update',
+                requestResourceData: data,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+            toast({ variant: "destructive", title: "Update Failed", description: "Could not save your profile. Please try again." });
+        }
+    };
+
+    return (
+        <div className="container py-12 md:py-16">
+            <div className="flex items-center gap-4 mb-10">
+                <Button variant="outline" size="icon" onClick={onBack}>
+                    <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                    <h1 className="font-headline text-4xl font-bold">Create Your Public Profile</h1>
+                    <p className="mt-2 text-muted-foreground">This information will be displayed on your course pages.</p>
+                </div>
+            </div>
+
+            <Card className="max-w-4xl mx-auto bg-card/50 backdrop-blur-sm border-primary/20 shadow-lg shadow-primary/10">
+                <CardHeader>
+                    <CardTitle>Instructor Details</CardTitle>
+                    <CardDescription>Craft a compelling profile to attract students.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Professional Title</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="e.g., Senior Penetration Tester" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="bio"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Biography</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Tell students about your experience and passion for cybersecurity (min. 50 characters)."
+                                                className="min-h-[150px]"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <div className="flex justify-end pt-4">
+                                <Button type="submit" disabled={form.formState.isSubmitting}>
+                                    {form.formState.isSubmitting ? "Saving..." : "Save Profile"}
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
 
 // Instructor Dashboard Component
 function InstructorDashboard({ instructor }: { instructor: Instructor }) {
+  const [view, setView] = useState('main');
   const firestore = useFirestore();
   const { user } = useUser();
+  const { toast } = useToast();
 
   // Fetch Wallet info
   const walletDocRef = useMemoFirebase(() => {
@@ -42,12 +159,23 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
     { title: "Total Students", value: totalStudents.toLocaleString(), icon: Users },
   ];
 
+  const showNotImplementedToast = () => {
+    toast({
+        title: "Coming Soon",
+        description: "This feature is currently under development.",
+    });
+  };
+
   const actions = [
-      { title: "Launch Live Class", description: "Start a real-time session for your students.", href:"https://moderated.jitsi.net/", icon: Mic, external: true },
-      { title: "Course Studio", description: "Create, edit, and manage your course content.", href:"#", icon: BookCopy, external: false },
-      { title: "Earnings & Payouts", description: "View your balance and request withdrawals.", href:"#", icon: Wallet, external: false },
-      { title: "Student Analytics", description: "Gain insights into student progress and engagement.", href:"#", icon: BarChart, external: false },
+      { title: "Launch Live Class", description: "Start a real-time session for your students.", onClick: () => window.open('https://moderated.jitsi.net/', '_blank'), icon: Mic },
+      { title: "START SELLING COURSES TO EARN", description: "Create your public profile to display on course pages.", onClick: () => setView('profile'), icon: Briefcase },
+      { title: "Earnings & Payouts", description: "View your balance and request withdrawals.", onClick: showNotImplementedToast, icon: Wallet },
+      { title: "Student Analytics", description: "Gain insights into student progress and engagement.", onClick: showNotImplementedToast, icon: BarChart },
   ];
+
+  if (view === 'profile') {
+      return <InstructorProfileForm instructor={instructor} onBack={() => setView('main')} />
+  }
 
   return (
     <div className="container py-12 md:py-16">
@@ -76,20 +204,18 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
       {/* Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {actions.map((action, i) => (
-            <Card key={i} className="bg-card/50 backdrop-blur-sm border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-500/20 group">
-                <Link href={action.href} target={action.external ? "_blank" : "_self"} rel={action.external ? "noopener noreferrer" : ""}>
-                    <CardHeader className="pb-4">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
-                                <action.icon className="h-6 w-6 text-blue-300" />
-                            </div>
-                            <CardTitle className="font-headline text-xl">{action.title}</CardTitle>
+            <Card key={i} className="bg-card/50 backdrop-blur-sm border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-500/20 group cursor-pointer" onClick={action.onClick}>
+                <CardHeader className="pb-4">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                            <action.icon className="h-6 w-6 text-blue-300" />
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">{action.description}</p>
-                    </CardContent>
-                </Link>
+                        <CardTitle className="font-headline text-xl">{action.title}</CardTitle>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">{action.description}</p>
+                </CardContent>
             </Card>
         ))}
       </div>
