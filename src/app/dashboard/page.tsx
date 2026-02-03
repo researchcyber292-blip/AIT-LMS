@@ -289,7 +289,9 @@ function InstructorManagementView({ onBack, onEditProfile }: { onBack: () => voi
                     <div className="rounded-lg border bg-card/70 p-6 text-center flex flex-col items-center justify-center">
                         <h3 className="text-lg font-semibold font-headline">Course Studio</h3>
                         <p className="text-sm text-muted-foreground mt-2 mb-4 flex-grow">Create, edit, and publish your video courses.</p>
-                        <Button disabled>Coming Soon</Button>
+                        <Button asChild>
+                           <Link href="/studio">Open AIT Studio</Link>
+                        </Button>
                     </div>
                     <div className="rounded-lg border bg-card/70 p-6 text-center flex flex-col items-center justify-center">
                         <h3 className="text-lg font-semibold font-headline">Edit Profile Preview</h3>
