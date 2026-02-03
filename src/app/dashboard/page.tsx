@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart, ArrowLeft, Briefcase } from 'lucide-react';
+import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart, ArrowLeft, BookUser, LayoutGrid } from 'lucide-react';
 import { COURSES } from '@/data/content';
 import { useUser, useFirestore, useCollection, useDoc, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, updateDoc } from 'firebase/firestore';
@@ -19,11 +19,20 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
+import imageData from '@/lib/placeholder-images.json';
+
+
+const { placeholderImages } = imageData;
+const avatars = placeholderImages.filter(img => img.id.startsWith('avatar-'));
 
 
 const profileSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters.").max(50, "Title is too long."),
-    bio: z.string().min(50, "Bio must be at least 50 characters.").max(500, "Bio is too long."),
+    qualifications: z.string().optional(),
+    bio: z.string().min(150, "Bio must be at least 30 words long to be effective.").max(500, "Bio is too long."),
+    photoURL: z.string({ required_error: "Please select a profile picture." }).min(1, "Please select a profile picture."),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -36,9 +45,15 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
         resolver: zodResolver(profileSchema),
         defaultValues: {
             title: instructor.title || '',
+            qualifications: instructor.qualifications || '',
             bio: instructor.bio || '',
+            photoURL: instructor.photoURL || '',
         }
     });
+
+    const { formState: { isSubmitting }, setValue, watch } = form;
+    const selectedAvatarUrl = watch('photoURL');
+
 
     const onSubmit = async (data: ProfileFormValues) => {
         if (!firestore || !instructor) return;
@@ -46,11 +61,20 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
         const instructorDocRef = doc(firestore, 'instructors', instructor.id);
 
         try {
+            // Also update the Auth user profile picture
+            const { getAuth, updateProfile } = await import('firebase/auth');
+            const auth = getAuth();
+            if (auth.currentUser) {
+              await updateProfile(auth.currentUser, { photoURL: data.photoURL });
+            }
+
             await updateDoc(instructorDocRef, {
                 title: data.title,
-                bio: data.bio
+                qualifications: data.qualifications,
+                bio: data.bio,
+                photoURL: data.photoURL
             });
-            toast({ title: "Profile Updated!", description: "Your public profile has been saved." });
+            toast({ title: "Profile Created!", description: "Your public profile is now live." });
             onBack();
         } catch (error: any) {
             console.error("Profile update failed:", error);
@@ -60,63 +84,122 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
                 requestResourceData: data,
             });
             errorEmitter.emit('permission-error', permissionError);
-            toast({ variant: "destructive", title: "Update Failed", description: "Could not save your profile. Please try again." });
+            toast({ variant: "destructive", title: "Update Failed", description: "Could not save your profile. Please check permissions and try again." });
         }
     };
-
+    
     return (
         <div className="container py-12 md:py-16">
-            <div className="flex items-center gap-4 mb-10">
+             <div className="flex items-center gap-4 mb-10">
                 <Button variant="outline" size="icon" onClick={onBack}>
                     <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div>
                     <h1 className="font-headline text-4xl font-bold">Create Your Public Profile</h1>
-                    <p className="mt-2 text-muted-foreground">This information will be displayed on your course pages.</p>
+                    <p className="mt-2 text-muted-foreground">This information will be displayed on your course pages to attract students.</p>
                 </div>
             </div>
 
-            <Card className="max-w-4xl mx-auto bg-card/50 backdrop-blur-sm border-primary/20 shadow-lg shadow-primary/10">
+            <Card className="max-w-5xl mx-auto bg-card/50 backdrop-blur-sm border-primary/20 shadow-lg shadow-primary/10">
                 <CardHeader>
                     <CardTitle>Instructor Details</CardTitle>
-                    <CardDescription>Craft a compelling profile to attract students.</CardDescription>
+                    <CardDescription>
+                        Hello, <span className="font-stylish text-primary">{instructor.firstName} {instructor.lastName}</span>.
+                        Fill out the details below to complete your profile.
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-8">
+                                    <FormField
+                                        control={form.control}
+                                        name="title"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Professional Title / Role</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="e.g., Cyber Security Researcher" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="qualifications"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Qualifications (Optional)</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="List any degrees, certifications (OSCP, CEH, etc.), or major achievements."
+                                                        className="min-h-[120px]"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="bio"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Biography</FormLabel>
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder="Tell students about your experience, passion, and what makes your teaching unique. (Minimum 30 words)"
+                                                    className="flex-grow min-h-[250px]"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
                             <FormField
                                 control={form.control}
-                                name="title"
+                                name="photoURL"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Professional Title</FormLabel>
+                                        <FormLabel>Profile Picture</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="e.g., Senior Penetration Tester" {...field} />
+                                            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-4">
+                                                {avatars.map(avatar => (
+                                                <div
+                                                    key={avatar.id}
+                                                    onClick={() => setValue('photoURL', avatar.imageUrl, { shouldValidate: true })}
+                                                    className={cn(
+                                                    "relative aspect-square rounded-full overflow-hidden border-4 cursor-pointer transition-all duration-300",
+                                                    selectedAvatarUrl === avatar.imageUrl ? 'border-primary scale-110 shadow-lg' : 'border-transparent hover:border-primary/50'
+                                                    )}
+                                                >
+                                                    <Image
+                                                        src={avatar.imageUrl}
+                                                        alt={avatar.description}
+                                                        fill
+                                                        className="object-cover"
+                                                        data-ai-hint={avatar.imageHint}
+                                                        sizes="(max-width: 768px) 25vw, 12.5vw"
+                                                    />
+                                                </div>
+                                                ))}
+                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="bio"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Biography</FormLabel>
-                                        <FormControl>
-                                            <Textarea
-                                                placeholder="Tell students about your experience and passion for cybersecurity (min. 50 characters)."
-                                                className="min-h-[150px]"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            
                             <div className="flex justify-end pt-4">
-                                <Button type="submit" disabled={form.formState.isSubmitting}>
-                                    {form.formState.isSubmitting ? "Saving..." : "Save Profile"}
+                                <Button type="submit" size="lg" disabled={isSubmitting}>
+                                    {isSubmitting ? "Saving..." : "Save & Complete Profile"}
                                 </Button>
                             </div>
                         </form>
@@ -149,6 +232,8 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
 
   const isLoading = isWalletLoading;
 
+  const hasCompletedProfile = !!(instructor.title && instructor.bio && instructor.photoURL);
+
   if (isLoading) {
     return <Loading />;
   }
@@ -165,12 +250,18 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
         description: "This feature is currently under development.",
     });
   };
-
-  const actions = [
-      { title: "Launch Live Class", description: "Start a real-time session for your students.", onClick: () => window.open('https://moderated.jitsi.net/', '_blank'), icon: Mic },
-      { title: "START SELLING COURSES TO EARN", description: "Create your public profile to display on course pages.", onClick: () => setView('profile'), icon: Briefcase },
-      { title: "Earnings & Payouts", description: "View your balance and request withdrawals.", onClick: showNotImplementedToast, icon: Wallet },
-      { title: "Student Analytics", description: "Gain insights into student progress and engagement.", onClick: showNotImplementedToast, icon: BarChart },
+  
+  const mainActions = [
+      { title: "Launch Live Class", description: "Start a real-time session for your students.", onClick: () => window.open('https://moderated.jitsi.net/', '_blank'), icon: Mic, isEnabled: true },
+      { 
+        title: hasCompletedProfile ? "My Courses & Management" : "START SELLING COURSES TO EARN", 
+        description: hasCompletedProfile ? "Manage your existing courses and create new ones." : "Create your public profile to display on course pages.", 
+        onClick: () => hasCompletedProfile ? showNotImplementedToast() : setView('profile'),
+        icon: hasCompletedProfile ? LayoutGrid : BookUser,
+        isEnabled: true
+      },
+      { title: "Earnings & Payouts", description: "View your balance and request withdrawals.", onClick: showNotImplementedToast, icon: Wallet, isEnabled: true },
+      { title: "Student Analytics", description: "Gain insights into student progress and engagement.", onClick: showNotImplementedToast, icon: BarChart, isEnabled: true },
   ];
 
   if (view === 'profile') {
@@ -203,8 +294,8 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
 
       {/* Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {actions.map((action, i) => (
-            <Card key={i} className="bg-card/50 backdrop-blur-sm border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-500/20 group cursor-pointer" onClick={action.onClick}>
+        {mainActions.map((action, i) => (
+            <Card key={i} className={cn("bg-card/50 backdrop-blur-sm border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-500/20 group", action.isEnabled && "cursor-pointer")} onClick={action.isEnabled ? action.onClick : undefined}>
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">

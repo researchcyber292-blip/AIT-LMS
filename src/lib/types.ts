@@ -48,6 +48,7 @@ export type Instructor = {
   // Public profile details
   title?: string;
   bio?: string;
+  qualifications?: string;
   image?: string;
   imageHint?: string;
 };

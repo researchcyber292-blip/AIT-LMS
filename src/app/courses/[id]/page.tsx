@@ -1,3 +1,4 @@
+
 'use client';
 
 import { notFound, useParams, useRouter } from 'next/navigation';
@@ -8,21 +9,86 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { CheckCircle, BarChart, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
 import { verifyRazorpayPayment } from '@/ai/flows/verify-razorpay-payment';
-import { collection, addDoc } from 'firebase/firestore';
-import type { Enrollment } from '@/lib/types';
+import { collection, addDoc, doc } from 'firebase/firestore';
+import type { Enrollment, Instructor } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 declare global {
   interface Window {
     Razorpay: any;
   }
+}
+
+function LiveInstructorProfile({ instructorId }: { instructorId: string }) {
+    const firestore = useFirestore();
+    
+    const instructorDocRef = useMemoFirebase(() => {
+        if (!firestore || !instructorId) return null;
+        return doc(firestore, 'instructors', instructorId);
+    }, [firestore, instructorId]);
+
+    const { data: instructor, isLoading, error } = useDoc<Instructor>(instructorDocRef);
+
+    if (isLoading) {
+        return (
+            <div className="mt-8 rounded-xl border bg-card p-6 shadow">
+                <Skeleton className="h-6 w-2/4 mb-4" />
+                <div className="flex items-center gap-4">
+                    <Skeleton className="h-16 w-16 rounded-full" />
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-40" />
+                    </div>
+                </div>
+                <div className="mt-4 space-y-2">
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-3/4" />
+                </div>
+            </div>
+        );
+    }
+    
+    if (error || !instructor) {
+        return (
+             <div className="mt-8 rounded-xl border border-destructive/20 bg-destructive/10 p-6 shadow text-center">
+                 <p className="text-sm text-destructive-foreground">Could not load instructor details.</p>
+             </div>
+        );
+    }
+    
+    const getInitials = (firstName: string, lastName: string) => `${firstName.charAt(0)}${lastName.charAt(0)}`;
+    
+    return (
+        <div className="mt-8 rounded-xl border bg-card p-6 shadow">
+            <h3 className="font-headline text-lg font-semibold">Instructor</h3>
+            <div className="mt-4 flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                    <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
+                    <AvatarFallback>{getInitials(instructor.firstName, instructor.lastName)}</AvatarFallback>
+                </Avatar>
+                <div>
+                    <p className="font-semibold text-xl">{instructor.firstName} {instructor.lastName}</p>
+                    <p className="text-sm text-primary">{instructor.title}</p>
+                </div>
+            </div>
+            {instructor.bio && <p className="mt-4 text-sm text-muted-foreground">{instructor.bio}</p>}
+            {instructor.qualifications && (
+                <div className="mt-4">
+                    <h4 className="font-semibold text-sm">Qualifications</h4>
+                    <p className="mt-1 text-sm text-muted-foreground whitespace-pre-line">{instructor.qualifications}</p>
+                </div>
+            )}
+      </div>
+    );
 }
 
 export default function CourseDetailPage() {
@@ -256,20 +322,7 @@ export default function CourseDetailPage() {
             </div>
           </div>
           
-          <div className="mt-8 rounded-xl border bg-card p-6 shadow">
-            <h3 className="font-headline text-lg font-semibold">Instructor</h3>
-            <div className="mt-4 flex items-center gap-4">
-              <Avatar>
-                <AvatarImage src={course.instructor.image} alt={`${course.instructor.firstName} ${course.instructor.lastName}`} data-ai-hint={course.instructor.imageHint} />
-                <AvatarFallback>{`${course.instructor.firstName.charAt(0)}${course.instructor.lastName.charAt(0)}`}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold">{course.instructor.firstName} {course.instructor.lastName}</p>
-                <p className="text-sm text-muted-foreground">{course.instructor.title}</p>
-              </div>
-            </div>
-            <p className="mt-4 text-sm text-muted-foreground">{course.instructor.bio}</p>
-          </div>
+          <LiveInstructorProfile instructorId={course.instructor.id} />
         </div>
         
         <div className="md:col-span-2">
