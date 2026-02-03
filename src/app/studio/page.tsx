@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image, Video } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
@@ -25,6 +25,21 @@ export default function StudioPage() {
     const [platinumDescription, setPlatinumDescription] = useState('');
     const [silverDescription, setSilverDescription] = useState('');
 
+    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+
+    const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setThumbnailPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setThumbnailPreview(null);
+        }
+    };
+
     const handleFeatureChange = (
         plan: 'gold' | 'platinum' | 'silver',
         index: number,
@@ -38,7 +53,7 @@ export default function StudioPage() {
             const newFeatures = [...platinumFeatures];
             newFeatures[index] = value;
             setPlatinumFeatures(newFeatures);
-        } else {
+        } else { // silver
             const newFeatures = [...silverFeatures];
             newFeatures[index] = value;
             setSilverFeatures(newFeatures);
@@ -103,7 +118,7 @@ export default function StudioPage() {
                         Curriculum
                     </TabsTrigger>
                     <TabsTrigger value="media">
-                        <Image className="mr-2 h-4 w-4" />
+                        <ImageIcon className="mr-2 h-4 w-4" />
                         Media
                     </TabsTrigger>
                     <TabsTrigger value="publish" disabled>
@@ -369,13 +384,24 @@ export default function StudioPage() {
                             <div className="space-y-2">
                                 <Label>Upload Thumbnail</Label>
                                 <div className="flex items-center gap-4">
-                                    <Input id="thumbnail-upload-input" type="file" className="hidden" />
+                                    {thumbnailPreview && (
+                                        <div className="relative w-48 aspect-video rounded-md overflow-hidden border bg-muted">
+                                            <img src={thumbnailPreview} alt="Thumbnail preview" className="h-full w-full object-cover" />
+                                        </div>
+                                    )}
+                                    <Input 
+                                        id="thumbnail-upload-input" 
+                                        type="file" 
+                                        className="hidden" 
+                                        onChange={handleThumbnailChange}
+                                        accept="image/png, image/jpeg, image/webp"
+                                    />
                                     <Label
                                         htmlFor="thumbnail-upload-input"
                                         className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 cursor-pointer"
                                     >
-                                        <Image className="mr-2 h-4 w-4" />
-                                        Choose File
+                                        <ImageIcon className="mr-2 h-4 w-4" />
+                                        {thumbnailPreview ? 'Change File' : 'Choose File'}
                                     </Label>
                                 </div>
                                 <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
