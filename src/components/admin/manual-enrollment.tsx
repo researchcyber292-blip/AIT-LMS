@@ -11,7 +11,7 @@ import { COURSES } from '@/data/content';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Eye } from 'lucide-react';
+import { Plus, Eye, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -153,12 +153,13 @@ export function ManualEnrollment() {
       <h2 className="text-2xl font-bold font-headline mb-4">Manual Course Enrollment</h2>
       <p className="text-muted-foreground mb-6">Manually enroll or unenroll students from any course plan.</p>
       
-      <div className="mb-4">
+      <div className="mb-4 relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search by student name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-sm"
+          className="pl-10"
         />
       </div>
       
