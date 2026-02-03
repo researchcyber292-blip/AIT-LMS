@@ -1,3 +1,4 @@
+
 'use client';
 
 import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
@@ -225,43 +226,57 @@ export default function CoursesPage() {
                 </p>
             </div>
 
-            <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 gap-8">
                 {isLoading ? (
                   <>
                     {[...Array(2)].map((_, i) => (
-                      <div key={i} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-8 flex flex-col items-center">
-                        <Skeleton className="h-32 w-32 rounded-full border-4 border-primary/50" />
-                        <div className="mt-6 flex-grow flex flex-col items-center">
-                          <Skeleton className="h-7 w-40" />
-                          <Skeleton className="h-4 w-48 mt-2" />
-                          <div className="mt-4 space-y-2 w-full max-w-xs">
-                            <Skeleton className="h-3 w-full" />
-                            <Skeleton className="h-3 w-full" />
-                            <Skeleton className="h-3 w-3/4" />
-                          </div>
+                        <div key={i} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-6 flex flex-col md:flex-row items-start gap-8">
+                            {/* Left Skeleton */}
+                            <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
+                                <Skeleton className="h-32 w-32 rounded-full border-4 border-primary/50" />
+                                <Skeleton className="h-7 w-40 mt-4" />
+                                <Skeleton className="h-4 w-48 mt-2" />
+                                <div className="mt-4 space-y-2 w-full">
+                                    <Skeleton className="h-3 w-full" />
+                                    <Skeleton className="h-3 w-3/4 mx-auto" />
+                                </div>
+                            </div>
+                            {/* Right Skeleton */}
+                            <div className="flex flex-col items-start flex-grow w-full">
+                                <div className="space-y-2 w-full">
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-5/6" />
+                                    <Skeleton className="h-4 w-3/4" />
+                                </div>
+                                <Skeleton className="h-11 w-48 mt-4 self-start md:self-end" />
+                            </div>
                         </div>
-                        <div className="mt-8 w-full">
-                          <Skeleton className="h-11 w-full rounded-full" />
-                        </div>
-                      </div>
                     ))}
                   </>
                 ) : (
                   activeInstructors?.map((instructor) => (
-                    <div key={instructor.id} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-8 text-center flex flex-col items-center transition-all hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1">
-                        <Avatar className="h-32 w-32 border-4 border-primary/50">
-                            <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
-                            <AvatarFallback className="text-4xl">{`${instructor.firstName.charAt(0)}${instructor.lastName.charAt(0)}`}</AvatarFallback>
-                        </Avatar>
-                        
-                        <div className="mt-6 flex-grow flex flex-col">
-                            <h3 className="font-headline text-2xl font-bold">{instructor.firstName} {instructor.lastName}</h3>
-                            <p className="text-sm text-primary font-semibold mt-1">{instructor.title}</p>
-                            <p className="mt-4 text-muted-foreground text-sm flex-grow line-clamp-4">{instructor.bio}</p>
+                    <div key={instructor.id} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-6 flex flex-col md:flex-row items-start gap-8 transition-all hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1">
+                        {/* Left Side */}
+                        <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
+                            <Avatar className="h-32 w-32 border-4 border-primary/50">
+                                <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
+                                <AvatarFallback className="text-4xl">{`${instructor.firstName.charAt(0)}${instructor.lastName.charAt(0)}`}</AvatarFallback>
+                            </Avatar>
+                            <h3 className="font-headline text-2xl font-bold mt-4">{instructor.firstName} {instructor.lastName}</h3>
+                            <p className="text-sm text-primary font-semibold mt-1 w-full break-words">{instructor.title}</p>
+                            {instructor.qualifications && (
+                                <div className="mt-4 text-xs text-muted-foreground text-center">
+                                    <p className="whitespace-pre-line line-clamp-4">{instructor.qualifications}</p>
+                                </div>
+                            )}
                         </div>
-                        
-                        <div className="mt-8 w-full">
-                            <Button asChild size="lg" className="w-full">
+
+                        {/* Right Side */}
+                        <div className="flex flex-col items-start text-left flex-grow w-full">
+                            <p className="text-muted-foreground text-sm flex-grow line-clamp-6">{instructor.bio || "View profile to see full description."}</p>
+                            <Button asChild size="lg" className="mt-4 self-end">
                                 <Link href={`/instructors/${instructor.id}`}>
                                     View Profile & Courses
                                 </Link>
@@ -271,7 +286,7 @@ export default function CoursesPage() {
                   ))
                 )}
                  {!isLoading && (!activeInstructors || activeInstructors.length === 0) && (
-                    <div className="md:col-span-2 text-center text-muted-foreground py-8">
+                    <div className="md:col-span-1 text-center text-muted-foreground py-8">
                         No active instructors found.
                     </div>
                 )}
