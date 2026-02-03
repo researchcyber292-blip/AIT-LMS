@@ -1,7 +1,7 @@
+
 'use client';
 
 import { notFound, useParams } from 'next/navigation';
-import Image from 'next/image';
 import { COURSES } from '@/data/content';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CourseCard } from '@/components/course-card';
@@ -9,6 +9,7 @@ import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { Instructor } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Cloud } from 'lucide-react';
 
 function InstructorProfileSkeleton() {
     return (
@@ -57,6 +58,23 @@ export default function InstructorProfilePage() {
 
   if (!instructor) {
     notFound();
+  }
+
+  const isProfileIncomplete = !instructor.title || !instructor.bio || !instructor.photoURL;
+
+  if (isProfileIncomplete) {
+    return (
+      <div className="container py-24 text-center">
+        <Cloud className="mx-auto h-24 w-24 text-muted-foreground/50" />
+        <h1 className="mt-8 font-headline text-3xl font-bold">
+          Profile Coming Soon
+        </h1>
+        <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+          {instructor.firstName} {instructor.lastName} hasn't set up their public portfolio yet. 
+          Their detailed biography and course list will appear here once they're ready.
+        </p>
+      </div>
+    );
   }
 
   // NOTE: This still uses static course data. Migrating courses to Firestore is a separate task.
