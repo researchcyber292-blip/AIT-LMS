@@ -142,13 +142,14 @@ service cloud.firestore {
      * @allow (create) An instructor can create their own profile.
      * @allow (get, list) Publicly readable to display on course and instructor pages.
      * @allow (update) An instructor can update their own profile, or an admin can update any profile.
+     * @allow (delete) An instructor can delete their own profile, or an admin can delete any profile.
      * @principle Owner-creatable, public-readable, owner/admin-managed.
      */
     match /instructors/{instructorId} {
       allow create: if isOwner(instructorId);
       allow get, list: if true;
       allow update: if isOwner(instructorId) || isAnonymousAdmin();
-      allow delete: if isAnonymousAdmin();
+      allow delete: if isOwner(instructorId) || isAnonymousAdmin();
     }
 
     /**
@@ -192,7 +193,7 @@ service cloud.firestore {
     match /wallets/{userId} {
       allow read: if isOwner(userId) || isAnonymousAdmin();
       allow create: if isOwner(userId); // Allow initial creation on signup
-      allow delete: if isAnonymousAdmin();
+      allow delete: if isOwner(userId) || isAnonymousAdmin();
       allow update, list: if false;
     }
 
