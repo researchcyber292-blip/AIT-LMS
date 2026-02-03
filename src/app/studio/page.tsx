@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 export default function StudioPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState('details');
+    const [priceType, setPriceType] = useState<'paid' | 'free'>('paid');
 
     return (
         <div className="container py-12 md:py-16">
@@ -109,31 +110,45 @@ export default function StudioPage() {
                             
                             <div className="space-y-4">
                                 <Label className="text-lg font-medium">Make the Course</Label>
-                                <RadioGroup defaultValue="paid" className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="paid" id="price-paid" />
-                                        <Label htmlFor="price-paid">Paid</Label>
+                                <RadioGroup 
+                                    value={priceType}
+                                    onValueChange={(value: 'paid' | 'free') => setPriceType(value)}
+                                    className="grid grid-cols-2 gap-4 pt-2"
+                                >
+                                    <div>
+                                        <RadioGroupItem value="paid" id="price-paid" className="peer sr-only" />
+                                        <Label htmlFor="price-paid" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
+                                            Paid
+                                        </Label>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="free" id="price-free" />
-                                        <Label htmlFor="price-free">Free</Label>
+                                    <div>
+                                        <RadioGroupItem value="free" id="price-free" className="peer sr-only" />
+                                        <Label htmlFor="price-free" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
+                                            Free
+                                        </Label>
                                     </div>
                                 </RadioGroup>
                             </div>
 
-                            <div className="space-y-4">
-                                <Label className="text-lg font-medium">Payment Board Method</Label>
-                                 <RadioGroup defaultValue="direct" className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="direct" id="payment-direct" />
-                                        <Label htmlFor="payment-direct">Direct Way</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="templates" id="payment-templates" />
-                                        <Label htmlFor="payment-templates">Templates</Label>
-                                    </div>
-                                </RadioGroup>
-                            </div>
+                            {priceType === 'paid' && (
+                                <div className="space-y-4">
+                                    <Label className="text-lg font-medium">Payment Board Method</Label>
+                                     <RadioGroup defaultValue="direct" className="grid grid-cols-2 gap-4 pt-2">
+                                        <div>
+                                            <RadioGroupItem value="direct" id="payment-direct" className="peer sr-only" />
+                                            <Label htmlFor="payment-direct" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
+                                                Direct Way
+                                            </Label>
+                                        </div>
+                                        <div>
+                                            <RadioGroupItem value="templates" id="payment-templates" className="peer sr-only" />
+                                            <Label htmlFor="payment-templates" className="flex h-16 flex-col items-center justify-center rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer text-lg font-semibold">
+                                                Templates
+                                            </Label>
+                                        </div>
+                                    </RadioGroup>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
