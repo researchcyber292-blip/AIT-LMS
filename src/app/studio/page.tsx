@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -60,7 +59,7 @@ export default function StudioPage() {
 
     // Media Tab
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-    const [youtubeUrl, setYoutubeUrl] = useState('');
+    const [youtubeUrls, setYoutubeUrls] = useState(['']);
     
     // Publish Tab
     const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
@@ -171,6 +170,27 @@ export default function StudioPage() {
                 newFeatures.splice(index, 1);
                 setSilverFeatures(newFeatures);
             }
+        }
+    };
+    
+    // Handlers for youtube urls
+    const handleYoutubeUrlChange = (index: number, value: string) => {
+        const newUrls = [...youtubeUrls];
+        newUrls[index] = value;
+        setYoutubeUrls(newUrls);
+    };
+
+    const addYoutubeUrl = () => {
+        if (youtubeUrls.length < 111) {
+            setYoutubeUrls([...youtubeUrls, '']);
+        }
+    };
+
+    const removeYoutubeUrl = (index: number) => {
+        if (youtubeUrls.length > 1) {
+            const newUrls = [...youtubeUrls];
+            newUrls.splice(index, 1);
+            setYoutubeUrls(newUrls);
         }
     };
 
@@ -568,10 +588,42 @@ export default function StudioPage() {
                                 </div>
                                 <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="youtube-url">YouTube Video URL (Optional)</Label>
-                                <Input id="youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=..." value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
-                                <p className="text-sm text-muted-foreground">Link to your course's introduction video on YouTube.</p>
+                            <div className="space-y-4">
+                                <Label>Course Videos (YouTube URLs)</Label>
+                                <div className="space-y-2">
+                                    {youtubeUrls.map((url, index) => (
+                                        <div key={index} className="flex items-center gap-2">
+                                            <Input
+                                                type="url"
+                                                placeholder={`https://www.youtube.com/watch?v=...`}
+                                                value={url}
+                                                onChange={(e) => handleYoutubeUrlChange(index, e.target.value)}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => removeYoutubeUrl(index)}
+                                                className="h-8 w-8 flex-shrink-0"
+                                                disabled={youtubeUrls.length <= 1}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                                {youtubeUrls.length < 111 && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={addYoutubeUrl}
+                                        className="mt-2"
+                                    >
+                                        <Plus className="mr-2 h-4 w-4" /> Add Video URL
+                                    </Button>
+                                )}
+                                <p className="text-sm text-muted-foreground">Add links to your course videos from YouTube. You can add up to 111 videos.</p>
                             </div>
                         </CardContent>
                         <CardFooter className="flex justify-between">
@@ -774,7 +826,3 @@ export default function StudioPage() {
         </div>
     );
 }
-
-    
-
-    
