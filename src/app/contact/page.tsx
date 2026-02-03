@@ -25,6 +25,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Mail, Phone, Clock, MapPin } from 'lucide-react';
+import { useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const formSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
@@ -44,6 +46,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function ContactPage() {
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -58,13 +61,40 @@ export default function ContactPage() {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    console.log(values);
-    toast({
-      title: 'Form Submitted!',
-      description: 'Thank you for reaching out. We will get back to you shortly.',
-    });
-    form.reset();
+  async function onSubmit(values: FormValues) {
+    if (!firestore) {
+      toast({
+        variant: 'destructive',
+        title: 'Database Error',
+        description: 'Could not connect to the database. Please try again later.',
+      });
+      return;
+    }
+    
+    form.control.disabled = true;
+
+    try {
+      const submissionsCol = collection(firestore, 'contact_submissions');
+      await addDoc(submissionsCol, {
+        ...values,
+        submittedAt: serverTimestamp(),
+      });
+      
+      toast({
+        title: 'Form Submitted!',
+        description: 'Thank you for reaching out. We will get back to you shortly.',
+      });
+      form.reset();
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Submission Failed',
+        description: 'There was an error submitting your message. Please try again.',
+      });
+    } finally {
+        form.control.disabled = false;
+    }
   }
 
   return (
@@ -160,7 +190,7 @@ export default function ContactPage() {
                           <FormItem>
                             <FormLabel>First name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter your first name" {...field} className="bg-white/5 border-white/20" />
+                              <Input placeholder="Enter your first name" {...field} className="bg-white/5 border-white/20" disabled={form.formState.isSubmitting} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -173,7 +203,7 @@ export default function ContactPage() {
                           <FormItem>
                             <FormLabel>Last name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter your last name" {...field} className="bg-white/5 border-white/20" />
+                              <Input placeholder="Enter your last name" {...field} className="bg-white/5 border-white/20" disabled={form.formState.isSubmitting} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -186,7 +216,7 @@ export default function ContactPage() {
                           <FormItem>
                             <FormLabel>Work email</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter work email" {...field} className="bg-white/5 border-white/20" />
+                              <Input placeholder="Enter work email" {...field} className="bg-white/5 border-white/20" disabled={form.formState.isSubmitting}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -199,7 +229,7 @@ export default function ContactPage() {
                           <FormItem>
                             <FormLabel>Mobile Number</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter your mobile number" {...field} className="bg-white/5 border-white/20" />
+                              <Input placeholder="Enter your mobile number" {...field} className="bg-white/5 border-white/20" disabled={form.formState.isSubmitting} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -212,7 +242,7 @@ export default function ContactPage() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Company size</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={form.formState.isSubmitting}>
                                 <FormControl>
                                   <SelectTrigger className="bg-white/5 border-white/20">
                                     <SelectValue placeholder="Select Company size" />
@@ -244,6 +274,7 @@ export default function ContactPage() {
                                 placeholder="Please describe your needs in at least 25 words."
                                 className="bg-white/5 border-white/20 min-h-[120px]"
                                 {...field}
+                                disabled={form.formState.isSubmitting}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -268,6 +299,7 @@ export default function ContactPage() {
                             <Switch
                               checked={field.value}
                               onCheckedChange={field.onChange}
+                              disabled={form.formState.isSubmitting}
                             />
                           </FormControl>
                         </FormItem>
@@ -275,8 +307,8 @@ export default function ContactPage() {
                     />
                     
                     <div className="pt-4">
-                        <Button type="submit" size="lg" className="w-full bg-[#0091FF] hover:bg-[#007de8] text-white font-bold text-base h-12">
-                            Submit
+                        <Button type="submit" size="lg" className="w-full bg-[#0091FF] hover:bg-[#007de8] text-white font-bold text-base h-12" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? 'Submitting...' : 'Submit'}
                         </Button>
                     </div>
                      <p className="mt-4 text-center text-xs text-gray-500">

@@ -27,6 +27,7 @@ import type { Instructor } from '@/lib/types';
 import { signInAnonymously, setPersistence, inMemoryPersistence } from 'firebase/auth';
 import Loading from '@/app/loading';
 import { cn } from '@/lib/utils';
+import { ContactMailsList } from '@/components/admin/contact-mails-list';
 
 
 export default function AdminPage() {
@@ -180,17 +181,7 @@ export default function AdminPage() {
                     <InstructorsList />
                 )}
                 {activeView === 'contact-mails' && (
-                    <div>
-                        <h2 className="text-2xl font-bold font-headline">Contact Mails</h2>
-                        <p className="text-muted-foreground mt-2 mb-6">View and manage contact form submissions.</p>
-                        <div className="text-center aspect-video flex items-center justify-center rounded-lg border-2 border-dashed">
-                            <div>
-                                <Mail className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <h3 className="mt-4 text-xl font-semibold">Under Construction</h3>
-                                <p className="text-muted-foreground mt-2">This section will display contact mail submissions.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <ContactMailsList />
                 )}
                 {activeView === 'auto-approving' && (
                      <div>

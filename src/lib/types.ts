@@ -86,3 +86,15 @@ export type PayoutRequest = {
   paidDate?: string; // ISO string
   rejectionReason?: string;
 }
+
+export type ContactSubmission = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobileNumber: string;
+  companySize?: string;
+  message: string;
+  scheduleDemo: boolean;
+  submittedAt: { seconds: number; nanoseconds: number; } | null;
+};

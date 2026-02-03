@@ -208,5 +208,17 @@ service cloud.firestore {
         allow read, list, update: if isAnonymousAdmin();
         allow delete: if false; // Requests should be processed, not deleted.
     }
+    
+    /**
+     * @description Stores submissions from the public contact form.
+     * @path /contact_submissions/{submissionId}
+     * @allow (create) Anyone can submit the contact form.
+     * @allow (read, list, update, delete) Only admins can manage submissions.
+     * @principle Public write, admin-only management.
+     */
+    match /contact_submissions/{submissionId} {
+        allow create: if true;
+        allow read, list, update, delete: if isAnonymousAdmin();
+    }
   }
 }

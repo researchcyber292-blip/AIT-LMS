@@ -315,6 +315,53 @@
         "requestDate",
         "status"
       ]
+    },
+    "ContactSubmission": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ContactSubmission",
+      "type": "object",
+      "description": "Represents a submission from the public contact form.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the submission."
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "mobileNumber": {
+          "type": "string"
+        },
+        "companySize": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "scheduleDemo": {
+          "type": "boolean"
+        },
+        "submittedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "mobileNumber",
+        "message",
+        "submittedAt"
+      ]
     }
   },
   "auth": {
@@ -421,6 +468,22 @@
             {
               "name": "requestId",
               "description": "Unique ID for the payout request."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/contact_submissions/{submissionId}",
+        "definition": {
+          "entityName": "ContactSubmission",
+          "schema": {
+            "$ref": "#/backend/entities/ContactSubmission"
+          },
+          "description": "Stores submissions from the public contact form. Publicly writable, admin-readable.",
+          "params": [
+            {
+              "name": "submissionId",
+              "description": "Unique ID for the submission."
             }
           ]
         }
