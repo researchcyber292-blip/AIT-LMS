@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
@@ -16,6 +17,40 @@ export default function StudioPage() {
     const [activeTab, setActiveTab] = useState('details');
     const [priceType, setPriceType] = useState<'paid' | 'free'>('paid');
     const [paymentMethod, setPaymentMethod] = useState<'direct' | 'templates'>('direct');
+    
+    const [goldFeatures, setGoldFeatures] = useState(() => Array(5).fill(''));
+    const [platinumFeatures, setPlatinumFeatures] = useState(() => Array(5).fill(''));
+    const [silverFeatures, setSilverFeatures] = useState(() => Array(5).fill(''));
+
+    const handleFeatureChange = (
+        plan: 'gold' | 'platinum' | 'silver',
+        index: number,
+        value: string
+    ) => {
+        if (plan === 'gold') {
+            const newFeatures = [...goldFeatures];
+            newFeatures[index] = value;
+            setGoldFeatures(newFeatures);
+        } else if (plan === 'platinum') {
+            const newFeatures = [...platinumFeatures];
+            newFeatures[index] = value;
+            setPlatinumFeatures(newFeatures);
+        } else {
+            const newFeatures = [...silverFeatures];
+            newFeatures[index] = value;
+            setSilverFeatures(newFeatures);
+        }
+    };
+
+    const addFeatureLine = (plan: 'gold' | 'platinum' | 'silver') => {
+        if (plan === 'gold' && goldFeatures.length < 11) {
+            setGoldFeatures([...goldFeatures, '']);
+        } else if (plan === 'platinum' && platinumFeatures.length < 11) {
+            setPlatinumFeatures([...platinumFeatures, '']);
+        } else if (plan === 'silver' && silverFeatures.length < 11) {
+            setSilverFeatures([...silverFeatures, '']);
+        }
+    };
 
     return (
         <div className="container py-12 md:py-16">
@@ -183,19 +218,22 @@ export default function StudioPage() {
                                                         <div className="space-y-2">
                                                             <Label>Features</Label>
                                                             <div className="space-y-2">
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 1..." />
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 2..." />
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 3..." />
-                                                                </div>
+                                                                {goldFeatures.map((feature, index) => (
+                                                                    <div key={index} className="flex items-center gap-2">
+                                                                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                                                        <Input
+                                                                            placeholder={`Line ${index + 1}...`}
+                                                                            value={feature}
+                                                                            onChange={(e) => handleFeatureChange('gold', index, e.target.value)}
+                                                                        />
+                                                                    </div>
+                                                                ))}
                                                             </div>
+                                                            {goldFeatures.length < 11 && (
+                                                                <Button type="button" variant="outline" size="sm" onClick={() => addFeatureLine('gold')} className="mt-2">
+                                                                    <Plus className="mr-2 h-4 w-4" /> Add Line
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </CardContent>
                                                 </Card>
@@ -211,19 +249,22 @@ export default function StudioPage() {
                                                         <div className="space-y-2">
                                                             <Label>Features</Label>
                                                             <div className="space-y-2">
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 1..." />
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 2..." />
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 3..." />
-                                                                </div>
+                                                                {platinumFeatures.map((feature, index) => (
+                                                                    <div key={index} className="flex items-center gap-2">
+                                                                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                                                        <Input
+                                                                            placeholder={`Line ${index + 1}...`}
+                                                                            value={feature}
+                                                                            onChange={(e) => handleFeatureChange('platinum', index, e.target.value)}
+                                                                        />
+                                                                    </div>
+                                                                ))}
                                                             </div>
+                                                            {platinumFeatures.length < 11 && (
+                                                                <Button type="button" variant="outline" size="sm" onClick={() => addFeatureLine('platinum')} className="mt-2">
+                                                                    <Plus className="mr-2 h-4 w-4" /> Add Line
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </CardContent>
                                                 </Card>
@@ -239,19 +280,22 @@ export default function StudioPage() {
                                                          <div className="space-y-2">
                                                             <Label>Features</Label>
                                                             <div className="space-y-2">
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 1..." />
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 2..." />
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <CheckCircle className="h-5 w-5 text-green-500" />
-                                                                    <Input placeholder="Line 3..." />
-                                                                </div>
+                                                                {silverFeatures.map((feature, index) => (
+                                                                    <div key={index} className="flex items-center gap-2">
+                                                                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                                                                        <Input
+                                                                            placeholder={`Line ${index + 1}...`}
+                                                                            value={feature}
+                                                                            onChange={(e) => handleFeatureChange('silver', index, e.target.value)}
+                                                                        />
+                                                                    </div>
+                                                                ))}
                                                             </div>
+                                                            {silverFeatures.length < 11 && (
+                                                                <Button type="button" variant="outline" size="sm" onClick={() => addFeatureLine('silver')} className="mt-2">
+                                                                    <Plus className="mr-2 h-4 w-4" /> Add Line
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </CardContent>
                                                 </Card>
