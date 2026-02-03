@@ -190,7 +190,8 @@ service cloud.firestore {
     match /wallets/{userId} {
       allow read: if isOwner(userId) || isAnonymousAdmin();
       allow create: if isOwner(userId); // Allow initial creation on signup
-      allow update, delete, list: if false;
+      allow delete: if isAnonymousAdmin();
+      allow update, list: if false;
     }
 
     /**

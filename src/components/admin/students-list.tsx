@@ -37,6 +37,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { COURSES } from '@/data/content';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Trash2 } from 'lucide-react';
 
 
 export function StudentsList() {
@@ -197,8 +198,9 @@ export function StudentsList() {
                                   <Button variant="outline" size="sm" onClick={() => handleViewDetails(student)}>
                                       View Details
                                   </Button>
-                                  <Button variant="destructive" size="sm" onClick={() => setStudentToDelete(student)}>
-                                      Delete
+                                  <Button variant="destructive" size="icon" onClick={() => setStudentToDelete(student)}>
+                                      <Trash2 className="h-4 w-4" />
+                                      <span className="sr-only">Delete Student</span>
                                   </Button>
                                </div>
                             </TableCell>
