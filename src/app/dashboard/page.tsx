@@ -131,9 +131,9 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
                                         name="title"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Professional Title / Role</FormLabel>
+                                                <FormLabel>Enter Your Name</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="e.g., Cyber Security Researcher" {...field} />
+                                                    <Input placeholder="e.g., Mr. Ashok Sir" {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>

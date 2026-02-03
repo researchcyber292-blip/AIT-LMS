@@ -10,6 +10,7 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import type { Instructor } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Note: Metadata export is for server components, but we keep it for potential future static generation.
 // In a client component, document title would be set via useEffect if needed.
@@ -226,7 +227,7 @@ export default function CoursesPage() {
                 </p>
             </div>
 
-            <div className="mt-12 max-w-5xl mx-auto grid grid-cols-1 gap-8">
+            <div className="mt-12 max-w-6xl mx-auto grid grid-cols-1 gap-8">
                 {isLoading ? (
                   <>
                     {[...Array(2)].map((_, i) => (
@@ -242,15 +243,9 @@ export default function CoursesPage() {
                                 </div>
                             </div>
                             {/* Right Skeleton */}
-                            <div className="flex flex-col items-start flex-grow w-full">
-                                <div className="space-y-2 w-full">
-                                    <Skeleton className="h-4 w-full" />
-                                    <Skeleton className="h-4 w-full" />
-                                    <Skeleton className="h-4 w-full" />
-                                    <Skeleton className="h-4 w-5/6" />
-                                    <Skeleton className="h-4 w-3/4" />
-                                </div>
-                                <Skeleton className="h-11 w-48 mt-4 self-start md:self-end" />
+                             <div className="flex flex-col items-center flex-grow w-full">
+                                <Skeleton className="h-32 w-full rounded-md" />
+                                <Skeleton className="h-11 w-48 mt-6" />
                             </div>
                         </div>
                     ))}
@@ -274,9 +269,11 @@ export default function CoursesPage() {
                         </div>
 
                         {/* Right Side */}
-                        <div className="flex flex-col items-start text-left flex-grow w-full">
-                            <p className="text-muted-foreground text-sm flex-grow line-clamp-6">{instructor.bio || "View profile to see full description."}</p>
-                            <Button asChild size="lg" className="mt-4 self-end">
+                        <div className="flex flex-col items-center text-left flex-grow w-full">
+                             <ScrollArea className="h-32 w-full rounded-md border bg-black/20 p-4">
+                                <p className="text-muted-foreground text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
+                            </ScrollArea>
+                            <Button asChild size="lg" className="mt-6">
                                 <Link href={`/instructors/${instructor.id}`}>
                                     View Profile & Courses
                                 </Link>
