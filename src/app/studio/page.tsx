@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, BookOpen, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function StudioPage() {
     const router = useRouter();
@@ -63,8 +64,25 @@ export default function StudioPage() {
                                 <Textarea id="course-long-description" placeholder="A comprehensive overview of the course content, goals, and target audience." className="min-h-[200px]" />
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor="course-category">Category</Label>
-                                <p className="text-sm text-muted-foreground">The course category (Beginner, Intermediate, Advanced) will be assigned by an administrator during the review process.</p>
+                                <Label>Category</Label>
+                                <RadioGroup defaultValue="beginner" className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="beginner" id="cat-beginner" />
+                                        <Label htmlFor="cat-beginner">Beginner</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="intermediate" id="cat-intermediate" />
+                                        <Label htmlFor="cat-intermediate">Intermediate</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="advanced" id="cat-advanced" />
+                                        <Label htmlFor="cat-advanced">Advanced</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="highly-advanced" id="cat-highly-advanced" />
+                                        <Label htmlFor="cat-highly-advanced">Highly Advanced</Label>
+                                    </div>
+                                </RadioGroup>
                             </div>
                             <div className="flex justify-end">
                                 <Button disabled>Save & Continue</Button>
