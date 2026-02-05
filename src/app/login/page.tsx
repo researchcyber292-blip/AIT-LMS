@@ -11,6 +11,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
   const [role, setRole] = useState<'student' | 'instructor'>('student');
@@ -119,15 +121,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background text-foreground">
+    <div className="min-h-screen w-full bg-secondary/50 text-foreground">
       <div className="container flex min-h-screen items-center justify-center py-12">
-        <div className="w-full max-w-sm">
-            <h1 className="mb-8 text-center text-4xl font-bold tracking-tight text-foreground">
-              Log into your account
-            </h1>
-            
+        <Card className="w-full max-w-sm">
+          <CardHeader className="text-center">
+            <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4">
+              <ShieldCheck className="h-8 w-8" />
+            </div>
+            <CardTitle className="font-headline text-2xl">
+              Console Access
+            </CardTitle>
+            <CardDescription>
+              Log into your account to continue.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <div className="mb-6">
-                <p className="mb-3 font-medium text-center">I am logging in as a...</p>
                 <RadioGroup defaultValue="student" onValueChange={onRoleChange} className="grid grid-cols-2 gap-4">
                     <div>
                         <RadioGroupItem value="student" id="student" className="peer sr-only" />
@@ -153,11 +162,6 @@ export default function LoginPage() {
             <div className="flex flex-col gap-4">
                 {role === 'student' ? (
                     <form onSubmit={handleStudentLogin} className="space-y-4">
-                        <div className="relative my-2">
-                            <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-border" /></div>
-                            <div className="relative flex justify-center text-sm"><span className="bg-background px-2 uppercase text-muted-foreground">Login as a Student</span></div>
-                        </div>
-                        
                         <Input
                             type="email"
                             placeholder="Email"
@@ -176,18 +180,12 @@ export default function LoginPage() {
                             className="h-12"
                             autoComplete="current-password"
                         />
-
-                        <Button type="submit" size="lg" className="h-14 w-full justify-center text-base font-bold" disabled={isLoading}>
-                            {isLoading ? 'Logging in...' : 'LOGIN WITH AIT'}
+                        <Button type="submit" size="lg" className="h-12 w-full justify-center text-base font-bold" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Login as Student'}
                         </Button>
                     </form>
                 ) : (
                     <form onSubmit={handleInstructorLogin} className="space-y-4">
-                        <div className="relative my-2">
-                            <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-border" /></div>
-                            <div className="relative flex justify-center text-sm"><span className="bg-background px-2 uppercase text-muted-foreground">Login as an Instructor</span></div>
-                        </div>
-                        
                         <Input
                             type="email"
                             placeholder="Instructor Email"
@@ -206,8 +204,8 @@ export default function LoginPage() {
                             className="h-12"
                             autoComplete="current-password"
                         />
-                        <Button type="submit" size="lg" className="h-14 w-full justify-center text-base font-bold" disabled={isLoading}>
-                            {isLoading ? 'Logging in...' : 'LOGIN AS INSTRUCTOR'}
+                        <Button type="submit" size="lg" className="h-12 w-full justify-center text-base font-bold" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Login as Instructor'}
                         </Button>
                     </form>
               )}
@@ -219,7 +217,8 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </p>
-          </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

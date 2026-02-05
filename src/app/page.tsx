@@ -68,23 +68,15 @@ const testimonials = [
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-1 pt-14">
         {/* Hero Section */}
-        <section className="relative bg-background overflow-hidden">
-           <Image
-              src="https://images.unsplash.com/photo-1519791883288-dc8bd696e667?w=1600&auto=format&fit=crop&q=60"
-              alt="Blueprint background"
-              fill
-              className="object-cover opacity-5"
-              data-ai-hint="blueprint pattern"
-              priority
-            />
-          <div className="container relative z-10 px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12 md:py-20">
+        <section className="bg-background">
+          <div className="container px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12 md:py-24">
               <div className="text-center md:text-left">
-                <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-                  Plan, creating & Launching your next Cybersecurity Course
+                <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+                  Your Gateway to Cybersecurity Mastery
                 </h1>
                 <p className="mt-6 max-w-xl mx-auto md:mx-0 text-lg text-muted-foreground">
                   Master in-demand cybersecurity skills with expert-led courses, hands-on labs, and a vibrant professional community.
@@ -100,68 +92,43 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="relative h-96 md:h-auto md:aspect-[4/5]">
+              <div className="relative h-80 md:h-full w-full">
                   <Image
-                    src="https://eduvouchers.com/wp-content/uploads/2023/11/Teacher-in-Lahore.png"
-                    alt="Professional instructor"
+                    src="https://testsigma.com/blog/wp-content/uploads/2024/02/What-is-E2E-Testing.png"
+                    alt="Cybersecurity professionals collaborating"
                     fill
-                    className="object-contain object-bottom"
+                    className="object-contain"
                     priority
-                    data-ai-hint="professional instructor"
+                    data-ai-hint="professionals collaborating"
                   />
               </div>
             </div>
-            <Card className="relative -bottom-12 shadow-xl max-w-4xl mx-auto border-border/50">
-              <CardContent className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <BrainCircuit className="h-6 w-6" />
-                    </div>
-                    <p className="font-semibold">AI Learning</p>
-                    <p className="text-sm text-muted-foreground">Personalized paths</p>
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Users className="h-6 w-6" />
-                    </div>
-                    <p className="font-semibold">Community</p>
-                    <p className="text-sm text-muted-foreground">Peer support</p>
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <ShieldCheck className="h-6 w-6" />
-                    </div>
-                    <p className="font-semibold">Certification</p>
-                    <p className="text-sm text-muted-foreground">Industry recognized</p>
-                  </div>
-              </CardContent>
-            </Card>
           </div>
         </section>
 
         {/* Why Choose Section */}
-        <section className="py-24 bg-background md:py-32">
+        <section className="py-16 bg-secondary/50 md:py-24">
             <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                     <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Aviraj Info Tech?</h2>
                     <p className="mt-4 text-lg text-muted-foreground">We provide a comprehensive learning ecosystem designed for success.</p>
                 </div>
                 <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
-                    <div className="text-center">
+                    <div className="text-center p-6 border rounded-lg bg-card">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                             <UserCheck className="h-6 w-6" />
                         </div>
                         <h3 className="mt-6 font-headline text-lg font-semibold">Expert-Led Curriculum</h3>
                         <p className="mt-2 text-muted-foreground">Courses crafted by industry veterans with decades of real-world offensive and defensive security experience.</p>
                     </div>
-                    <div className="text-center">
+                    <div className="text-center p-6 border rounded-lg bg-card">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                             <BookOpen className="h-6 w-6" />
                         </div>
                         <h3 className="mt-6 font-headline text-lg font-semibold">Hands-On Virtual Labs</h3>
                         <p className="mt-2 text-muted-foreground">Move beyond theory with practical labs that simulate real-world attacks and defensive scenarios.</p>
                     </div>
-                    <div className="text-center">
+                    <div className="text-center p-6 border rounded-lg bg-card">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                             <ShieldCheck className="h-6 w-6" />
                         </div>
@@ -173,7 +140,7 @@ export default function Home() {
         </section>
 
         {/* Featured Courses Section */}
-        <section className="py-16 bg-secondary/30 md:py-24">
+        <section className="py-16 bg-background md:py-24">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Explore Our Featured Courses</h2>
@@ -195,7 +162,7 @@ export default function Home() {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-16 bg-background md:py-24">
+        <section className="py-16 bg-secondary/50 md:py-24">
             <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                     <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Trusted by Aspiring Professionals</h2>
@@ -203,7 +170,7 @@ export default function Home() {
                 </div>
                 <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                     {testimonials.map((testimonial, i) => (
-                        <Card key={i} className="flex flex-col">
+                        <Card key={i} className="flex flex-col bg-card">
                             <CardContent className="pt-6 flex-grow">
                                 <div className="flex gap-1 text-yellow-400 mb-4">
                                     <Star className="w-5 h-5 fill-current" />
@@ -214,7 +181,7 @@ export default function Home() {
                                 </div>
                                 <p className="text-muted-foreground italic">"{testimonial.quote}"</p>
                             </CardContent>
-                            <CardFooter className="flex items-center gap-4 bg-secondary/30">
+                            <CardFooter className="flex items-center gap-4 bg-muted/50">
                                 <Avatar className="h-12 w-12">
                                     <AvatarImage src={testimonial.avatar} alt={testimonial.name} data-ai-hint={testimonial.avatarHint} />
                                     <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
@@ -231,9 +198,9 @@ export default function Home() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-16 md:py-24">
+        <section className="py-16 md:py-24 bg-background">
             <div className="container mx-auto px-4">
-                <div className="relative overflow-hidden rounded-2xl bg-secondary px-6 py-20 text-center shadow-inner sm:px-16">
+                <div className="relative overflow-hidden rounded-2xl bg-secondary px-6 py-20 text-center shadow-inner-lg sm:px-16 border">
                     <div className="relative">
                         <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Ready to Start Learning?</h2>
                         <p className="mt-4 text-lg text-muted-foreground">Join thousands of learners and take the next step in your cybersecurity career.</p>

@@ -15,9 +15,9 @@ import { UserNav } from './user-nav';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/courses', label: 'Courses' },
-  { href: '/explore', label: 'EXPLORE' },
-  { href: '/live-classes', label: 'LIVE CLASSES' },
-  { href: '/about', label: 'ACCOUNTS' },
+  { href: '/explore', label: 'Explore' },
+  { href: '/live-classes', label: 'Live Classes' },
+  { href: '/about', label: 'Accounts' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -25,23 +25,33 @@ export function Header() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
 
   return (
-    <header className="fixed top-0 z-50 w-full transition-all duration-300 h-14 bg-background/95 border-b border-border/40 backdrop-blur-sm text-foreground">
+    <header className={cn("fixed top-0 z-50 w-full transition-all duration-300 h-16", isScrolled ? "bg-background/80 border-b border-border/40 backdrop-blur-sm" : "bg-transparent")}>
       <div className="container flex h-full items-center">
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
+            <div className="relative h-8 w-8 rounded-full bg-white overflow-hidden flex items-center justify-center border-2 border-primary/20">
               <Image
                 src="/image.png"
                 alt="Aviraj Info Tech Logo"
-                width={28}
-                height={28}
+                width={32}
+                height={32}
                 className="object-cover w-full h-full"
               />
             </div>
-             <span className="font-bold hidden sm:inline-block">AVIRAJ INFO TECH</span>
+             <span className="font-bold hidden sm:inline-block text-foreground">AVIRAJ INFO TECH</span>
           </Link>
         </div>
 

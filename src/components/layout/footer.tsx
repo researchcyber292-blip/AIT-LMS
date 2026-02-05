@@ -14,16 +14,16 @@ export function Footer() {
         {/* Column 1: Company Info */}
         <div className="flex flex-col items-start md:col-span-1">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
+            <div className="relative h-8 w-8 rounded-full bg-white overflow-hidden flex items-center justify-center border-2 border-primary/20">
               <Image
                 src="/image.png"
                 alt="Aviraj Info Tech Logo"
-                width={28}
-                height={28}
+                width={32}
+                height={32}
                 className="object-cover w-full h-full"
               />
             </div>
-            <span className="font-bold">AVIRAJ INFO TECH</span>
+            <span className="font-bold text-foreground">AVIRAJ INFO TECH</span>
           </Link>
           <p className="mt-4 text-sm text-muted-foreground">
             Safeguarding the Future of Digital.

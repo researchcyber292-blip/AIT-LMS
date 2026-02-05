@@ -77,19 +77,19 @@ const plans = [
 
 const tierStyles = {
     orange: {
-        card: 'border-orange-500/50 bg-card shadow-orange-500/10',
-        header: 'bg-orange-500',
-        button: 'bg-orange-500 hover:bg-orange-600 border-orange-700 text-white',
+        card: 'border-orange-500/20 bg-card shadow-orange-500/5',
+        header: 'bg-orange-500/10 text-orange-600',
+        button: 'bg-orange-500 hover:bg-orange-600 text-white',
     },
     silver: {
         card: 'border-primary/50 bg-card shadow-primary/10',
-        header: 'bg-primary',
+        header: 'bg-primary/10 text-primary',
         button: 'bg-primary hover:bg-primary/90 text-primary-foreground',
     },
     gold: {
-        card: 'border-yellow-500/50 bg-card shadow-yellow-500/10',
-        header: 'bg-yellow-500',
-        button: 'bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-700',
+        card: 'border-yellow-500/20 bg-card shadow-yellow-500/5',
+        header: 'bg-yellow-500/10 text-yellow-600',
+        button: 'bg-yellow-500 hover:bg-yellow-600 text-black',
     }
 }
 
@@ -108,7 +108,7 @@ export default function CoursesPage() {
   return (
     <div className="bg-background text-foreground min-h-[calc(100vh-3.5rem)] py-12 md:py-24">
         <div className="container">
-            <div className="relative text-center mb-16 rounded-2xl border border-border py-12">
+            <div className="relative text-center mb-16 rounded-2xl border border-border py-12 bg-card">
                 <div className="relative z-10">
                     <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4 shadow-lg">
                         <Gem className="h-8 w-8" />
@@ -137,15 +137,13 @@ export default function CoursesPage() {
                             </div>
                         )}
                         
-                        {/* Header */}
-                        <div className={cn("p-6 text-center rounded-t-md text-primary-foreground", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
-                            <h2 className="text-3xl font-bold uppercase font-headline tracking-widest flex items-center justify-center gap-2">
-                                {plan.tier === 'gold' && <Crown className="w-8 h-8 text-yellow-300" />}
+                        <div className={cn("p-6 text-center rounded-t-md font-bold", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
+                            <h2 className="text-3xl uppercase font-headline tracking-widest flex items-center justify-center gap-2">
+                                {plan.tier === 'gold' && <Crown className="w-8 h-8 text-yellow-500" />}
                                 {plan.title}
                             </h2>
                         </div>
                         
-                        {/* Content */}
                         <div className="p-8 flex flex-col flex-grow">
                             <p className="text-muted-foreground min-h-[4rem] text-sm">{plan.description}</p>
                             
@@ -163,8 +161,8 @@ export default function CoursesPage() {
                             </ul>
 
                             <div className="text-center mt-auto pt-4">
-                                <p className="text-4xl font-bold font-headline mb-4">{plan.price}</p>
-                                <Button size="lg" className={cn("w-full uppercase font-bold border-b-4", tierStyles[plan.tier as keyof typeof tierStyles].button)}>
+                                <p className="text-4xl font-bold font-headline mb-4 text-foreground">{plan.price}</p>
+                                <Button size="lg" className={cn("w-full uppercase font-bold", tierStyles[plan.tier as keyof typeof tierStyles].button)}>
                                     Order Now
                                 </Button>
                             </div>
@@ -212,7 +210,6 @@ export default function CoursesPage() {
                   <>
                     {[...Array(2)].map((_, i) => (
                         <div key={i} className="bg-card border border-border rounded-xl shadow-sm p-6 flex flex-col md:flex-row items-start gap-8">
-                            {/* Left Skeleton */}
                             <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
                                 <Skeleton className="h-32 w-32 rounded-full border-4 border-primary/20" />
                                 <Skeleton className="h-7 w-40 mt-4" />
@@ -222,7 +219,6 @@ export default function CoursesPage() {
                                     <Skeleton className="h-3 w-3/4 mx-auto" />
                                 </div>
                             </div>
-                            {/* Right Skeleton */}
                              <div className="flex flex-col items-center flex-grow w-full">
                                 <div className="w-full"><Skeleton className="h-32 w-full rounded-md" /></div>
                                 <Skeleton className="h-11 w-48 mt-6" />
@@ -233,9 +229,8 @@ export default function CoursesPage() {
                 ) : (
                   activeInstructors?.map((instructor) => (
                     <div key={instructor.id} className="bg-card border border-border rounded-xl shadow-sm p-6 flex flex-col md:flex-row items-start gap-8 transition-all hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-1">
-                        {/* Left Side */}
                         <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
-                            <Avatar className="h-32 w-32 border-4 border-primary/50">
+                            <Avatar className="h-32 w-32 border-4 border-primary/20">
                                 <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
                                 <AvatarFallback className="text-4xl">{`${instructor.firstName.charAt(0)}${instructor.lastName.charAt(0)}`}</AvatarFallback>
                             </Avatar>
@@ -248,7 +243,6 @@ export default function CoursesPage() {
                             )}
                         </div>
 
-                        {/* Right Side */}
                         <div className="flex flex-col items-center flex-grow w-full">
                             <div className="w-full">
                                 <ScrollArea className="h-32 w-full rounded-md bg-muted/50 p-4">

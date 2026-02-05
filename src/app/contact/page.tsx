@@ -115,10 +115,8 @@ export default function ContactPage() {
 
         <div className="mt-16 w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 items-start">
             
-            {/* Left side: Contact Info */}
             <div className="md:sticky md:top-28">
               <div className="space-y-8">
-                {/* Card for Email */}
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                   <div className="flex items-center gap-4">
                     <div className="bg-primary/10 p-3 rounded-lg shrink-0">
@@ -132,7 +130,6 @@ export default function ContactPage() {
                   </div>
                 </div>
   
-                {/* Card for Phone */}
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                   <div className="flex items-center gap-4">
                     <div className="bg-primary/10 p-3 rounded-lg shrink-0">
@@ -146,7 +143,6 @@ export default function ContactPage() {
                   </div>
                 </div>
                 
-                {/* Card for Office Hour */}
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                   <div className="flex items-center gap-4">
                     <div className="bg-primary/10 p-3 rounded-lg shrink-0">
@@ -160,7 +156,6 @@ export default function ContactPage() {
                   </div>
                 </div>
   
-                {/* Card for Location */}
                 <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                   <div className="flex items-center gap-4">
                     <div className="bg-primary/10 p-3 rounded-lg shrink-0">
@@ -175,7 +170,6 @@ export default function ContactPage() {
               </div>
             </div>
             
-            {/* Right side: Form */}
             <div className="w-full text-left">
               <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
                 <Form {...form}>
