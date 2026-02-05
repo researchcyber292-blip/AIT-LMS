@@ -12,6 +12,7 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 import Script from 'next/script';
 import { OnboardingGuard } from '@/components/onboarding-guard';
 import { cn } from '@/lib/utils';
+import { CustomCursor } from '@/components/custom-cursor';
 
 export default function RootLayout({
   children,
@@ -28,7 +29,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <title>Aviraj Info Tech - Your Gateway to Cybersecurity Mastery</title>
         <meta name="description" content="Aviraj Info Tech offers expert-led courses in cybersecurity, from ethical hacking to advanced network defense." />
@@ -49,6 +50,7 @@ export default function RootLayout({
             </div>
             <SecurityInterceptor />
             <Toaster />
+            <CustomCursor />
           </OnboardingGuard>
         </FirebaseClientProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />

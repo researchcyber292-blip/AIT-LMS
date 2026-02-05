@@ -11,7 +11,7 @@ interface CourseCardProps {
 
 export function CourseCard({ course }: CourseCardProps) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 bg-card border-border group">
+    <Card className="flex h-full flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 bg-card border-border hover:border-primary/50 group">
       <CardHeader className="p-0 overflow-hidden">
         <Link href={`/courses/${course.id}`} className="block">
           <Image

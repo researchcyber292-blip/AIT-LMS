@@ -71,8 +71,16 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background">
       <main className="flex-1 pt-14">
         {/* Hero Section */}
-        <section className="relative bg-secondary/30">
-          <div className="container px-4">
+        <section className="relative bg-background overflow-hidden">
+           <Image
+              src="https://images.unsplash.com/photo-1519791883288-dc8bd696e667?w=1600&auto=format&fit=crop&q=60"
+              alt="Blueprint background"
+              fill
+              className="object-cover opacity-5"
+              data-ai-hint="blueprint pattern"
+              priority
+            />
+          <div className="container relative z-10 px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12 md:py-20">
               <div className="text-center md:text-left">
                 <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
@@ -103,7 +111,7 @@ export default function Home() {
                   />
               </div>
             </div>
-            <Card className="relative -bottom-12 shadow-xl max-w-4xl mx-auto">
+            <Card className="relative -bottom-12 shadow-xl max-w-4xl mx-auto border-border/50">
               <CardContent className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
