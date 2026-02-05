@@ -3,7 +3,6 @@
 
 import { notFound, useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { COURSES } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -15,10 +14,11 @@ import { useState } from 'react';
 import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
 import { verifyRazorpayPayment } from '@/ai/flows/verify-razorpay-payment';
 import { collection, addDoc, doc } from 'firebase/firestore';
-import type { Enrollment, Instructor } from '@/lib/types';
+import type { Enrollment, Instructor, Course } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import Loading from '@/app/loading';
 
 
 declare global {
@@ -94,11 +94,18 @@ function LiveInstructorProfile({ instructorId }: { instructorId: string }) {
 export default function CourseDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const course = COURSES.find(c => c.id === params.id);
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Fetch course data from Firestore
+  const courseDocRef = useMemoFirebase(() => {
+    if (!firestore || !params.id) return null;
+    return doc(firestore, 'courses', params.id);
+  }, [firestore, params.id]);
+
+  const { data: course, isLoading: isCourseLoading } = useDoc<Course>(courseDocRef);
 
   // Check enrollment status
   const enrollmentsQuery = useMemoFirebase(() => {
@@ -106,15 +113,13 @@ export default function CourseDetailPage() {
     return collection(firestore, 'users', user.uid, 'enrollments');
   }, [firestore, user]);
   const { data: enrollments, isLoading: enrollmentsLoading } = useCollection<Enrollment>(enrollmentsQuery);
+  
   const isEnrolled = enrollments?.some(e => e.courseId === course?.id) || false;
   
-  if (!course) {
-    notFound();
-  }
-  
-  const isLoading = enrollmentsLoading;
+  const isLoading = isCourseLoading || enrollmentsLoading;
 
   const handlePayment = async () => {
+    if (!course) return;
     setIsProcessing(true);
     if (!user || !firestore) {
       toast({
@@ -142,7 +147,6 @@ export default function CourseDetailPage() {
       const order = await createRazorpayOrder({
         amount: course.price * 100, // Amount in paise
         currency: "INR",
-        // A unique receipt ID for this transaction
         receipt: `receipt_${course.id}_${user.uid}_${Date.now()}`
       });
 
@@ -155,8 +159,6 @@ export default function CourseDetailPage() {
         image: "/image.png",
         order_id: order.id,
         handler: async function (response: any) {
-          // Verification happens here. isProcessing is already true.
-          // It will be set to false in this handler's finally block.
           try {
             const verification = await verifyRazorpayPayment({
               order_id: response.razorpay_order_id,
@@ -269,7 +271,16 @@ export default function CourseDetailPage() {
        </Button>
     );
   };
+  
+  if (isLoading) {
+      return <Loading />;
+  }
 
+  if (!course) {
+    // This can happen briefly on load or if the ID is invalid.
+    // notFound() will throw an error and engage Next.js's 404 logic.
+    notFound();
+  }
 
   return (
     <div className="container py-12 md:py-16">
@@ -322,7 +333,7 @@ export default function CourseDetailPage() {
             </div>
           </div>
           
-          <LiveInstructorProfile instructorId={course.instructor.id} />
+          {course.instructorId && <LiveInstructorProfile instructorId={course.instructorId} />}
         </div>
         
         <div className="md:col-span-2">
@@ -360,3 +371,4 @@ export default function CourseDetailPage() {
     </div>
   );
 }
+

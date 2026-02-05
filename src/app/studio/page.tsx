@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -21,6 +22,9 @@ import {
 } from "@/components/ui/dialog"
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 
 export default function StudioPage() {
@@ -32,7 +36,7 @@ export default function StudioPage() {
     const [title, setTitle] = useState('');
     const [shortDescription, setShortDescription] = useState('');
     const [longDescription, setLongDescription] = useState('');
-    const [category, setCategory] = useState<'beginner' | 'intermediate' | 'advanced' | 'highly-advanced'>('beginner');
+    const [category, setCategory] = useState<'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced'>('Beginner');
     const [learningObjectives, setLearningObjectives] = useState(['']);
 
     // Curriculum Tab
@@ -67,6 +71,10 @@ export default function StudioPage() {
     
     // Publish Tab
     const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+    const [isPublishing, setIsPublishing] = useState(false);
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const { toast } = useToast();
 
     
     // --- HANDLER FUNCTIONS ---
@@ -258,6 +266,65 @@ export default function StudioPage() {
         }
     };
 
+    const handlePublish = async () => {
+        if (!user || !firestore) {
+            toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in to publish a course.' });
+            return;
+        }
+
+        if (!title || !longDescription || !thumbnailPreview) {
+            toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out title, description, and add a thumbnail before publishing.' });
+            setActiveTab('details');
+            return;
+        }
+
+        setIsPublishing(true);
+
+        const newCourseData = {
+            title,
+            description: shortDescription,
+            longDescription,
+            category,
+            learningObjectives: learningObjectives.filter(o => o.trim() !== ''),
+            curriculum: [], // Curriculum builder not implemented yet
+            instructorId: user.uid,
+            image: thumbnailPreview, // Storing as base64 data URL
+            imageHint: 'custom course thumbnail',
+            createdAt: serverTimestamp(),
+            priceType,
+            paymentMethod: priceType === 'paid' ? paymentMethod : undefined,
+            price: priceType === 'paid' && paymentMethod === 'direct' ? parseFloat(directPrice) || 0 : 0,
+            subscriptionTiers: priceType === 'paid' && paymentMethod === 'templates' ? {
+                gold: { price: goldPrice, description: goldDescription, features: goldFeatures.filter(Boolean), videos: goldYoutubeUrls.filter(Boolean) },
+                platinum: { price: platinumPrice, description: platinumDescription, features: platinumFeatures.filter(Boolean), videos: platinumYoutubeUrls.filter(Boolean) },
+                silver: { price: silverPrice, description: silverDescription, features: silverFeatures.filter(Boolean), videos: silverYoutubeUrls.filter(Boolean) },
+            } : null,
+            videos: priceType !== 'paid' || paymentMethod !== 'templates' ? youtubeUrls.filter(Boolean) : [],
+            duration: formatDuration(courseDuration[0]),
+            liveSessionsEnabled: wantsToGoLive,
+            resourcesEnabled: providesResources,
+        };
+
+        try {
+            const coursesCol = collection(firestore, 'courses');
+            await addDoc(coursesCol, newCourseData);
+            toast({
+                title: 'Course Published!',
+                description: 'Your course is now live for students.',
+            });
+            router.push('/dashboard');
+        } catch (error: any) {
+            console.error("Error publishing course:", error);
+            toast({
+                variant: 'destructive',
+                title: 'Publish Failed',
+                description: 'Could not save the course to the database. Check permissions and try again.',
+            });
+        } finally {
+            setIsPublishing(false);
+        }
+    };
+
 
     return (
         <div className="container py-12 md:py-16">
@@ -342,19 +409,19 @@ export default function StudioPage() {
                                 <Label>Category</Label>
                                 <RadioGroup value={category} onValueChange={(v) => setCategory(v as any)} className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="beginner" id="cat-beginner" />
+                                        <RadioGroupItem value="Beginner" id="cat-beginner" />
                                         <Label htmlFor="cat-beginner">Beginner</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="intermediate" id="cat-intermediate" />
+                                        <RadioGroupItem value="Intermediate" id="cat-intermediate" />
                                         <Label htmlFor="cat-intermediate">Intermediate</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="advanced" id="cat-advanced" />
+                                        <RadioGroupItem value="Advanced" id="cat-advanced" />
                                         <Label htmlFor="cat-advanced">Advanced</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="highly-advanced" id="cat-highly-advanced" />
+                                        <RadioGroupItem value="Highly Advanced" id="cat-highly-advanced" />
                                         <Label htmlFor="cat-highly-advanced">Highly Advanced</Label>
                                     </div>
                                 </RadioGroup>
@@ -923,7 +990,9 @@ export default function StudioPage() {
                         </CardContent>
                          <CardFooter className="flex justify-between">
                             <Button variant="outline" onClick={() => setActiveTab('media')}>Back</Button>
-                            <Button disabled>Publish Course (Coming Soon)</Button>
+                            <Button onClick={handlePublish} disabled={isPublishing}>
+                                {isPublishing ? 'Publishing...' : 'Publish Course'}
+                            </Button>
                         </CardFooter>
                     </Card>
                 </TabsContent>
@@ -1010,3 +1079,4 @@ export default function StudioPage() {
         </div>
     );
 }
+

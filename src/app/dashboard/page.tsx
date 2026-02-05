@@ -6,13 +6,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart, ArrowLeft, BookUser, LayoutGrid, Trash2 } from 'lucide-react';
-import { COURSES } from '@/data/content';
 import { useAuth, useUser, useFirestore, useCollection, useDoc, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { deleteUser } from 'firebase/auth';
-import type { Enrollment, Instructor, Wallet as WalletType } from '@/lib/types';
+import type { Enrollment, Instructor, Wallet as WalletType, Course } from '@/lib/types';
 import Loading from '@/app/loading';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -35,6 +34,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 const { placeholderImages } = imageData;
@@ -379,13 +379,19 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
   }, [firestore, user]);
   const { data: wallet, isLoading: isWalletLoading } = useDoc<WalletType>(walletDocRef);
 
-  // Fetch instructor's courses from the main `COURSES` static data for now
-  const instructorCourses = COURSES.filter(c => c.instructor.id === instructor.id);
+  // Fetch instructor's courses from Firestore
+  const coursesQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return collection(firestore, "courses");
+  }, [firestore, user]);
+  const { data: allCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
+  const instructorCourses = allCourses?.filter(c => c.instructorId === instructor.id) || [];
+
 
   // Placeholder data for stats
   const totalStudents = 1234; // Placeholder
 
-  const isLoading = isWalletLoading;
+  const isLoading = isWalletLoading || areCoursesLoading;
 
   const hasCompletedProfile = !!(instructor.title && instructor.bio && instructor.photoURL);
 
@@ -475,6 +481,63 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
 }
 
 
+function EnrolledCourseCard({ enrollment }: { enrollment: Enrollment }) {
+    const firestore = useFirestore();
+    const courseRef = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return doc(firestore, 'courses', enrollment.courseId);
+    }, [firestore, enrollment.courseId]);
+    
+    const { data: course, isLoading } = useDoc<Course>(courseRef);
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        setProgress(Math.floor(Math.random() * 80) + 10);
+    }, []);
+
+    if (isLoading) {
+        return (
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-5 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-4 w-full" />
+                </CardContent>
+                <CardFooter>
+                    <Skeleton className="h-10 w-full" />
+                </CardFooter>
+            </Card>
+        );
+    }
+    
+    if (!course) {
+        // This can happen if a course is deleted but an enrollment record still exists.
+        return null; 
+    }
+
+    return (
+        <Card key={course.id} className="flex flex-col">
+            <CardHeader>
+                <CardTitle className="font-headline">{course.title}</CardTitle>
+                <CardDescription>{course.category}</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1">
+                <div className="space-y-2">
+                    <Progress value={progress} aria-label={`${progress}% complete`} />
+                    <p className="text-sm text-muted-foreground">{progress}% complete</p>
+                </div>
+            </CardContent>
+            <CardFooter>
+                <Button asChild className="w-full">
+                    <Link href={`/courses/${course.id}`}>Continue Learning</Link>
+                </Button>
+            </CardFooter>
+        </Card>
+    );
+}
+
 // Student Dashboard Component
 function StudentDashboard() {
   const { user, isUserLoading } = useUser();
@@ -491,16 +554,6 @@ function StudentDashboard() {
     return <Loading />;
   }
 
-  const enrolledCourses = (enrollments || [])
-    .map(enrollment => {
-      const course = COURSES.find(c => c.id === enrollment.courseId);
-      if (course) {
-        return { ...course, progress: Math.floor(Math.random() * 80) + 10 };
-      }
-      return null;
-    })
-    .filter((c): c is NonNullable<typeof c> => c !== null);
-
   return (
     <div className="container py-12 md:py-16">
       <div className="mb-10">
@@ -513,26 +566,10 @@ function StudentDashboard() {
       <div className="grid grid-cols-1 gap-12">
         <section>
           <h2 className="font-headline text-2xl font-semibold mb-4">My Courses</h2>
-          {enrolledCourses.length > 0 ? (
+          {enrollments && enrollments.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {enrolledCourses.map(course => (
-                <Card key={course.id} className="flex flex-col">
-                  <CardHeader>
-                    <CardTitle className="font-headline">{course.title}</CardTitle>
-                    <CardDescription>{course.category}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                    <div className="space-y-2">
-                        <Progress value={course.progress} aria-label={`${course.progress}% complete`} />
-                        <p className="text-sm text-muted-foreground">{course.progress}% complete</p>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button asChild className="w-full">
-                      <Link href={`/courses/${course.id}`}>Continue Learning</Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
+              {enrollments.map(enrollment => (
+                <EnrolledCourseCard key={enrollment.id} enrollment={enrollment} />
               ))}
             </div>
           ) : (
@@ -592,3 +629,4 @@ export default function DashboardPage() {
 
   return <StudentDashboard />;
 }
+

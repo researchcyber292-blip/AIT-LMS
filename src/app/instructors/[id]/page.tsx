@@ -2,14 +2,13 @@
 'use client';
 
 import { notFound, useParams } from 'next/navigation';
-import { COURSES } from '@/data/content';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CourseCard } from '@/components/course-card';
-import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
-import type { Instructor } from '@/lib/types';
+import { useDoc, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
+import { collection, doc, query, where } from 'firebase/firestore';
+import type { Instructor, Course } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Cloud } from 'lucide-react';
+import { Cloud, BookOpen } from 'lucide-react';
 
 function InstructorProfileSkeleton() {
     return (
@@ -51,8 +50,17 @@ export default function InstructorProfilePage() {
     [firestore, params.id]
   );
   const { data: instructor, isLoading: isInstructorLoading } = useDoc<Instructor>(instructorDocRef);
+  
+  const coursesQuery = useMemoFirebase(() => {
+    if (!firestore || !params.id) return null;
+    return query(collection(firestore, "courses"), where("instructorId", "==", params.id));
+  }, [firestore, params.id]);
 
-  if (isInstructorLoading) {
+  const { data: instructorCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
+
+  const isLoading = isInstructorLoading || areCoursesLoading;
+
+  if (isLoading) {
     return <InstructorProfileSkeleton />;
   }
 
@@ -76,9 +84,12 @@ export default function InstructorProfilePage() {
       </div>
     );
   }
-
-  // NOTE: This still uses static course data. Migrating courses to Firestore is a separate task.
-  const instructorCourses = COURSES.filter(course => course.instructor.id === instructor.id);
+  
+  // Attach the full instructor object to each course for the CourseCard component
+  const coursesWithInstructorData = instructorCourses?.map(course => ({
+      ...course,
+      instructor: instructor
+  }));
 
   return (
     <div className="container py-12 md:py-16">
@@ -104,15 +115,17 @@ export default function InstructorProfilePage() {
             <h2 className="font-headline text-3xl font-semibold border-l-4 border-primary pl-4">
               Courses by {instructor.firstName}
             </h2>
-            {instructorCourses.length > 0 ? (
+            {coursesWithInstructorData && coursesWithInstructorData.length > 0 ? (
                  <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {instructorCourses.map(course => (
+                    {coursesWithInstructorData.map(course => (
                         <CourseCard key={course.id} course={course} />
                     ))}
                 </div>
             ) : (
-                <div className="mt-8 bg-card border rounded-lg p-8 text-center text-muted-foreground">
-                    <p>{instructor.firstName} doesn't have any courses published yet.</p>
+                <div className="mt-8 bg-card border rounded-lg p-8 text-center text-muted-foreground flex flex-col items-center justify-center min-h-[200px]">
+                    <BookOpen className="h-12 w-12 text-muted-foreground/50" />
+                    <p className="mt-4 font-semibold">{instructor.firstName} doesn't have any courses published yet.</p>
+                    <p className="text-sm">Check back soon!</p>
                 </div>
             )}
         </main>
@@ -120,3 +133,4 @@ export default function InstructorProfilePage() {
     </div>
   );
 }
+
