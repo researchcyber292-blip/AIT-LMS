@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -96,11 +97,21 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="relative h-96 md:h-full w-full flex items-center justify-center">
-                <div className="relative w-full h-full max-w-lg -translate-x-24 translate-y-12">
+              <div className="relative h-96 md:h-full w-full">
+                {/* The main professional, in the background */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/4 -translate-y-1/2 w-[30rem] h-[30rem] lg:w-[35rem] lg:h-[35rem]">
                   <Image
                     src="/man_home_page.png"
                     alt="Cybersecurity Professional"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                {/* The CEO, in the foreground */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-3/4 -translate-y-1/2 w-80 h-80 lg:w-96 lg:h-96 z-10">
+                  <Image
+                    src="/ceo.png"
+                    alt="Aviraj Singh, CEO"
                     fill
                     className="object-contain"
                   />
