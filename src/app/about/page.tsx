@@ -11,14 +11,14 @@ export default function SignUpPage() {
   const [role, setRole] = useState<'student' | 'instructor'>('student');
 
   return (
-    <div className="w-full bg-black text-gray-200 pt-14">
+    <div className="w-full bg-background text-foreground pt-14">
       {/* Main Content */}
       <div className="grid min-h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2">
         {/* Left Side: Form */}
         <div className="flex flex-col items-center justify-center p-8">
           
           <div className="w-full max-w-md">
-            <h1 className="mb-8 text-4xl font-headline font-bold tracking-tight text-white">
+            <h1 className="mb-8 text-4xl font-headline font-bold tracking-tight text-foreground">
               Create your account
             </h1>
             
@@ -29,7 +29,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="student" id="student" className="peer sr-only" />
                         <Label
                         htmlFor="student"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white/5 p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Student
                         </Label>
@@ -38,7 +38,7 @@ export default function SignUpPage() {
                         <RadioGroupItem value="instructor" id="instructor" className="peer sr-only" />
                         <Label
                         htmlFor="instructor"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white/5 p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Instructor
                         </Label>
@@ -50,10 +50,10 @@ export default function SignUpPage() {
               {role === 'student' && (
                 <>
                   <div className="relative my-2">
-                    <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                    <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Sign up as a Student</span></div>
+                    <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-border" /></div>
+                    <div className="relative flex justify-center text-sm"><span className="bg-background px-2 uppercase text-muted-foreground">Sign up as a Student</span></div>
                   </div>
-                  <Button asChild size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
+                  <Button asChild size="lg" className="h-14 w-full justify-center border border-input bg-background text-base font-bold text-foreground hover:bg-muted">
                     <Link href="/student-welcome">
                       <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
                           <Image
@@ -73,10 +73,10 @@ export default function SignUpPage() {
               {role === 'instructor' && (
                 <>
                     <div className="relative my-2">
-                        <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                        <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Sign up as an Instructor</span></div>
+                        <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-border" /></div>
+                        <div className="relative flex justify-center text-sm"><span className="bg-background px-2 uppercase text-muted-foreground">Sign up as an Instructor</span></div>
                     </div>
-                    <Button asChild size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800">
+                    <Button asChild size="lg" className="h-14 w-full justify-center border border-input bg-background text-base font-bold text-foreground hover:bg-muted">
                         <Link href="/instructor-signup">
                             <div className="relative h-7 w-7 mr-2 rounded-full overflow-hidden flex items-center justify-center">
                                 <Image
@@ -93,8 +93,8 @@ export default function SignUpPage() {
                 </>
               )}
             </div>
-             <p className="mt-4 text-center text-xs text-gray-500">
-                By signing up, you agree to the <Link href="#" className="underline hover:text-white">Terms of Service</Link> and <Link href="#" className="underline hover:text-white">Privacy Policy</Link>, including <Link href="#" className="underline hover:text-white">Cookie Use</Link>.
+             <p className="mt-4 text-center text-xs text-muted-foreground">
+                By signing up, you agree to the <Link href="#" className="underline hover:text-primary">Terms of Service</Link> and <Link href="#" className="underline hover:text-primary">Privacy Policy</Link>, including <Link href="#" className="underline hover:text-primary">Cookie Use</Link>.
             </p>
           </div>
         </div>

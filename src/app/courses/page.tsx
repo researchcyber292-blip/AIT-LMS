@@ -77,22 +77,19 @@ const plans = [
 
 const tierStyles = {
     orange: {
-        card: 'border-orange-500/50 bg-neutral-900 shadow-orange-500/20',
-        header: 'bg-gradient-to-r from-orange-500 to-orange-600',
-        button: 'bg-orange-500 hover:bg-orange-400 border-orange-600 text-white',
-        peel: 'from-orange-500/80 to-neutral-900/10'
+        card: 'border-orange-500/50 bg-card shadow-orange-500/10',
+        header: 'bg-orange-500',
+        button: 'bg-orange-500 hover:bg-orange-600 border-orange-700 text-white',
     },
     silver: {
-        card: 'border-slate-400/50 bg-slate-900 shadow-slate-500/20',
-        header: 'bg-gradient-to-r from-slate-500 to-slate-700',
-        button: 'bg-slate-500 hover:bg-slate-400 border-slate-600',
-        peel: 'from-slate-500/80 to-slate-900/10'
+        card: 'border-primary/50 bg-card shadow-primary/10',
+        header: 'bg-primary',
+        button: 'bg-primary hover:bg-primary/90 text-primary-foreground',
     },
     gold: {
-        card: 'border-yellow-500/50 bg-neutral-900 shadow-yellow-500/20',
-        header: 'bg-gradient-to-r from-yellow-500 to-amber-600',
-        button: 'bg-yellow-500 hover:bg-yellow-400 text-black border-yellow-600',
-        peel: 'from-yellow-500/80 to-neutral-900/10'
+        card: 'border-yellow-500/50 bg-card shadow-yellow-500/10',
+        header: 'bg-yellow-500',
+        button: 'bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-700',
     }
 }
 
@@ -109,19 +106,14 @@ export default function CoursesPage() {
   const activeInstructors = instructors?.filter(inst => inst.accountStatus === 'active' && inst.bio && inst.title);
 
   return (
-    <div className="bg-gray-900 text-white min-h-[calc(100vh-3.5rem)] py-12 md:py-24">
+    <div className="bg-background text-foreground min-h-[calc(100vh-3.5rem)] py-12 md:py-24">
         <div className="container">
-            <div className="relative text-center mb-16 overflow-hidden rounded-2xl border border-border/10 py-12">
-                {/* Background animations */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-transparent to-cyan-600/10 opacity-30"></div>
-                <div className="absolute top-0 left-0 -translate-x-1/3 -translate-y-1/3 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-[spin-slow_9s_linear_infinite]"></div>
-                <div className="absolute bottom-0 right-0 translate-x-1/3 translate-y-1/3 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-[spin-slow_11s_linear_infinite_reverse]"></div>
-                
+            <div className="relative text-center mb-16 rounded-2xl border border-border py-12">
                 <div className="relative z-10">
-                    <div className="mx-auto bg-gradient-to-r from-primary to-accent p-3 rounded-full w-fit mb-4 shadow-lg">
-                        <Gem className="h-8 w-8 text-white" />
+                    <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4 shadow-lg">
+                        <Gem className="h-8 w-8" />
                     </div>
-                    <h1 className="font-headline text-4xl font-bold uppercase tracking-wider text-white">
+                    <h1 className="font-headline text-4xl font-bold uppercase tracking-wider text-foreground">
                         Our Subscription Plans
                     </h1>
                     <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -133,28 +125,20 @@ export default function CoursesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-center max-w-6xl mx-auto">
                 {plans.map((plan) => (
                     <div key={plan.title} className={cn(
-                        "rounded-lg shadow-2xl flex flex-col border-2 relative transition-transform transform hover:-translate-y-2",
+                        "rounded-lg shadow-lg flex flex-col border relative transition-transform transform hover:-translate-y-2",
                         tierStyles[plan.tier as keyof typeof tierStyles].card,
-                        plan.isPopular && "scale-105 md:scale-110 z-10 border-4 border-slate-400 shadow-xl shadow-slate-400/30"
+                        plan.isPopular && "scale-105 md:scale-110 z-10 border-2 border-primary shadow-xl shadow-primary/20"
                     )}>
                         {plan.isPopular && (
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                                <div className="bg-slate-300 text-black px-4 py-1 rounded-full text-sm font-bold uppercase shadow-lg">
+                                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-bold uppercase shadow-lg">
                                     Best Value
                                 </div>
                             </div>
                         )}
-
-                        {/* A simplified visual flair to mimic a curled corner */}
-                        <div className={cn(
-                            "absolute top-0 right-0 h-24 w-24 bg-gradient-to-bl rounded-bl-full opacity-50",
-                             tierStyles[plan.tier as keyof typeof tierStyles].peel
-                        )}></div>
-                        <div className="absolute top-[3px] right-[3px] h-8 w-8 bg-gray-900 rounded-bl-full"></div>
-
-
+                        
                         {/* Header */}
-                        <div className={cn("p-6 text-center rounded-t-md", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
+                        <div className={cn("p-6 text-center rounded-t-md text-primary-foreground", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
                             <h2 className="text-3xl font-bold uppercase font-headline tracking-widest flex items-center justify-center gap-2">
                                 {plan.tier === 'gold' && <Crown className="w-8 h-8 text-yellow-300" />}
                                 {plan.title}
@@ -169,7 +153,7 @@ export default function CoursesPage() {
                                 {plan.features.map((feature, i) => (
                                     <li key={i} className="flex items-center gap-3">
                                         {feature.included ? (
-                                            <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                                            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                                         ) : (
                                             <XCircle className="w-5 h-5 text-red-500/70 flex-shrink-0" />
                                         )}
@@ -191,26 +175,22 @@ export default function CoursesPage() {
 
             {/* Premium++ Plan */}
             <div className="max-w-6xl mx-auto mt-24">
-                <div className="relative rounded-2xl shadow-2xl border-2 border-cyan-500/30 bg-gray-950 p-8 text-center overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-transparent to-cyan-600/20 opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-[spin-slow_8s_linear_infinite]"></div>
-                    <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-cyan-600/30 rounded-full blur-3xl animate-[spin-slow_10s_linear_infinite_reverse]"></div>
-                    
+                <div className="relative rounded-2xl shadow-lg border border-border bg-card p-8 text-center overflow-hidden group">
                     <div className="relative z-10">
-                        <div className="mx-auto bg-gradient-to-r from-cyan-500 to-purple-600 p-3 rounded-full w-fit mb-4 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-purple-500/30">
-                            <Rocket className="h-8 w-8 text-white transition-transform duration-300 group-hover:-rotate-12" />
+                        <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4 shadow-lg transition-all duration-300 group-hover:scale-110">
+                            <Rocket className="h-8 w-8 text-primary transition-transform duration-300 group-hover:-rotate-12" />
                         </div>
-                        <h2 className="text-4xl font-bold uppercase font-headline tracking-widest text-white">
+                        <h2 className="text-4xl font-bold uppercase font-headline tracking-widest text-foreground">
                             Premium++
                         </h2>
-                        <p className="mt-4 max-w-2xl mx-auto text-purple-200/80">
+                        <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
                             NO LIMIT LEARNING WITH OUR ADVANCED FEATURES AND THE COURCE WILL GET REDESIGNE FOR YOU PERSONALLY WITH A HYPER FEEL.
                         </p>
                         <div className="my-8">
-                            <span className="text-5xl font-bold font-headline text-white">₹12,999</span>
+                            <span className="text-5xl font-bold font-headline text-foreground">₹12,999</span>
                             <span className="text-xl font-semibold text-muted-foreground"> / 6 months</span>
                         </div>
-                        <Button size="lg" className="w-full max-w-xs mx-auto uppercase font-bold bg-transparent border-2 border-cyan-400 text-cyan-300 hover:bg-cyan-400/10 hover:text-white hover:border-cyan-300 transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:shadow-xl hover:shadow-cyan-400/40">
+                        <Button size="lg" variant="outline" className="w-full max-w-xs mx-auto uppercase font-bold transition-all duration-300">
                             Contact to Order
                         </Button>
                     </div>
@@ -219,7 +199,7 @@ export default function CoursesPage() {
 
             {/* Instructors Section */}
             <div className="mt-24 text-center">
-                <h2 className="font-headline text-4xl font-bold uppercase tracking-wider text-white">
+                <h2 className="font-headline text-4xl font-bold uppercase tracking-wider text-foreground">
                     Our Instructors
                 </h2>
                 <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -231,10 +211,10 @@ export default function CoursesPage() {
                 {isLoading ? (
                   <>
                     {[...Array(2)].map((_, i) => (
-                        <div key={i} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-6 flex flex-col md:flex-row items-start gap-8">
+                        <div key={i} className="bg-card border border-border rounded-xl shadow-sm p-6 flex flex-col md:flex-row items-start gap-8">
                             {/* Left Skeleton */}
                             <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
-                                <Skeleton className="h-32 w-32 rounded-full border-4 border-primary/50" />
+                                <Skeleton className="h-32 w-32 rounded-full border-4 border-primary/20" />
                                 <Skeleton className="h-7 w-40 mt-4" />
                                 <Skeleton className="h-4 w-48 mt-2" />
                                 <div className="mt-4 space-y-2 w-full">
@@ -244,7 +224,7 @@ export default function CoursesPage() {
                             </div>
                             {/* Right Skeleton */}
                              <div className="flex flex-col items-center flex-grow w-full">
-                                <div className="w-full p-[2px] rounded-lg"><Skeleton className="h-32 w-full rounded-md" /></div>
+                                <div className="w-full"><Skeleton className="h-32 w-full rounded-md" /></div>
                                 <Skeleton className="h-11 w-48 mt-6" />
                             </div>
                         </div>
@@ -252,7 +232,7 @@ export default function CoursesPage() {
                   </>
                 ) : (
                   activeInstructors?.map((instructor) => (
-                    <div key={instructor.id} className="bg-card/90 backdrop-blur-sm border border-border/20 rounded-xl shadow-lg p-6 flex flex-col md:flex-row items-start gap-8 transition-all hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1">
+                    <div key={instructor.id} className="bg-card border border-border rounded-xl shadow-sm p-6 flex flex-col md:flex-row items-start gap-8 transition-all hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-1">
                         {/* Left Side */}
                         <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
                             <Avatar className="h-32 w-32 border-4 border-primary/50">
@@ -270,9 +250,9 @@ export default function CoursesPage() {
 
                         {/* Right Side */}
                         <div className="flex flex-col items-center flex-grow w-full">
-                            <div className="w-full animated-glowing-border">
-                                <ScrollArea className="h-32 w-full rounded-md bg-gradient-to-br from-slate-700 via-slate-800 to-gray-900 p-4">
-                                    <p className="text-slate-300 text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
+                            <div className="w-full">
+                                <ScrollArea className="h-32 w-full rounded-md bg-muted/50 p-4">
+                                    <p className="text-muted-foreground text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
                                 </ScrollArea>
                             </div>
                             <Button asChild size="lg" className="mt-6 self-center">

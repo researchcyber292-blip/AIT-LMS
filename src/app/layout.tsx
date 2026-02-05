@@ -28,7 +28,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <title>Aviraj Info Tech - Your Gateway to Cybersecurity Mastery</title>
         <meta name="description" content="Aviraj Info Tech offers expert-led courses in cybersecurity, from ethical hacking to advanced network defense." />

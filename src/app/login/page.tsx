@@ -121,11 +121,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-black text-gray-200">
+    <div className="min-h-screen w-full bg-background text-foreground">
       <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
         <div className="flex flex-col items-center justify-center p-8">
           <div className="w-full max-w-sm">
-            <h1 className="mb-8 text-4xl font-bold tracking-tight text-white">
+            <h1 className="mb-8 text-4xl font-bold tracking-tight text-foreground">
               Log into your account
             </h1>
             
@@ -136,7 +136,7 @@ export default function LoginPage() {
                         <RadioGroupItem value="student" id="student" className="peer sr-only" />
                         <Label
                         htmlFor="student"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white/5 p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Student
                         </Label>
@@ -145,7 +145,7 @@ export default function LoginPage() {
                         <RadioGroupItem value="instructor" id="instructor" className="peer sr-only" />
                         <Label
                         htmlFor="instructor"
-                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white/5 p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                         >
                         Instructor
                         </Label>
@@ -157,8 +157,8 @@ export default function LoginPage() {
                 {role === 'student' ? (
                     <form onSubmit={handleStudentLogin} className="space-y-4">
                         <div className="relative my-2">
-                            <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                            <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Login as a Student</span></div>
+                            <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-border" /></div>
+                            <div className="relative flex justify-center text-sm"><span className="bg-background px-2 uppercase text-muted-foreground">Login as a Student</span></div>
                         </div>
                         
                         <Input
@@ -167,7 +167,7 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
-                            className="h-12 bg-transparent border-white/20"
+                            className="h-12"
                             autoComplete="email"
                         />
                         <Input
@@ -176,19 +176,19 @@ export default function LoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLoading}
-                            className="h-12 bg-transparent border-white/20"
+                            className="h-12"
                             autoComplete="current-password"
                         />
 
-                        <Button type="submit" size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800" disabled={isLoading}>
+                        <Button type="submit" size="lg" className="h-14 w-full justify-center border border-input text-base font-bold" disabled={isLoading}>
                             {isLoading ? 'Logging in...' : 'LOGIN WITH AIT'}
                         </Button>
                     </form>
                 ) : (
                     <form onSubmit={handleInstructorLogin} className="space-y-4">
                         <div className="relative my-2">
-                            <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-700" /></div>
-                            <div className="relative flex justify-center text-sm"><span className="bg-black px-2 uppercase text-muted-foreground">Login as an Instructor</span></div>
+                            <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-border" /></div>
+                            <div className="relative flex justify-center text-sm"><span className="bg-background px-2 uppercase text-muted-foreground">Login as an Instructor</span></div>
                         </div>
                         
                         <Input
@@ -197,7 +197,7 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
-                            className="h-12 bg-transparent border-white/20"
+                            className="h-12"
                             autoComplete="email"
                         />
                         <Input
@@ -206,19 +206,19 @@ export default function LoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLoading}
-                            className="h-12 bg-transparent border-white/20"
+                            className="h-12"
                             autoComplete="current-password"
                         />
-                        <Button type="submit" size="lg" className="h-14 w-full justify-center border border-gray-700 bg-black text-base font-bold text-white hover:bg-gray-800" disabled={isLoading}>
+                        <Button type="submit" size="lg" className="h-14 w-full justify-center border border-input text-base font-bold" disabled={isLoading}>
                             {isLoading ? 'Logging in...' : 'LOGIN AS INSTRUCTOR'}
                         </Button>
                     </form>
               )}
             </div>
             
-            <p className="mt-8 text-center text-sm text-gray-400">
+            <p className="mt-8 text-center text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}
-              <Link href="/about" className="font-semibold text-white hover:underline">
+              <Link href="/about" className="font-semibold text-primary hover:underline">
                 Sign up
               </Link>
             </p>
