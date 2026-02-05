@@ -96,8 +96,8 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="relative h-80 md:h-full w-full flex items-center justify-center">
-                <div className="relative w-full max-w-md aspect-video">
+              <div className="relative h-96 md:h-full w-full flex items-center justify-center">
+                <div className="relative w-full h-full max-w-lg">
                   <Image
                     src="/ceo.png"
                     alt="Aviraj Info Tech CEO"
