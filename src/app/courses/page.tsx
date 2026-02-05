@@ -1,3 +1,4 @@
+
 'use client';
 
 import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
@@ -275,7 +276,7 @@ export default function CoursesPage() {
                                 </ScrollArea>
                             </div>
                             <Button asChild size="lg" className="mt-6 self-center">
-                                <Link href={`/instructors/${instructor.id}`} target="_blank" rel="noopener noreferrer">
+                                <Link href={`/instructors/${instructor.id}`}>
                                     View Profile & Courses
                                 </Link>
                             </Button>
