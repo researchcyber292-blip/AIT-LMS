@@ -63,8 +63,7 @@ export default function InstructorProfilePage() {
   // Filter the courses on the client side. This is less efficient but more reliable without manual index creation.
   const instructorCourses = useMemo(() => {
     if (!allCourses || !params.id) return [];
-    // Use `as any` to access instructorId which might not be in the strict Course type during a mismatch
-    return allCourses.filter(course => (course as any).instructorId === params.id);
+    return allCourses.filter(course => course.instructorId === params.id);
   }, [allCourses, params.id]);
 
 
@@ -94,12 +93,6 @@ export default function InstructorProfilePage() {
       </div>
     );
   }
-  
-  // Attach the full instructor object to each course for the CourseCard component
-  const coursesWithInstructorData = instructorCourses?.map(course => ({
-      ...course,
-      instructor: instructor
-  }));
 
   return (
     <div className="container py-12 md:py-16">
@@ -125,9 +118,9 @@ export default function InstructorProfilePage() {
             <h2 className="font-headline text-3xl font-semibold border-l-4 border-primary pl-4">
               Courses by {instructor.firstName}
             </h2>
-            {coursesWithInstructorData && coursesWithInstructorData.length > 0 ? (
+            {instructorCourses && instructorCourses.length > 0 ? (
                  <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {coursesWithInstructorData.map(course => (
+                    {instructorCourses.map(course => (
                         <CourseCard key={course.id} course={course} />
                     ))}
                 </div>

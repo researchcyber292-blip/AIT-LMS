@@ -22,10 +22,22 @@ export type Course = {
   price: number;
   image: string;
   imageHint: string;
-  instructor: Instructor;
+  instructorId: string;
   learningObjectives: string[];
   curriculum: { title: string; content: string }[];
-  category: 'Beginner' | 'Intermediate' | 'Advanced';
+  category: 'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced';
+  priceType: 'paid' | 'free';
+  paymentMethod?: 'direct' | 'templates';
+  subscriptionTiers?: {
+    gold: { price: string, description: string, features: string[], videos: string[] },
+    platinum: { price: string, description: string, features: string[], videos: string[] },
+    silver: { price: string, description: string, features: string[], videos: string[] },
+  } | null,
+  videos?: string[];
+  duration: string;
+  liveSessionsEnabled: boolean;
+  resourcesEnabled: boolean;
+  createdAt: any; // serverTimestamp
 };
 
 export type Instructor = {
