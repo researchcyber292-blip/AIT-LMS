@@ -96,8 +96,15 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="relative h-80 md:h-full w-full">
-                  {/* This space is now intentionally left blank for a future image. */}
+              <div className="relative h-80 md:h-full w-full flex items-center justify-center">
+                <div className="relative w-full max-w-md aspect-video rounded-xl overflow-hidden border-2 border-white/10 shadow-2xl bg-black/20 p-2">
+                  <Image
+                    src="/homepage-small.png"
+                    alt="Cybersecurity console preview"
+                    fill
+                    className="object-contain rounded-lg"
+                  />
+                </div>
               </div>
             </div>
           </div>
