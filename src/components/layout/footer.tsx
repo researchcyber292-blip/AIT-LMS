@@ -9,10 +9,10 @@ export function Footer() {
   const pathname = usePathname();
 
   return (
-    <footer className="border-t border-border/40 bg-card">
-      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-2">
+    <footer className="border-t bg-secondary/50">
+      <div className="container grid grid-cols-1 gap-8 py-12 md:grid-cols-3">
         {/* Column 1: Company Info */}
-        <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <div className="flex flex-col items-start md:col-span-1">
           <Link href="/" className="flex items-center space-x-2">
             <div className="relative h-7 w-7 rounded-full bg-white overflow-hidden flex items-center justify-center">
               <Image
@@ -46,9 +46,9 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Column 2: Links */}
-        <div className="grid grid-cols-2 gap-8 text-sm">
-          <div>
+        {/* Column 2 & 3: Links */}
+        <div className="grid grid-cols-2 gap-8 text-sm md:col-span-2">
+          <div className="md:justify-self-center">
             <h4 className="font-headline font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
               <li><Link href="/about" className="text-muted-foreground hover:text-primary">About</Link></li>
@@ -56,7 +56,7 @@ export function Footer() {
               <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
             </ul>
           </div>
-          <div>
+          <div className="md:justify-self-center">
             <h4 className="font-headline font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
               <li><Link href="/admin" className="text-muted-foreground hover:text-primary">Admin</Link></li>

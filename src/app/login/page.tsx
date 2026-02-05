@@ -1,8 +1,6 @@
-
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -122,10 +120,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
-      <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col items-center justify-center p-8">
-          <div className="w-full max-w-sm">
-            <h1 className="mb-8 text-4xl font-bold tracking-tight text-foreground">
+      <div className="container flex min-h-screen items-center justify-center py-12">
+        <div className="w-full max-w-sm">
+            <h1 className="mb-8 text-center text-4xl font-bold tracking-tight text-foreground">
               Log into your account
             </h1>
             
@@ -180,7 +177,7 @@ export default function LoginPage() {
                             autoComplete="current-password"
                         />
 
-                        <Button type="submit" size="lg" className="h-14 w-full justify-center border border-input text-base font-bold" disabled={isLoading}>
+                        <Button type="submit" size="lg" className="h-14 w-full justify-center text-base font-bold" disabled={isLoading}>
                             {isLoading ? 'Logging in...' : 'LOGIN WITH AIT'}
                         </Button>
                     </form>
@@ -209,7 +206,7 @@ export default function LoginPage() {
                             className="h-12"
                             autoComplete="current-password"
                         />
-                        <Button type="submit" size="lg" className="h-14 w-full justify-center border border-input text-base font-bold" disabled={isLoading}>
+                        <Button type="submit" size="lg" className="h-14 w-full justify-center text-base font-bold" disabled={isLoading}>
                             {isLoading ? 'Logging in...' : 'LOGIN AS INSTRUCTOR'}
                         </Button>
                     </form>
@@ -217,27 +214,12 @@ export default function LoginPage() {
             </div>
             
             <p className="mt-8 text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
+              Don't have an account?{" "}
               <Link href="/about" className="font-semibold text-primary hover:underline">
                 Sign up
               </Link>
             </p>
           </div>
-        </div>
-
-        {/* Right Side: Image */}
-        <div className="relative hidden items-center justify-center overflow-hidden md:flex">
-            <Image
-                src="/LOGINPAGE.png"
-                alt="Abstract background"
-                fill
-                className="object-cover"
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
-                <h2 className="font-headline text-4xl font-bold tracking-tight drop-shadow-md md:text-5xl">WELCOME TO</h2>
-                <h1 className="font-headline text-5xl font-bold tracking-tight drop-shadow-lg md:text-6xl mt-2">AVIRAJ INFO TECH</h1>
-            </div>
-        </div>
       </div>
     </div>
   );
