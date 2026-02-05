@@ -276,7 +276,7 @@ export default function CoursesPage() {
                             </div>
                             <Button asChild size="lg" className="mt-6 self-center">
                                 <Link href={`/instructors/${instructor.id}`}>
-                                    NOW REMEMBER THIS ONE TIME.
+                                    View Profile & Courses
                                 </Link>
                             </Button>
                         </div>
