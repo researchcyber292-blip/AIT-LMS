@@ -76,7 +76,7 @@ export default function Home() {
           className="relative bg-cover bg-center" 
           style={{backgroundImage: "url('/homepage.png')"}}
         >
-          <div className="absolute inset-0 bg-background/30 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
           <div className="container relative px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12 md:py-24">
               <div className="text-center md:text-left">
@@ -97,25 +97,58 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="relative h-96 md:h-full w-full">
-                {/* The main professional, in the background */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-full -translate-y-1/2 w-[30rem] h-[30rem] lg:w-[35rem] lg:h-[35rem]">
-                  <Image
-                    src="/man_home_page.png"
-                    alt="Cybersecurity Professional"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                {/* The CEO, in the foreground */}
-                <div className="absolute top-1/2 left-1/2 -translate-y-1/2 w-80 h-80 lg:w-96 lg:h-96 z-10">
-                  <Image
-                    src="/ceo.png"
-                    alt="Aviraj Singh, CEO"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
+               <div className="relative h-96 md:h-full w-full flex items-center justify-center">
+                  <div className="relative w-full max-w-3xl flex items-center justify-between">
+                      {/* Left Character (CEO - Answering) */}
+                      <div className="relative">
+                          {/* Dashed Circle */}
+                          <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
+                          {/* Floating Dots */}
+                          <div className="absolute -bottom-4 -left-4 w-4 h-4 bg-orange-400 rounded-full"></div>
+                          <div className="absolute -top-4 right-8 w-5 h-5 bg-blue-400 rounded-full"></div>
+                          
+                          {/* Image Container */}
+                          <div className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 border-background shadow-lg">
+                              <Image
+                                  src="/ceo.png"
+                                  alt="Aviraj Singh, CEO"
+                                  fill
+                                  className="object-cover scale-125 origin-top"
+                              />
+                          </div>
+                          {/* Speech Bubble */}
+                          <div className="absolute bottom-10 left-[90%] w-64 bg-primary text-primary-foreground p-4 rounded-lg shadow-xl z-10">
+                              <p className="text-sm">"AIT is where students master cybersecurity with expert guidance and love."</p>
+                              {/* Triangle */}
+                              <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-primary border-b-8 border-b-transparent"></div>
+                          </div>
+                      </div>
+
+                      {/* Right Character (Professional - Asking) */}
+                      <div className="relative">
+                          {/* Dashed Circle */}
+                          <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow [animation-direction:reverse]"></div>
+                          {/* Floating Dots */}
+                          <div className="absolute -top-4 -left-4 w-4 h-4 bg-pink-400 rounded-full"></div>
+                          <div className="absolute -bottom-4 right-0 w-6 h-6 bg-cyan-400 rounded-full"></div>
+
+                          {/* Image Container */}
+                          <div className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 border-background shadow-lg">
+                              <Image
+                                  src="/man_home_page.png"
+                                  alt="Cybersecurity Professional"
+                                  fill
+                                  className="object-cover"
+                              />
+                          </div>
+                          {/* Speech Bubble */}
+                          <div className="absolute top-10 right-[90%] w-56 bg-card text-card-foreground p-4 rounded-lg shadow-xl z-10">
+                              <p className="text-sm">"Aviraj Sir, What is AIT?"</p>
+                              {/* Triangle */}
+                              <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-l-8 border-l-card border-b-8 border-b-transparent"></div>
+                          </div>
+                      </div>
+                  </div>
               </div>
             </div>
           </div>
