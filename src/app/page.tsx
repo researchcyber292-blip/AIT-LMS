@@ -99,7 +99,7 @@ export default function Home() {
               </div>
               <div className="relative h-96 md:h-full w-full">
                 {/* The main professional, in the background */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/4 -translate-y-1/2 w-[30rem] h-[30rem] lg:w-[35rem] lg:h-[35rem]">
+                <div className="absolute top-1/2 left-1/2 -translate-x-full -translate-y-1/2 w-[30rem] h-[30rem] lg:w-[35rem] lg:h-[35rem]">
                   <Image
                     src="/man_home_page.png"
                     alt="Cybersecurity Professional"
@@ -108,7 +108,7 @@ export default function Home() {
                   />
                 </div>
                 {/* The CEO, in the foreground */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-3/4 -translate-y-1/2 w-80 h-80 lg:w-96 lg:h-96 z-10">
+                <div className="absolute top-1/2 left-1/2 -translate-y-1/2 w-80 h-80 lg:w-96 lg:h-96 z-10">
                   <Image
                     src="/ceo.png"
                     alt="Aviraj Singh, CEO"
