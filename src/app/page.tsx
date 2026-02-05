@@ -71,14 +71,18 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-1 pt-14">
         {/* Hero Section */}
-        <section className="bg-background">
-          <div className="container px-4">
+        <section 
+          className="relative bg-cover bg-center" 
+          style={{backgroundImage: "url('/homepage.png')"}}
+        >
+          <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
+          <div className="container relative px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12 md:py-24">
               <div className="text-center md:text-left">
-                <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+                <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
                   Your Gateway to Cybersecurity Mastery
                 </h1>
-                <p className="mt-6 max-w-xl mx-auto md:mx-0 text-lg text-muted-foreground">
+                <p className="mt-6 max-w-xl mx-auto md:mx-0 text-lg text-foreground/80">
                   Master in-demand cybersecurity skills with expert-led courses, hands-on labs, and a vibrant professional community.
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
@@ -87,20 +91,13 @@ export default function Home() {
                       Explore Courses
                     </Link>
                   </Button>
-                  <Button asChild size="lg" variant="outline" className="rounded-full px-10 py-6 text-lg">
+                  <Button asChild size="lg" variant="secondary" className="rounded-full px-10 py-6 text-lg">
                     <Link href="/about">Get Started</Link>
                   </Button>
                 </div>
               </div>
               <div className="relative h-80 md:h-full w-full">
-                  <Image
-                    src="/homepage.png"
-                    alt="Cybersecurity learning platform hero image"
-                    fill
-                    className="object-cover"
-                    priority
-                    data-ai-hint="cybersecurity hero"
-                  />
+                  {/* This space is now intentionally left blank for a future image. */}
               </div>
             </div>
           </div>
