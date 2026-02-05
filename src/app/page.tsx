@@ -94,12 +94,12 @@ export default function Home() {
               </div>
               <div className="relative h-80 md:h-full w-full">
                   <Image
-                    src="https://testsigma.com/blog/wp-content/uploads/2024/02/What-is-E2E-Testing.png"
-                    alt="Cybersecurity professionals collaborating"
+                    src="/homepage.png"
+                    alt="Cybersecurity learning platform hero image"
                     fill
-                    className="object-contain"
+                    className="object-cover"
                     priority
-                    data-ai-hint="professionals collaborating"
+                    data-ai-hint="cybersecurity hero"
                   />
               </div>
             </div>
