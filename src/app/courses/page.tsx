@@ -275,7 +275,7 @@ export default function CoursesPage() {
                                 </ScrollArea>
                             </div>
                             <Button asChild size="lg" className="mt-6 self-center">
-                                <Link href={`/instructors/${instructor.id}`}>
+                                <Link href={`/instructors/${instructor.id}`} target="_blank" rel="noopener noreferrer">
                                     View Profile & Courses
                                 </Link>
                             </Button>
