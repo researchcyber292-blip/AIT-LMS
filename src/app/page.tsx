@@ -2,268 +2,214 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowDown } from 'lucide-react';
-import { useLayoutEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
-import { WhyChooseUs } from '@/components/landing/why-choose-us';
+import { ArrowRight, BookOpen, BrainCircuit, Users, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CourseCard } from '@/components/course-card';
+import type { Course } from '@/lib/types';
 
-gsap.registerPlugin(ScrollTrigger);
+
+// Mock data for featured courses for a stable and fast-loading homepage.
+const featuredCourses: Partial<Course>[] = [
+  {
+    id: 'clps3x2y8000008l8h4g2f7c6',
+    title: 'Advanced Penetration Testing',
+    description: 'Master the art of ethical hacking and find vulnerabilities before the bad guys do.',
+    price: 4999,
+    image: 'https://images.unsplash.com/photo-1631624220291-8f191fbdb543?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYWNrZXIlMjBjb2RlfGVufDB8fHx8MTc2OTA5Njc3OHww&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'hacker code',
+    category: 'Advanced'
+  },
+  {
+    id: 'clps4a5b9000108l8g6h3c9e1',
+    title: 'Cloud Security Engineering',
+    description: 'Secure modern cloud infrastructure in AWS, Azure, and GCP.',
+    price: 3499,
+    image: 'https://images.unsplash.com/photo-1667984390538-3dea7a3fe33d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjbG91ZCUyMGNvbXB1dGluZ3xlbnwwfHx8fDE3NjkxNDI1OTB8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'cloud computing',
+    category: 'Intermediate'
+  },
+  {
+    id: 'clps4c7d0000208l8b2k9a3f8',
+    title: 'Digital Forensics & Incident Response',
+    description: 'Learn to investigate cybercrimes and respond to security breaches effectively.',
+    price: 4200,
+    image: 'https://images.unsplash.com/photo-1591696205602-2f950c417cb9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGF0YSUyMGFuYWx5c2lzfGVufDB8fHx8MTc2OTE2MjI3M3ww&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'data analysis',
+    category: 'Advanced'
+  },
+];
+
+
+const testimonials = [
+    {
+        quote: "This platform transformed my understanding of cybersecurity. The hands-on labs are incredible!",
+        name: "Priya Sharma",
+        title: "Cybersecurity Analyst",
+        avatar: "https://images.unsplash.com/photo-1768633647910-7e6fb53e5b0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0ZWNoJTIwZXhwZXJ0fGVufDB8fHx8MTc2OTE2ODA2NXww&ixlib=rb-4.1.0&q=80&w=1080",
+        avatarHint: 'tech expert',
+    },
+    {
+        quote: "The instructors are true experts and the community is so supportive. I landed my dream job after completing the advanced course.",
+        name: "Rajesh Kumar",
+        title: "Penetration Tester",
+        avatar: "https://images.unsplash.com/photo-1689218742383-c4e7b8494e75?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkZXZlbG9wZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjkwODY3ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        avatarHint: 'developer portrait',
+    },
+    {
+        quote: "I started with zero knowledge and now I feel confident in my skills. The beginner-friendly approach made all the difference.",
+        name: "Anjali Menon",
+        title: "Junior SOC Analyst",
+        avatar: "https://images.unsplash.com/photo-1580929571530-51780c506410?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmcmllbmRseSUyMHBlcnNvbnxlbnwwfHx8fDE3NjkxNjgwNjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        imageHint: 'friendly person',
+    },
+];
 
 export default function Home() {
-    const mainRef = useRef(null);
-
-    useLayoutEffect(() => {
-        const ctx = gsap.context(() => {
-            // Helper function to run code after fonts are loaded
-            const runAfterFontsLoaded = (callback: () => void) => {
-                // Check if fonts are already loaded
-                if (document.fonts.status === 'loaded') {
-                    callback();
-                } else {
-                    // Wait for fonts to load
-                    document.fonts.ready.then(callback).catch(e => {
-                        console.error("Font loading error:", e);
-                        // Still run the callback as a fallback
-                        callback();
-                    });
-                }
-            };
-            
-            const initAnimation = () => {
-                const targetO = document.querySelector('.choose-o-target');
-                const animator = document.querySelector('.choose-o-animator') as HTMLElement;
-                const animatorImage = document.querySelector('.animator-image');
-                const finalContentContainer = document.querySelector('.final-content-container') as HTMLElement;
-                const featuresGrid = document.querySelector('.features-grid');
-                const footerWrapper = document.querySelector('.footer-wrapper');
-
-                // Add null checks to ensure all elements are present before starting the animation.
-                if (!targetO || !animator || !animatorImage || !animator.parentElement || !finalContentContainer || !featuresGrid || !footerWrapper) {
-                    return;
-                }
-
-                const finalTargetO = finalContentContainer.querySelector('.final-o-target-new');
-
-                if (!finalTargetO) {
-                    return;
-                }
-                
-                // --- Pre-calculate final position of the 'O' ---
-                gsap.set(finalContentContainer, { top: '140px', yPercent: 0, opacity: 1 });
-                const finalRect = finalTargetO.getBoundingClientRect();
-                gsap.set(finalTargetO, { opacity: 0 }); 
-                const parentRect = animator.parentElement.getBoundingClientRect();
-                const finalO_position = {
-                    width: finalRect.width,
-                    height: finalRect.height,
-                    left: finalRect.left - parentRect.left,
-                    top: finalRect.top - parentRect.top,
-                };
-                gsap.set(finalContentContainer, { top: '50%', yPercent: -50, opacity: 0 });
-                // --- End pre-calculation ---
-
-                const setInitialPosition = () => {
-                    if (!targetO) return;
-                    const rect = targetO.getBoundingClientRect();
-                    const parentRect = animator.parentElement!.getBoundingClientRect();
-
-                    gsap.set(animator, {
-                        width: rect.width,
-                        height: rect.height,
-                        left: rect.left - parentRect.left,
-                        top: rect.top - parentRect.top,
-                        visibility: 'hidden',
-                    });
-                };
-                
-                setInitialPosition();
-                window.addEventListener('resize', setInitialPosition);
-
-                const tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: '.choose-us-section',
-                        start: 'top top',
-                        end: '+=450%',
-                        scrub: 1.5,
-                        pin: '.sticky-container',
-                        invalidateOnRefresh: true,
-                    },
-                });
-
-                tl.to(['.why-to', '.letter', '.us'], {
-                    opacity: 0,
-                    duration: 0.5,
-                }, 'start')
-                .set(animator, { visibility: 'visible' }, 'start')
-                .to(animatorImage, { opacity: 1, duration: 0.5 }, 'start');
-
-                const zoomTime = 'start';
-                tl.to(animator, {
-                    width: '100vw',
-                    height: '100vh',
-                    top: 0,
-                    left: 0,
-                    borderRadius: '0px',
-                    borderWidth: '0px',
-                    ease: 'power1.inOut',
-                    duration: 2,
-                }, zoomTime);
-                
-                tl.to(animator.querySelector('.relative'), {
-                    borderRadius: '0px',
-                    ease: 'power1.inOut',
-                    duration: 2,
-                }, zoomTime);
-
-                tl.to({}, {duration: 1});
-
-                const finalSequenceTime = 'finalSequence';
-
-                tl.to(animator, {
-                    duration: 2,
-                    ease: 'power2.inOut',
-                    width: finalO_position.width,
-                    height: finalO_position.height,
-                    left: finalO_position.left,
-                    top: finalO_position.top,
-                    borderRadius: '9999px',
-                    borderWidth: '8px'
-                }, finalSequenceTime);
-                tl.to(animator.querySelector('.relative'), {
-                    borderRadius: '9999px',
-                    ease: 'power2.inOut',
-                    duration: 2,
-                }, finalSequenceTime);
-
-                tl.to(finalContentContainer, {
-                    top: '140px',
-                    yPercent: 0,
-                    opacity: 1,
-                    ease: "power2.inOut",
-                    duration: 2
-                }, finalSequenceTime);
-                
-                const fadeSwapTime = `${'finalSequence'}+=1.5`;
-                tl.to(animatorImage, { opacity: 0, duration: 0.5 }, fadeSwapTime)
-                  .to(finalTargetO, { opacity: 1, duration: 0.5 }, fadeSwapTime)
-                  .set(animator, { visibility: 'hidden' });
-
-                const revealFeaturesTime = `${'finalSequence'}+=2.2`;
-                gsap.set(featuresGrid, { y: 50, opacity: 0 });
-                
-                tl.to(featuresGrid, {
-                    opacity: 1,
-                    y: 0,
-                    ease: "power2.out",
-                    duration: 1.5
-                }, revealFeaturesTime);
-
-                tl.to(footerWrapper, {
-                    opacity: 1,
-                    ease: "power2.out",
-                    duration: 1.5
-                }, revealFeaturesTime);
-                
-                return () => {
-                    window.removeEventListener('resize', setInitialPosition);
-                }
-            };
-            
-            runAfterFontsLoaded(initAnimation);
-
-        }, mainRef);
-        return () => ctx.revert();
-    }, []);
-
   return (
-    <div ref={mainRef}>
-      {/* Hero Section */}
-      <div className="relative h-screen w-full overflow-hidden">
-        <video
-          src="/video.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover"
-        />
-
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 text-center text-white">
-          <h1 className="font-stylish text-5xl font-bold tracking-tight drop-shadow-xl md:text-7xl">
-            AVIRAJ INFO TECH
-          </h1>
-          <p className="mt-6 max-w-2xl font-body text-2xl text-gray-200 drop-shadow-lg md:text-3xl">
-            CYBER SECURITY COURSES
-          </p>
-          <Link
-            href="/courses"
-            className="mt-10 rounded-full border border-white/40 bg-black/20 px-10 py-3 text-lg font-medium text-white backdrop-blur-md transition-all hover:border-white/70 hover:bg-white/10"
-          >
-            Get Started
-          </Link>
-
-          <div className="absolute bottom-10 animate-bounce">
-            <a href="#main-content" aria-label="Scroll to next section">
-                <ArrowDown className="h-8 w-8 text-white/70" />
-            </a>
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative pt-14 text-white">
+          <div className="absolute inset-0">
+            <Image
+              src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzNHx8YWJzdHJhY3QlMjB0ZWNobm9sb2d5fGVufDB8fHx8MTc2OTEwNTczM3ww&ixlib=rb-4.1.0&q=80&w=1080"
+              alt="Abstract technology background"
+              fill
+              className="object-cover"
+              priority
+              data-ai-hint="abstract technology"
+            />
+            <div className="absolute inset-0 bg-black/60" />
           </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div id="main-content" className="relative bg-background scroll-mt-14 py-20 md:py-28">
-        <Image
-          src="https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?q=80&w=1920&auto=format&fit=crop"
-          alt="Universe background"
-          fill
-          className="object-cover opacity-20"
-          data-ai-hint="universe stars"
-        />
-        <div className="container relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Rectangle */}
-            <div className="bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden">
-              <div className="relative w-full aspect-[4/3]">
-                <Image 
-                  src="https://testsigma.com/blog/wp-content/uploads/blog-24_6bcd0d8524197c6dd9e305692ac92fc9_2000.jpg"
-                  alt="Live testing environment"
-                  fill
-                  className="object-cover"
-                  data-ai-hint="live environment cyber"
-                />
-              </div>
-              <div className="p-8 text-center flex flex-col flex-1">
-                <h2 className="font-headline text-3xl font-bold flex-1 flex items-center justify-center min-h-[6rem]">Live Testing Environment with our Professional Teachers</h2>
-                <Link href="/workspace" className="mt-6 block w-full rounded-full border border-primary/40 bg-primary/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-primary/60 hover:bg-primary/30">
-                    Open Workspace
+          <div className="relative container mx-auto px-4 py-24 text-center md:py-32 lg:py-40">
+            <h1 className="font-headline text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
+              Your Gateway to Cybersecurity Mastery
+            </h1>
+            <p className="mt-6 max-w-3xl mx-auto text-lg text-gray-300 md:text-xl">
+              Master in-demand cybersecurity skills with expert-led courses, hands-on labs, and a vibrant professional community.
+            </p>
+            <div className="mt-10 flex justify-center gap-4">
+              <Button asChild size="lg" className="rounded-full px-10 py-6 text-lg">
+                <Link href="/courses">
+                  Explore Courses <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-              </div>
-            </div>
-            {/* Right Rectangle */}
-            <div className="bg-card border rounded-lg shadow-lg flex flex-col overflow-hidden">
-              <div className="relative w-full aspect-[4/3]">
-                <Image 
-                  src="https://eduvouchers.com/cdn/shop/articles/best_universiies_for_CS_in_USA_main_img.webp?v=1768893270&width=1024"
-                  alt="University campus for computer science"
-                  fill
-                  className="object-cover"
-                  data-ai-hint="university campus"
-                />
-              </div>
-              <div className="p-8 text-center flex flex-col flex-1">
-                <h2 className="font-headline text-3xl font-bold">For Instructors</h2>
-                <p className="mt-4 text-muted-foreground flex-1">Join our team of experts and share your knowledge with the world.</p>
-                <Link href="/about" className="mt-6 block w-full rounded-full border border-primary/40 bg-primary/20 py-3 text-center font-medium text-white backdrop-blur-sm transition-colors hover:border-primary/60 hover:bg-primary/30">
-                    Become an Instructor
-                </Link>
-              </div>
+              </Button>
+              <Button asChild size="lg" variant="secondary" className="rounded-full px-10 py-6 text-lg">
+                <Link href="/about">Get Started</Link>
+              </Button>
             </div>
           </div>
-        </div>
-      </div>
-      
-      <WhyChooseUs />
+        </section>
+
+        {/* Features Section */}
+        <section className="py-16 bg-background md:py-24">
+            <div className="container mx-auto px-4">
+                <div className="mx-auto max-w-2xl text-center">
+                    <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Aviraj Info Tech?</h2>
+                    <p className="mt-4 text-lg text-muted-foreground">We provide a comprehensive learning ecosystem designed for success.</p>
+                </div>
+                <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+                    <div className="text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <BrainCircuit className="h-6 w-6" />
+                        </div>
+                        <h3 className="mt-6 font-headline text-lg font-semibold">Expert-Led Curriculum</h3>
+                        <p className="mt-2 text-muted-foreground">Courses crafted by industry veterans with decades of real-world offensive and defensive security experience.</p>
+                    </div>
+                    <div className="text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <BookOpen className="h-6 w-6" />
+                        </div>
+                        <h3 className="mt-6 font-headline text-lg font-semibold">Hands-On Virtual Labs</h3>
+                        <p className="mt-2 text-muted-foreground">Move beyond theory with practical labs that simulate real-world attacks and defensive scenarios.</p>
+                    </div>
+                    <div className="text-center">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                            <Users className="h-6 w-6" />
+                        </div>
+                        <h3 className="mt-6 font-headline text-lg font-semibold">Career-Focused Learning</h3>
+                        <p className="mt-2 text-muted-foreground">Gain certifications and build a portfolio that stands out to employers in the cybersecurity industry.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {/* Featured Courses Section */}
+        <section className="py-16 bg-secondary/30 md:py-24">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Explore Our Featured Courses</h2>
+              <p className="mt-4 text-lg text-muted-foreground">Kickstart your learning journey with our most popular courses.</p>
+            </div>
+            <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredCourses.map(course => (
+                <CourseCard key={course.id} course={course as Course} />
+              ))}
+            </div>
+             <div className="mt-12 text-center">
+                 <Button asChild size="lg" variant="outline">
+                    <Link href="/courses">
+                        View All Courses
+                    </Link>
+                 </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="py-16 bg-background md:py-24">
+            <div className="container mx-auto px-4">
+                <div className="mx-auto max-w-2xl text-center">
+                    <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Trusted by Aspiring Professionals</h2>
+                    <p className="mt-4 text-lg text-muted-foreground">Hear what our students have to say about their learning experience.</p>
+                </div>
+                <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    {testimonials.map((testimonial, i) => (
+                        <Card key={i} className="flex flex-col">
+                            <CardContent className="pt-6 flex-grow">
+                                <div className="flex gap-1 text-yellow-400 mb-4">
+                                    <Star className="w-5 h-5 fill-current" />
+                                    <Star className="w-5 h-5 fill-current" />
+                                    <Star className="w-5 h-5 fill-current" />
+                                    <Star className="w-5 h-5 fill-current" />
+                                    <Star className="w-5 h-5 fill-current" />
+                                </div>
+                                <p className="text-muted-foreground italic">"{testimonial.quote}"</p>
+                            </CardContent>
+                            <CardFooter className="flex items-center gap-4">
+                                <Avatar className="h-12 w-12">
+                                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} data-ai-hint={testimonial.avatarHint} />
+                                    <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="font-semibold">{testimonial.name}</p>
+                                    <p className="text-sm text-muted-foreground">{testimonial.title}</p>
+                                </div>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        </section>
+
+        {/* Final CTA Section */}
+        <section className="py-16 md:py-24">
+            <div className="container mx-auto px-4">
+                <div className="relative overflow-hidden rounded-2xl bg-primary/10 px-6 py-20 text-center shadow-lg sm:px-16">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-30"></div>
+                    <div className="relative">
+                        <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Ready to Start Learning?</h2>
+                        <p className="mt-4 text-lg text-primary/80">Join thousands of learners and take the next step in your cybersecurity career.</p>
+                        <Button asChild size="lg" className="mt-8 rounded-full px-10 py-6 text-lg">
+                            <Link href="/about">Sign Up Now</Link>
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </section>
+      </main>
     </div>
   );
 }
