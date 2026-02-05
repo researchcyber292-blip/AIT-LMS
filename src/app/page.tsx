@@ -125,7 +125,7 @@ export default function Home() {
                       </div>
 
                       {/* Right Character (Professional - Asking) */}
-                      <div className="relative">
+                      <div className="relative transform -translate-y-4">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow [animation-direction:reverse]"></div>
                           {/* Floating Dots */}
@@ -138,7 +138,7 @@ export default function Home() {
                                   src="/man_home_page.png"
                                   alt="Cybersecurity Professional"
                                   fill
-                                  className="object-cover"
+                                  className="object-cover object-top"
                               />
                           </div>
                           {/* Speech Bubble */}
