@@ -2,10 +2,11 @@
 'use client';
 
 import { notFound, useParams } from 'next/navigation';
+import { useMemo } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CourseCard } from '@/components/course-card';
 import { useDoc, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
-import { collection, doc, query, where } from 'firebase/firestore';
+import { collection, doc } from 'firebase/firestore';
 import type { Instructor, Course } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Cloud, BookOpen } from 'lucide-react';
@@ -51,12 +52,21 @@ export default function InstructorProfilePage() {
   );
   const { data: instructor, isLoading: isInstructorLoading } = useDoc<Instructor>(instructorDocRef);
   
-  const coursesQuery = useMemoFirebase(() => {
-    if (!firestore || !params.id) return null;
-    return query(collection(firestore, "courses"), where("instructorId", "==", params.id));
-  }, [firestore, params.id]);
+  // Fetch all courses instead of using a `where` query to avoid indexing issues.
+  const coursesCollectionRef = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, "courses");
+  }, [firestore]);
 
-  const { data: instructorCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
+  const { data: allCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesCollectionRef);
+
+  // Filter the courses on the client side. This is less efficient but more reliable without manual index creation.
+  const instructorCourses = useMemo(() => {
+    if (!allCourses || !params.id) return [];
+    // Use `as any` to access instructorId which might not be in the strict Course type during a mismatch
+    return allCourses.filter(course => (course as any).instructorId === params.id);
+  }, [allCourses, params.id]);
+
 
   const isLoading = isInstructorLoading || areCoursesLoading;
 
@@ -133,4 +143,3 @@ export default function InstructorProfilePage() {
     </div>
   );
 }
-
