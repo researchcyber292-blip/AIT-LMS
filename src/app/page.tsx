@@ -97,7 +97,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative h-96 md:h-full w-full flex items-center justify-center">
-                <div className="relative w-full h-full max-w-lg -translate-x-4 translate-y-4">
+                <div className="relative w-full h-full max-w-lg -translate-x-8 translate-y-8">
                   <Image
                     src="/ceo.png"
                     alt="Aviraj Info Tech CEO"
