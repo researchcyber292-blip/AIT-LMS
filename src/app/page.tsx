@@ -97,12 +97,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative h-80 md:h-full w-full flex items-center justify-center">
-                <div className="relative w-full max-w-md aspect-video rounded-xl overflow-hidden border-2 border-white/10 shadow-2xl bg-black/20 p-2">
+                <div className="relative w-full max-w-md aspect-video">
                   <Image
-                    src="/homepage-small.png"
-                    alt="Cybersecurity console preview"
+                    src="/ceo.png"
+                    alt="Aviraj Info Tech CEO"
                     fill
-                    className="object-contain rounded-lg"
+                    className="object-contain"
                   />
                 </div>
               </div>
