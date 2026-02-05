@@ -1,4 +1,3 @@
-
 'use client';
 
 import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
@@ -277,7 +276,7 @@ export default function CoursesPage() {
                             </div>
                             <Button asChild size="lg" className="mt-6 self-center">
                                 <Link href={`/instructors/${instructor.id}`}>
-                                    View Profile & Courses
+                                    NOW REMEMBER THIS ONE TIME.
                                 </Link>
                             </Button>
                         </div>
