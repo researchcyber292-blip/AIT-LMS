@@ -75,7 +75,7 @@ export default function Home() {
           className="relative bg-cover bg-center" 
           style={{backgroundImage: "url('/homepage.png')"}}
         >
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-background/30 backdrop-blur-sm" />
           <div className="container relative px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12 md:py-24">
               <div className="text-center md:text-left">
