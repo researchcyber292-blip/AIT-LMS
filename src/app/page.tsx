@@ -329,8 +329,8 @@ export default function Home() {
       title: 'ADVANCED PENETRATION TESTING',
       subtitle: 'Master the art of ethical hacking and secure networks like a pro.',
       price: 240,
-      image: 'https://images.unsplash.com/photo-1544890225-2fde0e66ea9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZW5ldHJhdGlvbiUyMHRlc3Rpbmd8ZW58MHx8fHwxNzcwMTE5MTI4fDA&ixlib=rb-4.1.0&q=80&w=1080',
-      imageHint: 'penetration testing',
+      image: 'https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjYmVyJTIwc2VjdXJpdHklMjBoYWNrZXJ8ZW58MHx8fHwxNzcxMjYxMjMzfDA&ixlib=rb-4.1.0&q=80&w=1080',
+      imageHint: 'cyber security hacker',
       lessons: 60,
       students: 4210,
     }
