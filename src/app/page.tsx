@@ -100,7 +100,7 @@ export default function Home() {
               </div>
                <div className="relative h-96 md:h-full w-full flex items-center justify-between">
                       {/* Left Character (CEO - Answering) */}
-                      <div className="relative transform translate-y-32">
+                      <div className="relative transform translate-y-40">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
                           {/* Floating Dots */}
@@ -113,11 +113,11 @@ export default function Home() {
                                   src="/ceo.png"
                                   alt="Aviraj Singh, CEO"
                                   fill
-                                  className="object-cover object-bottom"
+                                  className="object-cover object-[center_10%]"
                               />
                           </div>
                           {/* Speech Bubble */}
-                          <div className="absolute bottom-24 left-[90%] w-56 bg-primary text-primary-foreground p-3 rounded-lg shadow-xl z-10">
+                          <div className="absolute bottom-16 left-[90%] w-56 bg-primary text-primary-foreground p-3 rounded-lg shadow-xl z-10">
                               <p className="text-sm">"AIT is where students master cybersecurity with expert guidance and love."</p>
                               {/* Triangle */}
                               <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-primary border-b-8 border-b-transparent"></div>
