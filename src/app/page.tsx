@@ -78,7 +78,7 @@ export default function Home() {
                       </div>
 
                       {/* Right Character (Student) */}
-                      <div className="relative transform translate-x-16 -translate-y-10">
+                      <div className="relative transform translate-x-24 -translate-y-10">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow [animation-direction:reverse]"></div>
                           {/* Floating Dots */}
