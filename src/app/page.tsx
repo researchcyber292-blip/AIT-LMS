@@ -253,42 +253,42 @@ export default function Home() {
 
   const latestBlogs = [
     {
-      title: 'Top 10 Cybersecurity Threats to Watch in 2024',
+      title: 'Top 10 Cybersecurity Threats to Watch in 2026',
       category: 'Threat Intelligence',
-      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
-      imageHint: 'cybersecurity threats',
+      image: 'https://images.unsplash.com/photo-1631624220291-8f191fbdb543?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYWNrZXIlMjBjb2RlfGVufDB8fHx8MTc2OTA5Njc3OHww&ixlib=rb-4.1.0&q=80&w=1080',
+      imageHint: 'hacker code',
       excerpt: 'As technology evolves, so do the threats. We break down the most significant cyber threats that individuals and businesses will face this year.',
       author: {
         name: 'Aviraj Singh',
         avatar: 'https://picsum.photos/seed/instructor-1/40/40'
       },
-      date: 'July 26, 2024',
+      date: 'July 26, 2026',
       href: '#'
     },
     {
       title: "A Beginner's Guide to Ethical Hacking",
       category: 'Ethical Hacking',
-      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
-      imageHint: 'ethical hacking guide',
+      image: 'https://images.unsplash.com/photo-1548092372-0d1bd40894a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwc2VjdXJpdHl8ZW58MHx8fHwxNzY5MTE5MTI4fDA&ixlib=rb-4.1.0&q=80&w=1080',
+      imageHint: 'digital security',
       excerpt: 'Ever wondered how hackers think? Our guide to ethical hacking will introduce you to the core concepts and tools used by security professionals.',
       author: {
         name: 'Priya Sharma',
         avatar: 'https://picsum.photos/seed/instructor-2/40/40'
       },
-      date: 'July 22, 2024',
+      date: 'July 22, 2026',
       href: '#'
     },
     {
       title: 'The Rise of AI in Cybersecurity: Friend or Foe?',
       category: 'AI Security',
-      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
-      imageHint: 'ai cybersecurity',
+      image: 'https://images.unsplash.com/photo-1488229297570-58520851e868?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkaWdpdGFsJTIwYnJhaW58ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080',
+      imageHint: 'digital brain',
       excerpt: 'Artificial intelligence is a double-edged sword. Learn how AI is being used to both defend against and carry out sophisticated cyber attacks.',
       author: {
         name: 'Rajesh Kumar',
         avatar: 'https://picsum.photos/seed/instructor-3/40/40'
       },
-      date: 'July 18, 2024',
+      date: 'July 18, 2026',
       href: '#'
     }
   ];
