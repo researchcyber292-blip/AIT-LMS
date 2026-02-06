@@ -257,6 +257,12 @@
       "description": "An eagle head close-up",
       "imageUrl": "https://images.unsplash.com/photo-1612218432649-c36a1de7fedb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxlYWdsZSUyMGhlYWR8ZW58MHx8fHwxNzcwMDk5NDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "eagle head"
+    },
+    {
+      "id": "hero-background-pastel",
+      "description": "Abstract pastel waves background.",
+      "imageUrl": "https://images.unsplash.com/photo-1620121692029-d088224ddc74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwYXN0ZWwlMjBhYnN0cmFjdHxlbnwwfHx8fDE3NzAxNzAxODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pastel abstract"
     }
   ]
 }

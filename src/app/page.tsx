@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -6,15 +5,30 @@ import Image from 'next/image';
 import { Video, FileText, HelpCircle, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import imageData from '@/lib/placeholder-images.json';
 
 export default function Home() {
+  const heroBg = imageData.placeholderImages.find(img => img.id === 'hero-background-pastel');
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-1 pt-14">
         {/* Hero Section */}
         <section 
-          className="relative bg-gradient-to-br from-purple-50 via-white to-blue-50"
+          className="relative"
         >
+          {heroBg && (
+            <Image
+              src={heroBg.imageUrl}
+              alt={heroBg.description}
+              fill
+              className="object-cover"
+              data-ai-hint={heroBg.imageHint}
+              quality={100}
+            />
+          )}
+          <div className="absolute inset-0 bg-background/60" />
+
           <div className="container relative px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-12 md:py-24">
               <div className="text-center md:text-left">
