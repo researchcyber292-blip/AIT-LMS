@@ -124,6 +124,87 @@ export default function Home() {
           avatar: 'https://picsum.photos/seed/instructor-3/40/40'
       }
     },
+    {
+      id: 'dummy-4',
+      title: 'Cyber Security Analyst Fundamentals',
+      description: '',
+      longDescription: '',
+      price: 45,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'cyber security',
+      instructorId: 'dummy-instructor-4',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Beginner',
+      category: 'Cybersecurity',
+      priceType: 'paid',
+      duration: '4h',
+      liveSessionsEnabled: true,
+      resourcesEnabled: true,
+      createdAt: null,
+      rating: 4,
+      reviews: 180,
+      lessons: 25,
+      students: 3102,
+      instructor: {
+          name: 'Sarah Lee',
+          avatar: 'https://picsum.photos/seed/instructor-4/40/40'
+      }
+    },
+    {
+      id: 'dummy-5',
+      title: 'Ethical Hacking: Zero to Hero',
+      description: '',
+      longDescription: '',
+      price: 80,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'ethical hacking',
+      instructorId: 'dummy-instructor-5',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Intermediate',
+      category: 'Ethical Hacking',
+      priceType: 'paid',
+      duration: '12h',
+      liveSessionsEnabled: true,
+      resourcesEnabled: true,
+      createdAt: null,
+      rating: 5,
+      reviews: 350,
+      lessons: 50,
+      students: 4500,
+      instructor: {
+          name: 'David Chen',
+          avatar: 'https://picsum.photos/seed/instructor-5/40/40'
+      }
+    },
+    {
+      id: 'dummy-6',
+      title: 'Cloud Security Engineering (AWS)',
+      description: '',
+      longDescription: '',
+      price: 150,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'cloud security',
+      instructorId: 'dummy-instructor-6',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Advanced',
+      category: 'Cloud Security',
+      priceType: 'paid',
+      duration: '20h',
+      liveSessionsEnabled: false,
+      resourcesEnabled: true,
+      createdAt: null,
+      rating: 4,
+      reviews: 210,
+      lessons: 60,
+      students: 2800,
+      instructor: {
+          name: 'Emily White',
+          avatar: 'https://picsum.photos/seed/instructor-6/40/40'
+      }
+    }
   ];
 
   return (
