@@ -41,6 +41,11 @@
             "type": "string"
           }
         },
+        "level": {
+          "type": "string",
+          "description": "The difficulty level of the course.",
+          "enum": ["Beginner", "Intermediate", "Advanced", "Highly Advanced"]
+        },
         "category": {
           "type": "string",
           "description": "The category the course belongs to."
@@ -51,7 +56,9 @@
         "title",
         "description",
         "price",
-        "instructorId"
+        "instructorId",
+        "level",
+        "category"
       ]
     },
     "Instructor": {

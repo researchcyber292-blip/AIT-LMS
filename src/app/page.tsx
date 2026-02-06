@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -10,30 +11,87 @@ import { CourseCard } from '@/components/course-card';
 
 export default function Home() {
 
-  const dummyCourses = [
+  const dummyCourses: Course[] = [
     {
       id: 'dummy-1',
-      title: 'Ethical Hacking Essentials',
-      description: 'Learn the fundamentals of ethical hacking and penetration testing to secure modern systems.',
-      price: 499,
-      image: 'https://images.unsplash.com/photo-1631624220291-8f191fbdb543?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYWNrZXIlMjBjb2RlfGVufDB8fHx8MTc2OTA5Njc3OHww&ixlib=rb-4.1.0&q=80&w=1080',
-      imageHint: 'hacker code',
+      title: 'The Complete Digital Marketing Analysis Guide',
+      description: '',
+      longDescription: '',
+      price: 13,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'digital marketing course',
+      instructorId: 'dummy-instructor',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Beginner',
+      category: 'Digital Marketing',
+      priceType: 'paid',
+      duration: '2h',
+      liveSessionsEnabled: false,
+      resourcesEnabled: false,
+      createdAt: null,
+      rating: 0,
+      reviews: 0,
+      lessons: 1,
+      students: 0,
+      instructor: {
+          name: 'Robert Smith',
+          avatar: 'https://picsum.photos/seed/instructor-1/40/40'
+      }
     },
     {
       id: 'dummy-2',
-      title: 'Network Security & Defense',
-      description: 'Master the art of defending networks against sophisticated cyber attacks and intrusions.',
-      price: 799,
-      image: 'https://images.unsplash.com/photo-1639066648921-82d4500abf1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzZXJ2ZXIlMjByb29tfGVufDB8fHx8MTc2OTEzODc5N3ww&ixlib=rb-4.1.0&q=80&w=1080',
-      imageHint: 'server room',
+      title: 'E-Commerce Development Course for Creating User-Friendly Online Stores',
+      description: '',
+      longDescription: '',
+      price: 25.50,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'digital marketing course',
+      instructorId: 'dummy-instructor',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Beginner',
+      category: 'Data Science',
+      priceType: 'paid',
+      duration: '2h 30m',
+      liveSessionsEnabled: false,
+      resourcesEnabled: false,
+      createdAt: null,
+      rating: 0,
+      reviews: 0,
+      lessons: 2,
+      students: 0,
+      instructor: {
+          name: 'Robert Smith',
+          avatar: 'https://picsum.photos/seed/instructor-1/40/40'
+      }
     },
     {
       id: 'dummy-3',
-      title: 'Web App Pentesting',
-      description: 'Discover and exploit vulnerabilities in modern web applications before the attackers do.',
-      price: 699,
-      image: 'https://images.unsplash.com/photo-1548092372-0d1bd40894a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwc2VjdXJpdHl8ZW58MHx8fHwxNzY5MTE5MTI4fDA&ixlib=rb-4.1.0&q=80&w=1080',
-      imageHint: 'digital security',
+      title: 'Full Stack Web Development with JavaScript',
+      description: '',
+      longDescription: '',
+      price: 240,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'digital marketing course',
+      instructorId: 'dummy-instructor',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Intermediate',
+      category: 'Data Science',
+      priceType: 'paid',
+      duration: '2h 30m',
+      liveSessionsEnabled: false,
+      resourcesEnabled: false,
+      createdAt: null,
+      rating: 0,
+      reviews: 0,
+      lessons: 1,
+      students: 0,
+      instructor: {
+          name: 'Robert Smith',
+          avatar: 'https://picsum.photos/seed/instructor-1/40/40'
+      }
     },
   ];
 
@@ -213,7 +271,7 @@ export default function Home() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {dummyCourses.map((course) => (
-                      <CourseCard key={course.id} course={course as Course} />
+                      <CourseCard key={course.id} course={course} />
                   ))}
                 </div>
             </div>

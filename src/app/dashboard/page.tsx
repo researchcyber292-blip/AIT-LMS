@@ -521,7 +521,7 @@ function EnrolledCourseCard({ enrollment }: { enrollment: Enrollment }) {
         <Card key={course.id} className="flex flex-col">
             <CardHeader>
                 <CardTitle className="font-headline">{course.title}</CardTitle>
-                <CardDescription>{course.category}</CardDescription>
+                <CardDescription>{course.level}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
                 <div className="space-y-2">
@@ -629,4 +629,3 @@ export default function DashboardPage() {
 
   return <StudentDashboard />;
 }
-

@@ -323,7 +323,7 @@ export default function CourseDetailPage() {
               <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-center gap-3">
                     <BarChart className="h-5 w-5 text-primary" />
-                    <span>Level: {course.category}</span>
+                    <span>Level: {course.level}</span>
                 </li>
                 <li className="flex items-center gap-3">
                     <Clock className="h-5 w-5 text-primary" />
@@ -371,4 +371,3 @@ export default function CourseDetailPage() {
     </div>
   );
 }
-

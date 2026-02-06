@@ -36,7 +36,8 @@ export default function StudioPage() {
     const [title, setTitle] = useState('');
     const [shortDescription, setShortDescription] = useState('');
     const [longDescription, setLongDescription] = useState('');
-    const [category, setCategory] = useState<'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced'>('Beginner');
+    const [level, setLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced'>('Beginner');
+    const [category, setCategory] = useState('');
     const [learningObjectives, setLearningObjectives] = useState(['']);
 
     // Curriculum Tab
@@ -284,6 +285,7 @@ export default function StudioPage() {
             title,
             description: shortDescription,
             longDescription,
+            level,
             category,
             learningObjectives: learningObjectives.filter(o => o.trim() !== ''),
             curriculum: [], // Curriculum builder not implemented yet
@@ -381,6 +383,31 @@ export default function StudioPage() {
                                 <Label htmlFor="course-long-description">Detailed Description</Label>
                                 <Textarea id="course-long-description" placeholder="A comprehensive overview of the course content, goals, and target audience." value={longDescription} onChange={(e) => setLongDescription(e.target.value)} className="min-h-[200px]" />
                             </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="course-category">Category</Label>
+                                <Input id="course-category" placeholder="e.g., Web Development, Data Science" value={category} onChange={(e) => setCategory(e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Level</Label>
+                                <RadioGroup value={level} onValueChange={(v) => setLevel(v as any)} className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="Beginner" id="level-beginner" />
+                                        <Label htmlFor="level-beginner">Beginner</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="Intermediate" id="level-intermediate" />
+                                        <Label htmlFor="level-intermediate">Intermediate</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="Advanced" id="level-advanced" />
+                                        <Label htmlFor="level-advanced">Advanced</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="Highly Advanced" id="level-highly-advanced" />
+                                        <Label htmlFor="level-highly-advanced">Highly Advanced</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
                             <div className="space-y-2">
                                 <Label>What You'll Learn</Label>
                                 <p className="text-sm text-muted-foreground">List the key skills and knowledge students will gain. (Max 10)</p>
@@ -404,27 +431,6 @@ export default function StudioPage() {
                                         <Plus className="mr-2 h-4 w-4" /> Add Objective
                                     </Button>
                                 )}
-                            </div>
-                             <div className="space-y-2">
-                                <Label>Category</Label>
-                                <RadioGroup value={category} onValueChange={(v) => setCategory(v as any)} className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="Beginner" id="cat-beginner" />
-                                        <Label htmlFor="cat-beginner">Beginner</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="Intermediate" id="cat-intermediate" />
-                                        <Label htmlFor="cat-intermediate">Intermediate</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="Advanced" id="cat-advanced" />
-                                        <Label htmlFor="cat-advanced">Advanced</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="Highly Advanced" id="cat-highly-advanced" />
-                                        <Label htmlFor="cat-highly-advanced">Highly Advanced</Label>
-                                    </div>
-                                </RadioGroup>
                             </div>
                         </CardContent>
                         <CardFooter className="flex justify-end">
@@ -918,7 +924,7 @@ export default function StudioPage() {
                                                     <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                                                         <li className="flex items-center gap-3">
                                                             <BarChart className="h-5 w-5 text-primary" />
-                                                            <span className="capitalize">Level: {category.replace('-', ' ')}</span>
+                                                            <span className="capitalize">Level: {level.replace('-', ' ')}</span>
                                                         </li>
                                                          <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
@@ -943,7 +949,7 @@ export default function StudioPage() {
                                                     <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
                                                         <li className="flex items-center gap-3">
                                                             <BarChart className="h-5 w-5 text-primary" />
-                                                            <span className="capitalize">Level: {category.replace('-', ' ')}</span>
+                                                            <span className="capitalize">Level: {level.replace('-', ' ')}</span>
                                                         </li>
                                                         <li className="flex items-center gap-3">
                                                             <Clock className="h-5 w-5 text-primary" />
@@ -960,7 +966,7 @@ export default function StudioPage() {
                                     </div>
                                     
                                     <div className="md:col-span-2">
-                                        <Badge variant="secondary" className="mb-2 capitalize">{category.replace('-', ' ')}</Badge>
+                                        <Badge variant="secondary" className="mb-2 capitalize">{category || "Category"}</Badge>
                                         <h1 className="font-headline text-4xl font-bold tracking-tight lg:text-5xl">{title || "Your Course Title"}</h1>
                                         <p className="mt-4 text-lg text-muted-foreground">{longDescription || "Your detailed course description will appear here."}</p>
 
@@ -1079,4 +1085,3 @@ export default function StudioPage() {
         </div>
     );
 }
-

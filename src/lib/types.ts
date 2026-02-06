@@ -1,4 +1,9 @@
 
+export type InstructorStub = {
+  name: string;
+  avatar?: string;
+};
+
 export type UserProfile = {
   id: string; // Firebase UID
   email: string;
@@ -25,7 +30,8 @@ export type Course = {
   instructorId: string;
   learningObjectives: string[];
   curriculum: { title: string; content: string }[];
-  category: 'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced';
+  level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced';
+  category: string;
   priceType: 'paid' | 'free';
   paymentMethod?: 'direct' | 'templates';
   subscriptionTiers?: {
@@ -38,6 +44,13 @@ export type Course = {
   liveSessionsEnabled: boolean;
   resourcesEnabled: boolean;
   createdAt: any; // serverTimestamp
+
+  // For card display
+  rating?: number;
+  reviews?: number;
+  lessons?: number;
+  students?: number;
+  instructor?: InstructorStub;
 };
 
 export type Instructor = {
