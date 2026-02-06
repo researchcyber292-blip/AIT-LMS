@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Video, FileText, Clock, BookOpen } from 'lucide-react';
+import { Video, FileText, Clock, BookOpen, Heart, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Course } from '@/lib/types';
@@ -11,7 +11,7 @@ import { CourseCard } from '@/components/course-card';
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -290,6 +290,49 @@ export default function Home() {
       },
       date: 'July 18, 2026',
       href: '#'
+    }
+  ];
+
+  const upcomingCourses = [
+    {
+      id: 'upcoming-1',
+      title: 'DIGITAL MARKETING',
+      subtitle: 'The Complete Digital Marketing Analysis Guide',
+      price: 13,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'digital marketing',
+      lessons: 1,
+      students: 0,
+    },
+    {
+      id: 'upcoming-2',
+      title: 'DIGITAL MARKETING',
+      subtitle: 'This is the best Online Course in the country, we focus on adequate teaching for Everyone.',
+      price: 25.50,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'marketing analytics',
+      lessons: 12,
+      students: 1543,
+    },
+    {
+      id: 'upcoming-3',
+      title: 'FULL STACK WEB DEVELOPMENT WITH JAVASCRIPT',
+      subtitle: 'This is the best Online Course in the country, we focus on adequate teaching for Everyone.',
+      price: 82,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'web javascript',
+      lessons: 45,
+      students: 5230,
+    },
+    {
+      id: 'upcoming-4',
+      title: 'ADVANCED PENETRATION TESTING',
+      subtitle: 'Master the art of ethical hacking and secure networks like a pro.',
+      price: 240,
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'penetration testing',
+      lessons: 60,
+      students: 4210,
     }
   ];
 
@@ -573,6 +616,63 @@ export default function Home() {
                 </div>
             </div>
         </section>
+
+        {/* Upcoming Courses Section */}
+        <section className="py-16 md:py-24 bg-secondary/30">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center mb-12">
+              <h2 className="font-headline text-3xl font-bold sm:text-4xl">See Our Upcoming Courses</h2>
+              <div className="hidden md:flex gap-2">
+                <CarouselPrevious className="static translate-y-0" />
+                <CarouselNext className="static translate-y-0" />
+              </div>
+            </div>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {upcomingCourses.map((course) => (
+                  <CarouselItem key={course.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
+                    <div className="h-full">
+                      <Card className="relative overflow-hidden h-[450px] flex flex-col justify-end group/upcoming rounded-lg">
+                        <Image src={course.image} alt={course.title} fill objectFit="cover" className="z-0 group-hover/upcoming:scale-105 transition-transform duration-300" data-ai-hint={course.imageHint} />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                        
+                        <div className="absolute top-4 left-4 z-20">
+                            <Badge>₹{course.price}</Badge>
+                        </div>
+                        <div className="absolute top-4 right-4 z-20">
+                            <Button size="icon" variant="ghost" className="h-9 w-9 rounded-full bg-white/10 text-white backdrop-blur-sm hover:bg-white/20">
+                                <Heart className="h-4 w-4" />
+                            </Button>
+                        </div>
+
+                        <CardContent className="relative z-20 p-4 text-white">
+                          <h3 className="font-headline text-2xl font-bold uppercase leading-tight">{course.title}</h3>
+                          <p className="text-sm mt-1 text-white/80 h-10 line-clamp-2">{course.subtitle}</p>
+                          
+                          <div className="mt-4 border-t border-white/20 pt-3 flex items-center gap-x-4 text-sm text-white/90">
+                              <div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4"/><span>{course.lessons} Lessons</span></div>
+                              <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/><span>{course.students} Students</span></div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex md:hidden justify-center gap-4 mt-8">
+                <CarouselPrevious />
+                <CarouselNext />
+              </div>
+            </Carousel>
+          </div>
+        </section>
+
       </main>
     </div>
   );
