@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -98,7 +99,7 @@ export default function Home() {
               </div>
                <div className="relative h-96 md:h-full w-full flex items-center justify-between">
                       {/* Left Character (CEO - Answering) */}
-                      <div className="relative transform translate-y-[5rem]">
+                      <div className="relative transform translate-y-[8rem]">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
                           {/* Floating Dots */}
@@ -111,7 +112,7 @@ export default function Home() {
                                   src="/ceo.png"
                                   alt="Aviraj Singh, CEO"
                                   fill
-                                  className="object-cover object-[center_350%]"
+                                  className="object-cover object-[center_80%]"
                               />
                           </div>
                           {/* Speech Bubble */}
@@ -136,7 +137,7 @@ export default function Home() {
                                   src="/man_home_page.png"
                                   alt="Cybersecurity Professional"
                                   fill
-                                  className="object-cover object-[center_20%]"
+                                  className="object-cover object-bottom"
                               />
                           </div>
                           {/* Speech Bubble */}
