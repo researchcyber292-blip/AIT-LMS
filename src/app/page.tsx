@@ -51,7 +51,7 @@ export default function Home() {
           className="relative"
         >
           <Image
-            src="/background.png"
+            src="/H1.png"
             alt="Abstract background pattern"
             fill
             className="object-cover"
