@@ -48,7 +48,7 @@ export default function Home() {
                           <div className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 border-white shadow-lg">
                               <Image
                                   src="/ceo.png"
-                                  alt="Alakh Pandey, CEO"
+                                  alt="Avanish Singh, CEO"
                                   width={224}
                                   height={224}
                                   className="object-cover absolute top-[-40px]"
@@ -82,7 +82,7 @@ export default function Home() {
                           </div>
                           {/* Speech Bubble */}
                           <div className="absolute top-8 right-[80%] w-48 bg-white text-black p-3 rounded-lg shadow-xl z-10">
-                              <p className="text-sm">"Alakh Sir, What is AIT?"</p>
+                              <p className="text-sm">"Avanish Sir, What is AIT?"</p>
                               {/* Triangle */}
                               <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-l-8 border-l-white border-b-8 border-b-transparent"></div>
                           </div>
