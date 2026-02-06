@@ -63,11 +63,8 @@ export function CustomCursor() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M4 0L4 19L9 14L13 24L16 22L11.5 13L18 13L4 0Z"
+          d="M4 0 L18 13 L9 14 L4 19 Z"
           fill="black"
-          stroke="white"
-          strokeWidth="1"
-          strokeLinejoin="round"
         />
       </svg>
     </div>
