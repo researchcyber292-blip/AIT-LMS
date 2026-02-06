@@ -100,7 +100,7 @@ export default function Home() {
               </div>
                <div className="relative h-96 md:h-full w-full flex items-center justify-between">
                       {/* Left Character (CEO - Answering) */}
-                      <div className="relative transform translate-y-8">
+                      <div className="relative transform translate-y-2">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
                           {/* Floating Dots */}
