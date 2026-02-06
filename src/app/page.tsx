@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -448,7 +447,7 @@ export default function Home() {
               }}
               plugins={[
                 Autoplay({
-                  delay: 4000,
+                  delay: 2000,
                   stopOnInteraction: true,
                 }),
               ]}
