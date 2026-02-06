@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -10,6 +11,9 @@ import { CourseCard } from '@/components/course-card';
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -207,6 +211,45 @@ export default function Home() {
     }
   ];
 
+  const studentFeedback = [
+    {
+      name: 'Ravi Kumar',
+      role: 'Ethical Hacking Student',
+      feedback: "This was the best investment I've made in my career. The instructors are top-notch and the hands-on labs are incredibly valuable.",
+      avatarSeed: 'student-1'
+    },
+    {
+      name: 'Priya Sharma',
+      role: 'Data Science Student',
+      feedback: 'The curriculum is well-structured and up-to-date with industry standards. I feel much more confident in my skills now.',
+      avatarSeed: 'student-2'
+    },
+    {
+      name: 'Amit Das',
+      role: 'Web Development Student',
+      feedback: "I went from knowing nothing about web development to building my own applications. Highly recommended!",
+      avatarSeed: 'student-3'
+    },
+    {
+      name: 'Sneha Mehta',
+      role: 'Cyber Security Student',
+      feedback: 'The 24x7 doubt solving feature is a lifesaver. I never felt stuck for long.',
+      avatarSeed: 'student-4'
+    },
+    {
+      name: 'Vijay Singh',
+      role: 'AI/ML Student',
+      feedback: "Incredible value for the price. The quality of teaching is comparable to much more expensive bootcamps.",
+      avatarSeed: 'student-5'
+    },
+    {
+        name: 'Anjali Kulkarni',
+        role: 'Robotics Student',
+        feedback: "The practical, hands-on approach is what sets AIT apart. You don't just learn theory, you actually build things.",
+        avatarSeed: 'student-6'
+    }
+  ];
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-1 pt-14">
@@ -387,6 +430,55 @@ export default function Home() {
                   ))}
                 </div>
             </div>
+        </section>
+
+        {/* Student Feedback Section */}
+        <section className="py-16 md:py-24 bg-secondary/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="font-headline text-3xl font-bold sm:text-4xl">What Our Students Say</h2>
+              <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                Hear from learners who have transformed their careers with us.
+              </p>
+            </div>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[
+                Autoplay({
+                  delay: 4000,
+                  stopOnInteraction: true,
+                }),
+              ]}
+              className="w-full max-w-6xl mx-auto"
+            >
+              <CarouselContent>
+                {studentFeedback.map((feedback, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-2 h-full">
+                      <Card className="h-full flex flex-col">
+                        <CardContent className="flex flex-col items-center text-center p-6 gap-6 flex-1">
+                          <Avatar className="w-24 h-24 border-4 border-primary/20">
+                            <AvatarImage src={`https://picsum.photos/seed/${feedback.avatarSeed}/100/100`} />
+                            <AvatarFallback>{feedback.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 flex flex-col">
+                            <p className="text-muted-foreground italic flex-grow">"{feedback.feedback}"</p>
+                            <div className="mt-6">
+                                <p className="font-bold text-lg">{feedback.name}</p>
+                                <p className="text-sm text-primary">{feedback.role}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
         </section>
       </main>
     </div>
