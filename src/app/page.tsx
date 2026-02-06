@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -8,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import imageData from '@/lib/placeholder-images.json';
 
 export default function Home() {
-  const heroBg = imageData.placeholderImages.find(img => img.id === 'hero-background-pastel');
+  const heroBg = imageData.placeholderImages.find(img => img.id === 'hero-background');
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
