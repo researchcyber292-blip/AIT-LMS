@@ -88,29 +88,6 @@ export function Footer() {
         { label: 'Accessibility', href: '#' },
         { label: 'Security', href: '#' },
       ]
-    },
-    {
-        title: 'Community',
-        links: [
-            { label: 'Discord Server', href: '#' },
-            { label: 'Events', href: '#' },
-            { label: 'Student Showcase', href: '#' },
-            { label: 'Leaderboard', href: '#' },
-            { label: 'Ambassador Program', href: '#' },
-        ]
-    },
-     {
-        title: 'More',
-        links: [
-            { label: 'Affiliate Program', href: '#' },
-            { label: 'Scholarships', href: '#' },
-            { label: 'Gift a Course', href: '#' },
-            { label: 'Redeem Code', href: '#' },
-            { label: 'System Status', href: '#' },
-            { label: 'Swag Store', href: '#' },
-            { label: 'Testimonials', href: '#' },
-            { label: 'Press Inquiries', href: '#' },
-        ]
     }
   ];
 
@@ -160,7 +137,7 @@ export function Footer() {
           </div>
           
           {/* Link Groups */}
-          <div className="grid grid-cols-2 gap-8 lg:col-span-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 lg:col-span-2 lg:grid-cols-3">
             {linkGroups.map((group) => (
               <div key={group.title}>
                 <p className="font-headline font-semibold text-foreground">{group.title}</p>
@@ -176,6 +153,25 @@ export function Footer() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="mt-16 border-t border-border pt-12 text-sm text-muted-foreground space-y-8">
+            <div className="space-y-2">
+                <h3 className="font-headline font-semibold text-lg text-foreground">Know about Aviraj Info Tech</h3>
+                <p>Aviraj Info Tech is an Indian online education platform that provides accessible & comprehensive learning experiences in cybersecurity, preparing students for careers in ethical hacking, network defense, and AI security. We provide extensive hands-on labs, sample penetration tests, and real-world case studies, which makes us a one-stop solution for all cybersecurity resources. Aviraj Info Tech also caters to a growing community of registered students with high ratings on our app.</p>
+            </div>
+             <div className="space-y-2">
+                <h3 className="font-headline font-semibold text-lg text-foreground">We Stand Out Because</h3>
+                <p>We successfully provide students with intensive courses by India's qualified & experienced cybersecurity professionals. AIT strives to make the learning experience comprehensive and accessible for students of all sections of society. We believe in empowering every single student who dreams of a good career in the technology and cybersecurity field.</p>
+            </div>
+             <div className="space-y-2">
+                <h3 className="font-headline font-semibold text-lg text-foreground">Our Key Focus Areas</h3>
+                <p>Aviraj Info Tech's main focus is to create accessible learning experiences for students all over India. With courses like Ethical Hacking, Advanced Penetration Testing, AI in Cybersecurity & many others, we have been able to provide a ready solution for lakhs of aspirants. From providing foundational knowledge to giving access to virtual labs from eminent security firms, AIT aims to provide reliable solutions for student prep.</p>
+            </div>
+             <div className="space-y-2">
+                <h3 className="font-headline font-semibold text-lg text-foreground">What Makes Us Different</h3>
+                <p>Aviraj Info Tech strives to develop a comprehensive pedagogical structure for students, where they get a state-of-the-art learning experience with practical study material and resources. Apart from catering to students preparing for certifications like OSCP and CEH, AIT also provides study material for specific fields like cloud security, malware analysis, and digital forensics.</p>
+            </div>
         </div>
         
         <div className="mt-12 border-t border-border pt-8">
