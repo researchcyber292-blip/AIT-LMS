@@ -7,8 +7,40 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Course } from '@/lib/types';
 import { CourseCard } from '@/components/course-card';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const featuresRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const featureElements = featuresRef.current?.children;
+    if (featureElements) {
+        // Set initial state (invisible and shifted down)
+        gsap.set(featureElements, { y: 50, opacity: 0 });
+
+        ScrollTrigger.batch(featureElements, {
+            start: "top 85%", // When the top of the element hits 85% of the viewport height
+            onEnter: batch => gsap.to(batch, {
+                opacity: 1, 
+                y: 0, 
+                stagger: 0.15,
+                duration: 0.5,
+                ease: 'power3.out',
+            }),
+            onLeaveBack: batch => gsap.to(batch, {
+                opacity: 0,
+                y: 50,
+                stagger: 0.1,
+                duration: 0.3,
+                ease: 'power3.in'
+            }),
+        });
+    }
+  }, []);
 
   const dummyCourses: Course[] = [
     {
@@ -193,7 +225,7 @@ export default function Home() {
             <div className="container mx-auto px-4">
                 <div className="relative -mt-40">
                   <Card className="shadow-2xl">
-                    <CardContent className="p-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <CardContent ref={featuresRef} className="p-8 grid grid-cols-2 md:grid-cols-4 gap-8">
                        <div className="text-center flex flex-col items-center gap-2">
                            <div className="p-3 bg-red-100 rounded-lg">
                                <Video className="h-6 w-6 text-red-500"/>
