@@ -11,14 +11,14 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import crypto from 'crypto';
 
-export const VerifyPaymentInputSchema = z.object({
+const VerifyPaymentInputSchema = z.object({
   order_id: z.string(),
   payment_id: z.string(),
   signature: z.string(),
 });
 export type VerifyPaymentInput = z.infer<typeof VerifyPaymentInputSchema>;
 
-export const VerifyPaymentOutputSchema = z.object({
+const VerifyPaymentOutputSchema = z.object({
   isVerified: z.boolean(),
 });
 export type VerifyPaymentOutput = z.infer<typeof VerifyPaymentOutputSchema>;

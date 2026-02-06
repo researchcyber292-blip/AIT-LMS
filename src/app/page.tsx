@@ -176,42 +176,32 @@ export default function Home() {
             </div>
         </section>
 
-        {/* Why Choose Us Section */}
+        {/* About Us Section */}
         <section className="py-16 md:py-24 bg-card">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="font-headline text-3xl font-bold sm:text-4xl">Why Choose Aviraj Info Tech?</h2>
-              <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                We are dedicated to providing the best and most affordable cybersecurity education in India.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center p-6 bg-background rounded-lg shadow-sm border">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto mb-4">
-                  <BookOpen className="h-8 w-8" />
-                </div>
-                <h3 className="font-headline text-xl font-semibold">Expert-Led Curriculum</h3>
-                <p className="mt-2 text-muted-foreground">
-                  Our courses are designed and taught by industry veterans with real-world experience in cybersecurity.
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="font-headline text-3xl font-bold sm:text-4xl">About Aviraj Info Tech</h2>
+                <p className="mt-4 text-lg text-muted-foreground">
+                  Aviraj Info Tech is a leading provider of cybersecurity education, committed to empowering the next generation of security professionals. Our mission is to deliver high-quality, accessible, and affordable training that equips students with the real-world skills needed to tackle the challenges of the digital age.
                 </p>
+                 <p className="mt-4 text-muted-foreground">
+                  Founded by industry experts, we combine cutting-edge curriculum with hands-on learning to ensure our students are not just certified, but truly job-ready. Join us to turn your passion for technology into a rewarding career in cybersecurity.
+                </p>
+                <div className="mt-8">
+                    <Button asChild>
+                        <Link href="/about">Learn More</Link>
+                    </Button>
+                </div>
               </div>
-              <div className="text-center p-6 bg-background rounded-lg shadow-sm border">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto mb-4">
-                  <Target className="h-8 w-8" />
-                </div>
-                <h3 className="font-headline text-xl font-semibold">Hands-On Learning</h3>
-                <p className="mt-2 text-muted-foreground">
-                  Gain practical skills with hands-on labs, real-world projects, and interactive sessions.
-                </p>
-              </div>
-              <div className="text-center p-6 bg-background rounded-lg shadow-sm border">
-                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto mb-4">
-                  <Heart className="h-8 w-8" />
-                </div>
-                <h3 className="font-headline text-xl font-semibold">Affordable & Accessible</h3>
-                <p className="mt-2 text-muted-foreground">
-                  We believe quality education should be available to everyone, everywhere, at a fair price.
-                </p>
+              <div className="relative w-full h-96 rounded-lg overflow-hidden">
+                <Image
+                  src="/HOME1.png"
+                  alt="A team of cybersecurity experts working together"
+                  fill
+                  className="object-cover"
+                  data-ai-hint="cybersecurity team"
+                />
               </div>
             </div>
           </div>

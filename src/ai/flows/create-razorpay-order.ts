@@ -11,14 +11,14 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import Razorpay from 'razorpay';
 
-export const CreateRazorpayOrderInputSchema = z.object({
+const CreateRazorpayOrderInputSchema = z.object({
   amount: z.number().describe('The order amount in the smallest currency unit (e.g., paise for INR).'),
   currency: z.string().describe('The currency of the order (e.g., "INR").'),
   receipt: z.string().describe('A unique receipt ID for the order.'),
 });
 export type CreateRazorpayOrderInput = z.infer<typeof CreateRazorpayOrderInputSchema>;
 
-export const CreateRazorpayOrderOutputSchema = z.object({
+const CreateRazorpayOrderOutputSchema = z.object({
   id: z.string(),
   amount: z.number(),
   currency: z.string(),
