@@ -2,46 +2,40 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Video, FileText, Clock, Award, BookOpen, Target, Heart } from 'lucide-react';
+import { Video, FileText, Clock, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, limit, query } from 'firebase/firestore';
 import type { Course } from '@/lib/types';
 import { CourseCard } from '@/components/course-card';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
 
-  function PopularCourses() {
-    const firestore = useFirestore();
-    const coursesQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(collection(firestore, 'courses'), limit(3));
-    }, [firestore]);
-
-    const { data: courses, isLoading } = useCollection<Course>(coursesQuery);
-    
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isLoading ? (
-                <>
-                    <Skeleton className="h-96 rounded-lg" />
-                    <Skeleton className="h-96 rounded-lg" />
-                    <Skeleton className="h-96 rounded-lg" />
-                </>
-            ) : courses && courses.length > 0 ? (
-                courses.map((course) => (
-                    <CourseCard key={course.id} course={course} />
-                ))
-            ) : (
-                <div className="text-center text-muted-foreground col-span-full py-12">
-                    <p>No courses available at the moment. Please check back later.</p>
-                </div>
-            )}
-        </div>
-    );
-  }
+  const dummyCourses = [
+    {
+      id: 'dummy-1',
+      title: 'Ethical Hacking Essentials',
+      description: 'Learn the fundamentals of ethical hacking and penetration testing to secure modern systems.',
+      price: 499,
+      image: 'https://images.unsplash.com/photo-1631624220291-8f191fbdb543?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYWNrZXIlMjBjb2RlfGVufDB8fHx8MTc2OTA5Njc3OHww&ixlib=rb-4.1.0&q=80&w=1080',
+      imageHint: 'hacker code',
+    },
+    {
+      id: 'dummy-2',
+      title: 'Network Security & Defense',
+      description: 'Master the art of defending networks against sophisticated cyber attacks and intrusions.',
+      price: 799,
+      image: 'https://images.unsplash.com/photo-1639066648921-82d4500abf1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzZXJ2ZXIlMjByb29tfGVufDB8fHx8MTc2OTEzODc5N3ww&ixlib=rb-4.1.0&q=80&w=1080',
+      imageHint: 'server room',
+    },
+    {
+      id: 'dummy-3',
+      title: 'Web App Pentesting',
+      description: 'Discover and exploit vulnerabilities in modern web applications before the attackers do.',
+      price: 699,
+      image: 'https://images.unsplash.com/photo-1548092372-0d1bd40894a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwc2VjdXJpdHl8ZW58MHx8fHwxNzY5MTE5MTI4fDA&ixlib=rb-4.1.0&q=80&w=1080',
+      imageHint: 'digital security',
+    },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -217,7 +211,11 @@ export default function Home() {
                         Dive into our most sought-after courses and start your journey to mastery.
                     </p>
                 </div>
-                <PopularCourses />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {dummyCourses.map((course) => (
+                      <CourseCard key={course.id} course={course as Course} />
+                  ))}
+                </div>
             </div>
         </section>
       </main>
