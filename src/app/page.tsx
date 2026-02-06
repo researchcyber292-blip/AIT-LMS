@@ -2,11 +2,46 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Video, FileText, HelpCircle, Award } from 'lucide-react';
+import { Video, FileText, HelpCircle, Award, BookOpen, Target, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, limit, query } from 'firebase/firestore';
+import type { Course } from '@/lib/types';
+import { CourseCard } from '@/components/course-card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
+
+  function PopularCourses() {
+    const firestore = useFirestore();
+    const coursesQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return query(collection(firestore, 'courses'), limit(3));
+    }, [firestore]);
+
+    const { data: courses, isLoading } = useCollection<Course>(coursesQuery);
+    
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {isLoading ? (
+                <>
+                    <Skeleton className="h-96 rounded-lg" />
+                    <Skeleton className="h-96 rounded-lg" />
+                    <Skeleton className="h-96 rounded-lg" />
+                </>
+            ) : courses && courses.length > 0 ? (
+                courses.map((course) => (
+                    <CourseCard key={course.id} course={course} />
+                ))
+            ) : (
+                <div className="text-center text-muted-foreground col-span-full py-12">
+                    <p>No courses available at the moment. Please check back later.</p>
+                </div>
+            )}
+        </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -138,6 +173,60 @@ export default function Home() {
                     </CardContent>
                   </Card>
                 </div>
+            </div>
+        </section>
+
+        {/* Why Choose Us Section */}
+        <section className="py-16 md:py-24 bg-card">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="font-headline text-3xl font-bold sm:text-4xl">Why Choose Aviraj Info Tech?</h2>
+              <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                We are dedicated to providing the best and most affordable cybersecurity education in India.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center p-6 bg-background rounded-lg shadow-sm border">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto mb-4">
+                  <BookOpen className="h-8 w-8" />
+                </div>
+                <h3 className="font-headline text-xl font-semibold">Expert-Led Curriculum</h3>
+                <p className="mt-2 text-muted-foreground">
+                  Our courses are designed and taught by industry veterans with real-world experience in cybersecurity.
+                </p>
+              </div>
+              <div className="text-center p-6 bg-background rounded-lg shadow-sm border">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto mb-4">
+                  <Target className="h-8 w-8" />
+                </div>
+                <h3 className="font-headline text-xl font-semibold">Hands-On Learning</h3>
+                <p className="mt-2 text-muted-foreground">
+                  Gain practical skills with hands-on labs, real-world projects, and interactive sessions.
+                </p>
+              </div>
+              <div className="text-center p-6 bg-background rounded-lg shadow-sm border">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary mx-auto mb-4">
+                  <Heart className="h-8 w-8" />
+                </div>
+                <h3 className="font-headline text-xl font-semibold">Affordable & Accessible</h3>
+                <p className="mt-2 text-muted-foreground">
+                  We believe quality education should be available to everyone, everywhere, at a fair price.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Popular Courses Section */}
+        <section className="py-16 md:py-24">
+            <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="font-headline text-3xl font-bold sm:text-4xl">Explore Our Popular Courses</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                        Dive into our most sought-after courses and start your journey to mastery.
+                    </p>
+                </div>
+                <PopularCourses />
             </div>
         </section>
       </main>
