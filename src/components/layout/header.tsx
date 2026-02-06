@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -66,6 +65,13 @@ export function Header() {
         {/* Auth Buttons & Mobile Nav */}
         <div className="flex-1 flex justify-end items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
+              {!isUserLoading && !user && (
+                 <Button asChild size="sm" variant="ghost">
+                    <Link href="/signup">
+                        Sign Up
+                    </Link>
+                </Button>
+              )}
               <Button asChild size="sm" variant="default" className="rounded-full font-bold">
                 <Link href={user ? "/dashboard" : "/login"}>
                   <ShieldCheck className="mr-2 h-4 w-4" />
@@ -119,6 +125,15 @@ export function Header() {
                         </nav>
                         
                         <div className="mt-auto flex flex-col gap-2 border-t p-4">
+                          {!isUserLoading && !user && (
+                            <SheetClose asChild>
+                                <Button asChild className="w-full rounded-full" variant="outline">
+                                    <Link href="/signup">
+                                        Sign Up
+                                    </Link>
+                                </Button>
+                            </SheetClose>
+                          )}
                           <SheetClose asChild>
                             <Button asChild className="w-full rounded-full" variant={user ? "secondary" : "default"}>
                                 <Link href={user ? "/dashboard" : "/login"}>
