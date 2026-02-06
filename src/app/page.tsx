@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -30,10 +29,10 @@ export default function Home() {
       liveSessionsEnabled: false,
       resourcesEnabled: false,
       createdAt: null,
-      rating: 0,
-      reviews: 0,
-      lessons: 1,
-      students: 0,
+      rating: 4,
+      reviews: 120,
+      lessons: 12,
+      students: 1543,
       instructor: {
           name: 'Robert Smith',
           avatar: 'https://picsum.photos/seed/instructor-1/40/40'
@@ -46,7 +45,7 @@ export default function Home() {
       longDescription: '',
       price: 25.50,
       image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
-      imageHint: 'digital marketing course',
+      imageHint: 'e-commerce development',
       instructorId: 'dummy-instructor',
       learningObjectives: [],
       curriculum: [],
@@ -57,13 +56,13 @@ export default function Home() {
       liveSessionsEnabled: false,
       resourcesEnabled: false,
       createdAt: null,
-      rating: 0,
-      reviews: 0,
-      lessons: 2,
-      students: 0,
+      rating: 4,
+      reviews: 98,
+      lessons: 15,
+      students: 2011,
       instructor: {
-          name: 'Robert Smith',
-          avatar: 'https://picsum.photos/seed/instructor-1/40/40'
+          name: 'Maria Garcia',
+          avatar: 'https://picsum.photos/seed/instructor-2/40/40'
       }
     },
     {
@@ -73,24 +72,24 @@ export default function Home() {
       longDescription: '',
       price: 240,
       image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
-      imageHint: 'digital marketing course',
+      imageHint: 'web development',
       instructorId: 'dummy-instructor',
       learningObjectives: [],
       curriculum: [],
       level: 'Intermediate',
-      category: 'Data Science',
+      category: 'Web Development',
       priceType: 'paid',
-      duration: '2h 30m',
+      duration: '8h 15m',
       liveSessionsEnabled: false,
       resourcesEnabled: false,
       createdAt: null,
-      rating: 0,
-      reviews: 0,
-      lessons: 1,
-      students: 0,
+      rating: 4,
+      reviews: 255,
+      lessons: 45,
+      students: 5230,
       instructor: {
-          name: 'Robert Smith',
-          avatar: 'https://picsum.photos/seed/instructor-1/40/40'
+          name: 'James Johnson',
+          avatar: 'https://picsum.photos/seed/instructor-3/40/40'
       }
     },
   ];

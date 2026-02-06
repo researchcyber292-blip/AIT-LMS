@@ -54,10 +54,10 @@ export function CourseCard({ course }: CourseCardProps) {
           <Link href={`/courses/${course.id}`} className="hover:text-primary transition-colors">{course.title}</Link>
         </h3>
         
-        <div className="flex items-center text-xs text-muted-foreground gap-x-4 gap-y-1 flex-wrap">
-            {course.duration && <div className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5"/><span>{course.duration}</span></div>}
-            {course.lessons && <div className="flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5"/><span>{course.lessons} Lessons</span></div>}
-            {course.students && <div className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5"/><span>{course.students} Students</span></div>}
+        <div className="flex items-center text-sm text-muted-foreground gap-x-4 gap-y-1 flex-wrap">
+            {course.duration && <div className="flex items-center gap-1.5"><Clock className="h-4 w-4"/><span>{course.duration}</span></div>}
+            {course.lessons && <div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4"/><span>{course.lessons} Lessons</span></div>}
+            {course.students && <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/><span>{course.students} Students</span></div>}
         </div>
         
         <div className="!mt-auto pt-4 border-t border-border">
