@@ -13,6 +13,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -249,6 +250,48 @@ export default function Home() {
     }
   ];
 
+  const latestBlogs = [
+    {
+      title: 'Top 10 Cybersecurity Threats to Watch in 2024',
+      category: 'Threat Intelligence',
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'cybersecurity threats',
+      excerpt: 'As technology evolves, so do the threats. We break down the most significant cyber threats that individuals and businesses will face this year.',
+      author: {
+        name: 'Aviraj Singh',
+        avatar: 'https://picsum.photos/seed/instructor-1/40/40'
+      },
+      date: 'July 26, 2024',
+      href: '#'
+    },
+    {
+      title: 'A Beginner\'s Guide to Ethical Hacking',
+      category: 'Ethical Hacking',
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'ethical hacking guide',
+      excerpt: 'Ever wondered how hackers think? Our guide to ethical hacking will introduce you to the core concepts and tools used by security professionals.',
+      author: {
+        name: 'Priya Sharma',
+        avatar: 'https://picsum.photos/seed/instructor-2/40/40'
+      },
+      date: 'July 22, 2024',
+      href: '#'
+    },
+    {
+      title: 'The Rise of AI in Cybersecurity: Friend or Foe?',
+      category: 'AI Security',
+      image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
+      imageHint: 'ai cybersecurity',
+      excerpt: 'Artificial intelligence is a double-edged sword. Learn how AI is being used to both defend against and carry out sophisticated cyber attacks.',
+      author: {
+        name: 'Rajesh Kumar',
+        avatar: 'https://picsum.photos/seed/instructor-3/40/40'
+      },
+      date: 'July 18, 2024',
+      href: '#'
+    }
+  ];
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-1 pt-14">
@@ -478,6 +521,56 @@ export default function Home() {
               </CarouselContent>
             </Carousel>
           </div>
+        </section>
+
+        {/* Latest Blogs Section */}
+        <section className="py-16 md:py-24">
+            <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="font-headline text-3xl font-bold sm:text-4xl">From Our Blog</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                        Stay updated with the latest trends, tutorials, and insights from the world of cybersecurity.
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {latestBlogs.map((post) => (
+                        <Card key={post.title} className="flex h-full flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 bg-card border-border group">
+                            <div className="relative overflow-hidden rounded-t-lg">
+                                <Link href={post.href} className="block">
+                                    <Image
+                                        src={post.image}
+                                        alt={post.title}
+                                        width={600}
+                                        height={400}
+                                        className="aspect-video w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        data-ai-hint={post.imageHint}
+                                    />
+                                </Link>
+                            </div>
+                            <CardContent className="flex flex-1 flex-col p-4 space-y-3">
+                                <Badge variant="secondary">{post.category}</Badge>
+                                <h3 className="font-bold text-lg leading-snug flex-1">
+                                    <Link href={post.href} className="hover:text-primary transition-colors">{post.title}</Link>
+                                </h3>
+                                <p className="text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>
+                                
+                                <div className="!mt-auto pt-4 border-t border-border">
+                                    <div className="flex justify-between items-center text-sm text-muted-foreground">
+                                      <div className="flex items-center gap-2">
+                                            <Avatar className="h-7 w-7">
+                                                <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                                                <AvatarFallback>{post.author.name?.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <span className="font-medium">{post.author.name}</span>
+                                        </div>
+                                        <span>{post.date}</span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
         </section>
       </main>
     </div>
