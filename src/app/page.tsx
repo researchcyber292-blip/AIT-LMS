@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -265,7 +266,7 @@ export default function Home() {
       href: '#'
     },
     {
-      title: 'A Beginner\'s Guide to Ethical Hacking',
+      title: "A Beginner's Guide to Ethical Hacking",
       category: 'Ethical Hacking',
       image: 'https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80',
       imageHint: 'ethical hacking guide',
