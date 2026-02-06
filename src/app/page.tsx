@@ -160,7 +160,7 @@ export default function Home() {
                        </div>
                        <div className="text-center flex flex-col items-center gap-2">
                            <div className="p-3 bg-purple-100 rounded-lg">
-                               <HelpCircle className="h-6 w-6 text-purple-500"/>
+                               <Heart className="h-6 w-6 text-purple-500"/>
                            </div>
                            <h3 className="font-bold text-lg">24 x 7</h3>
                            <p className="text-sm text-muted-foreground">Doubt solving sessions</p>
