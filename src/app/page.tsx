@@ -620,13 +620,6 @@ export default function Home() {
         {/* Upcoming Courses Section */}
         <section className="py-16 md:py-24 bg-secondary/30">
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-12">
-              <h2 className="font-headline text-3xl font-bold sm:text-4xl">See Our Upcoming Courses</h2>
-              <div className="hidden md:flex gap-2">
-                <CarouselPrevious className="static translate-y-0" />
-                <CarouselNext className="static translate-y-0" />
-              </div>
-            </div>
             <Carousel
               opts={{
                 align: "start",
@@ -634,6 +627,13 @@ export default function Home() {
               }}
               className="w-full"
             >
+              <div className="flex justify-between items-center mb-12">
+                <h2 className="font-headline text-3xl font-bold sm:text-4xl">See Our Upcoming Courses</h2>
+                <div className="hidden md:flex gap-2">
+                  <CarouselPrevious className="static translate-y-0" />
+                  <CarouselNext className="static translate-y-0" />
+                </div>
+              </div>
               <CarouselContent className="-ml-4">
                 {upcomingCourses.map((course) => (
                   <CarouselItem key={course.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
