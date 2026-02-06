@@ -99,7 +99,7 @@ export default function Home() {
               </div>
                <div className="relative h-96 md:h-full w-full flex items-center justify-between">
                       {/* Left Character (CEO - Answering) */}
-                      <div className="relative transform translate-y-[8rem]">
+                      <div className="relative transform translate-y-[6rem]">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
                           {/* Floating Dots */}
@@ -112,7 +112,7 @@ export default function Home() {
                                   src="/ceo.png"
                                   alt="Aviraj Singh, CEO"
                                   fill
-                                  className="object-cover object-[center_80%]"
+                                  className="object-cover object-[center_100%]"
                               />
                           </div>
                           {/* Speech Bubble */}
@@ -124,7 +124,7 @@ export default function Home() {
                       </div>
 
                       {/* Right Character (Professional - Asking) */}
-                      <div className="relative transform -translate-y-12">
+                      <div className="relative transform -translate-y-20">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow [animation-direction:reverse]"></div>
                           {/* Floating Dots */}
