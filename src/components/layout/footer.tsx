@@ -1,3 +1,4 @@
+
 'use client'
 
 import Link from 'next/link';
@@ -17,6 +18,10 @@ export function Footer() {
         { label: 'Blog', href: '#' },
         { label: 'Careers', href: '#' },
         { label: 'Contact Us', href: '/contact' },
+        { label: 'Press Kit', href: '#' },
+        { label: 'Brand Guidelines', href: '#' },
+        { label: 'Partnerships', href: '#' },
+        { label: 'Investors', href: '#' },
       ]
     },
     {
@@ -28,6 +33,11 @@ export function Footer() {
         { label: 'AI & ML', href: '/courses' },
         { label: 'Robotics & Tech', href: '/courses' },
         { label: 'Cloud Security', href: '/courses' },
+        { label: 'Network Security', href: '/courses' },
+        { label: 'Malware Analysis', href: '/courses' },
+        { label: 'Digital Forensics', href: '/courses' },
+        { label: 'Penetration Testing', href: '/courses' },
+        { label: 'Cybersecurity Law', href: '/courses' },
       ]
     },
     {
@@ -39,7 +49,31 @@ export function Footer() {
         { label: 'Community Forum', href: '#' },
         { label: 'Live Classes', href: '/live-classes' },
         { label: 'Explore Videos', href: '/explore' },
+        { label: 'Webinars', href: '#' },
+        { label: 'Whitepapers', href: '#' },
+        { label: 'Case Studies', href: '#' },
+        { label: 'Glossary', href: '#' },
       ]
+    },
+    {
+        title: 'For Business',
+        links: [
+            { label: 'Corporate Training', href: '#' },
+            { label: 'Team Subscriptions', href: '#' },
+            { label: 'Security Audits', href: '#' },
+            { label: 'Consulting Services', href: '#' },
+            { label: 'Enterprise Solutions', href: '#' },
+        ]
+    },
+    {
+        title: 'Support',
+        links: [
+            { label: 'General Support', href: '/contact' },
+            { label: 'Technical Support', href: '/contact' },
+            { label: 'Billing Inquiries', href: '/contact' },
+            { label: 'Report an Issue', href: '/contact' },
+            { label: 'Give Feedback', href: '#' },
+        ]
     },
     {
       title: 'Legal',
@@ -49,7 +83,34 @@ export function Footer() {
         { label: 'Cookie Policy', href: '#' },
         { label: 'Admin Login', href: '/admin' },
         { label: 'Student Login', href: '/login' },
+        { label: 'Instructor Login', href: '/login' },
+        { label: 'Sitemap', href: '#' },
+        { label: 'Accessibility', href: '#' },
+        { label: 'Security', href: '#' },
       ]
+    },
+    {
+        title: 'Community',
+        links: [
+            { label: 'Discord Server', href: '#' },
+            { label: 'Events', href: '#' },
+            { label: 'Student Showcase', href: '#' },
+            { label: 'Leaderboard', href: '#' },
+            { label: 'Ambassador Program', href: '#' },
+        ]
+    },
+     {
+        title: 'More',
+        links: [
+            { label: 'Affiliate Program', href: '#' },
+            { label: 'Scholarships', href: '#' },
+            { label: 'Gift a Course', href: '#' },
+            { label: 'Redeem Code', href: '#' },
+            { label: 'System Status', href: '#' },
+            { label: 'Swag Store', href: '#' },
+            { label: 'Testimonials', href: '#' },
+            { label: 'Press Inquiries', href: '#' },
+        ]
     }
   ];
 
