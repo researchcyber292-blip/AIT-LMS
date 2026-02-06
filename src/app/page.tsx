@@ -52,12 +52,12 @@ export default function Home() {
           className="relative"
         >
           <Image
-            src="https://images.unsplash.com/photo-1620121692029-d088224ddc74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwYXN0ZWwlMjBhYnN0cmFjdHxlbnwwfHx8fDE3NzAxNzAxODR8MA&ixlib=rb-4.1.0&q=80&w=1080"
-            alt="Abstract pastel waves"
+            src="/background.png"
+            alt="Hero background image"
             fill
             className="object-cover"
             quality={100}
-            data-ai-hint="pastel abstract"
+            data-ai-hint="abstract background"
           />
           <div className="absolute inset-0 bg-background/60" />
 
