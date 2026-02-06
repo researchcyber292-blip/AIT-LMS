@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -97,10 +98,9 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-               <div className="relative h-96 md:h-full w-full flex items-center justify-center">
-                  <div className="relative w-full max-w-3xl flex items-center justify-between">
+               <div className="relative h-96 md:h-full w-full flex items-center justify-between">
                       {/* Left Character (CEO - Answering) */}
-                      <div className="relative transform translate-y-8">
+                      <div className="relative transform translate-y-16">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
                           {/* Floating Dots */}
@@ -117,7 +117,7 @@ export default function Home() {
                               />
                           </div>
                           {/* Speech Bubble */}
-                          <div className="absolute bottom-16 left-[90%] w-64 bg-primary text-primary-foreground p-4 rounded-lg shadow-xl z-10">
+                          <div className="absolute bottom-24 left-[90%] w-56 bg-primary text-primary-foreground p-3 rounded-lg shadow-xl z-10">
                               <p className="text-sm">"AIT is where students master cybersecurity with expert guidance and love."</p>
                               {/* Triangle */}
                               <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-primary border-b-8 border-b-transparent"></div>
@@ -125,7 +125,7 @@ export default function Home() {
                       </div>
 
                       {/* Right Character (Professional - Asking) */}
-                      <div className="relative transform -translate-y-8">
+                      <div className="relative transform -translate-y-12">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow [animation-direction:reverse]"></div>
                           {/* Floating Dots */}
@@ -138,18 +138,17 @@ export default function Home() {
                                   src="/man_home_page.png"
                                   alt="Cybersecurity Professional"
                                   fill
-                                  className="object-cover object-top"
+                                  className="object-cover object-[center_20%]"
                               />
                           </div>
                           {/* Speech Bubble */}
-                          <div className="absolute top-4 right-[90%] w-56 bg-card text-card-foreground p-4 rounded-lg shadow-xl z-10">
+                          <div className="absolute top-8 right-[90%] w-48 bg-card text-card-foreground p-3 rounded-lg shadow-xl z-10">
                               <p className="text-sm">"Aviraj Sir, What is AIT?"</p>
                               {/* Triangle */}
                               <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-l-8 border-l-card border-b-8 border-b-transparent"></div>
                           </div>
                       </div>
-                  </div>
-              </div>
+                </div>
             </div>
           </div>
         </section>
