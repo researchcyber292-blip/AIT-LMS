@@ -24,7 +24,7 @@ export default function Home() {
                   Educational Platform
                 </h1>
                 <p className="mt-6 max-w-xl mx-auto md:mx-0 text-lg text-foreground/80">
-                  Unlock your potential by signing up with Physics Wallah-
+                  Unlock your potential by signing up with Aviraj Info Tech-
                   The most affordable learning solution
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
@@ -56,7 +56,7 @@ export default function Home() {
                           </div>
                           {/* Speech Bubble */}
                           <div className="absolute bottom-12 left-[80%] w-56 bg-indigo-900 text-white p-3 rounded-lg shadow-xl z-10">
-                              <p className="text-sm">"PW is where students learn with love and can grow with guidance."</p>
+                              <p className="text-sm">"AIT is where students learn with love and can grow with guidance."</p>
                               {/* Triangle */}
                               <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-indigo-900 border-b-8 border-b-transparent"></div>
                           </div>
@@ -82,7 +82,7 @@ export default function Home() {
                           </div>
                           {/* Speech Bubble */}
                           <div className="absolute top-8 right-[80%] w-48 bg-white text-black p-3 rounded-lg shadow-xl z-10">
-                              <p className="text-sm">"Alakh Sir, What is PW?"</p>
+                              <p className="text-sm">"Alakh Sir, What is AIT?"</p>
                               {/* Triangle */}
                               <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-l-8 border-l-white border-b-8 border-b-transparent"></div>
                           </div>
