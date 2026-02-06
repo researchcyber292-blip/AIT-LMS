@@ -36,7 +36,7 @@ export default function Home() {
               </div>
                <div className="relative h-96 md:h-full w-full flex items-center justify-center">
                       {/* Left Character (CEO) */}
-                      <div className="relative transform -translate-x-16">
+                      <div className="relative transform -translate-x-16 translate-y-8">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
                           {/* Floating Dots */}
@@ -46,11 +46,11 @@ export default function Home() {
                           {/* Image Container */}
                           <div className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 border-white shadow-lg">
                               <Image
-                                  src="https://www.edudag.com/wp-content/uploads/2022/07/Alakh-Pandey-1.jpg"
+                                  src="/ceo.png"
                                   alt="Alakh Pandey, CEO"
                                   width={224}
                                   height={224}
-                                  className="object-cover"
+                                  className="object-cover absolute top-[-40px]"
                               />
                           </div>
                           {/* Speech Bubble */}
@@ -72,7 +72,7 @@ export default function Home() {
                           {/* Image Container */}
                           <div className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 border-white shadow-lg">
                               <Image
-                                  src="https://images.unsplash.com/photo-1594899537243-99d8de212b48?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
+                                  src="/student.png"
                                   alt="Student"
                                   width={224}
                                   height={224}

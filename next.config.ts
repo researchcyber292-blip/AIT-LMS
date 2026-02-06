@@ -61,12 +61,6 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'www.edudag.com',
-        port: '',
-        pathname: '/**',
-      },
     ],
   },
   env: {
