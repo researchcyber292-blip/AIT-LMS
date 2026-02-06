@@ -177,15 +177,15 @@ export default function Home() {
         </section>
 
         {/* About Us Section */}
-        <section className="py-16 md:py-24 bg-card">
+        <section className="py-16 md:py-24 bg-[#FFF5EC]">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="font-headline text-3xl font-bold sm:text-4xl">About Aviraj Info Tech</h2>
-                <p className="mt-4 text-lg text-muted-foreground">
+                <h2 className="font-headline text-3xl font-bold sm:text-4xl text-gray-900">About Aviraj Info Tech</h2>
+                <p className="mt-4 text-lg text-gray-800">
                   Aviraj Info Tech is a leading provider of cybersecurity education, committed to empowering the next generation of security professionals. Our mission is to deliver high-quality, accessible, and affordable training that equips students with the real-world skills needed to tackle the challenges of the digital age.
                 </p>
-                 <p className="mt-4 text-muted-foreground">
+                 <p className="mt-4 text-gray-700">
                   Founded by industry experts, we combine cutting-edge curriculum with hands-on learning to ensure our students are not just certified, but truly job-ready. Join us to turn your passion for technology into a rewarding career in cybersecurity.
                 </p>
                 <div className="mt-8">
