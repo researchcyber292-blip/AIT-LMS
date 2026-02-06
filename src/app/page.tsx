@@ -568,7 +568,7 @@ export default function Home() {
         </section>
 
         {/* Latest Blogs Section */}
-        <section className="py-16 md:py-24">
+        <section id="blog" className="py-16 md:py-24 scroll-mt-16">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                     <h2 className="font-headline text-3xl font-bold sm:text-4xl">From Our Blog</h2>

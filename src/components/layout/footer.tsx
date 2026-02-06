@@ -14,14 +14,14 @@ export function Footer() {
       title: 'Company',
       links: [
         { label: 'About Us', href: '/about' },
-        { label: 'Our Team', href: '/#team' },
-        { label: 'Blog', href: '#' },
-        { label: 'Careers', href: '#' },
+        { label: 'Our Team', href: '/team' },
+        { label: 'Blog', href: '/#blog' },
+        { label: 'Careers', href: '/careers' },
         { label: 'Contact Us', href: '/contact' },
-        { label: 'Press Kit', href: '#' },
-        { label: 'Brand Guidelines', href: '#' },
-        { label: 'Partnerships', href: '#' },
-        { label: 'Investors', href: '#' },
+        { label: 'Press Kit', href: '/press-kit' },
+        { label: 'Brand Guidelines', href: '/brand-guidelines' },
+        { label: 'Partnerships', href: '/restricted-access' },
+        { label: 'Investors', href: '/restricted-access' },
       ]
     },
     {
