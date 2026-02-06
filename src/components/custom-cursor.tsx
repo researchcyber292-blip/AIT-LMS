@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -46,17 +45,31 @@ export function CustomCursor() {
   return (
     <div
       className={cn(
-        'pointer-events-none fixed z-[9999] h-3 w-3 rounded-full bg-black transition-transform duration-200 ease-in-out',
+        'pointer-events-none fixed z-[9999] transition-transform duration-200 ease-in-out',
         {
-          'scale-[3]': isHovering,
+          'scale-125': isHovering, // A more subtle zoom on hover
           'opacity-0': !isVisible,
         }
       )}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        transform: 'translate(-50%, -50%)',
       }}
-    />
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M4 0L4 19L9 14L13 24L16 22L11.5 13L18 13L4 0Z"
+          fill="black"
+          stroke="white"
+          strokeWidth="1"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
   );
 }
