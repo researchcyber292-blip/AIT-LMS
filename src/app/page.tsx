@@ -99,7 +99,7 @@ export default function Home() {
     },
     {
       id: 'dummy-3',
-      title: 'Full Stack Web Development with JavaScript',
+      title: 'Full Stack Web Development Bootcamp',
       description: '',
       longDescription: '',
       price: 240,
