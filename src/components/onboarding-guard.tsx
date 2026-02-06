@@ -30,7 +30,23 @@ const INSTRUCTOR_ONBOARDING_PAGES = [
 ];
 
 // Pages accessible to anyone, logged in or not.
-const PUBLIC_PAGES = ['/', '/login', '/about', '/courses', '/explore', '/programs', '/certifications', '/contact', '/admin', '/instructor-signup'];
+const PUBLIC_PAGES = [
+    '/', 
+    '/login', 
+    '/about', 
+    '/courses', 
+    '/explore', 
+    '/programs', 
+    '/certifications', 
+    '/contact', 
+    '/admin', 
+    '/instructor-signup',
+    '/team',
+    '/careers',
+    '/press-kit',
+    '/brand-guidelines',
+    '/restricted-access'
+];
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
