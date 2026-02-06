@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -6,10 +5,8 @@ import Image from 'next/image';
 import { Video, FileText, HelpCircle, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import imageData from '@/lib/placeholder-images.json';
 
 export default function Home() {
-  const heroBg = imageData.placeholderImages.find(img => img.id === 'hero-background');
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -18,16 +15,13 @@ export default function Home() {
         <section 
           className="relative"
         >
-          {heroBg && (
-            <Image
-              src={heroBg.imageUrl}
-              alt={heroBg.description}
-              fill
-              className="object-cover"
-              data-ai-hint={heroBg.imageHint}
-              quality={100}
-            />
-          )}
+          <Image
+            src="/background.png"
+            alt="Abstract background pattern"
+            fill
+            className="object-cover"
+            quality={100}
+          />
           <div className="absolute inset-0 bg-background/60" />
 
           <div className="container relative px-4">
@@ -63,7 +57,7 @@ export default function Home() {
                           <div className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden border-4 border-white shadow-lg">
                               <Image
                                   src="/ceo.png"
-                                  alt="Avanish Singh, CEO"
+                                  alt="Avanish Sir, CEO"
                                   width={224}
                                   height={224}
                                   className="object-cover absolute top-[-40px]"
@@ -78,7 +72,7 @@ export default function Home() {
                       </div>
 
                       {/* Right Character (Student) */}
-                      <div className="relative transform translate-x-24 -translate-y-10">
+                      <div className="relative transform translate-x-32 -translate-y-10">
                           {/* Dashed Circle */}
                           <div className="absolute -inset-4 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow [animation-direction:reverse]"></div>
                           {/* Floating Dots */}
