@@ -166,7 +166,7 @@ export default function Home() {
                        </div>
                        <div className="text-center flex flex-col items-center gap-2">
                            <div className="p-3 bg-yellow-100 rounded-lg">
-                               <Award className="h-6 w-6 text-yellow-500"/>
+                               <BookOpen className="h-6 w-6 text-yellow-500"/>
                            </div>
                            <h3 className="font-bold text-lg">100 +</h3>
                            <p className="text-sm text-muted-foreground">Offline centres</p>
