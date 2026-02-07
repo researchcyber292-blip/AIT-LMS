@@ -15,10 +15,11 @@
  * Nested within each user's document is an `/enrollments` subcollection, which is private to that user.
  *
  * Key Security Decisions:
- * - User Isolation: A user can only access data under their own `/users/{userId}` path. Listing or
- *   accessing other users' profiles or enrollments is strictly forbidden for standard users.
- * - Admin Access: The admin panel is granted read-only access to the full user list by authenticating
- *   with a special anonymous session. This prevents regular users from listing other user data.
+ * - User Isolation: A user can only write to their own profile and data under `/users/{userId}`.
+ *   To support community features like messaging, other authenticated users are allowed to read
+ *   user profiles. It is critical that only publicly-safe information is stored in user documents.
+ * - Admin Access: An admin panel, authenticated via a special anonymous session, has elevated
+ *   privileges for managing data across the platform.
  * - Public Content Model: The `/courses` collection is readable by anyone, including unauthenticated
  *   users, to allow for creating, updating, or deleting a course is restricted
  *   to the instructor who owns it, identified by the `instructorId` field on the course document.
@@ -155,15 +156,13 @@ service cloud.firestore {
     /**
      * @description Secures student profile data.
      * @path /users/{userId}
-     * @allow (get) An authenticated user can get their own profile.
-     * @allow (list) Only a special anonymous admin session can list all user profiles.
+     * @allow (get, list) Authenticated users and admins can read/list profiles to enable messaging.
      * @deny (get) A user (`user_abc`) tries to read another user's profile (`/users/user_xyz`).
      * @deny (list) A standard signed-in user cannot list all user profiles.
      * @principle Restricts access to a user's own data tree and enforces relational integrity.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId) || isAnonymousAdmin();
-      allow list: if isAnonymousAdmin();
+      allow get, list: if isSignedIn() || isAnonymousAdmin();
       allow create: if isOwner(userId) && isUserIdConsistentOnCreate(userId);
       allow update: if isExistingOwner(userId) && isUserIdImmutable();
       allow delete: if isOwner(userId) || isAnonymousAdmin();

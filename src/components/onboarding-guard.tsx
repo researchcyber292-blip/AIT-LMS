@@ -37,7 +37,6 @@ const PUBLIC_PAGES = [
     '/register',
     '/about', 
     '/courses', 
-    '/explore', 
     '/programs', 
     '/certifications', 
     '/contact', 
