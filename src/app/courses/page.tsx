@@ -471,15 +471,17 @@ export default function CoursesPage() {
 
                     {/* Search and Filters */}
                     <div className="mb-12 space-y-8">
-                        <div className="relative max-w-lg mx-auto">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Search course..."
-                                className="w-full pl-12 h-12 text-base rounded-full shadow-sm bg-background"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                        <div className="max-w-lg mx-auto animated-glowing-border">
+                           <div className="relative flex items-center bg-background rounded-full">
+                                <Search className="absolute left-4 h-5 w-5 text-muted-foreground" />
+                                <Input
+                                    type="search"
+                                    placeholder="Search course..."
+                                    className="w-full pl-12 h-12 text-base rounded-full border-none bg-transparent shadow-none focus-visible:ring-0"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                         </div>
                         
                         <ScrollArea className="w-full whitespace-nowrap rounded-md">

@@ -60,20 +60,17 @@
 
 @layer utilities {
   .animated-glowing-border {
-    @apply relative z-0 overflow-hidden rounded-lg p-[2px];
+    @apply relative z-0 overflow-hidden rounded-full p-[1.5px];
   }
 
   .animated-glowing-border::before {
     content: '';
     @apply absolute -top-1/2 -left-1/2 -z-10 h-[200%] w-[200%] animate-rotate-border;
     background: conic-gradient(
-      hsl(var(--primary) / 0.2),
-      hsl(var(--primary) / 0.2),
-      hsl(var(--primary) / 0.2),
       hsl(var(--primary)),
-      hsl(var(--primary) / 0.2),
-      hsl(var(--primary) / 0.2),
-      hsl(var(--primary) / 0.2)
+      hsl(var(--destructive)),
+      hsl(var(--accent)),
+      hsl(var(--primary))
     );
   }
 }
