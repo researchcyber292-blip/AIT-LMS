@@ -67,6 +67,12 @@
       "imageHint": "digital twin industrial"
     },
     {
+      "id": "login-industrial-bg",
+      "description": "A futuristic 3D render of a high-tech industrial facility with glowing blue lights.",
+      "imageUrl": "https://images.unsplash.com/photo-1520699941183-424b6fdd1804?q=80&w=2070&auto=format&fit=crop",
+      "imageHint": "futuristic data center"
+    },
+    {
       "id": "onboarding-background",
       "description": "Abstract matrix-style green code on a black background.",
       "imageUrl": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjeWJlcnNlY3VyaXR5JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NjkxNzU5MDN8MA&ixlib=rb-4.1.0&q=80&w=1080",

@@ -1,9 +1,10 @@
-
 'use client';
 
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useAuth, useFirestore } from "@/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -12,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
+import imageData from '@/lib/placeholder-images.json';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -91,43 +93,59 @@ export default function LoginPage() {
     }
   };
 
+  const loginImage = imageData.placeholderImages.find(img => img.id === 'login-industrial-bg');
+
   return (
-    <div className="w-full min-h-screen bg-[#F8F7FA]">
+    <div className="w-full min-h-screen bg-background text-foreground">
        <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+          <div className="hidden md:block relative">
+             {loginImage && (
+                <Image
+                  src={loginImage.imageUrl}
+                  alt={loginImage.description}
+                  fill
+                  className="object-cover"
+                  data-ai-hint={loginImage.imageHint}
+                />
+             )}
+          </div>
           <div className="flex flex-col items-center justify-center p-8">
              <div className="w-full max-w-sm">
-                <h1 className="text-4xl font-light text-[#333] mb-8">log in</h1>
+                <h1 className="text-3xl font-bold mb-2">Log in</h1>
+                <p className="text-muted-foreground mb-8">Welcome back! Please enter your details.</p>
                 <form onSubmit={handleLogin} className="space-y-6">
-                   <div className="relative">
-                       <User className="absolute top-1/2 -translate-y-1/2 left-0 h-5 w-5 text-muted-foreground" />
-                       <input
-                           id="email"
-                           type="email"
-                           value={email}
-                           onChange={(e) => setEmail(e.target.value)}
-                           disabled={isLoading}
-                           required
-                           placeholder="Username"
-                           autoComplete="email"
-                           className="w-full pl-8 pb-2 border-b-2 border-gray-200 bg-transparent text-base focus:outline-none focus:border-[#4B0082] transition-colors"
-                       />
-                   </div>
-                   <div className="relative">
-                       <Lock className="absolute top-1/2 -translate-y-1/2 left-0 h-5 w-5 text-muted-foreground" />
-                       <input
-                           id="password"
-                           type={showPassword ? "text" : "password"}
-                           value={password}
-                           onChange={(e) => setPassword(e.target.value)}
-                           disabled={isLoading}
-                           required
-                           placeholder="Password"
-                           autoComplete="current-password"
-                           className="w-full pl-8 pb-2 border-b-2 border-gray-200 bg-transparent text-base focus:outline-none focus:border-[#4B0082] transition-colors"
-                       />
-                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground">
-                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                       </button>
+                    <div>
+                        <Label htmlFor="email">E-mail</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={isLoading}
+                            required
+                            placeholder="you@example.com"
+                            autoComplete="email"
+                            className="w-full mt-2 bg-input border-border/50 rounded-md"
+                        />
+                    </div>
+                   <div>
+                        <Label htmlFor="password">Password</Label>
+                        <div className="relative">
+                           <Input
+                               id="password"
+                               type={showPassword ? "text" : "password"}
+                               value={password}
+                               onChange={(e) => setPassword(e.target.value)}
+                               disabled={isLoading}
+                               required
+                               placeholder="••••••••"
+                               autoComplete="current-password"
+                               className="w-full mt-2 bg-input border-border/50 rounded-md"
+                           />
+                           <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 mt-1 text-muted-foreground">
+                              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                           </button>
+                        </div>
                    </div>
                    <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-2">
@@ -136,32 +154,23 @@ export default function LoginPage() {
                         </div>
                         <Link
                             href="#"
-                            className="font-medium text-muted-foreground hover:text-[#4B0082]"
+                            className="font-medium text-primary hover:underline"
                             >
                             Forgot Password?
                         </Link>
                     </div>
-                   <Button type="submit" className="w-full h-12 mt-4 font-bold bg-[#4B0082] hover:bg-[#3A006A] text-white text-lg" disabled={isLoading}>
+                   <Button type="submit" className="w-full h-12 mt-4 font-bold bg-blue-600 hover:bg-blue-700 text-white text-lg rounded-md" disabled={isLoading}>
                        {isLoading ? 'Logging in...' : 'Log in'}
                    </Button>
                 </form>
 
                 <p className="mt-8 text-center text-sm text-muted-foreground">
-                    or{' '}
-                    <Link href="/signup" className="font-semibold text-[#4B0082] hover:text-[#3A006A] underline">
+                    Don't have an account?{' '}
+                    <Link href="/signup" className="font-semibold text-primary hover:underline">
                         Sign up
                     </Link>
                 </p>
              </div>
-          </div>
-          <div className="hidden md:block relative">
-             <Image
-                  src="/cloudpink.png"
-                  alt="Fluffy pink 3D rendered clouds against a pink background."
-                  fill
-                  className="object-cover"
-                  data-ai-hint="pink clouds 3d"
-                />
           </div>
        </div>
     </div>
