@@ -1,12 +1,19 @@
-
 'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, ShieldCheck } from 'lucide-react';
+import { Menu, X, ShieldCheck, Users, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { useAuth, useUser } from '@/firebase';
@@ -83,12 +90,43 @@ export function Header() {
                     </Link>
                 </Button>
               )}
-              <Button asChild size="sm" variant="default" className="rounded-full font-bold">
-                <Link href={user ? "/dashboard" : "/login"}>
-                  <ShieldCheck className="mr-2 h-4 w-4" />
-                  CONSOLE
-                </Link>
-              </Button>
+
+              {!isUserLoading && (
+                user ? (
+                  <Button asChild size="sm" variant="default" className="rounded-full font-bold">
+                    <Link href="/dashboard">
+                      <ShieldCheck className="mr-2 h-4 w-4" />
+                      CONSOLE
+                    </Link>
+                  </Button>
+                ) : (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="default" className="rounded-full font-bold">
+                        <ShieldCheck className="mr-2 h-4 w-4" />
+                        CONSOLE
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>Access Your Console</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <Link href="/login">
+                                <Users className="mr-2 h-4 w-4" />
+                                <span>Student Console</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/login">
+                                <Briefcase className="mr-2 h-4 w-4" />
+                                <span>Instructor Console</span>
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )
+              )}
+              
               {!isUserLoading && user && (
                 <UserNav user={user} />
               )}
@@ -133,32 +171,62 @@ export function Header() {
                           ))}
                         </nav>
                         
-                        <div className="mt-auto flex flex-col gap-2 border-t p-4">
+                        <div className="mt-auto flex flex-col gap-3 border-t p-4">
                           {!isUserLoading && !user && (
-                            <SheetClose asChild>
-                                <Button asChild className="w-full rounded-full" variant="outline">
-                                    <Link href="/signup">
-                                        Sign Up
-                                    </Link>
-                                </Button>
-                            </SheetClose>
+                            <>
+                                <SheetClose asChild>
+                                    <Button asChild className="w-full rounded-full" variant="default">
+                                        <Link href="/login">
+                                            <Users className="mr-2 h-4 w-4" />
+                                            Student Console
+                                        </Link>
+                                    </Button>
+                                </SheetClose>
+                                <SheetClose asChild>
+                                    <Button asChild className="w-full rounded-full" variant="secondary">
+                                        <Link href="/login">
+                                            <Briefcase className="mr-2 h-4 w-4" />
+                                            Instructor Console
+                                        </Link>
+                                    </Button>
+                                </SheetClose>
+                                
+                                <div className="relative my-2">
+                                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                                      <div className="w-full border-t border-border" />
+                                  </div>
+                                  <div className="relative flex justify-center text-sm">
+                                      <span className="bg-background px-2 text-muted-foreground">OR</span>
+                                  </div>
+                                </div>
+                                
+                                <SheetClose asChild>
+                                    <Button asChild className="w-full rounded-full" variant="outline">
+                                        <Link href="/signup">
+                                            Create an Account
+                                        </Link>
+                                    </Button>
+                                </SheetClose>
+                            </>
                           )}
-                          <SheetClose asChild>
-                            <Button asChild className="w-full rounded-full" variant={user ? "secondary" : "default"}>
-                                <Link href={user ? "/dashboard" : "/login"}>
-                                    <ShieldCheck className="mr-2 h-4 w-4" />
-                                    CONSOLE
-                                </Link>
-                            </Button>
-                          </SheetClose>
                           {!isUserLoading && user && (
-                              <SheetClose asChild>
-                                  <Button asChild className="w-full rounded-full" onClick={() => auth.signOut()}>
-                                      <Link href="#">
-                                        Sign Out
+                              <>
+                                  <SheetClose asChild>
+                                    <Button asChild className="w-full rounded-full" variant="default">
+                                      <Link href="/dashboard">
+                                          <ShieldCheck className="mr-2 h-4 w-4" />
+                                          Go to Console
                                       </Link>
-                                  </Button>
-                              </SheetClose>
+                                    </Button>
+                                  </SheetClose>
+                                  <SheetClose asChild>
+                                      <Button asChild className="w-full rounded-full" variant="ghost" onClick={() => auth.signOut()}>
+                                          <Link href="#">
+                                            Sign Out
+                                          </Link>
+                                      </Button>
+                                  </SheetClose>
+                              </>
                           )}
                         </div>
                     </div>
