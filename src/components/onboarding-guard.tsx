@@ -32,7 +32,8 @@ const INSTRUCTOR_ONBOARDING_PAGES = [
 // Pages accessible to anyone, logged in or not.
 const PUBLIC_PAGES = [
     '/', 
-    '/login', 
+    '/login',
+    '/register',
     '/about', 
     '/courses', 
     '/explore', 
