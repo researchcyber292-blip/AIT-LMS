@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -117,7 +118,7 @@ export function Header() {
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href="/instructor-login">
+                            <Link href="/login">
                                 <Briefcase className="mr-2 h-4 w-4" />
                                 <span>Instructor Console</span>
                             </Link>
@@ -184,7 +185,7 @@ export function Header() {
                                 </SheetClose>
                                 <SheetClose asChild>
                                     <Button asChild className="w-full rounded-full" variant="secondary">
-                                        <Link href="/instructor-login">
+                                        <Link href="/login">
                                             <Briefcase className="mr-2 h-4 w-4" />
                                             Instructor Console
                                         </Link>
