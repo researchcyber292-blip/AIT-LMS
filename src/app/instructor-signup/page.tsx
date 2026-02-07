@@ -22,7 +22,7 @@ const instructorSchema = z.object({
   motherName: z.string().min(1, "Mother's name is required."),
   fatherName: z.string().min(1, "Father's name is required."),
   age: z.coerce.number().min(13, 'You must be at least 13 years old.').max(60, 'Age must not be greater than 60.'),
-  email: z.string().email('Invalid Gmail address.').refine(val => val.endsWith('@gmail.com'), 'Only @gmail.com addresses are allowed.'),
+  email: z.string().email('Invalid email address.'),
   alternateEmail: z.string().email('Invalid alternate email.').optional().or(z.literal('')),
   mobileNumber: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number.'),
   alternateMobileNumber: z.string().regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number.').optional().or(z.literal('')),
@@ -138,10 +138,10 @@ export default function InstructorSignUpPage() {
                 <FormItem><FormLabel>Alternate Mobile (Optional)</FormLabel><FormControl><Input type="tel" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="email" render={({ field }) => (
-                <FormItem><FormLabel>Gmail</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="alternateEmail" render={({ field }) => (
-                <FormItem><FormLabel>Alternate Gmail (Optional)</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Alternate Email (Optional)</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="password" render={({ field }) => (
                 <FormItem><FormLabel>Password</FormLabel><FormControl><Input type="password" {...field} /></FormControl><FormMessage /></FormItem>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -19,7 +20,7 @@ const activationSchema = z.object({
   alternateMobileNumber: z.union([z.string().regex(/^[6-9]\d{9}$/, { message: 'Please enter a valid 10-digit Indian mobile number.' }), z.string().length(0)]).optional(),
   motherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Mother's name is required." }),
   fatherName: z.string().regex(/^[a-zA-Z\s]+$/, { message: 'Please enter a valid name.' }).min(1, { message: "Father's name is required." }),
-  email: z.string().email({ message: 'Invalid email address.' }).min(1, 'Email is required.').refine(val => val.endsWith('@gmail.com'), { message: 'Only @gmail.com addresses are allowed.' }),
+  email: z.string().email({ message: 'Invalid email address.' }).min(1, 'Email is required.'),
   password: z.string()
     .min(8, { message: 'Password must be at least 8 characters.' })
     .regex(/[a-zA-Z]/, { message: 'Password must contain at least one letter.' })
@@ -110,7 +111,7 @@ export default function ActivationPage() {
       { name: 'mobileNumber', placeholder: 'ENTER YOUR 10-DIGIT MOBILE NUMBER', type: 'text' },
       { name: 'motherName', placeholder: "ENTER YOUR MOTHER'S NAME", type: 'text' },
       { name: 'fatherName', placeholder: "ENTER YOUR FATHER'S NAME", type: 'text' },
-      { name: 'email', placeholder: 'ENTER YOUR VALID GMAIL', type: 'email' },
+      { name: 'email', placeholder: 'ENTER YOUR VALID EMAIL', type: 'email' },
       { name: 'password', placeholder: 'CREATE A PASSWORD', type: 'password' },
       { name: 'alternateMobileNumber', placeholder: 'ALTERNATE MOBILE (OPTIONAL)', type: 'text' },
   ] as const;
