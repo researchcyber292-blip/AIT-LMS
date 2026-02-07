@@ -98,7 +98,7 @@ export default function LoginPage() {
        <div className="grid grid-cols-1 md:grid-cols-5 h-screen">
           <div className="hidden md:block relative md:col-span-3">
             <Image
-              src="/LOGIN.png"
+              src="/login.png"
               alt="Login background"
               fill
               className="object-cover"
