@@ -8,15 +8,58 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Course } from '@/lib/types';
 import { CourseCard } from '@/components/course-card';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
+
+function UpcomingCourseCard({ course }: { course: any }) {
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsFavorited(!isFavorited);
+  };
+
+  return (
+    <div className="h-full">
+      <Card className="relative overflow-hidden h-[450px] flex flex-col justify-end group/upcoming rounded-lg">
+        <Image src={course.image} alt={course.title} fill objectFit="cover" className="z-0 group-hover/upcoming:scale-105 transition-transform duration-300" data-ai-hint={course.imageHint} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+        
+        <div className="absolute top-4 left-4 z-20">
+            <Badge>₹{course.price}</Badge>
+        </div>
+        <div className="absolute top-4 right-4 z-20">
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              className="h-9 w-9 rounded-full bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+              onClick={toggleFavorite}
+            >
+                <Heart className={cn("h-4 w-4 transition-colors", isFavorited && "fill-red-500 text-red-500")} />
+            </Button>
+        </div>
+
+        <CardContent className="relative z-20 p-4 text-white">
+          <h3 className="font-headline text-2xl font-bold uppercase leading-tight">{course.title}</h3>
+          <p className="text-sm mt-1 text-white/80 h-10 line-clamp-2">{course.subtitle}</p>
+          
+          <div className="mt-4 border-t border-white/20 pt-3 flex items-center gap-x-4 text-sm text-white/90">
+              <div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4"/><span>{course.lessons} Lessons</span></div>
+              <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/><span>{course.students} Students</span></div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
 
 export default function Home() {
   const featuresRef = useRef<HTMLDivElement>(null);
@@ -637,31 +680,7 @@ export default function Home() {
               <CarouselContent className="-ml-4">
                 {upcomingCourses.map((course) => (
                   <CarouselItem key={course.id} className="pl-4 md:basis-1/2 lg:basis-1/4">
-                    <div className="h-full">
-                      <Card className="relative overflow-hidden h-[450px] flex flex-col justify-end group/upcoming rounded-lg">
-                        <Image src={course.image} alt={course.title} fill objectFit="cover" className="z-0 group-hover/upcoming:scale-105 transition-transform duration-300" data-ai-hint={course.imageHint} />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
-                        
-                        <div className="absolute top-4 left-4 z-20">
-                            <Badge>₹{course.price}</Badge>
-                        </div>
-                        <div className="absolute top-4 right-4 z-20">
-                            <Button size="icon" variant="ghost" className="h-9 w-9 rounded-full bg-white/10 text-white backdrop-blur-sm hover:bg-white/20">
-                                <Heart className="h-4 w-4" />
-                            </Button>
-                        </div>
-
-                        <CardContent className="relative z-20 p-4 text-white">
-                          <h3 className="font-headline text-2xl font-bold uppercase leading-tight">{course.title}</h3>
-                          <p className="text-sm mt-1 text-white/80 h-10 line-clamp-2">{course.subtitle}</p>
-                          
-                          <div className="mt-4 border-t border-white/20 pt-3 flex items-center gap-x-4 text-sm text-white/90">
-                              <div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4"/><span>{course.lessons} Lessons</span></div>
-                              <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/><span>{course.students} Students</span></div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
+                    <UpcomingCourseCard course={course} />
                   </CarouselItem>
                 ))}
               </CarouselContent>

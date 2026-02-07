@@ -1,12 +1,15 @@
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
 import type { Course } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, Star, Clock, BookOpen, Users } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface CourseCardProps {
   course: Course;
@@ -26,6 +29,13 @@ const StarRating = ({ rating = 0, reviews = 0 }: { rating?: number; reviews?: nu
 };
 
 export function CourseCard({ course }: CourseCardProps) {
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsFavorited(!isFavorited);
+  };
+
   return (
     <Card className="flex h-full flex-col overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 bg-card border-border group">
         <div className="relative overflow-hidden rounded-t-lg">
@@ -39,8 +49,13 @@ export function CourseCard({ course }: CourseCardProps) {
                 data-ai-hint={course.imageHint}
               />
             </Link>
-            <Button size="icon" variant="ghost" className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/40 hover:text-white">
-                <Heart className="h-4 w-4" />
+            <Button 
+                size="icon" 
+                variant="ghost" 
+                className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/20 text-white backdrop-blur-sm hover:bg-black/40 hover:text-white"
+                onClick={toggleFavorite}
+            >
+                <Heart className={cn("h-4 w-4 transition-colors", isFavorited && "fill-red-500 text-red-500")} />
                 <span className="sr-only">Favorite</span>
             </Button>
         </div>
