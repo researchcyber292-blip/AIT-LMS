@@ -1,271 +1,287 @@
 
 'use client';
 
-import { CheckCircle, XCircle, Crown, Rocket, Gem } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+import { CourseCard } from '@/components/course-card';
+import type { Course } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
-import type { Instructor } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
-// Note: Metadata export is for server components, but we keep it for potential future static generation.
-// In a client component, document title would be set via useEffect if needed.
-
-const plans = [
-    {
-        title: 'Beginner',
-        price: '₹599/m',
-        description: 'Ideal for those new to cybersecurity, providing the essential concepts and tools to start your journey.',
-        features: [
-            { text: 'Access to all Beginner courses', included: true },
-            { text: 'Learn Cybersecurity from scratch', included: true },
-            { text: 'Quizzes & knowledge checks', included: true },
-            { text: 'Weekly progress reports', included: true },
-            { text: 'Community Access', included: true },
-            { text: 'Certification', included: true },
-            { text: '24/7 Live Support [AI]', included: true },
-            { text: 'Live Classes', included: false },
-            { text: 'Live Lab Tests', included: false },
-            { text: 'Priority Support', included: false },
-            { text: '1-on-1 Mentorship', included: false },
-        ],
-        tier: 'orange',
-        isPopular: false,
-    },
-    {
-        title: 'Pro',
-        price: '₹2999 / 3 months',
-        description: 'For learners aiming to advance their skills with practical labs and expert guidance.',
-        features: [
-            { text: 'Access to introductory courses', included: true },
-            { text: 'Basic cybersecurity concepts', included: true },
-            { text: 'Community forum access', included: true },
-            { text: '24/7 LIVE SUPPORT [AI]', included: true },
-            { text: 'WEEKLY DOUBT CLASSES', included: true },
-            { text: '24 LIVE CLASSES IN 6 MONTHS AVAILABLE', included: true },
-            { text: 'AFTER 6 MONTHS VERIFIED BADGES + CERTIFICATIONS + TITLE', included: true },
-            { text: 'Priority Support', included: false },
-            { text: '1-on-1 Mentorship', included: false },
-        ],
-        tier: 'silver',
-        isPopular: true,
-    },
-    {
-        title: 'Advanced',
-        price: '₹4999/PER 6 MONTHS',
-        description: 'For professionals seeking mastery with specialized content and 1-on-1 mentorship.',
-        features: [
-            { text: 'Full access to all courses (Beginner to Advanced)', included: true },
-            { text: 'Hands-on labs & projects', included: true },
-            { text: 'Cloud live testing environment', included: true },
-            { text: 'Weekly doubt classes', included: true },
-            { text: '24+ live classes in 6 months', included: true },
-            { text: 'Verified Badges + Certifications + Title', included: true },
-            { text: 'Community forum access', included: true },
-            { text: '24/7 Live Support [AI]', included: true },
-            { text: 'Priority support', included: true },
-            { text: '1-on-1 mentorship sessions', included: true},
-        ],
-        tier: 'gold',
-        isPopular: false,
-    }
+const courseCategories = [
+    'All',
+    'Ethical Hacking',
+    'Data Science',
+    'Full Stack Dev',
+    'AI & ML',
+    'Robotics & Tech',
+    'Cloud Security',
+    'Network Security',
+    'Malware Analysis',
+    'Digital Forensics',
+    'Penetration Testing',
+    'Cybersecurity Law',
+    'Earn with AI',
+    'Coding',
 ];
 
-const tierStyles = {
-    orange: {
-        card: 'border-orange-500/20 bg-card shadow-orange-500/5',
-        header: 'bg-orange-500/10 text-orange-600',
-        button: 'bg-orange-500 hover:bg-orange-600 text-white',
+const allCourses: Course[] = [
+    {
+      id: 'ethical-hacking-1',
+      title: 'The Complete Ethical Hacking Course: Zero to Hero',
+      description: 'Learn to hack like a pro. A complete course for beginners.',
+      longDescription: '...',
+      price: 499,
+      image: 'https://images.unsplash.com/photo-1544890225-2fde0e66f0d0?w=800&auto=format&fit=crop',
+      imageHint: 'ethical hacking',
+      instructorId: 'inst-1',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Beginner',
+      category: 'Ethical Hacking',
+      priceType: 'paid', duration: '52h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
+      rating: 5, reviews: 1250, lessons: 150, students: 8500,
+      instructor: { name: 'Rajesh Kumar', avatar: 'https://picsum.photos/seed/instructor-1/40/40' }
     },
-    silver: {
-        card: 'border-primary/50 bg-card shadow-primary/10',
-        header: 'bg-primary/10 text-primary',
-        button: 'bg-primary hover:bg-primary/90 text-primary-foreground',
+    {
+      id: 'data-science-1',
+      title: 'Data Science & Machine Learning Bootcamp',
+      description: 'Become a data scientist in 2024! From zero to hero.',
+      longDescription: '...',
+      price: 599,
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop',
+      imageHint: 'data science dashboard',
+      instructorId: 'inst-2',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Intermediate',
+      category: 'Data Science',
+      priceType: 'paid', duration: '80h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
+      rating: 4, reviews: 980, lessons: 210, students: 7600,
+      instructor: { name: 'Priya Sharma', avatar: 'https://picsum.photos/seed/instructor-2/40/40' }
     },
-    gold: {
-        card: 'border-yellow-500/20 bg-card shadow-yellow-500/5',
-        header: 'bg-yellow-500/10 text-yellow-600',
-        button: 'bg-yellow-500 hover:bg-yellow-600 text-black',
+    {
+      id: 'full-stack-1',
+      title: 'The Full Stack Web Development Bootcamp',
+      description: 'Learn HTML, CSS, Javascript, Node, React, and more!',
+      longDescription: '...',
+      price: 399,
+      image: 'https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800&auto=format&fit=crop',
+      imageHint: 'full stack code',
+      instructorId: 'inst-3',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Beginner',
+      category: 'Full Stack Dev',
+      priceType: 'paid', duration: '65h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
+      rating: 4, reviews: 2100, lessons: 180, students: 10500,
+      instructor: { name: 'Amit Das', avatar: 'https://picsum.photos/seed/instructor-3/40/40' }
+    },
+    {
+      id: 'ai-ml-1',
+      title: 'Artificial Intelligence A-Z: Build 5 AI Projects',
+      description: 'Learn AI and ML from scratch. Build real-world projects.',
+      longDescription: '...',
+      price: 799,
+      image: 'https://images.unsplash.com/photo-1535378620166-273708d44e4c?w=800&auto=format&fit=crop',
+      imageHint: 'AI robot face',
+      instructorId: 'inst-4',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Advanced',
+      category: 'AI & ML',
+      priceType: 'paid', duration: '100h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
+      rating: 5, reviews: 3500, lessons: 250, students: 9500,
+      instructor: { name: 'Anjali Menon', avatar: 'https://picsum.photos/seed/instructor-4/40/40' }
+    },
+    {
+      id: 'robotics-1',
+      title: 'Robotics & Tech: From Zero to Autonomous',
+      description: 'Build and program your own robots using Arduino and Python.',
+      longDescription: '...',
+      price: 699,
+      image: 'https://images.unsplash.com/photo-1635833948333-d85915d3368d?w=800&auto=format&fit=crop',
+      imageHint: 'robotics arm',
+      instructorId: 'inst-5',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Intermediate',
+      category: 'Robotics & Tech',
+      priceType: 'paid', duration: '70h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
+      rating: 4, reviews: 800, lessons: 120, students: 4500,
+      instructor: { name: 'Vijay Singh', avatar: 'https://picsum.photos/seed/instructor-5/40/40' }
+    },
+    {
+      id: 'earn-ai-1',
+      title: 'How to Earn Money with AI in 2024',
+      description: 'Practical guide to monetizing AI skills. No coding required!',
+      longDescription: '...',
+      price: 199,
+      image: 'https://images.unsplash.com/photo-1678403323863-148554279a29?w=800&auto=format&fit=crop',
+      imageHint: 'AI making money',
+      instructorId: 'inst-1',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Beginner',
+      category: 'Earn with AI',
+      priceType: 'paid', duration: '20h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
+      rating: 4, reviews: 1500, lessons: 40, students: 12000,
+      instructor: { name: 'Rajesh Kumar', avatar: 'https://picsum.photos/seed/instructor-1/40/40' }
+    },
+     {
+      id: 'pen-test-1',
+      title: 'Advanced Penetration Testing & Exploit Writing',
+      description: 'Go beyond automated tools and learn to write your own exploits.',
+      longDescription: '...',
+      price: 999,
+      image: 'https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?w=800&auto=format&fit=crop',
+      imageHint: 'cyber security professional',
+      instructorId: 'inst-2',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Advanced',
+      category: 'Penetration Testing',
+      priceType: 'paid', duration: '120h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
+      rating: 5, reviews: 950, lessons: 180, students: 3200,
+      instructor: { name: 'Priya Sharma', avatar: 'https://picsum.photos/seed/instructor-2/40/40' }
+    },
+     {
+      id: 'coding-1',
+      title: 'Coding for Absolute Beginners: Python & JavaScript',
+      description: 'Your first step into the world of programming. No experience needed.',
+      longDescription: '...',
+      price: 249,
+      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop',
+      imageHint: 'coding on laptop',
+      instructorId: 'inst-3',
+      learningObjectives: [],
+      curriculum: [],
+      level: 'Beginner',
+      category: 'Coding',
+      priceType: 'paid', duration: '40h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
+      rating: 4, reviews: 3100, lessons: 90, students: 15000,
+      instructor: { name: 'Amit Das', avatar: 'https://picsum.photos/seed/instructor-3/40/40' }
     }
-}
+  ];
 
 export default function CoursesPage() {
-  const firestore = useFirestore();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [activeCategory, setActiveCategory] = useState('All');
 
-  const instructorsQuery = useMemoFirebase(
-    () => (firestore ? collection(firestore, 'instructors') : null),
-    [firestore]
-  );
+    const filteredCourses = useMemo(() => {
+        return allCourses.filter(course => {
+            const matchesCategory = activeCategory === 'All' || course.category === activeCategory;
+            const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesCategory && matchesSearch;
+        });
+    }, [activeCategory, searchTerm]);
 
-  const { data: instructors, isLoading } = useCollection<Instructor>(instructorsQuery);
-  
-  const activeInstructors = instructors?.filter(inst => inst.accountStatus === 'active' && inst.bio && inst.title);
-
-  return (
-    <div className="bg-background text-foreground min-h-[calc(100vh-3.5rem)] py-12 md:py-24">
-        <div className="container">
-            <div className="relative text-center mb-16 rounded-2xl border border-border py-12 bg-card">
-                <div className="relative z-10">
-                    <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4 shadow-lg">
-                        <Gem className="h-8 w-8" />
-                    </div>
-                    <h1 className="font-headline text-4xl font-bold uppercase tracking-wider text-foreground">
-                        Our Subscription Plans
-                    </h1>
-                    <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                        Choose the plan that best fits your learning goals and unlock your potential.
-                    </p>
+    const renderSkeletons = () => (
+        [...Array(6)].map((_, i) => (
+            <div key={i} className="flex flex-col space-y-3">
+                <Skeleton className="h-[225px] w-full rounded-xl" />
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
                 </div>
             </div>
+        ))
+    );
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-center max-w-6xl mx-auto">
-                {plans.map((plan) => (
-                    <div key={plan.title} className={cn(
-                        "rounded-lg shadow-lg flex flex-col border relative transition-transform transform hover:-translate-y-2",
-                        tierStyles[plan.tier as keyof typeof tierStyles].card,
-                        plan.isPopular && "scale-105 md:scale-110 z-10 border-2 border-primary shadow-xl shadow-primary/20"
-                    )}>
-                        {plan.isPopular && (
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-bold uppercase shadow-lg">
-                                    Best Value
-                                </div>
-                            </div>
-                        )}
-                        
-                        <div className={cn("p-6 text-center rounded-t-md font-bold", tierStyles[plan.tier as keyof typeof tierStyles].header)}>
-                            <h2 className="text-3xl uppercase font-headline tracking-widest flex items-center justify-center gap-2">
-                                {plan.tier === 'gold' && <Crown className="w-8 h-8 text-yellow-500" />}
-                                {plan.title}
-                            </h2>
-                        </div>
-                        
-                        <div className="p-8 flex flex-col flex-grow">
-                            <p className="text-muted-foreground min-h-[4rem] text-sm">{plan.description}</p>
-                            
-                            <ul className="space-y-3 my-8 flex-grow">
-                                {plan.features.map((feature, i) => (
-                                    <li key={i} className="flex items-center gap-3">
-                                        {feature.included ? (
-                                            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                                        ) : (
-                                            <XCircle className="w-5 h-5 text-red-500/70 flex-shrink-0" />
-                                        )}
-                                        <span className={cn('text-sm', !feature.included && 'text-muted-foreground/60')}>{feature.text}</span>
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <div className="text-center mt-auto pt-4">
-                                <p className="text-4xl font-bold font-headline mb-4 text-foreground">{plan.price}</p>
-                                <Button size="lg" className={cn("w-full uppercase font-bold", tierStyles[plan.tier as keyof typeof tierStyles].button)}>
-                                    Order Now
-                                </Button>
+    return (
+        <div className="min-h-screen bg-secondary/20 text-foreground">
+            <main className="pt-16">
+                {/* Hero Banner Section */}
+                <section className="relative w-full h-[350px] bg-gray-900 text-white">
+                    <Image
+                        src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxidXNpbmVzcyUyMHRlYW0lMjBtZWV0aW5nfGVufDB8fHx8MTc3MDc0NDg0MHww&ixlib=rb-4.1.0&q=80&w=1080"
+                        alt="Business team in a meeting"
+                        layout="fill"
+                        objectFit="cover"
+                        className="opacity-30"
+                        data-ai-hint="business team meeting"
+                        priority
+                    />
+                    <div className="container relative z-10 flex flex-col justify-center h-full">
+                        <div className="max-w-2xl">
+                            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+                                Interview Preparation for
+                                <span className="block text-red-400">Business & Data Analyst</span>
+                                Professionals
+                            </h1>
+                            <p className="mt-4 text-lg text-gray-200">
+                                Hybrid learning | Live workshops | Practical interview practice
+                            </p>
+                            <div className="mt-2">
+                                <span className="text-3xl font-bold text-red-400 mr-2">₹10,999</span>
+                                <span className="text-xl line-through opacity-70">₹15,999</span>
                             </div>
                         </div>
                     </div>
-                ))}
-            </div>
+                </section>
 
-            {/* Premium++ Plan */}
-            <div className="max-w-6xl mx-auto mt-24">
-                <div className="relative rounded-2xl shadow-lg border border-border bg-card p-8 text-center overflow-hidden group">
-                    <div className="relative z-10">
-                        <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4 shadow-lg transition-all duration-300 group-hover:scale-110">
-                            <Rocket className="h-8 w-8 text-primary transition-transform duration-300 group-hover:-rotate-12" />
-                        </div>
-                        <h2 className="text-4xl font-bold uppercase font-headline tracking-widest text-foreground">
-                            Premium++
+                {/* Course Listing Section */}
+                <section className="container py-12 md:py-16">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold font-headline tracking-tight sm:text-4xl">
+                            Learn Skills That Matter
                         </h2>
                         <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                            NO LIMIT LEARNING WITH OUR ADVANCED FEATURES AND THE COURCE WILL GET REDESIGNE FOR YOU PERSONALLY WITH A HYPER FEEL.
+                            Gain real-world job ready skills for the future.
                         </p>
-                        <div className="my-8">
-                            <span className="text-5xl font-bold font-headline text-foreground">₹12,999</span>
-                            <span className="text-xl font-semibold text-muted-foreground"> / 6 months</span>
-                        </div>
-                        <Button size="lg" variant="outline" className="w-full max-w-xs mx-auto uppercase font-bold transition-all duration-300">
-                            Contact to Order
-                        </Button>
                     </div>
-                </div>
-            </div>
 
-            {/* Instructors Section */}
-            <div className="mt-24 text-center">
-                <h2 className="font-headline text-4xl font-bold uppercase tracking-wider text-foreground">
-                    Our Instructors
-                </h2>
-                <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                    Learn from a diverse group of industry experts who are passionate about sharing their knowledge.
-                </p>
-            </div>
-
-            <div className="mt-12 max-w-7xl mx-auto grid grid-cols-1 gap-8">
-                {isLoading ? (
-                  <>
-                    {[...Array(2)].map((_, i) => (
-                        <div key={i} className="bg-card border border-border rounded-xl shadow-sm p-6 flex flex-col md:flex-row items-start gap-8">
-                            <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
-                                <Skeleton className="h-32 w-32 rounded-full border-4 border-primary/20" />
-                                <Skeleton className="h-7 w-40 mt-4" />
-                                <Skeleton className="h-4 w-48 mt-2" />
-                                <div className="mt-4 space-y-2 w-full">
-                                    <Skeleton className="h-3 w-full" />
-                                    <Skeleton className="h-3 w-3/4 mx-auto" />
-                                </div>
-                            </div>
-                             <div className="flex flex-col items-center flex-grow w-full">
-                                <div className="w-full"><Skeleton className="h-32 w-full rounded-md" /></div>
-                                <Skeleton className="h-11 w-48 mt-6" />
-                            </div>
+                    {/* Search and Filters */}
+                    <div className="mb-12 space-y-8">
+                        <div className="relative max-w-lg mx-auto">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                            <Input
+                                type="search"
+                                placeholder="Search course..."
+                                className="w-full pl-12 h-12 text-base rounded-full shadow-sm bg-background"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
-                    ))}
-                  </>
-                ) : (
-                  activeInstructors?.map((instructor) => (
-                    <div key={instructor.id} className="bg-card border border-border rounded-xl shadow-sm p-6 flex flex-col md:flex-row items-start gap-8 transition-all hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-1">
-                        <div className="flex-shrink-0 flex flex-col items-center text-center md:w-52">
-                            <Avatar className="h-32 w-32 border-4 border-primary/20">
-                                <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
-                                <AvatarFallback className="text-4xl">{`${instructor.firstName.charAt(0)}${instructor.lastName.charAt(0)}`}</AvatarFallback>
-                            </Avatar>
-                            <h3 className="font-headline text-2xl font-bold mt-4">{instructor.firstName} {instructor.lastName}</h3>
-                            <p className="text-sm text-primary font-semibold mt-1 w-full break-words">{instructor.title}</p>
-                            {instructor.qualifications && (
-                                <div className="mt-4 text-xs text-muted-foreground text-center">
-                                    <p className="whitespace-pre-line line-clamp-4">{instructor.qualifications}</p>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex flex-col items-center flex-grow w-full">
-                            <div className="w-full">
-                                <ScrollArea className="h-32 w-full rounded-md bg-muted/50 p-4">
-                                    <p className="text-muted-foreground text-sm whitespace-pre-line">{instructor.bio || "View profile to see full description."}</p>
-                                </ScrollArea>
+                        
+                        <ScrollArea className="w-full whitespace-nowrap rounded-md">
+                            <div className="flex w-max space-x-2 p-2 justify-center mx-auto">
+                                {courseCategories.map(category => (
+                                    <Button
+                                        key={category}
+                                        variant={activeCategory === category ? 'default' : 'outline'}
+                                        onClick={() => setActiveCategory(category)}
+                                        className="rounded-full"
+                                    >
+                                        {category}
+                                    </Button>
+                                ))}
                             </div>
-                            <Button asChild size="lg" className="mt-6 self-center">
-                                <Link href={`/instructors/${instructor.id}`}>
-                                    View Profile & Courses
-                                </Link>
-                            </Button>
-                        </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
                     </div>
-                  ))
-                )}
-                 {!isLoading && (!activeInstructors || activeInstructors.length === 0) && (
-                    <div className="md:col-span-1 text-center text-muted-foreground py-8">
-                        No active instructors found.
-                    </div>
-                )}
-            </div>
 
+                    {/* Courses Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredCourses.length > 0 ? (
+                            filteredCourses.map((course) => (
+                                <CourseCard key={course.id} course={course} />
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-16">
+                                <h3 className="text-2xl font-semibold">No courses found</h3>
+                                <p className="text-muted-foreground mt-2">
+                                    Try adjusting your search or filter.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            </main>
         </div>
-    </div>
-  );
+    );
 }
