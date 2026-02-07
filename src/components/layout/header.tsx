@@ -34,7 +34,7 @@ export function Header() {
   const auth = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const isAuthPage = pathname === '/login' || pathname === '/register';
+  const isAuthPage = pathname === '/login' || pathname === '/register' || pathname === '/instructor-login';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -118,7 +118,7 @@ export function Header() {
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href="/login">
+                            <Link href="/instructor-login">
                                 <Briefcase className="mr-2 h-4 w-4" />
                                 <span>Instructor Console</span>
                             </Link>
@@ -185,7 +185,7 @@ export function Header() {
                                 </SheetClose>
                                 <SheetClose asChild>
                                     <Button asChild className="w-full rounded-full" variant="secondary">
-                                        <Link href="/login">
+                                        <Link href="/instructor-login">
                                             <Briefcase className="mr-2 h-4 w-4" />
                                             Instructor Console
                                         </Link>

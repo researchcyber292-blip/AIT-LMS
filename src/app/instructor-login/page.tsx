@@ -16,7 +16,6 @@ const courseCategories = [
     { name: 'AI & ML', icon: Bot, href: '/login' },
     { name: 'Robotics & Tech', icon: Cpu, href: '/login' },
     { name: 'Coding', icon: BookCopy, href: '/login' },
-    { name: 'Earn with AI', icon: Wallet, href: '/login' }
 ];
 
 
