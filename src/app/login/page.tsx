@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from "next/link";
@@ -14,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Shield } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -94,86 +94,76 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full min-h-screen relative flex items-center justify-center p-4 bg-black">
-        <video
-            src="/1.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute top-0 left-0 h-full w-full object-cover opacity-30"
+    <div className="relative flex min-h-screen items-center justify-center bg-background px-4">
+        <Image
+            src="https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80"
+            alt="Geometric background"
+            fill
+            className="object-cover"
+            data-ai-hint="geometric memphis"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-
-        <div className="w-full max-w-md z-10 animated-glowing-border">
-            <Card className="bg-background/80 backdrop-blur-lg border-primary/30 text-foreground shadow-2xl shadow-primary/10">
-                <CardHeader className="text-center">
-                    <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
-                        <Image
-                            src="/image.png"
-                            alt="Aviraj Info Tech Logo"
-                            width={40}
-                            height={40}
-                            className="object-contain"
+        <div className="absolute inset-0 bg-black/30" />
+        <Card className="w-full max-w-sm z-10 border-white/10 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="text-center">
+                <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4">
+                    <Shield className="h-8 w-8" />
+                </div>
+                <CardTitle className="font-headline text-2xl">Console Access</CardTitle>
+                <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleLogin} className="grid gap-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">Email address</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={isLoading}
+                            required
+                            className="h-11 bg-transparent border-white/20 focus:bg-background/20"
+                            placeholder="you@example.com"
                         />
                     </div>
-                    <CardTitle className="font-headline text-3xl">Console Access</CardTitle>
-                    <CardDescription className="text-muted-foreground">Enter your credentials to access your console.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleLogin} className="grid gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                disabled={isLoading}
-                                required
-                                className="h-11 bg-transparent border-border focus:bg-background/20"
-                                placeholder="you@example.com"
-                            />
+                    <div className="grid gap-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input 
+                            id="password" 
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            disabled={isLoading}
+                            required 
+                            className="h-11 bg-transparent border-white/20 focus:bg-background/20"
+                            placeholder="••••••••"
+                        />
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center space-x-2">
+                            <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} className="border-muted-foreground" />
+                            <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground">Remember me</Label>
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input 
-                                id="password" 
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                disabled={isLoading}
-                                required 
-                                className="h-11 bg-transparent border-border focus:bg-background/20"
-                                placeholder="••••••••"
-                            />
-                        </div>
-                        <div className="flex items-center justify-between mt-2">
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} className="border-muted-foreground" />
-                                <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground">Remember me</Label>
-                            </div>
-                            <Link
-                                href="#"
-                                className="ml-auto inline-block text-sm text-muted-foreground hover:text-primary"
-                                >
-                                Forgot Password?
-                            </Link>
-                        </div>
-                        <Button type="submit" className="w-full h-11 mt-4 font-bold" disabled={isLoading}>
-                            {isLoading ? 'Authenticating...' : 'Secure Login'}
-                        </Button>
-                    </form>
-
-                    <div className="mt-6 text-center text-sm text-muted-foreground">
-                        Don&apos;t have an account?{" "}
-                        <Link href="/signup" className="underline font-semibold text-primary hover:text-primary/80">
-                            Sign up
+                        <Link
+                            href="#"
+                            className="ml-auto inline-block text-sm text-muted-foreground hover:text-primary"
+                            >
+                            Forgot Password?
                         </Link>
                     </div>
-                </CardContent>
-            </Card>
-        </div>
+                    <Button type="submit" className="w-full h-11 mt-4 font-bold" disabled={isLoading}>
+                        {isLoading ? 'Authenticating...' : 'Secure Login'}
+                    </Button>
+                </form>
+
+                <div className="mt-6 text-center text-sm text-muted-foreground">
+                    Don&apos;t have an account?{" "}
+                    <Link href="/signup" className="underline font-semibold text-primary hover:text-primary/80">
+                        Sign up
+                    </Link>
+                </div>
+            </CardContent>
+        </Card>
     </div>
   );
 }
