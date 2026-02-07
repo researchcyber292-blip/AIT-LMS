@@ -49,12 +49,12 @@ export function Header() {
         {/* Logo */}
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-8 w-8 rounded-full bg-white overflow-hidden flex items-center justify-center border-2 border-primary/20">
+            <div className="relative h-10 w-10 rounded-full bg-white overflow-hidden flex items-center justify-center border-2 border-primary/20">
               <Image
-                src="/image.png"
+                src="/avirajinfotech.png"
                 alt="Aviraj Info Tech Logo"
-                width={32}
-                height={32}
+                width={40}
+                height={40}
                 className="object-cover w-full h-full"
               />
             </div>
@@ -110,7 +110,7 @@ export function Header() {
                              <Link href="/" className="flex items-center space-x-2">
                                <div className="h-8 w-8 rounded-full bg-white overflow-hidden">
                                  <Image
-                                      src="/image.png"
+                                      src="/avirajinfotech.png"
                                       alt="Aviraj Info Tech Logo"
                                       width={32}
                                       height={32}
