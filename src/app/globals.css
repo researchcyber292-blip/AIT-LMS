@@ -65,12 +65,13 @@
 
   .animated-glowing-border::before {
     content: '';
-    @apply absolute -top-1/2 -left-1/2 -z-10 h-[200%] w-[200%] animate-rotate-border;
+    @apply absolute -top-1/2 -left-1/2 -z-10 h-[200%] w-[200%] animate-border-pulse;
     background: conic-gradient(
       hsl(var(--primary)),
       hsl(var(--destructive)),
       hsl(var(--accent)),
       hsl(var(--primary))
     );
+    transform: translate(-50%, -50%);
   }
 }
