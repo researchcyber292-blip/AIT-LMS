@@ -1,371 +1,149 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
-import { CourseCard } from '@/components/course-card';
-import type { Course } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Search, Send, User } from 'lucide-react';
+import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
+import type { UserProfile } from '@/lib/types';
+import { collection } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
-const allCourses: Course[] = [
-    {
-      id: 'ethical-hacking-1',
-      title: 'The Complete Ethical Hacking Course: Zero to Hero',
-      description: 'Learn to hack like a pro. A complete course for beginners.',
-      longDescription: '...',
-      price: 499,
-      image: 'https://images.unsplash.com/photo-1544890225-2fde0e66f0d0?w=800&auto=format&fit=crop',
-      imageHint: 'ethical hacking',
-      instructorId: 'inst-1',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Beginner',
-      category: 'Ethical Hacking',
-      priceType: 'paid', duration: '52h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 1250, lessons: 150, students: 8500,
-      instructor: { name: 'Rajesh Kumar', avatar: 'https://picsum.photos/seed/instructor-1/40/40' }
-    },
-    {
-      id: 'data-science-1',
-      title: 'Data Science & Machine Learning Bootcamp',
-      description: 'Become a data scientist in 2024! From zero to hero.',
-      longDescription: '...',
-      price: 599,
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop',
-      imageHint: 'data science dashboard',
-      instructorId: 'inst-2',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Intermediate',
-      category: 'Data Science',
-      priceType: 'paid', duration: '80h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 4, reviews: 980, lessons: 210, students: 7600,
-      instructor: { name: 'Priya Sharma', avatar: 'https://picsum.photos/seed/instructor-2/40/40' }
-    },
-    {
-      id: 'full-stack-1',
-      title: 'The Full Stack Web Development Bootcamp',
-      description: 'Learn HTML, CSS, Javascript, Node, React, and more!',
-      longDescription: '...',
-      price: 399,
-      image: 'https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800&auto=format&fit=crop',
-      imageHint: 'full stack code',
-      instructorId: 'inst-3',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Beginner',
-      category: 'Full Stack Dev',
-      priceType: 'paid', duration: '65h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 4, reviews: 2100, lessons: 180, students: 10500,
-      instructor: { name: 'Amit Das', avatar: 'https://picsum.photos/seed/instructor-3/40/40' }
-    },
-    {
-      id: 'ai-ml-1',
-      title: 'Artificial Intelligence A-Z: Build 5 AI Projects',
-      description: 'Learn AI and ML from scratch. Build real-world projects.',
-      longDescription: '...',
-      price: 799,
-      image: 'https://images.unsplash.com/photo-1535378620166-273708d44e4c?w=800&auto=format&fit=crop',
-      imageHint: 'AI robot face',
-      instructorId: 'inst-4',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Advanced',
-      category: 'AI & ML',
-      priceType: 'paid', duration: '100h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 3500, lessons: 250, students: 9500,
-      instructor: { name: 'Anjali Menon', avatar: 'https://picsum.photos/seed/instructor-4/40/40' }
-    },
-    {
-      id: 'robotics-1',
-      title: 'Robotics & Tech: From Zero to Autonomous',
-      description: 'Build and program your own robots using Arduino and Python.',
-      longDescription: '...',
-      price: 699,
-      image: 'https://images.unsplash.com/photo-1635833948333-d85915d3368d?w=800&auto=format&fit=crop',
-      imageHint: 'robotics arm',
-      instructorId: 'inst-5',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Intermediate',
-      category: 'Robotics & Tech',
-      priceType: 'paid', duration: '70h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 4, reviews: 800, lessons: 120, students: 4500,
-      instructor: { name: 'Vijay Singh', avatar: 'https://picsum.photos/seed/instructor-5/40/40' }
-    },
-     {
-      id: 'coding-1',
-      title: 'Coding for Absolute Beginners: Python & JavaScript',
-      description: 'Your first step into the world of programming. No experience needed.',
-      longDescription: '...',
-      price: 249,
-      image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop',
-      imageHint: 'coding on laptop',
-      instructorId: 'inst-3',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Beginner',
-      category: 'Coding',
-      priceType: 'paid', duration: '40h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 4, reviews: 3100, lessons: 90, students: 15000,
-      instructor: { name: 'Amit Das', avatar: 'https://picsum.photos/seed/instructor-3/40/40' }
-    },
-    {
-      id: 'ethical-hacking-2',
-      title: 'Web Application Hacking and Security',
-      description: 'Master common web vulnerabilities like SQLi, XSS, and CSRF.',
-      longDescription: '...',
-      price: 650,
-      image: 'https://images.unsplash.com/photo-1593431038929-8e35493208f2?w=800&auto=format&fit=crop',
-      imageHint: 'web security code',
-      instructorId: 'inst-4',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Intermediate',
-      category: 'Ethical Hacking',
-      priceType: 'paid', duration: '55h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 2300, lessons: 160, students: 9800,
-      instructor: { name: 'Anjali Menon', avatar: 'https://picsum.photos/seed/instructor-4/40/40' }
-    },
-    {
-      id: 'data-science-2',
-      title: 'Python for Data Science and Machine Learning',
-      description: 'Learn NumPy, Pandas, Matplotlib, Scikit-learn and more!',
-      longDescription: '...',
-      price: 499,
-      image: 'https://images.unsplash.com/photo-1526374965328-5f61d25c04b6?w=800&auto=format&fit=crop',
-      imageHint: 'python code data',
-      instructorId: 'inst-5',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Beginner',
-      category: 'Data Science',
-      priceType: 'paid', duration: '45h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 5100, lessons: 190, students: 18000,
-      instructor: { name: 'Vijay Singh', avatar: 'https://picsum.photos/seed/instructor-5/40/40' }
-    },
-    {
-      id: 'ai-ml-2',
-      title: 'Deep Learning Specialization',
-      description: 'Master the foundations of Deep Learning, understand how to build neural networks.',
-      longDescription: '...',
-      price: 1199,
-      image: 'https://images.unsplash.com/photo-1696253900257-2a5c4a03a743?w=800&auto=format&fit=crop',
-      imageHint: 'neural network abstract',
-      instructorId: 'inst-1',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Highly Advanced',
-      category: 'AI & ML',
-      priceType: 'paid', duration: '150h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 4500, lessons: 300, students: 8000,
-      instructor: { name: 'Rajesh Kumar', avatar: 'https://picsum.photos/seed/instructor-1/40/40' }
-    },
-    {
-      id: 'full-stack-2',
-      title: 'MERN Stack - The Complete Guide',
-      description: 'Build fullstack React.js, Node.js, Express.js & MongoDB applications.',
-      longDescription: '...',
-      price: 799,
-      image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&auto=format&fit=crop',
-      imageHint: 'react code',
-      instructorId: 'inst-2',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Intermediate',
-      category: 'Full Stack Dev',
-      priceType: 'paid', duration: '85h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 4, reviews: 2800, lessons: 220, students: 12500,
-      instructor: { name: 'Priya Sharma', avatar: 'https://picsum.photos/seed/instructor-2/40/40' }
-    },
-    {
-      id: 'robotics-2',
-      title: 'ROS for Beginners: Basics, Motion, and OpenCV',
-      description: 'Learn the Robot Operating System from scratch.',
-      longDescription: '...',
-      price: 850,
-      image: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=800&auto=format&fit=crop',
-      imageHint: 'small robot',
-      instructorId: 'inst-3',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Intermediate',
-      category: 'Robotics & Tech',
-      priceType: 'paid', duration: '95h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 600, lessons: 110, students: 3500,
-      instructor: { name: 'Amit Das', avatar: 'https://picsum.photos/seed/instructor-3/40/40' }
-    },
-    {
-      id: 'coding-2',
-      title: 'Java Programming Masterclass for Software Developers',
-      description: 'Learn Java from scratch and become a certified Java developer.',
-      longDescription: '...',
-      price: 350,
-      image: 'https://images.unsplash.com/photo-1629904853716-f0bc642d9b6b?w=800&auto=format&fit=crop',
-      imageHint: 'java code editor',
-      instructorId: 'inst-2',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Beginner',
-      category: 'Coding',
-      priceType: 'paid', duration: '90h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 6000, lessons: 400, students: 25000,
-      instructor: { name: 'Priya Sharma', avatar: 'https://picsum.photos/seed/instructor-2/40/40' }
-    },
-    {
-      id: 'ethical-hacking-3',
-      title: 'Social Engineering: The Art of Human Hacking',
-      description: 'Learn the techniques attackers use to manipulate and deceive.',
-      longDescription: '...',
-      price: 400,
-      image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&auto=format&fit=crop',
-      imageHint: 'person whispering secret',
-      instructorId: 'inst-2',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Beginner',
-      category: 'Ethical Hacking',
-      priceType: 'paid', duration: '18h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 2500, lessons: 55, students: 11500,
-      instructor: { name: 'Priya Sharma', avatar: 'https://picsum.photos/seed/instructor-2/40/40' }
-    },
-    {
-      id: 'data-science-3',
-      title: 'Tableau 2024 A-Z: Hands-On Tableau Training',
-      description: 'Master data visualization and create stunning dashboards.',
-      longDescription: '...',
-      price: 300,
-      image: 'https://images.unsplash.com/photo-1637416395253-9426f8279124?w=800&auto=format&fit=crop',
-      imageHint: 'tableau dashboard chart',
-      instructorId: 'inst-3',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Beginner',
-      category: 'Data Science',
-      priceType: 'paid', duration: '35h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 3800, lessons: 120, students: 14000,
-      instructor: { name: 'Amit Das', avatar: 'https://picsum.photos/seed/instructor-3/40/40' }
-    },
-    {
-      id: 'ai-ml-3',
-      title: 'Natural Language Processing with Python',
-      description: 'Learn to analyze text data, build chatbots, and more with NLTK and spaCy.',
-      longDescription: '...',
-      price: 650,
-      image: 'https://images.unsplash.com/photo-1531771686278-222c3ca12265?w=800&auto=format&fit=crop',
-      imageHint: 'text analysis abstract',
-      instructorId: 'inst-4',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Intermediate',
-      category: 'AI & ML',
-      priceType: 'paid', duration: '50h', liveSessionsEnabled: true, resourcesEnabled: true, createdAt: null,
-      rating: 4, reviews: 1400, lessons: 100, students: 5500,
-      instructor: { name: 'Anjali Menon', avatar: 'https://picsum.photos/seed/instructor-4/40/40' }
-    },
-    {
-      id: 'full-stack-3',
-      title: 'Django 4 - The Complete Guide',
-      description: 'Build powerful web applications with Python and the Django framework.',
-      longDescription: '...',
-      price: 450,
-      image: 'https://images.unsplash.com/photo-1606115915090-be18a385f0f6?w=800&auto=format&fit=crop',
-      imageHint: 'python django code',
-      instructorId: 'inst-5',
-      learningObjectives: [],
-      curriculum: [],
-      level: 'Intermediate',
-      category: 'Full Stack Dev',
-      priceType: 'paid', duration: '60h', liveSessionsEnabled: false, resourcesEnabled: true, createdAt: null,
-      rating: 5, reviews: 2100, lessons: 180, students: 9000,
-      instructor: { name: 'Vijay Singh', avatar: 'https://picsum.photos/seed/instructor-5/40/40' }
-    }
-  ];
-
-const courseCategories = [
-    'All',
-    'Ethical Hacking',
-    'Data Science',
-    'Full Stack Dev',
-    'AI & ML',
-    'Robotics & Tech',
-    'Coding',
-];
-
-export default function ExplorePage() {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [activeCategory, setActiveCategory] = useState('All');
-
-    const filteredCourses = useMemo(() => {
-        return allCourses.filter(course => {
-            const matchesCategory = activeCategory === 'All' || course.category === activeCategory;
-            const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());
-            return matchesCategory && matchesSearch;
-        });
-    }, [activeCategory, searchTerm]);
-
+function UserListSkeleton() {
     return (
-        <div className="container py-12 md:py-16">
-            <div className="mb-10 text-center">
-                <h1 className="font-headline text-4xl font-bold">Explore Our Courses</h1>
-                <p className="mt-2 text-muted-foreground">
-                    Find the perfect course to advance your skills and career.
-                </p>
-            </div>
-
-            {/* Search and Filters */}
-            <div className="mb-12 space-y-8">
-                <div className="max-w-xl mx-auto animated-glowing-border">
-                   <div className="relative flex items-center bg-background rounded-full">
-                        <Search className="absolute left-6 h-6 w-6 text-muted-foreground" />
-                        <Input
-                            type="search"
-                            placeholder="Search courses..."
-                            className="w-full pl-16 h-16 text-lg rounded-full border-none bg-transparent shadow-none focus-visible:ring-0"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+        <div className="space-y-2">
+            {[...Array(8)].map((_, i) => (
+                <div key={i} className="flex items-center gap-3 rounded-lg p-2">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="space-y-1.5">
+                        <Skeleton className="h-3 w-24" />
+                        <Skeleton className="h-2 w-32" />
                     </div>
                 </div>
-                
-                <ScrollArea className="w-full whitespace-nowrap rounded-md">
-                    <div className="flex w-max space-x-2 p-2 justify-center mx-auto">
-                        {courseCategories.map(category => (
-                            <Button
-                                key={category}
-                                variant={activeCategory === category ? 'default' : 'outline'}
-                                onClick={() => setActiveCategory(category)}
-                                className="rounded-full"
-                            >
-                                {category}
-                            </Button>
-                        ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-            </div>
-
-
-            {/* Courses Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredCourses.length > 0 ? (
-                    filteredCourses.map((course) => (
-                        <CourseCard key={course.id} course={course} />
-                    ))
-                ) : (
-                    <div className="col-span-full text-center py-16">
-                        <h3 className="text-2xl font-semibold">No courses found</h3>
-                        <p className="text-muted-foreground mt-2">
-                            Try adjusting your search or filter.
-                        </p>
-                    </div>
-                )}
-            </div>
+            ))}
         </div>
     );
 }
 
-    
+
+export default function MessagingPage() {
+    const { user: currentUser } = useUser();
+    const firestore = useFirestore();
+    const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const usersQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return collection(firestore, 'users');
+    }, [firestore]);
+
+    const { data: users, isLoading } = useCollection<UserProfile>(usersQuery);
+
+    const filteredUsers = useMemo(() => {
+        if (!users) return [];
+        // Filter out the current user and apply search query
+        return users.filter(user =>
+            user.id !== currentUser?.uid &&
+            user.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [users, searchQuery, currentUser]);
+
+    const getInitials = (name: string) => {
+        if (!name) return '??';
+        const names = name.split(' ');
+        if (names.length > 1) {
+            return `${names[0][0]}${names[names.length - 1][0]}`;
+        }
+        return name.substring(0, 2);
+    }
+
+    return (
+        <div className="h-[calc(100vh-3.5rem)] mt-14 flex">
+            {/* Left Sidebar - User List */}
+            <aside className="w-full max-w-xs h-full border-r bg-card flex flex-col">
+                <div className="p-4 border-b">
+                    <h2 className="font-headline text-2xl font-bold">A-Message</h2>
+                    <p className="text-sm text-muted-foreground">Connect with others</p>
+                    <div className="relative mt-4">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search users..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-10"
+                        />
+                    </div>
+                </div>
+                <ScrollArea className="flex-1">
+                    <div className="p-2">
+                    {isLoading ? <UserListSkeleton /> : (
+                        filteredUsers.map(user => (
+                            <button
+                                key={user.id}
+                                onClick={() => setSelectedUser(user)}
+                                className={cn(
+                                    "w-full flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-muted",
+                                    selectedUser?.id === user.id && "bg-muted"
+                                )}
+                            >
+                                <Avatar>
+                                    <AvatarImage src={user.photoURL} alt={user.name} />
+                                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <p className="font-semibold text-sm">{user.name}</p>
+                                    <p className="text-xs text-muted-foreground line-clamp-1">{user.email}</p>
+                                </div>
+                            </button>
+                        ))
+                    )}
+                    </div>
+                </ScrollArea>
+            </aside>
+
+            {/* Right Panel - Chat Area */}
+            <main className="flex-1 flex flex-col bg-background">
+                {selectedUser ? (
+                    <>
+                        <header className="flex items-center gap-3 p-4 border-b">
+                            <Avatar>
+                                <AvatarImage src={selectedUser.photoURL} alt={selectedUser.name} />
+                                <AvatarFallback>{getInitials(selectedUser.name)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <h3 className="font-semibold">{selectedUser.name}</h3>
+                                <p className="text-xs text-muted-foreground">Ask your doubts here</p>
+                            </div>
+                        </header>
+                        <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+                            {/* Placeholder for messages */}
+                            <p className="text-muted-foreground">Messaging functionality coming soon.</p>
+                            <p className="text-sm text-muted-foreground">You can start a conversation with {selectedUser.name}.</p>
+                        </div>
+                        <footer className="p-4 border-t">
+                            <div className="relative">
+                                <Input placeholder="Type your message..." className="pr-12 h-12" />
+                                <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8">
+                                    <Send className="h-4 w-4" />
+                                    <span className="sr-only">Send</span>
+                                </Button>
+                            </div>
+                        </footer>
+                    </>
+                ) : (
+                    <div className="flex-1 flex items-center justify-center text-center">
+                        <div>
+                            <User className="h-16 w-16 text-muted-foreground mx-auto" />
+                            <h2 className="mt-4 text-xl font-semibold">Select a User</h2>
+                            <p className="mt-1 text-muted-foreground">Choose someone from the left panel to start a conversation.</p>
+                        </div>
+                    </div>
+                )}
+            </main>
+        </div>
+    );
+}

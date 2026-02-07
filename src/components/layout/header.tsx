@@ -23,7 +23,7 @@ import { UserNav } from './user-nav';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/courses', label: 'Courses' },
-  { href: '/explore', label: 'Explore' },
+  { href: '/explore', label: 'A-Message' },
   { href: '/live-classes', label: 'Live Classes' },
   { href: '/contact', label: 'Contact' },
 ];
