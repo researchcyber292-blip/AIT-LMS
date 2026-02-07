@@ -25,6 +25,8 @@ export function Header() {
   const auth = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const isAuthPage = pathname === '/login' || pathname === '/register';
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -35,7 +37,14 @@ export function Header() {
 
 
   return (
-    <header className={cn("fixed top-0 z-50 w-full transition-all duration-300 h-16", isScrolled ? "bg-background/80 border-b border-border/40 backdrop-blur-sm" : "bg-transparent")}>
+    <header className={cn(
+        "fixed top-0 z-50 w-full transition-all duration-300 h-16", 
+        isAuthPage 
+            ? "bg-[#0D0D0D]" 
+            : (isScrolled 
+                ? "bg-background/80 border-b border-border/40 backdrop-blur-sm" 
+                : "bg-transparent")
+    )}>
       <div className="container flex h-full items-center">
         {/* Logo */}
         <div className="flex-1 flex justify-start">
@@ -49,14 +58,17 @@ export function Header() {
                 className="object-cover w-full h-full"
               />
             </div>
-             <span className="font-bold hidden sm:inline-block text-foreground">AVIRAJ INFO TECH</span>
+             <span className={cn("font-bold hidden sm:inline-block", isAuthPage ? "text-white" : "text-foreground")}>AVIRAJ INFO TECH</span>
           </Link>
         </div>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex flex-1 justify-center items-center gap-8">
             {navLinks.map((link) => (
-                <Link key={link.label} href={link.href} className={cn("text-sm font-medium transition-colors whitespace-nowrap hover:text-primary", pathname === link.href ? 'text-primary' : 'text-foreground/80')}>
+                <Link key={link.label} href={link.href} className={cn(
+                    "text-sm font-medium transition-colors whitespace-nowrap hover:text-primary",
+                    pathname === link.href ? 'text-primary' : (isAuthPage ? 'text-white/80' : 'text-foreground/80')
+                )}>
                     {link.label}
                 </Link>
             ))}
@@ -66,7 +78,7 @@ export function Header() {
         <div className="flex-1 flex justify-end items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
               {!isUserLoading && !user && (
-                 <Button asChild size="sm" variant="ghost">
+                 <Button asChild size="sm" variant="ghost" className={cn(isAuthPage && "text-white hover:bg-white/10 hover:text-white")}>
                     <Link href="/signup">
                         Sign Up
                     </Link>
@@ -87,7 +99,7 @@ export function Header() {
             <div className="md:hidden">
                <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-foreground hover:bg-accent/10">
+                  <Button variant="ghost" size="icon" className={cn("hover:bg-accent/10", isAuthPage ? "text-white" : "text-foreground")}>
                     <Menu className="h-6 w-6" />
                     <span className="sr-only">Toggle Menu</span>
                   </Button>
