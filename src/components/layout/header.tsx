@@ -47,7 +47,7 @@ export function Header() {
 
   return (
     <header className={cn(
-        "fixed top-0 z-50 w-full transition-all duration-300 h-20", 
+        "fixed top-0 z-50 w-full transition-all duration-300 h-16", 
         isAuthPage 
             ? "bg-[#0D0D0D]" 
             : (isScrolled 
@@ -61,8 +61,8 @@ export function Header() {
             <Image
               src="/avirajinfotech.png"
               alt="Aviraj Info Tech Logo"
-              width={70}
-              height={70}
+              width={55}
+              height={55}
               className="object-contain"
             />
              <span className={cn("font-bold hidden sm:inline-block", isAuthPage ? "text-white" : "text-foreground")}>AVIRAJ INFO TECH</span>
@@ -149,8 +149,8 @@ export function Header() {
                                <Image
                                     src="/avirajinfotech.png"
                                     alt="Aviraj Info Tech Logo"
-                                    width={60}
-                                    height={60}
+                                    width={50}
+                                    height={50}
                                     className="object-contain"
                                 />
                              </Link>
