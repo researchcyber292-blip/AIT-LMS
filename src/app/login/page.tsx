@@ -94,83 +94,86 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full min-h-screen relative flex items-center justify-center p-4 bg-background">
-        <Image 
-            src="https://images.unsplash.com/photo-1623916993202-0a91f549d10e?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Indian-style pattern background"
-            fill
-            className="object-cover -z-10"
-            data-ai-hint="dark mandala"
+    <div className="w-full min-h-screen relative flex items-center justify-center p-4 bg-black">
+        <video
+            src="/1.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute top-0 left-0 h-full w-full object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-black/60 -z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
 
-        <Card className="w-full max-w-md bg-background/80 backdrop-blur-lg border-primary/30 shadow-2xl shadow-primary/10 text-foreground">
-            <CardHeader className="text-center">
-                <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
-                     <Image
-                        src="/image.png"
-                        alt="Aviraj Info Tech Logo"
-                        width={40}
-                        height={40}
-                        className="object-contain"
-                    />
-                </div>
-                <CardTitle className="font-headline text-3xl">Welcome Back</CardTitle>
-                <CardDescription className="text-muted-foreground">Enter your credentials to access your console.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleLogin} className="grid gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={isLoading}
-                            required
-                            className="h-11 bg-transparent border-border"
-                            placeholder="you@example.com"
+        <div className="w-full max-w-md z-10 animated-glowing-border">
+            <Card className="bg-background/80 backdrop-blur-lg border-primary/30 text-foreground shadow-2xl shadow-primary/10">
+                <CardHeader className="text-center">
+                    <div className="mx-auto mb-4 h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+                        <Image
+                            src="/image.png"
+                            alt="Aviraj Info Tech Logo"
+                            width={40}
+                            height={40}
+                            className="object-contain"
                         />
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input 
-                            id="password" 
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
-                            required 
-                            className="h-11 bg-transparent border-border"
-                            placeholder="••••••••"
-                        />
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center space-x-2">
-                            <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} className="border-muted-foreground" />
-                            <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground">Remember me</Label>
+                    <CardTitle className="font-headline text-3xl">Console Access</CardTitle>
+                    <CardDescription className="text-muted-foreground">Enter your credentials to access your console.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleLogin} className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Email address</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={isLoading}
+                                required
+                                className="h-11 bg-transparent border-border focus:bg-background/20"
+                                placeholder="you@example.com"
+                            />
                         </div>
-                        <Link
-                            href="#"
-                            className="ml-auto inline-block text-sm text-muted-foreground hover:text-primary"
-                            >
-                            Forgot Password?
+                        <div className="grid gap-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input 
+                                id="password" 
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                disabled={isLoading}
+                                required 
+                                className="h-11 bg-transparent border-border focus:bg-background/20"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                            <div className="flex items-center space-x-2">
+                                <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} className="border-muted-foreground" />
+                                <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground">Remember me</Label>
+                            </div>
+                            <Link
+                                href="#"
+                                className="ml-auto inline-block text-sm text-muted-foreground hover:text-primary"
+                                >
+                                Forgot Password?
+                            </Link>
+                        </div>
+                        <Button type="submit" className="w-full h-11 mt-4 font-bold" disabled={isLoading}>
+                            {isLoading ? 'Authenticating...' : 'Secure Login'}
+                        </Button>
+                    </form>
+
+                    <div className="mt-6 text-center text-sm text-muted-foreground">
+                        Don&apos;t have an account?{" "}
+                        <Link href="/signup" className="underline font-semibold text-primary hover:text-primary/80">
+                            Sign up
                         </Link>
                     </div>
-                    <Button type="submit" className="w-full h-11 mt-4 font-bold" disabled={isLoading}>
-                        {isLoading ? 'Logging in...' : 'Login'}
-                    </Button>
-                </form>
-
-                <div className="mt-6 text-center text-sm text-muted-foreground">
-                    Don&apos;t have an account?{" "}
-                    <Link href="/signup" className="underline font-semibold text-primary hover:text-primary/80">
-                        Sign up
-                    </Link>
-                </div>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </div>
     </div>
   );
 }
