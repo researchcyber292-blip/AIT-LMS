@@ -75,6 +75,8 @@ export function OnboardingGuard({ children }: { children: React.ReactNode }) {
         PUBLIC_PAGES.includes(pathname) || 
         pathname.startsWith('/courses/') || 
         pathname.startsWith('/instructors/') ||
+        pathname.startsWith('/admin/login') ||
+        pathname.startsWith('/admin/console/') ||
         PRE_AUTH_ONBOARDING_PAGES.includes(pathname) ||
         // Allow access to status pages if they somehow land there logged out
         INSTRUCTOR_ONBOARDING_PAGES.includes(pathname);

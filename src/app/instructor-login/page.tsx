@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,12 +11,12 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
 const courseCategories = [
-    { name: 'Ethical Hacking', icon: Fingerprint, href: '/login' },
-    { name: 'Data Science', icon: BarChart, href: '/login' },
-    { name: 'Full Stack Dev', icon: Code, href: '/login' },
-    { name: 'AI & ML', icon: Bot, href: '/login' },
-    { name: 'Robotics & Tech', icon: Cpu, href: '/login' },
-    { name: 'Coding', icon: BookCopy, href: '/login' },
+    { name: 'Ethical Hacking', icon: Fingerprint, href: '/admin/login?category=ethical-hacking' },
+    { name: 'Data Science', icon: BarChart, href: '/admin/login?category=data-science' },
+    { name: 'Full Stack Dev', icon: Code, href: '/admin/login?category=full-stack-dev' },
+    { name: 'AI & ML', icon: Bot, href: '/admin/login?category=ai-ml' },
+    { name: 'Robotics & Tech', icon: Cpu, href: '/admin/login?category=robotics-tech' },
+    { name: 'Coding', icon: BookCopy, href: '/admin/login?category=coding' },
 ];
 
 
@@ -110,7 +111,7 @@ export default function InstructorLoginPage() {
                          <category.icon className="h-6 w-6 text-primary" />
                          <span className="text-lg font-semibold font-headline">{category.name}</span>
                        </div>
-                       <p className="text-sm text-muted-foreground">Manage {category.name} content</p>
+                       <p className="text-sm text-muted-foreground group-hover:text-primary-foreground">Manage {category.name} content</p>
                     </Button>
                 ))}
             </div>
