@@ -46,7 +46,7 @@ export function Header() {
 
   return (
     <header className={cn(
-        "fixed top-0 z-50 w-full transition-all duration-300 h-16", 
+        "fixed top-0 z-50 w-full transition-all duration-300 h-20", 
         isAuthPage 
             ? "bg-[#0D0D0D]" 
             : (isScrolled 
@@ -60,8 +60,8 @@ export function Header() {
             <Image
               src="/avirajinfotech.png"
               alt="Aviraj Info Tech Logo"
-              width={55}
-              height={55}
+              width={70}
+              height={70}
               className="object-contain"
             />
              <span className={cn("font-bold hidden sm:inline-block", isAuthPage ? "text-white" : "text-foreground")}>AVIRAJ INFO TECH</span>
@@ -117,7 +117,7 @@ export function Header() {
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href="/login">
+                            <Link href="/instructor-login">
                                 <Briefcase className="mr-2 h-4 w-4" />
                                 <span>Instructor Console</span>
                             </Link>
@@ -148,8 +148,8 @@ export function Header() {
                                <Image
                                     src="/avirajinfotech.png"
                                     alt="Aviraj Info Tech Logo"
-                                    width={45}
-                                    height={45}
+                                    width={60}
+                                    height={60}
                                     className="object-contain"
                                 />
                              </Link>
@@ -184,7 +184,7 @@ export function Header() {
                                 </SheetClose>
                                 <SheetClose asChild>
                                     <Button asChild className="w-full rounded-full" variant="secondary">
-                                        <Link href="/login">
+                                        <Link href="/instructor-login">
                                             <Briefcase className="mr-2 h-4 w-4" />
                                             Instructor Console
                                         </Link>
