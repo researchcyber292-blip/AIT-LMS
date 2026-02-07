@@ -4,20 +4,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useAuth, useFirestore } from "@/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Shield } from "lucide-react";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
+import imageData from '@/lib/placeholder-images.json';
+
+const loginImage = imageData.placeholderImages.find(img => img.id === 'login-clouds');
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const auth = useAuth();
@@ -28,142 +29,145 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-        toast({
-            variant: 'destructive',
-            title: 'Login Failed',
-            description: 'Please enter both email and password.',
-        });
-        return;
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: 'Please enter both email and password.',
+      });
+      return;
     }
     setIsLoading(true);
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-        // Check if user is a student
-        let docRef = doc(firestore, 'users', user.uid);
-        let userDoc = await getDoc(docRef);
+      // Check if user is an instructor first
+      let docRef = doc(firestore, 'instructors', user.uid);
+      let userDoc = await getDoc(docRef);
 
-        if (userDoc.exists()) {
-            toast({ title: 'Login Successful' });
-            router.push('/dashboard');
-            return;
+      if (userDoc.exists()) {
+        const instructorData = userDoc.data();
+        if (instructorData.accountStatus === 'pending') {
+          router.push('/instructor-pending-verification');
+        } else if (instructorData.accountStatus === 'rejected' || instructorData.accountStatus === 'banned') {
+          router.push(`/instructor-access-denied?status=${instructorData.accountStatus}`);
+        } else if (instructorData.accountStatus === 'active' && !instructorData.photoURL) {
+          router.push('/instructor-avatar-selection');
+        } else {
+          toast({ title: 'Login Successful' });
+          router.push('/dashboard');
         }
+        return; // Stop execution after handling instructor
+      }
+      
+      // If not an instructor, check if user is a student
+      docRef = doc(firestore, 'users', user.uid);
+      userDoc = await getDoc(docRef);
 
-        // Check if user is an instructor
-        docRef = doc(firestore, 'instructors', user.uid);
-        userDoc = await getDoc(docRef);
+      if (userDoc.exists()) {
+        toast({ title: 'Login Successful' });
+        router.push('/dashboard');
+        return; // Stop execution after handling student
+      }
+      
+      // If user document doesn't exist in either collection
+      await auth.signOut();
+      toast({ variant: 'destructive', title: 'Login Failed', description: 'This account is not registered. Please sign up.' });
 
-        if (userDoc.exists()) {
-            const instructorData = userDoc.data();
-             // Check instructor status
-            if (instructorData.accountStatus === 'pending') {
-                router.push('/instructor-pending-verification');
-            } else if (instructorData.accountStatus === 'rejected' || instructorData.accountStatus === 'banned') {
-                router.push(`/instructor-access-denied?status=${instructorData.accountStatus}`);
-            } else if (instructorData.accountStatus === 'active' && !instructorData.photoURL) {
-                // First time login after approval
-                router.push('/instructor-avatar-selection');
-            } else {
-                toast({ title: 'Login Successful' });
-                router.push('/dashboard');
-            }
-            return;
-        }
-        
-        // If neither, sign out and show error
-        await auth.signOut();
-        toast({ variant: 'destructive', title: 'Login Failed', description: 'This account is not registered as a student or instructor.' });
     } catch (error: any) {
-        let description = 'An unexpected error occurred.';
-        switch(error.code) {
-            case 'auth/user-not-found':
-            case 'auth/wrong-password':
-            case 'auth/invalid-credential':
-                description = 'Invalid email or password.';
-                break;
-            default:
-                description = error.message;
-                break;
-        }
-        toast({ variant: 'destructive', title: 'Login Failed', description });
+      let description = 'An unexpected error occurred.';
+      switch (error.code) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+          description = 'Invalid email or password.';
+          break;
+        default:
+          description = error.message;
+          break;
+      }
+      toast({ variant: 'destructive', title: 'Login Failed', description });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-background px-4">
-        <Image
-            src="https://img.freepik.com/free-vector/black-geometric-memphis-social-banner_53876-116843.jpg?semt=ais_hybrid&w=740&q=80"
-            alt="Geometric background"
-            fill
-            className="object-cover"
-            data-ai-hint="geometric memphis"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-        <Card className="w-full max-w-sm z-10 border-white/10 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="text-center">
-                <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full w-fit mb-4">
-                    <Shield className="h-8 w-8" />
-                </div>
-                <CardTitle className="font-headline text-2xl">Console Access</CardTitle>
-                <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleLogin} className="grid gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={isLoading}
-                            required
-                            className="h-11 bg-transparent border-white/20 focus:bg-background/20"
-                            placeholder="you@example.com"
-                        />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input 
-                            id="password" 
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
-                            required 
-                            className="h-11 bg-transparent border-white/20 focus:bg-background/20"
-                            placeholder="••••••••"
-                        />
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
+    <div className="w-full min-h-screen bg-[#F8F7FA]">
+       <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+          <div className="flex flex-col items-center justify-center p-8">
+             <div className="w-full max-w-sm">
+                <h1 className="text-4xl font-light text-[#333] mb-8">log in</h1>
+                <form onSubmit={handleLogin} className="space-y-6">
+                   <div className="relative">
+                       <User className="absolute top-1/2 -translate-y-1/2 left-0 h-5 w-5 text-muted-foreground" />
+                       <input
+                           id="email"
+                           type="email"
+                           value={email}
+                           onChange={(e) => setEmail(e.target.value)}
+                           disabled={isLoading}
+                           required
+                           placeholder="Username"
+                           autoComplete="email"
+                           className="w-full pl-8 pb-2 border-b-2 border-gray-200 bg-transparent text-base focus:outline-none focus:border-[#4B0082] transition-colors"
+                       />
+                   </div>
+                   <div className="relative">
+                       <Lock className="absolute top-1/2 -translate-y-1/2 left-0 h-5 w-5 text-muted-foreground" />
+                       <input
+                           id="password"
+                           type={showPassword ? "text" : "password"}
+                           value={password}
+                           onChange={(e) => setPassword(e.target.value)}
+                           disabled={isLoading}
+                           required
+                           placeholder="Password"
+                           autoComplete="current-password"
+                           className="w-full pl-8 pb-2 border-b-2 border-gray-200 bg-transparent text-base focus:outline-none focus:border-[#4B0082] transition-colors"
+                       />
+                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground">
+                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                       </button>
+                   </div>
+                   <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-2">
-                            <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} className="border-muted-foreground" />
-                            <Label htmlFor="remember-me" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground">Remember me</Label>
+                            <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} />
+                            <label htmlFor="remember-me" className="font-medium text-muted-foreground leading-none">Remember me</label>
                         </div>
                         <Link
                             href="#"
-                            className="ml-auto inline-block text-sm text-muted-foreground hover:text-primary"
+                            className="font-medium text-muted-foreground hover:text-[#4B0082]"
                             >
                             Forgot Password?
                         </Link>
                     </div>
-                    <Button type="submit" className="w-full h-11 mt-4 font-bold" disabled={isLoading}>
-                        {isLoading ? 'Authenticating...' : 'Secure Login'}
-                    </Button>
+                   <Button type="submit" className="w-full h-12 mt-4 font-bold bg-[#4B0082] hover:bg-[#3A006A] text-white text-lg" disabled={isLoading}>
+                       {isLoading ? 'Logging in...' : 'Log in'}
+                   </Button>
                 </form>
 
-                <div className="mt-6 text-center text-sm text-muted-foreground">
-                    Don&apos;t have an account?{" "}
-                    <Link href="/signup" className="underline font-semibold text-primary hover:text-primary/80">
+                <p className="mt-8 text-center text-sm text-muted-foreground">
+                    or{' '}
+                    <Link href="/signup" className="font-semibold text-[#4B0082] hover:text-[#3A006A] underline">
                         Sign up
                     </Link>
-                </div>
-            </CardContent>
-        </Card>
+                </p>
+             </div>
+          </div>
+          <div className="hidden md:block relative">
+             {loginImage && (
+                <Image
+                  src={loginImage.imageUrl}
+                  alt={loginImage.description}
+                  fill
+                  className="object-cover"
+                  data-ai-hint={loginImage.imageHint}
+                />
+             )}
+          </div>
+       </div>
     </div>
   );
 }

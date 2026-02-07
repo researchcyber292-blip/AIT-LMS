@@ -253,6 +253,12 @@
       "imageHint": "eagle head"
     },
     {
+      "id": "login-clouds",
+      "description": "Fluffy pink 3D rendered clouds against a pink background.",
+      "imageUrl": "https://images.unsplash.com/photo-1619451998198-e56b4f74a945?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "pink clouds 3d"
+    },
+    {
       "id": "hero-background-pastel",
       "description": "Abstract pastel waves background.",
       "imageUrl": "https://images.unsplash.com/photo-1620121692029-d088224ddc74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwYXN0ZWwlMjBhYnN0cmFjdHxlbnwwfHx8fDE3NzAxNzAxODR8MA&ixlib=rb-4.1.0&q=80&w=1080",
