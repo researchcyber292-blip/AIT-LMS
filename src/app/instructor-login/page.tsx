@@ -103,14 +103,14 @@ export default function InstructorLoginPage() {
                     <Button
                         key={category.name}
                         variant="outline"
-                        className="h-24 text-left justify-start flex-col items-start p-4 gap-2 group transition-all hover:bg-primary/5 hover:border-primary"
+                        className="h-24 text-left justify-start flex-col items-start p-4 gap-2 group transition-all hover:bg-primary/10 hover:border-primary hover:-translate-y-1"
                         onClick={() => router.push(category.href)}
                     >
                        <div className="flex items-center gap-3">
-                         <category.icon className="h-6 w-6 text-primary transition-colors group-hover:text-primary-foreground" />
-                         <span className="text-lg font-semibold font-headline transition-colors group-hover:text-primary-foreground">{category.name}</span>
+                         <category.icon className="h-6 w-6 text-primary" />
+                         <span className="text-lg font-semibold font-headline">{category.name}</span>
                        </div>
-                       <p className="text-sm text-muted-foreground transition-colors group-hover:text-primary-foreground/80">Manage {category.name} content</p>
+                       <p className="text-sm text-muted-foreground">Manage {category.name} content</p>
                     </Button>
                 ))}
             </div>
