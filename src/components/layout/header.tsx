@@ -52,8 +52,8 @@ export function Header() {
             <Image
               src="/avirajinfotech.png"
               alt="Aviraj Info Tech Logo"
-              width={40}
-              height={40}
+              width={50}
+              height={50}
               className="object-contain"
             />
              <span className={cn("font-bold hidden sm:inline-block", isAuthPage ? "text-white" : "text-foreground")}>AVIRAJ INFO TECH</span>
@@ -109,8 +109,8 @@ export function Header() {
                                <Image
                                     src="/avirajinfotech.png"
                                     alt="Aviraj Info Tech Logo"
-                                    width={32}
-                                    height={32}
+                                    width={40}
+                                    height={40}
                                     className="object-contain"
                                 />
                              </Link>
