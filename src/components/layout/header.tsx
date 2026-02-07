@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -52,8 +53,8 @@ export function Header() {
             <Image
               src="/avirajinfotech.png"
               alt="Aviraj Info Tech Logo"
-              width={50}
-              height={50}
+              width={55}
+              height={55}
               className="object-contain"
             />
              <span className={cn("font-bold hidden sm:inline-block", isAuthPage ? "text-white" : "text-foreground")}>AVIRAJ INFO TECH</span>
@@ -109,8 +110,8 @@ export function Header() {
                                <Image
                                     src="/avirajinfotech.png"
                                     alt="Aviraj Info Tech Logo"
-                                    width={40}
-                                    height={40}
+                                    width={45}
+                                    height={45}
                                     className="object-contain"
                                 />
                              </Link>
