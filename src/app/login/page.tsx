@@ -12,9 +12,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
-import imageData from '@/lib/placeholder-images.json';
-
-const loginImage = imageData.placeholderImages.find(img => img.id === 'login-clouds');
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -158,15 +155,13 @@ export default function LoginPage() {
              </div>
           </div>
           <div className="hidden md:block relative">
-             {loginImage && (
-                <Image
-                  src={loginImage.imageUrl}
-                  alt={loginImage.description}
+             <Image
+                  src="/cloudpink.png"
+                  alt="Fluffy pink 3D rendered clouds against a pink background."
                   fill
                   className="object-cover"
-                  data-ai-hint={loginImage.imageHint}
+                  data-ai-hint="pink clouds 3d"
                 />
-             )}
           </div>
        </div>
     </div>
