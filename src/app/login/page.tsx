@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -13,7 +14,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
-import imageData from '@/lib/placeholder-images.json';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -93,23 +93,18 @@ export default function LoginPage() {
     }
   };
 
-  const loginImage = imageData.placeholderImages.find(img => img.id === 'login-industrial-bg');
-
   return (
     <div className="w-full min-h-screen bg-background text-foreground">
-       <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
-          <div className="hidden md:block relative">
-             {loginImage && (
-                <Image
-                  src={loginImage.imageUrl}
-                  alt={loginImage.description}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={loginImage.imageHint}
-                />
-             )}
+       <div className="grid grid-cols-1 md:grid-cols-5 h-screen">
+          <div className="hidden md:block relative md:col-span-3">
+            <Image
+              src="/LOGIN.png"
+              alt="Login background"
+              fill
+              className="object-cover"
+            />
           </div>
-          <div className="flex flex-col items-center justify-center p-8">
+          <div className="flex flex-col items-center justify-center p-8 md:col-span-2">
              <div className="w-full max-w-sm">
                 <h1 className="text-3xl font-bold mb-2">Log in</h1>
                 <p className="text-muted-foreground mb-8">Welcome back! Please enter your details.</p>
