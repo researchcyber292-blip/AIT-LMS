@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -12,6 +13,9 @@ import type { UserProfile } from '@/lib/types';
 import { collection } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { usePathname, useRouter } from 'next/navigation';
+import Loading from '@/app/loading';
+import { useEffect } from 'react';
 
 function UserListSkeleton() {
     return (
@@ -31,17 +35,25 @@ function UserListSkeleton() {
 
 
 export default function MessagingPage() {
-    const { user: currentUser } = useUser();
+    const { user: currentUser, isUserLoading } = useUser();
     const firestore = useFirestore();
+    const router = useRouter();
     const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     const usersQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
+        if (!firestore || !currentUser) return null; // Only query if user is logged in
         return collection(firestore, 'users');
-    }, [firestore]);
+    }, [firestore, currentUser]);
 
-    const { data: users, isLoading } = useCollection<UserProfile>(usersQuery);
+    const { data: users, isLoading: isCollectionLoading } = useCollection<UserProfile>(usersQuery);
+    const isLoading = isUserLoading || isCollectionLoading;
+    
+    useEffect(() => {
+        if (!isUserLoading && !currentUser) {
+          router.replace('/login');
+        }
+    }, [currentUser, isUserLoading, router]);
 
     const filteredUsers = useMemo(() => {
         if (!users) return [];
@@ -60,14 +72,22 @@ export default function MessagingPage() {
         }
         return name.substring(0, 2);
     }
+    
+    if (isLoading) {
+        return <Loading />;
+    }
+    
+    if (!currentUser) {
+        return null;
+    }
 
     return (
         <div className="h-[calc(100vh-3.5rem)] mt-14 flex">
             {/* Left Sidebar - User List */}
             <aside className="w-full max-w-xs h-full border-r bg-card flex flex-col">
                 <div className="p-4 border-b">
-                    <h2 className="font-headline text-2xl font-bold">A-Message</h2>
-                    <p className="text-sm text-muted-foreground">Connect with others</p>
+                    <h2 className="font-headline text-2xl font-bold">Support Chat</h2>
+                    <p className="text-sm text-muted-foreground">Connect with students &amp; support</p>
                     <div className="relative mt-4">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input

@@ -23,7 +23,7 @@ import { UserNav } from './user-nav';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/courses', label: 'Courses' },
-  { href: '/explore', label: 'A-Message' },
+  { href: '/explore', label: 'Support' },
   { href: '/live-classes', label: 'Live Classes' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -61,8 +61,8 @@ export function Header() {
             <Image
               src="/avirajinfotech.png"
               alt="Aviraj Info Tech Logo"
-              width={55}
-              height={55}
+              width={50}
+              height={50}
               className="object-contain"
             />
              <span className={cn("font-bold hidden sm:inline-block", isAuthPage ? "text-white" : "text-foreground")}>AVIRAJ INFO TECH</span>

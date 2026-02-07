@@ -48,7 +48,7 @@ export function Footer() {
         { label: 'Instructor Docs', href: '#' },
         { label: 'Community Forum', href: '#' },
         { label: 'Live Classes', href: '/live-classes' },
-        { label: 'A-Message', href: '/explore' },
+        { label: 'Support', href: '/explore' },
         { label: 'Webinars', href: '#' },
         { label: 'Whitepapers', href: '#' },
         { label: 'Case Studies', href: '#' },
