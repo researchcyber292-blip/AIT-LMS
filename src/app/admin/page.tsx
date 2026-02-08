@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Briefcase, Code, BarChart3, Bot, Cpu, Fingerprint, ArrowRight } from 'lucide-react';
 import { adminCredentials } from '@/lib/admin-credentials';
 import Image from 'next/image';
