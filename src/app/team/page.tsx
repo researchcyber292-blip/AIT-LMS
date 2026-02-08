@@ -59,7 +59,7 @@ export default function TeamPage() {
     <div className="bg-background text-foreground pt-14">
         <div className="relative h-72 w-full">
             <Image
-                src="https://images.unsplash.com/photo-1573496773905-f5b17e76b254?q=80&w=2069&auto=format&fit=crop"
+                src="https://picsum.photos/seed/team-banner/1920/480"
                 alt="Our Team"
                 fill
                 className="object-cover"
