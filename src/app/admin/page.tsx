@@ -52,7 +52,7 @@ function AdminLoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
     };
 
     return (
-        <div className="relative flex min-h-screen items-center justify-center px-4">
+        <div className="relative flex min-h-[calc(100vh-4rem)] mt-16 items-center justify-center px-4">
             <Image
                 src="https://plus.unsplash.com/premium_photo-1661878265739-da90bc1af051?q=80&w=1086&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Developer coding on a laptop"
@@ -114,7 +114,7 @@ function AdminDashboard() {
     };
     
     return (
-        <div className="flex min-h-screen bg-muted/40 pt-16">
+        <div className="flex min-h-[calc(100vh-4rem)] mt-16 bg-muted/40">
             <aside className="hidden md:flex w-72 flex-col border-r bg-background">
                 <div className="border-b p-4">
                     <h2 className="text-2xl font-bold font-headline">Admin Panel</h2>
