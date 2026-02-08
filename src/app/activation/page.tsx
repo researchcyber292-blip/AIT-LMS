@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ArrowRight } from 'lucide-react';
 import { useAuth, useFirestore } from '@/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/lib/types';
@@ -68,6 +68,8 @@ export default function ActivationPage() {
 
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
+
+      await updateProfile(user, { displayName: name });
 
       const userProfile: UserProfile = {
         id: user.uid,

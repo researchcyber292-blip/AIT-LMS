@@ -134,4 +134,6 @@ export type ChatMessage = {
   userName: string;
   userAvatar: string | null;
   timestamp: any; // Firestore Server Timestamp
+  isInstructor?: boolean;
+  isRead?: boolean;
 };

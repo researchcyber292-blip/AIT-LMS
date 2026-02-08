@@ -78,6 +78,13 @@ service cloud.firestore {
     }
 
     /**
+     * Checks if the authenticated user is a participant in the private chat.
+     */
+    function isChatParticipant(chatId) {
+      return isSignedIn() && (request.auth.uid in chatId.split('_'));
+    }
+
+    /**
      * Ensures that on course creation, the instructorId field matches the creator's UID.
      */
     function isCreatorTheInstructor() {
@@ -233,7 +240,20 @@ service cloud.firestore {
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow update, delete: if isOwner(resource.data.userId);
     }
+    
+    /**
+     * @description Private one-on-one chats between users.
+     * @path /private_chats/{chatId}
+     * @allow (read, write) Only participants of the chat can access messages.
+     * @principle Path-based ownership, derived from chat ID.
+     */
+    match /private_chats/{chatId} {
+      // Rules are enforced on the subcollection.
+      match /messages/{messageId} {
+        allow read, list: if isChatParticipant(chatId);
+        allow create: if isChatParticipant(chatId) && request.resource.data.userId == request.auth.uid;
+        allow update, delete: if isChatParticipant(chatId) && isOwner(resource.data.userId);
+      }
+    }
   }
 }
-
-    

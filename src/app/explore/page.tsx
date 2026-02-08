@@ -7,11 +7,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Send, User, Plus, MoreVertical, Video, Lock, Mic, Users, MessageSquare, MoreHorizontal, Edit, Trash2, Briefcase, User as UserIcon } from 'lucide-react';
+import { Search, Send, User, Plus, MoreVertical, Briefcase, User as UserIcon } from 'lucide-react';
 import { useCollection, useDoc, useFirestore, useMemoFirebase, useUser, useAuth } from '@/firebase';
 import type { UserProfile, ChatMessage, Instructor } from '@/lib/types';
 import { User } from 'firebase/auth';
-import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, writeBatch } from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -35,6 +35,8 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Edit, MessageSquare, MoreHorizontal, Trash2, Users } from 'lucide-react';
+
 
 const VerifiedTick = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={className}>
@@ -283,17 +285,20 @@ function PrivateChatView({ chatPartner, currentUser, userRole }: { chatPartner: 
         const adminRole = isAdmin ? localStorage.getItem('adminChatRole') : null;
         const adminContact = adminRole ? aitContacts.find(c => c.id.startsWith(`ait_${adminRole.split('-')[0]}`)) : null;
 
-        const messageData = {
+        const messageData: Omit<ChatMessage, 'id' | 'timestamp'> = {
             text: messageText,
             userId: currentUser.uid,
             userName: isAdmin && adminContact ? adminContact.name : (currentUser.displayName || 'Anonymous'),
             userAvatar: isAdmin && adminContact ? adminContact.photoURL : (currentUser.photoURL || null),
-            timestamp: serverTimestamp(),
+            isRead: false,
             ...(isAdmin && { isInstructor: true })
         };
 
         try {
-            await addDoc(collection(firestore, 'private_chats', chatId, 'messages'), messageData);
+            await addDoc(collection(firestore, 'private_chats', chatId, 'messages'), {
+                ...messageData,
+                timestamp: serverTimestamp()
+            });
         } catch (error: any) {
             console.error("Error sending private message:", error);
             toast({ variant: 'destructive', title: "Send failed", description: "You may not have permission to send messages." });
@@ -383,6 +388,73 @@ const aitContacts = [
     { id: 'ait_robotics_support', name: 'AIT ROBOTICS & TECH', photoURL: '/avirajinfotech.png', verified: true, email: 'robotics@avirajinfotech.com' },
 ];
 
+function AitContactButton({ contact, activeChatId, onSelectChat }: { contact: typeof aitContacts[0], activeChatId: string, onSelectChat: (contact: any) => void }) {
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const isActive = activeChatId === contact.id;
+
+    const chatId = useMemo(() => {
+        if (!user) return null;
+        const ids = [user.uid, contact.id].sort();
+        return ids.join('_');
+    }, [user, contact.id]);
+
+    const unreadQuery = useMemoFirebase(() => {
+        if (!firestore || !user || !chatId) return null;
+        return query(
+            collection(firestore, 'private_chats', chatId, 'messages'),
+            where('userId', '==', contact.id),
+            where('isRead', '==', false)
+        );
+    }, [firestore, user, chatId, contact.id]);
+
+    const { data: unreadMessages } = useCollection(unreadQuery);
+    const unreadCount = unreadMessages?.length || 0;
+
+    useEffect(() => {
+        if (isActive && unreadMessages && unreadMessages.length > 0 && firestore && chatId) {
+            const batch = writeBatch(firestore);
+            unreadMessages.forEach(msg => {
+                const msgRef = doc(firestore, 'private_chats', chatId, 'messages', msg.id);
+                batch.update(msgRef, { isRead: true });
+            });
+            batch.commit().catch(err => {
+                console.error("Failed to mark messages as read:", err);
+            });
+        }
+    }, [isActive, unreadMessages, firestore, chatId]);
+
+
+    return (
+        <button
+            onClick={() => onSelectChat(contact)}
+            className={cn(
+                "w-full flex items-center gap-3 p-2 text-left h-[72px] transition-colors border-b border-white/5 relative",
+                isActive ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
+            )}
+        >
+            <Avatar className="h-12 w-12">
+                <AvatarImage src={contact.photoURL} alt={contact.name || ''} className={'p-1.5 object-contain'} />
+                <AvatarFallback>{getInitials(contact.name)}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 overflow-hidden">
+                <p className="font-semibold text-gray-100 truncate flex items-center gap-1.5">
+                    {contact.name}
+                    <VerifiedTick className="h-4 w-4 text-blue-400" />
+                </p>
+                <p className="text-sm text-gray-400 truncate">
+                    Official AIT Support
+                </p>
+            </div>
+            {unreadCount > 0 && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 bg-emerald-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {unreadCount}
+                </div>
+            )}
+        </button>
+    );
+}
+
 function ChatSidebar({ userRole, activeChatId, onSelectChat }: { userRole: 'student' | 'instructor', activeChatId: string | 'public', onSelectChat: (contact: UserProfile | typeof aitContacts[0] | 'public') => void }) {
     const [searchQuery, setSearchQuery] = useState('');
     const firestore = useFirestore();
@@ -394,43 +466,13 @@ function ChatSidebar({ userRole, activeChatId, onSelectChat }: { userRole: 'stud
     const { data: students, isLoading: studentsLoading } = useCollection<UserProfile>(studentsQuery);
 
     const contacts = useMemo(() => {
-        const sourceList = userRole === 'instructor' ? students : aitContacts;
-        if (!sourceList) return [];
-        return sourceList.filter(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase()));
-    }, [students, aitContacts, searchQuery, userRole]);
+        if (userRole === 'instructor') {
+             if (!students) return [];
+             return students.filter(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+        return aitContacts.filter(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+    }, [students, searchQuery, userRole]);
 
-    const renderContactButton = (contact: UserProfile | typeof aitContacts[0]) => {
-        const isActive = activeChatId === contact.id;
-        const isVerified = 'verified' in contact && contact.verified;
-        
-        return (
-             <button
-                key={contact.id}
-                onClick={() => onSelectChat(contact)}
-                className={cn(
-                    "w-full flex items-center gap-3 p-2 text-left h-[72px] transition-colors border-b border-white/5",
-                    isActive ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
-                )}
-            >
-                <Avatar className="h-12 w-12">
-                    <AvatarImage src={contact.photoURL} alt={contact.name || ''} className={cn(isVerified && 'p-1.5 object-contain')} />
-                    <AvatarFallback>{getInitials(contact.name)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 overflow-hidden">
-                    <div className="flex justify-between items-center">
-                        <p className="font-semibold text-gray-100 truncate flex items-center gap-1.5">
-                            {contact.name}
-                            {isVerified && <VerifiedTick className="h-4 w-4 text-blue-400" />}
-                        </p>
-                    </div>
-                    <p className="text-sm text-gray-400 truncate">
-                        {userRole === 'instructor' ? (contact as UserProfile).email : 'Official AIT Support'}
-                    </p>
-                </div>
-            </button>
-        );
-    }
-    
     return (
         <aside className="w-full max-w-sm h-full border-r border-white/10 bg-[#111b21] flex flex-col">
             <header className="p-3 h-16 flex items-center justify-between border-b border-white/10 bg-[#202c33]">
@@ -472,7 +514,30 @@ function ChatSidebar({ userRole, activeChatId, onSelectChat }: { userRole: 'stud
                 {userRole === 'instructor' && studentsLoading && (
                     <div className="p-4 text-center text-sm text-muted-foreground">Loading students...</div>
                 )}
-                {contacts.map(renderContactButton)}
+
+                {userRole === 'student' && contacts.map(contact => (
+                    <AitContactButton key={contact.id} contact={contact as typeof aitContacts[0]} activeChatId={activeChatId} onSelectChat={onSelectChat} />
+                ))}
+
+                {userRole === 'instructor' && contacts.map(contact => (
+                     <button
+                        key={contact.id}
+                        onClick={() => onSelectChat(contact as UserProfile)}
+                        className={cn(
+                            "w-full flex items-center gap-3 p-2 text-left h-[72px] transition-colors border-b border-white/5",
+                            activeChatId === contact.id ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
+                        )}
+                    >
+                        <Avatar className="h-12 w-12">
+                            <AvatarImage src={contact.photoURL} alt={contact.name || ''} />
+                            <AvatarFallback>{getInitials(contact.name)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="font-semibold text-gray-100 truncate">{contact.name}</p>
+                            <p className="text-sm text-gray-400 truncate">{contact.email}</p>
+                        </div>
+                    </button>
+                ))}
             </ScrollArea>
         </aside>
     );
@@ -640,7 +705,7 @@ export default function MessagingPage() {
         
         if (instructorProfile) {
             setUserRole('instructor');
-        } else if (userProfile) {
+        } else if (userProfile || user) { // Check for userProfile or just authenticated user
             setUserRole('student');
         } else {
             setUserRole(null);
