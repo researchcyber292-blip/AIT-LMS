@@ -1,9 +1,7 @@
-
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -13,9 +11,8 @@ import type { UserProfile } from '@/lib/types';
 import { collection } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
-import { useEffect } from 'react';
 
 function UserListSkeleton() {
     return (
@@ -33,7 +30,6 @@ function UserListSkeleton() {
     );
 }
 
-
 export default function MessagingPage() {
     const { user: currentUser, isUserLoading } = useUser();
     const firestore = useFirestore();
@@ -42,7 +38,7 @@ export default function MessagingPage() {
     const [searchQuery, setSearchQuery] = useState('');
 
     const usersQuery = useMemoFirebase(() => {
-        if (!firestore || !currentUser) return null; // Only query if user is logged in
+        if (!firestore || !currentUser) return null;
         return collection(firestore, 'users');
     }, [firestore, currentUser]);
 
@@ -57,14 +53,13 @@ export default function MessagingPage() {
 
     const filteredUsers = useMemo(() => {
         if (!users) return [];
-        // Filter out the current user and apply search query
         return users.filter(user =>
             user.id !== currentUser?.uid &&
             user.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [users, searchQuery, currentUser]);
 
-    const getInitials = (name: string) => {
+    const getInitials = (name: string | null) => {
         if (!name) return '??';
         const names = name.split(' ');
         if (names.length > 1) {
@@ -107,7 +102,7 @@ export default function MessagingPage() {
                                 onClick={() => setSelectedUser(user)}
                                 className={cn(
                                     "w-full flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-muted",
-                                    selectedUser?.id === user.id && "bg-muted"
+                                    selectedUser?.id === user.id && "bg-accent/10"
                                 )}
                             >
                                 <Avatar>
@@ -126,10 +121,10 @@ export default function MessagingPage() {
             </aside>
 
             {/* Right Panel - Chat Area */}
-            <main className="flex-1 flex flex-col bg-background">
+            <main className="flex-1 flex flex-col bg-muted/20">
                 {selectedUser ? (
                     <>
-                        <header className="flex items-center gap-3 p-4 border-b">
+                        <header className="flex items-center gap-3 p-3 border-b bg-card shadow-sm z-10">
                             <Avatar>
                                 <AvatarImage src={selectedUser.photoURL} alt={selectedUser.name} />
                                 <AvatarFallback>{getInitials(selectedUser.name)}</AvatarFallback>
@@ -139,15 +134,32 @@ export default function MessagingPage() {
                                 <p className="text-xs text-muted-foreground">Ask your doubts here</p>
                             </div>
                         </header>
-                        <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
-                            {/* Placeholder for messages */}
-                            <p className="text-muted-foreground">Messaging functionality coming soon.</p>
-                            <p className="text-sm text-muted-foreground">You can start a conversation with {selectedUser.name}.</p>
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`}}>
+                            {/* Example Messages */}
+                            <div className="flex items-end gap-2">
+                                <Avatar className="h-8 w-8">
+                                    <AvatarImage src={selectedUser.photoURL} />
+                                    <AvatarFallback>{getInitials(selectedUser.name)}</AvatarFallback>
+                                </Avatar>
+                                <div className="bg-card rounded-lg p-3 max-w-md shadow-sm">
+                                    <p className="text-sm">Hello! I have a question about the Ethical Hacking course.</p>
+                                </div>
+                            </div>
+                            <div className="flex items-end gap-2 justify-end">
+                                <div className="bg-accent text-accent-foreground rounded-lg p-3 max-w-md shadow-sm">
+                                    <p className="text-sm">Hi there! I can help with that. What would you like to know?</p>
+                                </div>
+                                <Avatar className="h-8 w-8">
+                                     <AvatarImage src={currentUser.photoURL || undefined} />
+                                    <AvatarFallback>{getInitials(currentUser.displayName || '')}</AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <p className="text-center text-xs text-muted-foreground py-4">Messaging functionality coming soon.</p>
                         </div>
-                        <footer className="p-4 border-t">
+                        <footer className="p-3 border-t bg-card/80 backdrop-blur-sm z-10">
                             <div className="relative">
-                                <Input placeholder="Type your message..." className="pr-12 h-12" />
-                                <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8">
+                                <Input placeholder="Type your message..." className="pr-12 h-12 rounded-full" />
+                                <Button size="icon" className="absolute right-1.5 top-1/2 -translate-y-1/2 h-9 w-9 bg-accent hover:bg-accent/90 text-accent-foreground rounded-full">
                                     <Send className="h-4 w-4" />
                                     <span className="sr-only">Send</span>
                                 </Button>
@@ -155,7 +167,7 @@ export default function MessagingPage() {
                         </footer>
                     </>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center text-center">
+                    <div className="flex-1 flex items-center justify-center text-center" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`}}>
                         <div>
                             <User className="h-16 w-16 text-muted-foreground mx-auto" />
                             <h2 className="mt-4 text-xl font-semibold">Select a User</h2>
