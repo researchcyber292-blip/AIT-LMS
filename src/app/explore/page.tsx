@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Send, User, Plus, MoreVertical, Video, Lock, Mic, Users, MessageSquare, MoreHorizontal, Edit, Trash2, Briefcase, User as UserIcon } from 'lucide-react';
-import { useCollection, useFirestore, useMemoFirebase, useUser, useAuth, useDoc } from '@/firebase';
+import { useCollection, useDoc, useFirestore, useMemoFirebase, useUser, useAuth } from '@/firebase';
 import type { UserProfile, ChatMessage, Instructor } from '@/lib/types';
 import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -252,12 +252,15 @@ function ChatSidebar({ userRole }: { userRole: 'student' | 'instructor' }) {
     }, [userRole, firestore]);
     const { data: students, isLoading: studentsLoading } = useCollection<UserProfile>(studentsQuery);
 
-    const filteredStudents = useMemo(() => {
+    const filteredContacts = useMemo(() => {
+        if (userRole === 'student') {
+             return aitContacts.filter(c => c.name?.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
         if (!students) return [];
         return students.filter(s => s.name?.toLowerCase().includes(searchQuery.toLowerCase()));
-    }, [students, searchQuery]);
+    }, [students, searchQuery, userRole]);
     
-    const contacts = userRole === 'student' ? aitContacts : filteredStudents;
+    const contacts = userRole === 'student' ? filteredContacts : filteredContacts;
 
     const renderContactButton = (contact: UserProfile | typeof aitContacts[0]) => {
         const isActive = activeChatId === contact.id;
@@ -284,7 +287,7 @@ function ChatSidebar({ userRole }: { userRole: 'student' | 'instructor' }) {
                         </p>
                     </div>
                     <p className="text-sm text-gray-400 truncate">
-                        {userRole === 'instructor' ? contact.email : 'Click to see messages'}
+                        {userRole === 'instructor' ? (contact as UserProfile).email : 'Click to see messages'}
                     </p>
                 </div>
             </button>
@@ -349,14 +352,16 @@ function ChatView({ userRole }: { userRole: 'student' | 'instructor' }) {
     );
 }
 
-function RoleSelectionView({ onSelectRole }: { onSelectRole: (role: 'student' | 'instructor') => void }) {
+function RoleSelectionView({ onSelectStudent }: { onSelectStudent: () => void }) {
+    const router = useRouter();
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-background p-4">
             <div className="w-full max-w-md text-center">
                 <h1 className="text-4xl font-bold font-headline">Support Center</h1>
                 <p className="text-muted-foreground mt-2 mb-8">How would you like to log in?</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="hover:border-primary hover:shadow-lg transition-all cursor-pointer" onClick={() => onSelectRole('student')}>
+                    <Card className="hover:border-primary hover:shadow-lg transition-all cursor-pointer" onClick={onSelectStudent}>
                         <CardHeader className="items-center">
                             <div className="p-4 bg-primary/10 rounded-full mb-2">
                                 <UserIcon className="h-8 w-8 text-primary" />
@@ -364,7 +369,7 @@ function RoleSelectionView({ onSelectRole }: { onSelectRole: (role: 'student' | 
                             <CardTitle>I'm a Student</CardTitle>
                         </CardHeader>
                     </Card>
-                     <Card className="hover:border-primary hover:shadow-lg transition-all cursor-pointer" onClick={() => onSelectRole('instructor')}>
+                     <Card className="hover:border-primary hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/instructor-login')}>
                         <CardHeader className="items-center">
                              <div className="p-4 bg-primary/10 rounded-full mb-2">
                                 <Briefcase className="h-8 w-8 text-primary" />
@@ -378,7 +383,7 @@ function RoleSelectionView({ onSelectRole }: { onSelectRole: (role: 'student' | 
     )
 }
 
-function LoginView({ role, onBack }: { role: 'student' | 'instructor', onBack: () => void }) {
+function LoginView({ onBack }: { onBack: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -418,7 +423,7 @@ function LoginView({ role, onBack }: { role: 'student' | 'instructor', onBack: (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-sm">
             <CardHeader>
-                <CardTitle>Login as {role === 'student' ? 'Student' : 'Instructor'}</CardTitle>
+                <CardTitle>Student Login</CardTitle>
                 <CardDescription>Enter your credentials to access the support chat.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -449,7 +454,7 @@ function LoginView({ role, onBack }: { role: 'student' | 'instructor', onBack: (
 export default function MessagingPage() {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
-    const [loginRole, setLoginRole] = useState<'student' | 'instructor' | null>(null);
+    const [showStudentLogin, setShowStudentLogin] = useState(false);
     const [userRole, setUserRole] = useState<'student' | 'instructor' | null>(null);
 
     const userDocRef = useMemoFirebase(() => user ? doc(firestore, 'users', user.uid) : null, [firestore, user]);
@@ -480,11 +485,10 @@ export default function MessagingPage() {
     }
 
     if (!userRole) {
-        if (!loginRole) {
-            return <RoleSelectionView onSelectRole={setLoginRole} />;
-        } else {
-            return <LoginView role={loginRole} onBack={() => setLoginRole(null)} />;
+        if (showStudentLogin) {
+            return <LoginView onBack={() => setShowStudentLogin(false)} />;
         }
+        return <RoleSelectionView onSelectStudent={() => setShowStudentLogin(true)} />;
     }
 
     return <ChatView userRole={userRole} />;
