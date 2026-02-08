@@ -1,18 +1,19 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Send, User, Plus, MoreVertical, Check, Video, Lock, Mic } from 'lucide-react';
+import { Search, Send, User, Plus, MoreVertical, Check, Video, Lock, Mic, Users, MessageSquare } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
-import type { UserProfile } from '@/lib/types';
-import { collection } from 'firebase/firestore';
+import type { UserProfile, ChatMessage } from '@/lib/types';
+import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
+import { formatDistanceToNow } from 'date-fns';
 
 function UserListSkeleton() {
     return (
@@ -33,11 +34,128 @@ function UserListSkeleton() {
     );
 }
 
+function getInitials(name: string | null | undefined): string {
+    if (!name) return '??';
+    const names = name.split(' ');
+    if (names.length > 1 && names[names.length - 1]) {
+        return `${names[0][0]}${names[names.length - 1][0]}`;
+    }
+    return name.substring(0, 2);
+}
+
+function WorldChatView() {
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const [newMessage, setNewMessage] = useState('');
+    const [isSending, setIsSending] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const messagesQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return query(collection(firestore, 'public_chat'), orderBy('timestamp', 'asc'));
+    }, [firestore]);
+
+    const { data: messages, isLoading: messagesLoading } = useCollection<ChatMessage>(messagesQuery);
+    
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+    
+    const handleSendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newMessage.trim() || !user || !firestore || isSending) return;
+
+        setIsSending(true);
+        const messageText = newMessage;
+        setNewMessage('');
+
+        const messageData = {
+            text: messageText,
+            userId: user.uid,
+            userName: user.displayName || 'Anonymous',
+            userAvatar: user.photoURL || null,
+            timestamp: serverTimestamp()
+        };
+
+        try {
+            await addDoc(collection(firestore, 'public_chat'), messageData);
+        } catch (error: any) {
+            console.error("Error sending message:", error);
+            // Optionally: toast notification for error
+            setNewMessage(messageText); // Re-populate input on error
+        } finally {
+            setIsSending(false);
+        }
+    };
+    
+    return (
+        <>
+            <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
+                <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10 bg-emerald-600">
+                        <AvatarFallback className="text-white"><Users className="h-5 w-5" /></AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <h3 className="font-semibold text-gray-100">World Chat</h3>
+                        <p className="text-xs text-emerald-400">Public channel</p>
+                    </div>
+                </div>
+            </header>
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                <div className="self-center bg-[#182229] text-[#8696a0] text-xs px-3 py-2 rounded-lg flex items-center gap-2 max-w-max mx-auto">
+                    <MessageSquare className="h-3 w-3"/>
+                    <span>This is a public channel. Messages are visible to all users.</span>
+                </div>
+
+                {messagesLoading && <div className="text-center text-gray-400">Loading messages...</div>}
+                {!messagesLoading && messages?.map((message, index) => {
+                     const isCurrentUser = message.userId === user?.uid;
+                     return (
+                         <div key={message.id || index} className={cn("flex items-end gap-2", isCurrentUser ? "justify-end" : "justify-start")}>
+                            {!isCurrentUser && (
+                                 <Avatar className="h-8 w-8">
+                                     <AvatarImage src={message.userAvatar || undefined} alt={message.userName} />
+                                     <AvatarFallback>{getInitials(message.userName)}</AvatarFallback>
+                                 </Avatar>
+                            )}
+                            <div className={cn("max-w-md p-2 px-3 rounded-lg", isCurrentUser ? "bg-[#005c4b]" : "bg-[#202c33]")}>
+                                 {!isCurrentUser && <p className="text-xs font-semibold text-primary pb-1">{message.userName}</p>}
+                                <p className="text-white text-sm whitespace-pre-wrap">{message.text}</p>
+                                <p className="text-xs text-white/50 text-right mt-1">
+                                    {message.timestamp ? formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true }) : 'sending...'}
+                                </p>
+                            </div>
+                         </div>
+                     );
+                })}
+                <div ref={messagesEndRef} />
+            </div>
+            <footer className="px-4 py-2 bg-[#202c33] z-10 flex items-center gap-3">
+                <form onSubmit={handleSendMessage} className="flex-1 flex items-center gap-3">
+                    <div className="flex-1 relative">
+                        <Input 
+                            placeholder="Type a message in World Chat" 
+                            className="bg-[#2a3942] rounded-lg border-transparent h-10 px-4 text-white" 
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            disabled={isSending}
+                            autoComplete="off"
+                        />
+                    </div>
+                    <Button type="submit" variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-white/10 rounded-full" disabled={isSending || !newMessage.trim()}>
+                        <Send className="h-5 w-5" />
+                    </Button>
+                </form>
+            </footer>
+        </>
+    );
+}
+
 export default function MessagingPage() {
     const { user: currentUser, isUserLoading } = useUser();
     const firestore = useFirestore();
     const router = useRouter();
-    const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+    const [activeChat, setActiveChat] = useState<'public' | UserProfile | null>('public');
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
 
@@ -62,15 +180,6 @@ export default function MessagingPage() {
             user.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [users, searchQuery, currentUser]);
-
-    const getInitials = (name: string | null) => {
-        if (!name) return '??';
-        const names = name.split(' ');
-        if (names.length > 1) {
-            return `${names[0][0]}${names[names.length - 1][0]}`;
-        }
-        return name.substring(0, 2);
-    }
     
     if (isLoading) {
         return <Loading />;
@@ -106,7 +215,7 @@ export default function MessagingPage() {
                         />
                     </div>
                     <div className="flex items-center gap-2 mt-2">
-                        {['All', 'Unread', 'Favourites', 'Groups'].map(filter => (
+                        {['All', 'Unread', 'Favourites'].map(filter => (
                              <Button 
                                 key={filter}
                                 onClick={() => setActiveFilter(filter)}
@@ -122,14 +231,29 @@ export default function MessagingPage() {
                     </div>
                 </div>
                 <ScrollArea className="flex-1">
+                    <button
+                        onClick={() => setActiveChat('public')}
+                        className={cn(
+                            "w-full flex items-center gap-3 p-2 text-left h-[72px] transition-colors border-b border-white/5",
+                            activeChat === 'public' ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
+                        )}
+                    >
+                        <Avatar className="h-12 w-12 bg-emerald-600">
+                            <AvatarFallback className="text-white"><Users className="h-6 w-6" /></AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="font-semibold text-gray-100 truncate">World Chat</p>
+                            <p className="text-sm text-gray-400 truncate">Talk with everyone on the platform</p>
+                        </div>
+                    </button>
                     {isLoading ? <UserListSkeleton /> : (
                         filteredUsers.map(user => (
                             <button
                                 key={user.id}
-                                onClick={() => setSelectedUser(user)}
+                                onClick={() => setActiveChat(user)}
                                 className={cn(
                                     "w-full flex items-center gap-3 p-2 text-left h-[72px] transition-colors border-b border-white/5",
-                                    selectedUser?.id === user.id ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
+                                    activeChat && typeof activeChat === 'object' && activeChat.id === user.id ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
                                 )}
                             >
                                 <Avatar className="h-12 w-12">
@@ -154,16 +278,18 @@ export default function MessagingPage() {
 
             {/* Right Panel - Chat Area */}
             <main className="flex-1 flex flex-col" style={{ backgroundImage: `url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAFNJREFUSEtjZKAxYKSyeQMDw6CgoADGAbAMHEDA+ExyF4yB4T81j0ZkARhMhKk4gB8NYNnBAAyYgUj8Nxn+H4n/ZsNA/D8S/82GYQAxAwAD91GA/es02QAAAABJRU5ErkJggg==')`, backgroundBlendMode: 'soft-light', backgroundColor: '#0b141a' }}>
-                {selectedUser ? (
+                {activeChat === 'public' ? (
+                   <WorldChatView />
+                ) : activeChat && typeof activeChat === 'object' ? (
                     <>
                         <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-10 w-10">
-                                    <AvatarImage src={selectedUser.photoURL} alt={selectedUser.name} />
-                                    <AvatarFallback>{getInitials(selectedUser.name)}</AvatarFallback>
+                                    <AvatarImage src={activeChat.photoURL} alt={activeChat.name} />
+                                    <AvatarFallback>{getInitials(activeChat.name)}</AvatarFallback>
                                 </Avatar>
                                 <div>
-                                    <h3 className="font-semibold text-gray-100">{selectedUser.name}</h3>
+                                    <h3 className="font-semibold text-gray-100">{activeChat.name}</h3>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -173,14 +299,11 @@ export default function MessagingPage() {
                             </div>
                         </header>
                         <div className="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col justify-end">
-                            <div className="self-center bg-[#005c4b]/80 text-white/90 text-xs px-2 py-1 rounded-md">
-                                28/01/2026
-                            </div>
                            <div className="self-center bg-[#182229] text-[#8696a0] text-xs px-3 py-2 rounded-lg flex items-center gap-2">
                                 <Lock className="h-3 w-3"/>
                                 <span>Messages and calls are end-to-end encrypted. Click to learn more.</span>
                            </div>
-                           <p className="text-center text-xs text-muted-foreground py-4">Messaging functionality coming soon.</p>
+                           <p className="text-center text-xs text-muted-foreground py-4">Private messaging functionality coming soon.</p>
                         </div>
                         <footer className="px-4 py-2 bg-[#202c33] z-10 flex items-center gap-3">
                             <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-white/10 rounded-full">
@@ -198,11 +321,11 @@ export default function MessagingPage() {
                     <div className="flex-1 flex items-center justify-center text-center">
                         <div className='max-w-md'>
                             <div className="mx-auto bg-gray-700/20 p-6 rounded-full w-fit mb-6">
-                                <User className="h-20 w-20 text-gray-500" />
+                                <MessageSquare className="h-20 w-20 text-gray-500" />
                             </div>
-                            <h2 className="mt-4 text-2xl font-light text-gray-200">Aviraj Info Tech Chat</h2>
+                            <h2 className="mt-4 text-2xl font-light text-gray-200">Aviraj Info Tech Support</h2>
                             <p className="mt-2 text-sm text-gray-400">
-                                Send and receive messages with end-to-end encryption. <br/> Select a user from the left to begin a conversation.
+                                Join the World Chat to talk with the community, <br/> or select a user to start a private conversation.
                             </p>
                         </div>
                     </div>

@@ -372,6 +372,47 @@
         "message",
         "submittedAt"
       ]
+    },
+    "ChatMessage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Chat Message",
+      "type": "object",
+      "description": "Represents a single message in a public chat.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the message."
+        },
+        "text": {
+          "type": "string",
+          "description": "The content of the message."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who sent the message."
+        },
+        "userName": {
+          "type": "string",
+          "description": "The display name of the user who sent the message."
+        },
+        "userAvatar": {
+          "type": "string",
+          "description": "URL of the sender's profile picture.",
+          "format": "uri"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The server timestamp when the message was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "userId",
+        "userName",
+        "timestamp"
+      ]
     }
   },
   "auth": {
@@ -494,6 +535,22 @@
             {
               "name": "submissionId",
               "description": "Unique ID for the submission."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/public_chat/{messageId}",
+        "definition": {
+          "entityName": "ChatMessage",
+          "schema": {
+            "$ref": "#/backend/entities/ChatMessage"
+          },
+          "description": "Stores all messages for the public world chat. Readable and writable by any authenticated user.",
+          "params": [
+            {
+              "name": "messageId",
+              "description": "Unique ID for the chat message."
             }
           ]
         }

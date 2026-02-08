@@ -126,3 +126,12 @@ export type ContactSubmission = {
   scheduleDemo: boolean;
   submittedAt: { seconds: number; nanoseconds: number; } | null;
 };
+
+export type ChatMessage = {
+  id: string;
+  text: string;
+  userId: string;
+  userName: string;
+  userAvatar: string | null;
+  timestamp: any; // Firestore Server Timestamp
+};

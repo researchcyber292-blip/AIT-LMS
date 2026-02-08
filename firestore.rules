@@ -220,5 +220,19 @@ service cloud.firestore {
         allow create: if true;
         allow read, list, update, delete: if isAnonymousAdmin();
     }
+
+    /**
+     * @description Public chat room for all users.
+     * @path /public_chat/{messageId}
+     * @allow (read, list) Any signed-in user can read messages.
+     * @allow (create) Any signed-in user can send a message, but they can't impersonate another user.
+     * @principle Community-driven open channel.
+     */
+    match /public_chat/{messageId} {
+      allow read, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      // Nobody can update or delete messages from the client.
+      allow update, delete: if false;
+    }
   }
 }
