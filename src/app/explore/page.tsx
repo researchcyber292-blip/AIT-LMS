@@ -1,6 +1,8 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -92,12 +94,13 @@ function WorldChatView() {
         <>
             <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
                 <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 bg-emerald-600">
-                        <AvatarFallback className="text-white"><Users className="h-5 w-5" /></AvatarFallback>
+                    <Avatar className="h-10 w-10 bg-white">
+                        <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="p-1" />
+                        <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-5 w-5" /></AvatarFallback>
                     </Avatar>
                     <div>
                         <h3 className="font-semibold text-gray-100">World Chat</h3>
-                        <p className="text-xs text-emerald-400">Public channel</p>
+                        <p className="text-xs text-emerald-400">Talk with everyone on the platform</p>
                     </div>
                 </div>
             </header>
@@ -118,7 +121,7 @@ function WorldChatView() {
                                      <AvatarFallback>{getInitials(message.userName)}</AvatarFallback>
                                  </Avatar>
                             )}
-                            <div className={cn("max-w-md p-2 px-3 rounded-lg", isCurrentUser ? "bg-[#005c4b]" : "bg-[#202c33]")}>
+                            <div className={cn("max-w-md p-2 px-3 rounded-xl", isCurrentUser ? "bg-[#005c4b]" : "bg-[#202c33]")}>
                                  {!isCurrentUser && <p className="text-xs font-semibold text-primary pb-1">{message.userName}</p>}
                                 <p className="text-white text-sm whitespace-pre-wrap">{message.text}</p>
                                 <p className="text-xs text-white/50 text-right mt-1">
@@ -238,8 +241,9 @@ export default function MessagingPage() {
                             activeChat === 'public' ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
                         )}
                     >
-                        <Avatar className="h-12 w-12 bg-emerald-600">
-                            <AvatarFallback className="text-white"><Users className="h-6 w-6" /></AvatarFallback>
+                        <Avatar className="h-12 w-12 bg-white">
+                            <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="p-1" />
+                            <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-6 w-6" /></AvatarFallback>
                         </Avatar>
                         <div className="flex-1 overflow-hidden">
                             <p className="font-semibold text-gray-100 truncate">World Chat</p>
