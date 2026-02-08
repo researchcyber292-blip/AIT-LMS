@@ -215,7 +215,7 @@ function WorldChatView({ userRole }: { userRole: 'student' | 'instructor' }) {
         <>
             <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
                 <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 bg-white p-1.5">
+                    <Avatar className="h-10 w-10">
                         <AvatarImage src="/image.png" alt="World Chat" className="object-contain" />
                         <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-5 w-5" /></AvatarFallback>
                     </Avatar>
@@ -574,7 +574,7 @@ function ChatSidebar({ userRole, activeChatId, onSelectChat }: { userRole: 'stud
                         activeChatId === 'public' ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
                     )}
                 >
-                    <Avatar className="h-12 w-12 bg-white p-1.5">
+                    <Avatar className="h-12 w-12">
                         <AvatarImage src="/image.png" alt="World Chat" className="object-contain" />
                         <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-6 w-6" /></AvatarFallback>
                     </Avatar>
