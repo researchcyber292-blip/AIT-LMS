@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Send, User, Plus, MoreVertical, Video, Lock, Mic, Users, MessageSquare, MoreHorizontal, Edit, Trash2, Briefcase, User as UserIcon } from 'lucide-react';
-import { useCollection, useFirestore, useMemoFirebase, useUser, useAuth } from '@/firebase';
+import { useCollection, useFirestore, useMemoFirebase, useUser, useAuth, useDoc } from '@/firebase';
 import type { UserProfile, ChatMessage, Instructor } from '@/lib/types';
 import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -340,7 +340,7 @@ function ChatSidebar({ userRole }: { userRole: 'student' | 'instructor' }) {
 
 function ChatView({ userRole }: { userRole: 'student' | 'instructor' }) {
     return (
-        <div className="h-screen w-screen flex bg-[#0b141a] text-gray-300 pt-16">
+        <div className="h-screen w-screen flex bg-[#0b141a] text-gray-300">
             <ChatSidebar userRole={userRole} />
              <main className="flex-1 flex flex-col" style={{ backgroundImage: `url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAFNJREFUSEtjZKAxYKSyeQMDw6CgoADGAbAMHEDA+ExyF4yB4T81j0ZkARhMhKk4gB8NYNnBAAyYgUj8Nxn+H4n/ZsNA/D8S/82GYQAxAwAD91GA/es02QAAAABJRU5ErkJggg==')`, backgroundBlendMode: 'soft-light', backgroundColor: '#0b141a' }}>
                  <WorldChatView />
