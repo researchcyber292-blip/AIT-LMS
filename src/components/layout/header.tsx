@@ -62,7 +62,7 @@ export function Header() {
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/image.png"
+              src="/avirajinfotech.png"
               alt="Aviraj Info Tech Logo"
               width={50}
               height={50}
@@ -150,7 +150,7 @@ export function Header() {
                         <div className="flex items-center justify-between border-b p-4">
                              <Link href="/" className="flex items-center space-x-2">
                                <Image
-                                    src="/image.png"
+                                    src="/avirajinfotech.png"
                                     alt="Aviraj Info Tech Logo"
                                     width={50}
                                     height={50}
