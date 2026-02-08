@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
-import { SecurityInterceptor } from '@/components/security-interceptor';
 import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import Script from 'next/script';
@@ -48,7 +47,6 @@ export default function RootLayout({
               <main className="flex-1 relative">{children}</main>
               {!isFullScreenPage && <Footer />}
             </div>
-            <SecurityInterceptor />
             <Toaster />
             <CustomCursor />
           </OnboardingGuard>
