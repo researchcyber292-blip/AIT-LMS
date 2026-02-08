@@ -62,7 +62,7 @@ export function Header() {
         <div className="flex-1 flex justify-start">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/avirajinfotech.png"
+              src="/image.png"
               alt="Aviraj Info Tech Logo"
               width={50}
               height={50}
@@ -121,7 +121,7 @@ export function Header() {
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href="/instructor-login">
+                            <Link href="/admin">
                                 <Briefcase className="mr-2 h-4 w-4" />
                                 <span>Instructor Console</span>
                             </Link>
@@ -150,7 +150,7 @@ export function Header() {
                         <div className="flex items-center justify-between border-b p-4">
                              <Link href="/" className="flex items-center space-x-2">
                                <Image
-                                    src="/avirajinfotech.png"
+                                    src="/image.png"
                                     alt="Aviraj Info Tech Logo"
                                     width={50}
                                     height={50}
@@ -188,7 +188,7 @@ export function Header() {
                                 </SheetClose>
                                 <SheetClose asChild>
                                     <Button asChild className="w-full rounded-full" variant="secondary">
-                                        <Link href="/instructor-login">
+                                        <Link href="/admin">
                                             <Briefcase className="mr-2 h-4 w-4" />
                                             Instructor Console
                                         </Link>

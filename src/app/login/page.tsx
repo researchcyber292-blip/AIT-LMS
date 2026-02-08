@@ -12,7 +12,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { adminCredentials } from "@/lib/admin-credentials";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -34,19 +33,6 @@ export default function LoginPage() {
       return;
     }
     setIsLoading(true);
-
-    // Check for special admin credentials first
-    for (const [category, creds] of Object.entries(adminCredentials)) {
-      if (email === creds.username && password === creds.password) {
-        toast({
-          title: 'Admin Login Successful',
-          description: `Redirecting to ${category.replace(/-/g, ' ')} console.`,
-        });
-        router.push(`/admin/console/${category}`);
-        setIsLoading(false);
-        return; // Stop execution
-      }
-    }
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
