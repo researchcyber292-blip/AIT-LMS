@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Send, User, Plus, MoreVertical, Check, Video, Lock, Mic, Users, MessageSquare, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
+import { Search, Send, User, Plus, MoreVertical, Check, Video, Lock, Mic, Users, MessageSquare, MoreHorizontal, Edit, Trash2, CheckCircle } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import type { UserProfile, ChatMessage } from '@/lib/types';
 import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -243,11 +243,17 @@ function WorldChatView() {
     );
 }
 
+const aitContacts = [
+    { id: 'ait_hacking', name: 'AIT HACKING', photoURL: '/avirajinfotech.png', verified: true, email: 'hacking@avirajinfotech.com' },
+    { id: 'ait_coding', name: 'AIT CODING', photoURL: '/avirajinfotech.png', verified: true, email: 'coding@avirajinfotech.com' },
+    { id: 'ait_datascience', name: 'AIT DATA SCIENCE', photoURL: '/avirajinfotech.png', verified: true, email: 'ds@avirajinfotech.com' },
+];
+
 export default function MessagingPage() {
     const { user: currentUser, isUserLoading } = useUser();
     const firestore = useFirestore();
     const router = useRouter();
-    const [activeChat, setActiveChat] = useState<'public' | UserProfile | null>('public');
+    const [activeChat, setActiveChat] = useState<UserProfile | typeof aitContacts[0] | 'public' | null>('public');
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
 
@@ -265,12 +271,21 @@ export default function MessagingPage() {
         }
     }, [currentUser, isUserLoading, router]);
 
-    const filteredUsers = useMemo(() => {
-        if (!users) return [];
-        return users.filter(user =>
-            user.id !== currentUser?.uid &&
-            user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredUsersAndContacts = useMemo(() => {
+        if (!users) return { ait: [], students: [] };
+        
+        const lowerCaseQuery = searchQuery.toLowerCase();
+
+        const filteredAit = aitContacts.filter(c => 
+            c.name.toLowerCase().includes(lowerCaseQuery)
         );
+
+        const filteredStudents = users.filter(user =>
+            user.id !== currentUser?.uid &&
+            user.name.toLowerCase().includes(lowerCaseQuery)
+        );
+
+        return { ait: filteredAit, students: filteredStudents };
     }, [users, searchQuery, currentUser]);
     
     if (isLoading) {
@@ -281,9 +296,42 @@ export default function MessagingPage() {
         return null;
     }
 
+    const renderUserButton = (user: UserProfile | typeof aitContacts[0]) => {
+        const isActive = activeChat && typeof activeChat === 'object' && activeChat.id === user.id;
+        const isVerified = 'verified' in user && user.verified;
+
+        return (
+            <button
+                key={user.id}
+                onClick={() => setActiveChat(user)}
+                className={cn(
+                    "w-full flex items-center gap-3 p-2 text-left h-[72px] transition-colors border-b border-white/5",
+                    isActive ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
+                )}
+            >
+                <Avatar className="h-12 w-12">
+                    <AvatarImage src={user.photoURL} alt={user.name} className={cn(isVerified && 'p-1 object-contain')} />
+                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 overflow-hidden">
+                    <div className="flex justify-between items-center">
+                        <p className="font-semibold text-gray-100 truncate flex items-center gap-1.5">
+                            {user.name}
+                            {isVerified && <CheckCircle className="h-4 w-4 text-blue-400" />}
+                        </p>
+                        <p className="text-xs text-gray-400">Yesterday</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <Check className="h-4 w-4 text-blue-400"/>
+                        <p className="text-sm text-gray-400 truncate">Click to see messages</p>
+                    </div>
+                </div>
+            </button>
+        );
+    };
+
     return (
         <div className="h-screen w-screen flex bg-[#0b141a] text-gray-300 pt-16">
-            {/* Left Sidebar - Chat List */}
             <aside className="w-full max-w-sm h-full border-r border-white/10 bg-[#111b21] flex flex-col">
                 <header className="p-3 h-16 flex items-center justify-between border-b border-white/10 bg-[#202c33]">
                     <h2 className="font-semibold text-xl text-gray-200">Chats</h2>
@@ -340,36 +388,14 @@ export default function MessagingPage() {
                         </div>
                     </button>
                     {isLoading ? <UserListSkeleton /> : (
-                        filteredUsers.map(user => (
-                            <button
-                                key={user.id}
-                                onClick={() => setActiveChat(user)}
-                                className={cn(
-                                    "w-full flex items-center gap-3 p-2 text-left h-[72px] transition-colors border-b border-white/5",
-                                    activeChat && typeof activeChat === 'object' && activeChat.id === user.id ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
-                                )}
-                            >
-                                <Avatar className="h-12 w-12">
-                                    <AvatarImage src={user.photoURL} alt={user.name} />
-                                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-                                </Avatar>
-                                <div className="flex-1 overflow-hidden">
-                                    <div className="flex justify-between items-center">
-                                        <p className="font-semibold text-gray-100 truncate">{user.name}</p>
-                                        <p className="text-xs text-gray-400">Yesterday</p>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <Check className="h-4 w-4 text-blue-400"/>
-                                        <p className="text-sm text-gray-400 truncate">Click to see messages</p>
-                                    </div>
-                                </div>
-                            </button>
-                        ))
+                        <>
+                            {filteredUsersAndContacts.ait.map(renderUserButton)}
+                            {filteredUsersAndContacts.students.map(renderUserButton)}
+                        </>
                     )}
                 </ScrollArea>
             </aside>
 
-            {/* Right Panel - Chat Area */}
             <main className="flex-1 flex flex-col" style={{ backgroundImage: `url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAFNJREFUSEtjZKAxYKSyeQMDw6CgoADGAbAMHEDA+ExyF4yB4T81j0ZkARhMhKk4gB8NYNnBAAyYgUj8Nxn+H4n/ZsNA/D8S/82GYQAxAwAD91GA/es02QAAAABJRU5ErkJggg==')`, backgroundBlendMode: 'soft-light', backgroundColor: '#0b141a' }}>
                 {activeChat === 'public' ? (
                    <WorldChatView />
@@ -378,11 +404,14 @@ export default function MessagingPage() {
                         <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-10 w-10">
-                                    <AvatarImage src={activeChat.photoURL} alt={activeChat.name} />
+                                    <AvatarImage src={activeChat.photoURL} alt={activeChat.name} className={cn(('verified' in activeChat && activeChat.verified) && 'p-1 object-contain')}/>
                                     <AvatarFallback>{getInitials(activeChat.name)}</AvatarFallback>
                                 </Avatar>
                                 <div>
-                                    <h3 className="font-semibold text-gray-100">{activeChat.name}</h3>
+                                    <h3 className="font-semibold text-gray-100 flex items-center gap-1.5">
+                                        {activeChat.name}
+                                        {'verified' in activeChat && activeChat.verified && <CheckCircle className="h-4 w-4 text-blue-400" />}
+                                    </h3>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
@@ -427,7 +456,3 @@ export default function MessagingPage() {
         </div>
     );
 }
-    
-    
-
-    
