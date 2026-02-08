@@ -117,7 +117,7 @@ function WorldChatView() {
         <>
             <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
                 <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 bg-white">
+                    <Avatar className="h-10 w-10 bg-white p-1">
                         <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="object-contain" />
                         <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-5 w-5" /></AvatarFallback>
                     </Avatar>
@@ -144,7 +144,7 @@ function WorldChatView() {
                                      <AvatarFallback>{getInitials(message.userName)}</AvatarFallback>
                                  </Avatar>
                             )}
-                            <div className={cn("max-w-md p-2 px-3 rounded-xl", isCurrentUser ? "bg-[#005c4b]" : "bg-[#202c33]")}>
+                            <div className={cn("max-w-md p-2 px-3 rounded-2xl", isCurrentUser ? "bg-[#005c4b] rounded-br-none" : "bg-[#202c33] rounded-bl-none")}>
                                  {!isCurrentUser && <p className="text-xs font-semibold text-primary pb-1">{message.userName}</p>}
                                 <p className="text-white text-sm whitespace-pre-wrap">{message.text}</p>
                                 <p className="text-xs text-white/50 text-right mt-1">
@@ -237,7 +237,7 @@ export default function MessagingPage() {
     }
 
     return (
-        <div className="h-screen w-screen flex bg-[#0b141a] text-gray-300">
+        <div className="h-screen w-screen flex bg-[#0b141a] text-gray-300 pt-16">
             {/* Left Sidebar - Chat List */}
             <aside className="w-full max-w-sm h-full border-r border-white/10 bg-[#111b21] flex flex-col">
                 <header className="p-3 h-16 flex items-center justify-between border-b border-white/10 bg-[#202c33]">
@@ -285,7 +285,7 @@ export default function MessagingPage() {
                             activeChat === 'public' ? "bg-[#2a3942]" : "hover:bg-[#202c33]"
                         )}
                     >
-                        <Avatar className="h-12 w-12 bg-white">
+                        <Avatar className="h-12 w-12 bg-white p-1.5">
                             <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="object-contain" />
                             <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-6 w-6" /></AvatarFallback>
                         </Avatar>
@@ -383,4 +383,6 @@ export default function MessagingPage() {
     );
 }
     
+    
+
     
