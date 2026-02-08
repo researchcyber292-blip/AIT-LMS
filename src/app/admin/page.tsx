@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Briefcase, Code, BarChart3, Bot, Cpu, Fingerprint, ArrowRight } from 'lucide-react';
 import { adminCredentials } from '@/lib/admin-credentials';
 import Image from 'next/image';
@@ -110,18 +110,23 @@ export default function AdminCategorySelectionPage() {
             const Icon = categoryIcons[category] || Shield;
             const categoryName = category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
             return (
-              <Card 
-                key={category} 
+              <Card
+                key={category}
                 onClick={() => handleCategorySelect(category)}
-                className="cursor-pointer bg-card/50 backdrop-blur-sm border-primary/20 text-white hover:border-primary hover:bg-card/70 transition-all duration-300"
+                className="group cursor-pointer bg-card/70 backdrop-blur-md border-white/10 text-white hover:border-primary hover:bg-primary/10 transition-all duration-300"
               >
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{categoryName}</CardTitle>
-                  <Icon className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Login</div>
-                  <p className="text-xs text-muted-foreground">Access the {categoryName} panel</p>
+                <CardContent className="p-6 flex flex-col items-start text-left h-full">
+                    <div className="p-3 bg-primary/10 rounded-lg border border-primary/20 mb-4">
+                        <Icon className="h-8 w-8 text-primary" />
+                    </div>
+                    <div className="flex-grow">
+                        <h3 className="font-headline text-xl font-bold">{categoryName}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">Access the {categoryName} panel</p>
+                    </div>
+                    <div className="w-full mt-4 flex items-center justify-end text-sm font-semibold text-primary/80 group-hover:text-primary">
+                        <span>Login</span>
+                        <ArrowRight className="h-4 w-4 ml-2 transform transition-transform group-hover:translate-x-1" />
+                    </div>
                 </CardContent>
               </Card>
             );
