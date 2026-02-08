@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -54,15 +55,19 @@ export default function RegisterPage() {
       await updateProfile(user, { displayName: data.username });
 
       // Create user profile in Firestore
-      const userProfile: Omit<UserProfile, 'photoURL' | 'enrolledCourseIds' | 'motherName' | 'fatherName' | 'alternateEmail' | 'alternateMobileNumber' > = {
+      const userProfileData = {
         id: user.uid,
         name: data.username,
         username: data.username,
         email: data.email,
         mobileNumber: data.mobileNumber,
         onboardingStatus: 'active', // Go straight to active
+        publicChatStats: {
+          messageCount: 0,
+          weekStartTimestamp: new Date(0) // Initialize with a past date
+        }
       };
-      await setDoc(doc(firestore, "users", user.uid), userProfile);
+      await setDoc(doc(firestore, "users", user.uid), userProfileData);
 
       toast({
         title: "Account Created Successfully!",
@@ -172,3 +177,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+    

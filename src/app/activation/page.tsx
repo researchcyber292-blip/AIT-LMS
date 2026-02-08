@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { ArrowRight } from 'lucide-react';
 import { useAuth, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/lib/types';
 
@@ -82,6 +82,10 @@ export default function ActivationPage() {
         fatherName: data.fatherName,
         alternateEmail: '', // This field is no longer on the form
         onboardingStatus: 'username_complete',
+        publicChatStats: {
+          messageCount: 0,
+          weekStartTimestamp: new Date(0) // Initialize with a past date
+        }
       };
 
       await setDoc(doc(firestore, 'users', user.uid), userProfile);
@@ -181,3 +185,5 @@ export default function ActivationPage() {
     </div>
   );
 }
+
+    

@@ -17,6 +17,10 @@ export type UserProfile = {
   fatherName?: string;
   alternateEmail?: string;
   enrolledCourseIds?: string[];
+  publicChatStats?: {
+    messageCount: number;
+    weekStartTimestamp: any; // Can be Firestore Timestamp or Date
+  };
 };
 
 export type Course = {
@@ -137,3 +141,5 @@ export type ChatMessage = {
   isInstructor?: boolean;
   isRead?: boolean;
 };
+
+    

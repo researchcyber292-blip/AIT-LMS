@@ -11,7 +11,7 @@ import { Search, Send, User, Plus, MoreVertical, Briefcase, User as UserIcon } f
 import { useCollection, useDoc, useFirestore, useMemoFirebase, useUser, useAuth } from '@/firebase';
 import type { UserProfile, ChatMessage, Instructor } from '@/lib/types';
 import { User } from 'firebase/auth';
-import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, writeBatch, where } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, writeBatch, where, runTransaction } from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -81,28 +81,100 @@ function WorldChatView({ userRole }: { userRole: 'student' | 'instructor' }) {
 
         setIsSending(true);
         const messageText = newMessage;
-        setNewMessage('');
+        
+        // Instructors and admins have no message limit.
+        if (userRole === 'instructor') {
+            setNewMessage(''); // Optimistically clear input
+            const isAdmin = user.isAnonymous;
+            const adminRoleKey = isAdmin ? localStorage.getItem('adminChatRole') : null;
+            const adminContact = adminRoleKey ? aitContacts.find(c => c.id.startsWith(`ait_${adminRoleKey.split('-')[0]}`)) : null;
 
-        const isAdmin = userRole === 'instructor' && user.isAnonymous;
-        const adminRoleKey = isAdmin ? localStorage.getItem('adminChatRole') : null;
-        const adminContact = adminRoleKey ? aitContacts.find(c => c.id.startsWith(`ait_${adminRoleKey.split('-')[0]}`)) : null;
+            const messageData = {
+                text: messageText,
+                userId: user.uid,
+                userName: isAdmin && adminContact ? adminContact.name : (user.displayName || 'Anonymous'),
+                userAvatar: isAdmin && adminContact ? adminContact.photoURL : (user.photoURL || null),
+                timestamp: serverTimestamp(),
+                isInstructor: true
+            };
 
+            try {
+                await addDoc(collection(firestore, 'public_chat'), messageData);
+            } catch (error: any) {
+                console.error("Error sending message:", error);
+                toast({ variant: 'destructive', title: "Send failed", description: "You may not have permission to send messages." });
+                setNewMessage(messageText); // Restore message on failure
+            } finally {
+                setIsSending(false);
+            }
+            return;
+        }
 
-        const messageData = {
-            text: messageText,
-            userId: user.uid,
-            userName: isAdmin && adminContact ? adminContact.name : (user.displayName || 'Anonymous'),
-            userAvatar: isAdmin && adminContact ? adminContact.photoURL : (user.photoURL || null),
-            timestamp: serverTimestamp(),
-            ...(isAdmin && { isInstructor: true })
-        };
-
+        // --- Student message limit logic ---
         try {
-            await addDoc(collection(firestore, 'public_chat'), messageData);
+            await runTransaction(firestore, async (transaction) => {
+                const userDocRef = doc(firestore, 'users', user.uid);
+                const userDoc = await transaction.get(userDocRef);
+
+                if (!userDoc.exists()) {
+                    throw new Error("User profile not found.");
+                }
+
+                const userData = userDoc.data() as UserProfile;
+                const stats = userData.publicChatStats;
+                const now = new Date();
+                const weekInMs = 7 * 24 * 60 * 60 * 1000;
+                
+                let isNewWeek = false;
+                const isFirstEverMessage = !stats || !stats.weekStartTimestamp || (stats.weekStartTimestamp as any)?.toDate().getTime() === 0;
+
+                if (!isFirstEverMessage) {
+                    const weekStartDate = (stats.weekStartTimestamp as any).toDate();
+                    if (now.getTime() - weekStartDate.getTime() > weekInMs) {
+                        isNewWeek = true;
+                    }
+                }
+                
+                const messageData = {
+                    text: messageText,
+                    userId: user.uid,
+                    userName: user.displayName || 'Anonymous',
+                    userAvatar: user.photoURL || null,
+                    timestamp: serverTimestamp(),
+                };
+
+                if (isFirstEverMessage || isNewWeek) {
+                    // Can send, will reset counter to 1
+                    const newMessageRef = doc(collection(firestore, 'public_chat'));
+                    transaction.set(newMessageRef, messageData);
+                    transaction.update(userDocRef, {
+                        publicChatStats: { messageCount: 1, weekStartTimestamp: serverTimestamp() }
+                    });
+                    setNewMessage('');
+                } else {
+                    // Same week, check count
+                    if (stats.messageCount < 50) {
+                        const newMessageRef = doc(collection(firestore, 'public_chat'));
+                        transaction.set(newMessageRef, messageData);
+                        transaction.update(userDocRef, {
+                            publicChatStats: {
+                                messageCount: stats.messageCount + 1,
+                                weekStartTimestamp: stats.weekStartTimestamp
+                            }
+                        });
+                        setNewMessage('');
+                    } else {
+                        throw new Error("You have reached your weekly message limit of 50 messages.");
+                    }
+                }
+            });
         } catch (error: any) {
-            console.error("Error sending message:", error);
-            toast({ variant: 'destructive', title: "Send failed", description: "You may not have permission to send messages." });
-            setNewMessage(messageText);
+            console.error("Error in send message transaction:", error);
+            toast({
+                variant: 'destructive',
+                title: "Message Not Sent",
+                description: error.message || "An error occurred.",
+            });
         } finally {
             setIsSending(false);
         }
@@ -144,7 +216,7 @@ function WorldChatView({ userRole }: { userRole: 'student' | 'instructor' }) {
             <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
                 <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 bg-white p-1.5">
-                        <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="object-contain" />
+                        <AvatarImage src="/image.png" alt="World Chat" className="object-contain" />
                         <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-5 w-5" /></AvatarFallback>
                     </Avatar>
                     <div>
@@ -380,12 +452,12 @@ function PrivateChatView({ chatPartner, currentUser, userRole }: { chatPartner: 
 }
 
 const aitContacts = [
-    { id: 'ait_ethical-hacking_support', name: 'AIT HACKING', photoURL: '/avirajinfotech.png', verified: true, email: 'hacking@avirajinfotech.com' },
-    { id: 'ait_coding_support', name: 'AIT CODING', photoURL: '/avirajinfotech.png', verified: true, email: 'coding@avirajinfotech.com' },
-    { id: 'ait_data-science_support', name: 'AIT DATA SCIENCE', photoURL: '/avirajinfotech.png', verified: true, email: 'ds@avirajinfotech.com' },
-    { id: 'ait_full-stack-dev_support', name: 'AIT FULL STACK DEV', photoURL: '/avirajinfotech.png', verified: true, email: 'webdev@avirajinfotech.com' },
-    { id: 'ait_ai-ml_support', name: 'AIT AI & ML', photoURL: '/avirajinfotech.png', verified: true, email: 'aiml@avirajinfotech.com' },
-    { id: 'ait_robotics-tech_support', name: 'AIT ROBOTICS & TECH', photoURL: '/avirajinfotech.png', verified: true, email: 'robotics@avirajinfotech.com' },
+    { id: 'ait_ethical-hacking_support', name: 'AIT HACKING', photoURL: '/image.png', verified: true, email: 'hacking@avirajinfotech.com' },
+    { id: 'ait_coding_support', name: 'AIT CODING', photoURL: '/image.png', verified: true, email: 'coding@avirajinfotech.com' },
+    { id: 'ait_data-science_support', name: 'AIT DATA SCIENCE', photoURL: '/image.png', verified: true, email: 'ds@avirajinfotech.com' },
+    { id: 'ait_full-stack-dev_support', name: 'AIT FULL STACK DEV', photoURL: '/image.png', verified: true, email: 'webdev@avirajinfotech.com' },
+    { id: 'ait_ai-ml_support', name: 'AIT AI & ML', photoURL: '/image.png', verified: true, email: 'aiml@avirajinfotech.com' },
+    { id: 'ait_robotics-tech_support', name: 'AIT ROBOTICS & TECH', photoURL: '/image.png', verified: true, email: 'robotics@avirajinfotech.com' },
 ];
 
 function AitContactButton({ contact, activeChatId, onSelectChat }: { contact: typeof aitContacts[0], activeChatId: string, onSelectChat: (contact: any) => void }) {
@@ -503,7 +575,7 @@ function ChatSidebar({ userRole, activeChatId, onSelectChat }: { userRole: 'stud
                     )}
                 >
                     <Avatar className="h-12 w-12 bg-white p-1.5">
-                        <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="object-contain" />
+                        <AvatarImage src="/image.png" alt="World Chat" className="object-contain" />
                         <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-6 w-6" /></AvatarFallback>
                     </Avatar>
                     <div className="flex-1 overflow-hidden">
@@ -727,3 +799,5 @@ export default function MessagingPage() {
 
     return <ChatView userRole={userRole} />;
 }
+
+    
