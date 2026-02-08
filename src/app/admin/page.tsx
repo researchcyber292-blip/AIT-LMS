@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -53,11 +54,11 @@ function AdminLoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
     return (
         <div className="relative flex min-h-screen items-center justify-center px-4">
             <Image
-                src="https://images.unsplash.com/photo-1590934149998-357878347833?w=1080"
-                alt="Server room background"
+                src="https://plus.unsplash.com/premium_photo-1661878265739-da90bc1af051?q=80&w=1086&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Developer coding on a laptop"
                 fill
                 className="object-cover"
-                data-ai-hint="servers data center"
+                data-ai-hint="developer coding"
             />
             <div className="absolute inset-0 bg-black/70" />
             <Card className="z-10 w-full max-w-sm border-primary/20 bg-card/50 shadow-lg backdrop-blur-sm">
