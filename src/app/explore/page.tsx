@@ -11,7 +11,7 @@ import { Search, Send, User, Plus, MoreVertical, Briefcase, User as UserIcon } f
 import { useCollection, useDoc, useFirestore, useMemoFirebase, useUser, useAuth } from '@/firebase';
 import type { UserProfile, ChatMessage, Instructor } from '@/lib/types';
 import { User } from 'firebase/auth';
-import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, writeBatch } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, writeBatch, where } from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -380,12 +380,12 @@ function PrivateChatView({ chatPartner, currentUser, userRole }: { chatPartner: 
 }
 
 const aitContacts = [
-    { id: 'ait_hacking_support', name: 'AIT HACKING', photoURL: '/avirajinfotech.png', verified: true, email: 'hacking@avirajinfotech.com' },
+    { id: 'ait_ethical-hacking_support', name: 'AIT HACKING', photoURL: '/avirajinfotech.png', verified: true, email: 'hacking@avirajinfotech.com' },
     { id: 'ait_coding_support', name: 'AIT CODING', photoURL: '/avirajinfotech.png', verified: true, email: 'coding@avirajinfotech.com' },
-    { id: 'ait_datascience_support', name: 'AIT DATA SCIENCE', photoURL: '/avirajinfotech.png', verified: true, email: 'ds@avirajinfotech.com' },
-    { id: 'ait_fullstack_support', name: 'AIT FULL STACK DEV', photoURL: '/avirajinfotech.png', verified: true, email: 'webdev@avirajinfotech.com' },
-    { id: 'ait_aiml_support', name: 'AIT AI & ML', photoURL: '/avirajinfotech.png', verified: true, email: 'aiml@avirajinfotech.com' },
-    { id: 'ait_robotics_support', name: 'AIT ROBOTICS & TECH', photoURL: '/avirajinfotech.png', verified: true, email: 'robotics@avirajinfotech.com' },
+    { id: 'ait_data-science_support', name: 'AIT DATA SCIENCE', photoURL: '/avirajinfotech.png', verified: true, email: 'ds@avirajinfotech.com' },
+    { id: 'ait_full-stack-dev_support', name: 'AIT FULL STACK DEV', photoURL: '/avirajinfotech.png', verified: true, email: 'webdev@avirajinfotech.com' },
+    { id: 'ait_ai-ml_support', name: 'AIT AI & ML', photoURL: '/avirajinfotech.png', verified: true, email: 'aiml@avirajinfotech.com' },
+    { id: 'ait_robotics-tech_support', name: 'AIT ROBOTICS & TECH', photoURL: '/avirajinfotech.png', verified: true, email: 'robotics@avirajinfotech.com' },
 ];
 
 function AitContactButton({ contact, activeChatId, onSelectChat }: { contact: typeof aitContacts[0], activeChatId: string, onSelectChat: (contact: any) => void }) {
@@ -529,7 +529,7 @@ function ChatSidebar({ userRole, activeChatId, onSelectChat }: { userRole: 'stud
                         )}
                     >
                         <Avatar className="h-12 w-12">
-                            <AvatarImage src={contact.photoURL} alt={contact.name || ''} />
+                            <AvatarImage src={(contact as UserProfile).photoURL} alt={contact.name || ''} />
                             <AvatarFallback>{getInitials(contact.name)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 overflow-hidden">
@@ -682,7 +682,7 @@ export default function MessagingPage() {
     const instructorDocRef = useMemoFirebase(() => (user && !isSpecialAdmin) ? doc(firestore, 'instructors', user.uid) : null, [firestore, user, isSpecialAdmin]);
     const { data: instructorProfile, isLoading: isInstructorProfileLoading } = useDoc<Instructor>(instructorDocRef);
 
-    const isLoading = isUserLoading || (!isSpecialAdmin && (isProfileLoading || isInstructorProfileLoading));
+    const isLoading = isUserLoading || (user && !isSpecialAdmin && (isProfileLoading || isInstructorProfileLoading));
 
     useEffect(() => {
         if (isLoading) {
