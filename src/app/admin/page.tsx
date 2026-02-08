@@ -16,6 +16,7 @@ import { ContactMailsList } from '@/components/admin/contact-mails-list';
 import { ManualEnrollment } from '@/components/admin/manual-enrollment';
 import Loading from '@/app/loading';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 // Hardcoded credentials for the admin panel
 const ADMIN_USERNAME = "admin";
@@ -51,8 +52,16 @@ function AdminLoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-background">
-            <Card className="w-full max-w-sm">
+        <div className="relative flex min-h-screen items-center justify-center px-4">
+            <Image
+                src="https://images.unsplash.com/photo-1558005550-ab1c48325608?w=1080"
+                alt="Server room background"
+                fill
+                className="object-cover"
+                data-ai-hint="servers data center"
+            />
+            <div className="absolute inset-0 bg-black/70" />
+            <Card className="z-10 w-full max-w-sm border-primary/20 bg-card/50 shadow-lg backdrop-blur-sm">
                 <CardHeader className="text-center">
                     <Shield className="mx-auto h-12 w-12 text-primary" />
                     <CardTitle className="mt-4 text-2xl font-bold">Admin Console</CardTitle>
@@ -105,7 +114,7 @@ function AdminDashboard() {
     };
     
     return (
-        <div className="flex min-h-screen bg-muted/40">
+        <div className="flex min-h-screen bg-muted/40 pt-16">
             <aside className="hidden md:flex w-72 flex-col border-r bg-background">
                 <div className="border-b p-4">
                     <h2 className="text-2xl font-bold font-headline">Admin Panel</h2>
