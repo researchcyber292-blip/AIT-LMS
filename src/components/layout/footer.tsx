@@ -16,7 +16,7 @@ export function Footer() {
         { label: 'About Us', href: '/about' },
         { label: 'Our Team', href: '/team' },
         { label: 'Blog', href: '/#blog' },
-        { label: 'Careers', href: '/careers' },
+        { label: 'Admin', href: '/admin' },
         { label: 'Contact Us', href: '/contact' },
         { label: 'Press Kit', href: '/press-kit' },
         { label: 'Brand Guidelines', href: '/brand-guidelines' },
