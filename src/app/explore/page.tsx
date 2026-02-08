@@ -7,15 +7,23 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Send, User, Plus, MoreVertical, Check, Video, Lock, Mic, Users, MessageSquare } from 'lucide-react';
+import { Search, Send, User, Plus, MoreVertical, Check, Video, Lock, Mic, Users, MessageSquare, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import type { UserProfile, ChatMessage } from '@/lib/types';
-import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import Loading from '@/app/loading';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from '@/hooks/use-toast';
+
 
 function UserListSkeleton() {
     return (
@@ -48,6 +56,7 @@ function getInitials(name: string | null | undefined): string {
 function WorldChatView() {
     const { user } = useUser();
     const firestore = useFirestore();
+    const { toast } = useToast();
     const [newMessage, setNewMessage] = useState('');
     const [isSending, setIsSending] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -83,10 +92,24 @@ function WorldChatView() {
             await addDoc(collection(firestore, 'public_chat'), messageData);
         } catch (error: any) {
             console.error("Error sending message:", error);
-            // Optionally: toast notification for error
+            toast({ variant: 'destructive', title: "Send failed", description: "You may not have permission to send messages." });
             setNewMessage(messageText); // Re-populate input on error
         } finally {
             setIsSending(false);
+        }
+    };
+    
+    const handleDeleteMessage = async (messageId: string) => {
+        if (!firestore || !messageId) {
+            toast({ variant: 'destructive', title: "Error", description: "Cannot delete message." });
+            return;
+        };
+        try {
+            await deleteDoc(doc(firestore, 'public_chat', messageId));
+            toast({ title: "Message Deleted" });
+        } catch (error) {
+            console.error("Error deleting message:", error);
+            toast({ variant: 'destructive', title: "Delete failed", description: "You may not have permission to delete this message." });
         }
     };
     
@@ -95,7 +118,7 @@ function WorldChatView() {
             <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
                 <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10 bg-white">
-                        <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="p-1" />
+                        <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="object-contain" />
                         <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-5 w-5" /></AvatarFallback>
                     </Avatar>
                     <div>
@@ -114,7 +137,7 @@ function WorldChatView() {
                 {!messagesLoading && messages?.map((message, index) => {
                      const isCurrentUser = message.userId === user?.uid;
                      return (
-                         <div key={message.id || index} className={cn("flex items-end gap-2", isCurrentUser ? "justify-end" : "justify-start")}>
+                         <div key={message.id || index} className={cn("flex items-end gap-2 group", isCurrentUser ? "justify-end" : "justify-start")}>
                             {!isCurrentUser && (
                                  <Avatar className="h-8 w-8">
                                      <AvatarImage src={message.userAvatar || undefined} alt={message.userName} />
@@ -128,6 +151,27 @@ function WorldChatView() {
                                     {message.timestamp ? formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true }) : 'sending...'}
                                 </p>
                             </div>
+                            {isCurrentUser && (
+                                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full">
+                                                <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuItem disabled>
+                                                <Edit className="mr-2 h-4 w-4" />
+                                                <span>Edit</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleDeleteMessage(message.id)} className="text-destructive">
+                                                 <Trash2 className="mr-2 h-4 w-4" />
+                                                <span>Delete</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                           )}
                          </div>
                      );
                 })}
@@ -193,7 +237,7 @@ export default function MessagingPage() {
     }
 
     return (
-        <div className="h-[calc(100vh-3.5rem)] mt-14 flex bg-[#0b141a] text-gray-300">
+        <div className="h-screen w-screen flex bg-[#0b141a] text-gray-300">
             {/* Left Sidebar - Chat List */}
             <aside className="w-full max-w-sm h-full border-r border-white/10 bg-[#111b21] flex flex-col">
                 <header className="p-3 h-16 flex items-center justify-between border-b border-white/10 bg-[#202c33]">
@@ -242,7 +286,7 @@ export default function MessagingPage() {
                         )}
                     >
                         <Avatar className="h-12 w-12 bg-white">
-                            <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="p-1" />
+                            <AvatarImage src="/avirajinfotech.png" alt="World Chat" className="object-contain" />
                             <AvatarFallback className="bg-emerald-600 text-white"><Users className="h-6 w-6" /></AvatarFallback>
                         </Avatar>
                         <div className="flex-1 overflow-hidden">
@@ -338,4 +382,5 @@ export default function MessagingPage() {
         </div>
     );
 }
+    
     

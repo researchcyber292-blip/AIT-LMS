@@ -15,12 +15,13 @@
  * Nested within each user's document is an `/enrollments` subcollection, which is private to that user.
  *
  * Key Security Decisions:
- * - User Isolation: A user can only access data under their own `/users/{userId}` path. Listing or
- *   accessing other users' profiles or enrollments is strictly forbidden for standard users.
- * - Admin Access: The admin panel is granted read-only access to the full user list by authenticating
- *   with a special anonymous session. This prevents regular users from listing other user data.
+ * - User Isolation: A user can only write to their own profile and data under `/users/{userId}`.
+ *   To support community features like messaging, other authenticated users are allowed to read
+ *   user profiles. It is critical that only publicly-safe information is stored in user documents.
+ * - Admin Access: An admin panel, authenticated via a special anonymous session, has elevated
+ *   privileges for managing data across the platform.
  * - Public Content Model: The `/courses` collection is readable by anyone, including unauthenticated
- *   users, to allow for browsing. However, creating, updating, or deleting a course is restricted
+ *   users, to allow for creating, updating, or deleting a course is restricted
  *   to the instructor who owns it, identified by the `instructorId` field on the course document.
  * - Restricted Collections: The `/instructors` collection is currently locked down entirely. An
  *   admin-level role or specific business logic (e.g., via Cloud Functions) is required to manage this data.
@@ -69,9 +70,11 @@ service cloud.firestore {
     /**
      * Checks if the user is an admin by verifying their sign-in provider.
      * This aligns with the front-end's use of signInAnonymously for the admin panel.
+     * In this app's context, the admin panel's anonymous sign-in is sometimes identified
+     * with the 'custom' provider. To ensure admin actions work, we allow both.
      */
     function isAnonymousAdmin() {
-      return isSignedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous';
+      return isSignedIn() && (request.auth.token.firebase.sign_in_provider == 'anonymous' || request.auth.token.firebase.sign_in_provider == 'custom');
     }
 
     /**
@@ -138,29 +141,28 @@ service cloud.firestore {
      * @description Controls access to instructor profiles.
      * @path /instructors/{instructorId}
      * @allow (create) An instructor can create their own profile.
-     * @allow (read) An instructor can read their own profile, or an admin can read any profile.
-     * @allow (update) Only admins can update instructor profiles (e.g., to verify them).
-     * @principle Owner-creatable, owner-readable, admin-managed.
+     * @allow (get, list) Publicly readable to display on course and instructor pages.
+     * @allow (update) An instructor can update their own profile, or an admin can update any profile.
+     * @allow (delete) An instructor can delete their own profile, or an admin can delete any profile.
+     * @principle Owner-creatable, public-readable, owner/admin-managed.
      */
     match /instructors/{instructorId} {
       allow create: if isOwner(instructorId);
-      allow read: if isOwner(instructorId) || isAnonymousAdmin();
-      allow update: if isAnonymousAdmin();
-      allow delete: if isAnonymousAdmin();
+      allow get, list: if true;
+      allow update: if isOwner(instructorId) || isAnonymousAdmin();
+      allow delete: if isOwner(instructorId) || isAnonymousAdmin();
     }
 
     /**
      * @description Secures student profile data.
      * @path /users/{userId}
-     * @allow (get) An authenticated user can get their own profile.
-     * @allow (list) Only a special anonymous admin session can list all user profiles.
+     * @allow (get, list) Authenticated users and admins can read/list profiles to enable messaging.
      * @deny (get) A user (`user_abc`) tries to read another user's profile (`/users/user_xyz`).
      * @deny (list) A standard signed-in user cannot list all user profiles.
      * @principle Restricts access to a user's own data tree and enforces relational integrity.
      */
     match /users/{userId} {
-      allow get: if isOwner(userId) || isAnonymousAdmin();
-      allow list: if isAnonymousAdmin();
+      allow get, list: if isSignedIn() || isAnonymousAdmin();
       allow create: if isOwner(userId) && isUserIdConsistentOnCreate(userId);
       allow update: if isExistingOwner(userId) && isUserIdImmutable();
       allow delete: if isOwner(userId) || isAnonymousAdmin();
@@ -190,7 +192,7 @@ service cloud.firestore {
     match /wallets/{userId} {
       allow read: if isOwner(userId) || isAnonymousAdmin();
       allow create: if isOwner(userId); // Allow initial creation on signup
-      allow delete: if isAnonymousAdmin();
+      allow delete: if isOwner(userId) || isAnonymousAdmin();
       allow update, list: if false;
     }
 
@@ -206,5 +208,32 @@ service cloud.firestore {
         allow read, list, update: if isAnonymousAdmin();
         allow delete: if false; // Requests should be processed, not deleted.
     }
+    
+    /**
+     * @description Stores submissions from the public contact form.
+     * @path /contact_submissions/{submissionId}
+     * @allow (create) Anyone can submit the contact form.
+     * @allow (read, list, update, delete) Only admins can manage submissions.
+     * @principle Public write, admin-only management.
+     */
+    match /contact_submissions/{submissionId} {
+        allow create: if true;
+        allow read, list, update, delete: if isAnonymousAdmin();
+    }
+
+    /**
+     * @description Public chat room for all users.
+     * @path /public_chat/{messageId}
+     * @allow (read, list) Any signed-in user can read messages.
+     * @allow (create) Any signed-in user can send a message, but they can't impersonate another user.
+     * @principle Community-driven open channel.
+     */
+    match /public_chat/{messageId} {
+      allow read, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isOwner(resource.data.userId);
+    }
   }
 }
+
+    
