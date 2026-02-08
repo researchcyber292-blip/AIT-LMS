@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 import {
   Table,
   TableBody,
@@ -56,16 +57,27 @@ const instructors = [
 export default function TeamPage() {
   return (
     <div className="bg-background text-foreground pt-14">
-      <div className="container mx-auto max-w-6xl py-16 md:py-24 px-4">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold font-headline tracking-tight sm:text-5xl">
-            Our Expert Instructors
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            The driving force behind our mission to provide quality education.
-          </p>
+        <div className="relative h-72 w-full">
+            <Image
+                src="https://images.unsplash.com/photo-1573496773905-f5b17e76b254?q=80&w=2069&auto=format&fit=crop"
+                alt="Our Team"
+                fill
+                className="object-cover"
+                data-ai-hint="professional team"
+            />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <div className="text-center text-white">
+                    <h1 className="text-4xl font-bold font-headline tracking-tight sm:text-5xl">
+                        Our Expert Instructors
+                    </h1>
+                    <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
+                        The driving force behind our mission to provide quality education.
+                    </p>
+                </div>
+            </div>
         </div>
 
+      <div className="container mx-auto max-w-6xl py-16 md:py-24 px-4">
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
@@ -92,7 +104,6 @@ export default function TeamPage() {
             </TableBody>
           </Table>
         </div>
-
       </div>
     </div>
   );
