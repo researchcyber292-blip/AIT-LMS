@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
@@ -10,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Send, User, Plus, MoreVertical, Check, Video, Lock, Mic, Users, MessageSquare, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import type { UserProfile, ChatMessage } from '@/lib/types';
-import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -23,6 +22,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from '@/components/ui/textarea';
 
 
 function UserListSkeleton() {
@@ -59,6 +66,8 @@ function WorldChatView() {
     const { toast } = useToast();
     const [newMessage, setNewMessage] = useState('');
     const [isSending, setIsSending] = useState(false);
+    const [messageToEdit, setMessageToEdit] = useState<ChatMessage | null>(null);
+    const [editedText, setEditedText] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const messagesQuery = useMemoFirebase(() => {
@@ -113,6 +122,23 @@ function WorldChatView() {
         }
     };
     
+    const handleUpdateMessage = async () => {
+        if (!firestore || !messageToEdit || !editedText.trim()) return;
+
+        const messageRef = doc(firestore, 'public_chat', messageToEdit.id);
+        try {
+            await updateDoc(messageRef, {
+                text: editedText
+            });
+            toast({ title: "Message Updated" });
+            setMessageToEdit(null);
+            setEditedText('');
+        } catch (error) {
+            console.error("Error updating message:", error);
+            toast({ variant: 'destructive', title: "Update failed", description: "You may not have permission to edit this message." });
+        }
+    };
+    
     return (
         <>
             <header className="flex items-center justify-between p-2 h-16 border-b border-white/10 bg-[#202c33] z-10">
@@ -160,7 +186,10 @@ function WorldChatView() {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent>
-                                            <DropdownMenuItem disabled>
+                                            <DropdownMenuItem onClick={() => {
+                                                setMessageToEdit(message);
+                                                setEditedText(message.text);
+                                            }}>
                                                 <Edit className="mr-2 h-4 w-4" />
                                                 <span>Edit</span>
                                             </DropdownMenuItem>
@@ -194,6 +223,22 @@ function WorldChatView() {
                     </Button>
                 </form>
             </footer>
+             <Dialog open={!!messageToEdit} onOpenChange={(open) => !open && setMessageToEdit(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Edit Message</DialogTitle>
+                    </DialogHeader>
+                    <Textarea
+                        value={editedText}
+                        onChange={(e) => setEditedText(e.target.value)}
+                        className="min-h-[100px]"
+                    />
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => setMessageToEdit(null)}>Cancel</Button>
+                        <Button onClick={handleUpdateMessage}>Save</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

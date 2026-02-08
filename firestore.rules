@@ -231,8 +231,7 @@ service cloud.firestore {
     match /public_chat/{messageId} {
       allow read, list: if isSignedIn();
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      // Nobody can update or delete messages from the client.
-      allow update, delete: if false;
+      allow update, delete: if isOwner(resource.data.userId);
     }
   }
 }
