@@ -457,30 +457,51 @@ export default function MessagingPage() {
     const [showStudentLogin, setShowStudentLogin] = useState(false);
     const [userRole, setUserRole] = useState<'student' | 'instructor' | null>(null);
 
-    const userDocRef = useMemoFirebase(() => user ? doc(firestore, 'users', user.uid) : null, [firestore, user]);
+    // Prevent Firestore reads for anonymous users who are special admins
+    const isSpecialAdmin = user?.isAnonymous && typeof window !== 'undefined' && !!localStorage.getItem('adminChatRole');
+
+    const userDocRef = useMemoFirebase(() => (user && !isSpecialAdmin) ? doc(firestore, 'users', user.uid) : null, [firestore, user, isSpecialAdmin]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
-  
-    const instructorDocRef = useMemoFirebase(() => user ? doc(firestore, 'instructors', user.uid) : null, [firestore, user]);
+
+    const instructorDocRef = useMemoFirebase(() => (user && !isSpecialAdmin) ? doc(firestore, 'instructors', user.uid) : null, [firestore, user, isSpecialAdmin]);
     const { data: instructorProfile, isLoading: isInstructorProfileLoading } = useDoc<Instructor>(instructorDocRef);
 
-    const isLoading = isUserLoading || isProfileLoading || isInstructorProfileLoading;
+    const isLoading = isUserLoading || (!isSpecialAdmin && (isProfileLoading || isInstructorProfileLoading));
 
     useEffect(() => {
-        if (!isLoading && user) {
-            if (instructorProfile) {
-                setUserRole('instructor');
-            } else if (userProfile) {
-                setUserRole('student');
-            } else {
-                 setUserRole(null);
-            }
-        } else if (!user) {
+        if (isLoading) {
+            return;
+        }
+
+        if (!user) {
+            setUserRole(null);
+            // Clear any leftover role from a previous session
+            localStorage.removeItem('adminChatRole');
+            return;
+        }
+
+        // Check for special admin role first
+        const adminChatRole = localStorage.getItem('adminChatRole');
+        if (user.isAnonymous && adminChatRole) {
+            setUserRole('instructor');
+            return;
+        }
+        
+        // If not a special admin, check for regular profiles
+        if (instructorProfile) {
+            setUserRole('instructor');
+        } else if (userProfile) {
+            setUserRole('student');
+        } else {
+            // Logged-in, not special admin, but no profile.
+            // This state should be handled by OnboardingGuard, but as a fallback, show role selection.
             setUserRole(null);
         }
+
     }, [isLoading, user, userProfile, instructorProfile]);
 
 
-    if (isLoading) {
+    if (isLoading || (user && !userRole && !showStudentLogin)) {
         return <Loading />;
     }
 
