@@ -10,15 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { Suspense } from 'react';
 import { Lock } from 'lucide-react';
-
-const adminCredentials = {
-  'ethical-hacking': { username: 'cyber@ait.com', password: 'cyber@ait(hacking)' },
-  'data-science': { username: 'datascience@ait.com', password: 'data@ait(datascience)' },
-  'full-stack-dev': { username: 'webdev@ait.com', password: 'website@ait(webdev)' },
-  'ai-ml': { username: 'aiml@ait.com', password: 'aiml@ait(aiml)' },
-  'robotics-tech': { username: 'robotics@ait.com', password: 'robo@ait(machine)' },
-  'coding': { username: 'coding@ait.com', password: 'coding@ait(programming)' },
-};
+import { adminCredentials, type AdminCategory } from '@/lib/admin-credentials';
 
 function AdminLoginPageContent() {
   const router = useRouter();
@@ -42,7 +34,7 @@ function AdminLoginPageContent() {
   }
   
   const categoryName = category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  const expectedCreds = adminCredentials[category as keyof typeof adminCredentials];
+  const expectedCreds = adminCredentials[category as AdminCategory];
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
