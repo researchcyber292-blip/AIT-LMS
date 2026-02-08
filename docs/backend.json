@@ -392,7 +392,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Chat Message",
       "type": "object",
-      "description": "Represents a single message in a public chat.",
+      "description": "Represents a single message in a public or private chat.",
       "properties": {
         "id": {
           "type": "string",
@@ -419,10 +419,17 @@
           "type": "string",
           "description": "The server timestamp when the message was created.",
           "format": "date-time"
+        },
+        "isInstructor": {
+            "type": "boolean",
+            "description": "Indicates if the message was sent by a verified instructor."
+        },
+        "isRead": {
+            "type": "boolean",
+            "description": "Indicates if the message has been read by the recipient (in private chat)."
         }
       },
       "required": [
-        "id",
         "text",
         "userId",
         "userName",
@@ -569,11 +576,28 @@
             }
           ]
         }
+      },
+      {
+        "path": "/private_chats/{chatId}/messages/{messageId}",
+        "definition": {
+          "entityName": "ChatMessage",
+          "schema": {
+            "$ref": "#/backend/entities/ChatMessage"
+          },
+          "description": "Stores messages for private one-on-one chats between users. Read/write access is restricted to chat participants.",
+          "params": [
+            {
+              "name": "chatId",
+              "description": "A unique identifier for the chat, typically a combination of the two user IDs."
+            },
+            {
+              "name": "messageId",
+              "description": "Unique ID for the chat message."
+            }
+          ]
+        }
       }
     ],
     "reasoning": "The Firestore structure is designed to provide a secure and scalable data model for the CyberLearn application, focusing on authorization independence and clear data relationships. The structure emphasizes path-based ownership for private user data and membership maps for collaborative data access. \n\nAuthorization Independence (CRITICAL):  Authorization Independence is achieved by avoiding the get() function in rules. This is accomplished via denormalization: relevant authorization data (such as course instructor) is included directly within the documents where it's needed.\n\nQAPs Support: List operations are secured through structural segregation and path-based ownership. User-specific data (enrollments) is stored under the `/users/{userId}` path, allowing secure listing of only the current user's enrollments. Access to the courses collection is controlled by role-based access via the instructorId field, and is publicly readable only."
   }
 }
-
-
-    
