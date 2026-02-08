@@ -1,27 +1,46 @@
-import { Lock } from 'lucide-react';
 import { Metadata } from 'next';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import Image from 'next/image';
+import { TEAM_MEMBERS } from '@/data/content';
+import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
-    title: 'Access Denied - Aviraj Info Tech',
+  title: 'Our Team - Aviraj Info Tech',
+  description: 'Meet the dedicated team behind Aviraj Info Tech.',
 };
 
 export default function TeamPage() {
   return (
-    <div className="container py-24 text-center">
-      <Lock className="mx-auto h-24 w-24 text-destructive" />
-      <h1 className="mt-8 text-4xl font-bold font-headline">Access Restricted</h1>
-      <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-        The information you are trying to access is confidential and requires administrative privileges.
-      </p>
-      <div className="mt-8 flex gap-4 justify-center">
-          <Button asChild variant="outline">
-              <Link href="/">Go to Homepage</Link>
-          </Button>
-          <Button asChild>
-              <Link href="/admin">Admin Login</Link>
-          </Button>
+    <div className="bg-background text-foreground pt-14">
+      <div className="container mx-auto max-w-6xl py-16 md:py-24 px-4">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold font-headline tracking-tight sm:text-5xl">
+            Meet Our Dedicated Team
+          </h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            The driving force behind our mission to provide quality education.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {TEAM_MEMBERS.map((member) => (
+            <Card key={member.id} className="text-center overflow-hidden group border">
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  data-ai-hint={member.imageHint}
+                />
+                 <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
+              </div>
+              <CardContent className="p-4 bg-card">
+                <h3 className="font-headline text-xl font-semibold">{member.name}</h3>
+                <p className="text-sm text-primary">{member.title}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
