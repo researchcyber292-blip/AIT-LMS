@@ -1,7 +1,7 @@
+
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
@@ -9,7 +9,6 @@ import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import Script from 'next/script';
 import { OnboardingGuard } from '@/components/onboarding-guard';
-import { cn } from '@/lib/utils';
 
 export default function RootLayout({
   children,
@@ -18,12 +17,6 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isFullScreenPage = ['/student-welcome', '/welcome-video-2', '/profile-setup', '/getting-started', '/activation', '/admin', '/creation-success', '/live-classroom', '/dashboard', '/studio', '/explore'].includes(pathname);
-
-  useEffect(() => {
-    console.log("%c████████ STOP! ████████", "color: red; font-size: 40px; font-weight: bold; font-family: monospace;");
-    console.log("%cThis is a secure system. All activity is monitored.", "color: yellow; font-size: 16px; font-family: monospace;");
-    console.log("%cUnauthorized access attempts, including use of developer tools for inspection or network interception, are strictly prohibited and will be logged.", "color: orange; font-size: 12px;");
-  }, []);
 
   return (
     <html lang="en">
