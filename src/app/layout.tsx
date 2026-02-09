@@ -1,4 +1,3 @@
-
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -11,7 +10,6 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 import Script from 'next/script';
 import { OnboardingGuard } from '@/components/onboarding-guard';
 import { cn } from '@/lib/utils';
-import { CustomCursor } from '@/components/custom-cursor';
 
 export default function RootLayout({
   children,
@@ -48,7 +46,6 @@ export default function RootLayout({
               {!isFullScreenPage && <Footer />}
             </div>
             <Toaster />
-            <CustomCursor />
           </OnboardingGuard>
         </FirebaseClientProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />
