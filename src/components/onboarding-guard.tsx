@@ -33,6 +33,7 @@ const INSTRUCTOR_ONBOARDING_PAGES = [
 const PUBLIC_PAGES = [
     '/', 
     '/login',
+    '/signup',
     '/instructor-login',
     '/register',
     '/about', 
