@@ -489,11 +489,13 @@ function EnrolledCourseCard({ enrollment }: { enrollment: Enrollment }) {
     }, [firestore, enrollment.courseId]);
     
     const { data: course, isLoading } = useDoc<Course>(courseRef);
-    const [progress, setProgress] = useState(0);
+    const [progress, setProgress] = useState<number | null>(null);
 
     useEffect(() => {
+        // This code runs only on the client, after the component has mounted.
         setProgress(Math.floor(Math.random() * 80) + 10);
-    }, []);
+    }, []); // Empty dependency array ensures this runs only once.
+
 
     if (isLoading) {
         return (
@@ -525,8 +527,17 @@ function EnrolledCourseCard({ enrollment }: { enrollment: Enrollment }) {
             </CardHeader>
             <CardContent className="flex-1">
                 <div className="space-y-2">
-                    <Progress value={progress} aria-label={`${progress}% complete`} />
-                    <p className="text-sm text-muted-foreground">{progress}% complete</p>
+                    {progress !== null ? (
+                        <>
+                            <Progress value={progress} aria-label={`${progress}% complete`} />
+                            <p className="text-sm text-muted-foreground">{progress}% complete</p>
+                        </>
+                    ) : (
+                        <>
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-3 w-20" />
+                        </>
+                    )}
                 </div>
             </CardContent>
             <CardFooter>

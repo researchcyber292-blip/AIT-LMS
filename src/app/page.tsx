@@ -432,7 +432,7 @@ export default function Home() {
                                   alt="Avanish Sir, CEO"
                                   width={224}
                                   height={224}
-                                  className="object-cover absolute top-[-40px]"
+                                  className="object-cover absolute top-[-20px]"
                               />
                           </div>
                           {/* Speech Bubble */}
