@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -80,7 +81,7 @@ export function CourseCard({ course }: CourseCardProps) {
                 {course.instructor && (
                     <div className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
-                            <AvatarImage src={course.instructor.avatar} alt={course.instructor.name} />
+                            <AvatarImage src={course.instructor.avatar || undefined} alt={course.instructor.name} />
                             <AvatarFallback>{course.instructor.name?.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <span className="text-sm font-medium">{course.instructor.name}</span>

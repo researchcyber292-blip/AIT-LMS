@@ -180,7 +180,7 @@ export function InstructorsList() {
                             <TableCell>
                                 <div className="flex items-center gap-3">
                                     <Avatar>
-                                        <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
+                                        <AvatarImage src={instructor.photoURL || undefined} alt={`${instructor.firstName} ${instructor.lastName}`} />
                                         <AvatarFallback>{getInitials(instructor.firstName, instructor.lastName)}</AvatarFallback>
                                     </Avatar>
                                     <div className="font-medium">{instructor.firstName} {instructor.lastName}</div>
@@ -240,7 +240,7 @@ export function InstructorsList() {
                     <DialogHeader>
                         <div className="flex flex-col items-center gap-4">
                             <Avatar className="h-20 w-20">
-                                <AvatarImage src={selectedInstructor.photoURL} />
+                                <AvatarImage src={selectedInstructor.photoURL || undefined} />
                                 <AvatarFallback className="text-2xl">{getInitials(selectedInstructor.firstName, selectedInstructor.lastName)}</AvatarFallback>
                             </Avatar>
                              <div>

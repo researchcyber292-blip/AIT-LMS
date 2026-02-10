@@ -89,7 +89,7 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-2xl">
         <div className="flex flex-col items-center gap-4">
           <Avatar className="h-24 w-24 border-4 border-primary">
-            <AvatarImage src={user.photoURL || ''} alt={user.displayName || ''} />
+            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || ''} />
             <AvatarFallback className="text-3xl">
               {getInitials(user.displayName)}
             </AvatarFallback>

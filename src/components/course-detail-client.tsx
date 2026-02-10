@@ -72,7 +72,7 @@ function LiveInstructorProfile({ instructorId }: { instructorId: string }) {
             <h3 className="font-headline text-lg font-semibold">Instructor</h3>
             <div className="mt-4 flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                    <AvatarImage src={instructor.photoURL} alt={`${instructor.firstName} ${instructor.lastName}`} />
+                    <AvatarImage src={instructor.photoURL || undefined} alt={`${instructor.firstName} ${instructor.lastName}`} />
                     <AvatarFallback>{getInitials(instructor.firstName, instructor.lastName)}</AvatarFallback>
                 </Avatar>
                 <div>

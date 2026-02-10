@@ -179,7 +179,7 @@ export function StudentsList() {
                         <TableRow key={student.id}>
                             <TableCell>
                                 <Avatar>
-                                    <AvatarImage src={student.photoURL} />
+                                    <AvatarImage src={student.photoURL || undefined} />
                                     <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
                                 </Avatar>
                             </TableCell>
@@ -305,4 +305,5 @@ export function StudentsList() {
     </div>
   );
 }
+
 

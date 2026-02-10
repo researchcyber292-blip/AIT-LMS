@@ -93,7 +93,7 @@ function WorldChatView({ userRole }: { userRole: 'student' | 'instructor' }) {
                 text: messageText,
                 userId: user.uid,
                 userName: isAdmin && adminContact ? adminContact.name : (user.displayName || 'Anonymous'),
-                userAvatar: isAdmin && adminContact ? adminContact.photoURL : (user.photoURL || null),
+                userAvatar: isAdmin && adminContact ? adminContact.photoURL : (user.photoURL || undefined),
                 timestamp: serverTimestamp(),
                 isInstructor: true
             };
@@ -139,7 +139,7 @@ function WorldChatView({ userRole }: { userRole: 'student' | 'instructor' }) {
                     text: messageText,
                     userId: user.uid,
                     userName: user.displayName || 'Anonymous',
-                    userAvatar: user.photoURL || null,
+                    userAvatar: user.photoURL || undefined,
                     timestamp: serverTimestamp(),
                 };
 
@@ -361,7 +361,7 @@ function PrivateChatView({ chatPartner, currentUser, userRole }: { chatPartner: 
             text: messageText,
             userId: currentUser.uid,
             userName: isAdmin && adminContact ? adminContact.name : (currentUser.displayName || 'Anonymous'),
-            userAvatar: isAdmin && adminContact ? adminContact.photoURL : (currentUser.photoURL || null),
+            userAvatar: isAdmin && adminContact ? adminContact.photoURL : (currentUser.photoURL || undefined),
             isRead: false,
             ...(isAdmin && { isInstructor: true })
         };
@@ -601,7 +601,7 @@ function ChatSidebar({ userRole, activeChatId, onSelectChat }: { userRole: 'stud
                         )}
                     >
                         <Avatar className="h-12 w-12">
-                            <AvatarImage src={(contact as UserProfile).photoURL} alt={contact.name || ''} />
+                            <AvatarImage src={(contact as UserProfile).photoURL || undefined} alt={contact.name || ''} />
                             <AvatarFallback>{getInitials(contact.name)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 overflow-hidden">
