@@ -6,9 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase, useUser, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { collection, doc, addDoc, deleteDoc, getDocs } from 'firebase/firestore';
-import type { UserProfile, Enrollment } from '@/lib/types';
-import { COURSES } from '@/data/content';
+import { collection, doc, addDoc, deleteDoc, getDocs, query, where } from 'firebase/firestore';
+import type { UserProfile, Enrollment, Course } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -33,16 +32,21 @@ export function ManualEnrollment() {
   }, [firestore, user]);
 
   const { data: students, isLoading: isCollectionLoading } = useCollection<UserProfile>(studentsQuery);
-  const isLoading = isAuthLoading || isCollectionLoading;
+
+  const allCoursesQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'courses') : null), [firestore]);
+  const { data: allCourses, isLoading: areCoursesLoading } = useCollection<Course>(allCoursesQuery);
+  
+  const isLoading = isAuthLoading || isCollectionLoading || areCoursesLoading;
 
   const filteredStudents = (students || []).filter(student =>
     student.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const plans = [
-    { name: 'Beginner', price: '599/M', category: 'Beginner' as const },
-    { name: 'Pro', price: '2999/3M', category: 'Intermediate' as const },
-    { name: 'Advanced', price: '4999/6M', category: 'Advanced' as const }
+    { name: 'Beginner', category: 'Beginner' as const },
+    { name: 'Intermediate', category: 'Intermediate' as const },
+    { name: 'Advanced', category: 'Advanced' as const },
+    { name: 'Highly Advanced', category: 'Highly Advanced' as const },
   ];
 
   const handleManageClick = async (student: UserProfile) => {
@@ -64,12 +68,12 @@ export function ManualEnrollment() {
     }
   };
 
-  const handleEnrollInPlan = async (student: UserProfile, category: 'Beginner' | 'Intermediate' | 'Advanced') => {
-    if (!firestore) return;
+  const handleEnrollInPlan = async (student: UserProfile, category: 'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced') => {
+    if (!firestore || !allCourses) return;
 
-    const coursesToEnroll = COURSES.filter(c => c.category === category);
+    const coursesToEnroll = allCourses.filter(c => c.level === category);
     if (coursesToEnroll.length === 0) {
-      toast({ variant: 'destructive', title: 'No Courses', description: `No courses found for the ${category} plan.` });
+      toast({ variant: 'destructive', title: 'No Courses', description: `No courses found for the ${category} level.` });
       return;
     }
 
@@ -100,12 +104,12 @@ export function ManualEnrollment() {
     }
   };
   
-  const handleUnenrollFromPlan = async (student: UserProfile, category: 'Beginner' | 'Intermediate' | 'Advanced') => {
-    if (!firestore) return;
+  const handleUnenrollFromPlan = async (student: UserProfile, category: 'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced') => {
+    if (!firestore || !allCourses) return;
     
     const enrollmentsToCancel = studentEnrollments.filter(e => {
-        const course = COURSES.find(c => c.id === e.courseId);
-        return course?.category === category;
+        const course = allCourses.find(c => c.id === e.courseId);
+        return course?.level === category;
     });
 
     if (enrollmentsToCancel.length === 0) {
@@ -215,15 +219,16 @@ export function ManualEnrollment() {
                {isLoadingEnrollments ? <div className="text-center p-8">Loading plans...</div> : (
                   <div className="py-4 space-y-2">
                     {plans.map(plan => {
-                      const planCourses = COURSES.filter(c => c.category === plan.category);
+                      if (!allCourses) return null;
+                      const planCourses = allCourses.filter(c => c.level === plan.category);
                       const enrolledInPlanCourses = studentEnrollments.filter(e => planCourses.some(pc => pc.id === e.courseId));
                       const isEnrolled = planCourses.length > 0 && enrolledInPlanCourses.length >= planCourses.length;
                       
                       return (
                         <div key={plan.name} className="flex items-center justify-between rounded-md border p-4">
                           <div>
-                            <p className="font-semibold">{plan.name}</p>
-                            <p className="text-sm text-muted-foreground">{plan.price}</p>
+                            <p className="font-semibold">{plan.name} Plan</p>
+                            <p className="text-sm text-muted-foreground">{plan.category} Level Courses</p>
                           </div>
                           {isEnrolled ? (
                             <Button variant="destructive" size="sm" onClick={() => handleUnenrollFromPlan(selectedStudent, plan.category)}>
@@ -250,7 +255,7 @@ export function ManualEnrollment() {
             <DialogHeader>
                 <div className="flex items-center gap-4 mb-4">
                     <Avatar className="h-16 w-16">
-                        <AvatarImage src={studentDetails.photoURL} />
+                        <AvatarImage src={studentDetails.photoURL || undefined} />
                         <AvatarFallback className="text-xl">{getInitials(studentDetails.name)}</AvatarFallback>
                     </Avatar>
                     <div>
@@ -288,7 +293,7 @@ export function ManualEnrollment() {
                 <div className="grid grid-cols-[150px_1fr] items-center gap-4">
                     <span className="text-muted-foreground">Onboarding Status</span>
                      <span className={`capitalize`}>
-                        {studentDetails.onboardingStatus.replace('_', ' ')}
+                        {(studentDetails.onboardingStatus || '').replace('_', ' ')}
                     </span>
                 </div>
             </div>

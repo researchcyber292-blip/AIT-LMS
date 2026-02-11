@@ -16,6 +16,15 @@ interface CourseCardProps {
   course: Course;
 }
 
+const getInitials = (name: string | null | undefined): string => {
+    if (!name) return '??';
+    const names = name.split(' ');
+    if (names.length > 1 && names[names.length - 1]) {
+        return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+}
+
 const StarRating = ({ rating = 0, reviews = 0 }: { rating?: number; reviews?: number }) => {
     return (
         <div className="flex items-center gap-1">
@@ -82,7 +91,7 @@ export function CourseCard({ course }: CourseCardProps) {
                     <div className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
                             <AvatarImage src={course.instructor.avatar || undefined} alt={course.instructor.name} />
-                            <AvatarFallback>{course.instructor.name?.charAt(0)}</AvatarFallback>
+                            <AvatarFallback>{getInitials(course.instructor.name)}</AvatarFallback>
                         </Avatar>
                         <span className="text-sm font-medium">{course.instructor.name}</span>
                     </div>

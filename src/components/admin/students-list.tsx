@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -31,11 +31,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useCollection, useFirestore, useMemoFirebase, errorEmitter, FirestorePermissionError, useUser } from '@/firebase';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
-import type { UserProfile, Enrollment } from '@/lib/types';
+import type { UserProfile, Enrollment, Course, Instructor } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-import { COURSES } from '@/data/content';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Trash2 } from 'lucide-react';
 
@@ -53,9 +52,26 @@ export function StudentsList() {
     if (!user || !user.isAnonymous) return null;
     return collection(firestore, 'users');
   }, [firestore, user]);
-
   const { data: students, isLoading: isCollectionLoading, error } = useCollection<UserProfile>(studentsQuery);
-  const isLoading = isAuthLoading || isCollectionLoading;
+  
+  const coursesQuery = useMemoFirebase(() => firestore ? collection(firestore, 'courses') : null, [firestore]);
+  const { data: allCourses, isLoading: isCoursesLoading } = useCollection<Course>(coursesQuery);
+
+  const instructorsQuery = useMemoFirebase(() => firestore ? collection(firestore, 'instructors') : null, [firestore]);
+  const { data: allInstructors, isLoading: isInstructorsLoading } = useCollection<Instructor>(instructorsQuery);
+
+  const isLoading = isAuthLoading || isCollectionLoading || isCoursesLoading || isInstructorsLoading;
+  
+  const processedCourses = useMemo(() => {
+    if (!allCourses || !allInstructors) return [];
+    return allCourses.map(course => {
+      const instructor = allInstructors.find(inst => inst.id === course.instructorId);
+      return {
+        ...course,
+        instructorName: instructor ? `${instructor.firstName} ${instructor.lastName}` : 'Official',
+      };
+    });
+  }, [allCourses, allInstructors]);
 
   const handleViewDetails = async (student: UserProfile) => {
     setSelectedStudent(student);
@@ -90,7 +106,7 @@ export function StudentsList() {
   const getInitials = (name: string) => {
     if (!name) return '??';
     const names = name.split(' ');
-    if (names.length > 1) {
+    if (names.length > 1 && names[names.length - 1]) {
         return `${names[0][0]}${names[names.length - 1][0]}`;
     }
     return name.substring(0, 2);
@@ -190,7 +206,7 @@ export function StudentsList() {
                             <TableCell>{student.email}</TableCell>
                             <TableCell>
                                 <span className={`px-2 py-1 text-xs rounded-full capitalize ${student.onboardingStatus === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                                    {student.onboardingStatus.replace('_', ' ')}
+                                    {(student.onboardingStatus || 'new').replace('_', ' ')}
                                 </span>
                             </TableCell>
                             <TableCell className="text-right">
@@ -263,12 +279,11 @@ export function StudentsList() {
                                     </TableHeader>
                                     <TableBody>
                                         {studentEnrollments.map((enrollment) => {
-                                            const course = COURSES.find(c => c.id === enrollment.courseId);
-                                            const instructorName = course?.instructor ? `${course.instructor.firstName} ${course.instructor.lastName}` : 'Official';
+                                            const course = processedCourses.find(c => c.id === enrollment.courseId);
                                             return (
                                                 <TableRow key={enrollment.id}>
                                                     <TableCell className="font-medium">{course?.title || enrollment.courseId}</TableCell>
-                                                    <TableCell>{instructorName}</TableCell>
+                                                    <TableCell>{course?.instructorName || 'Official'}</TableCell>
                                                     <TableCell>₹{enrollment.price}</TableCell>
                                                     <TableCell>{new Date(enrollment.purchaseDate).toLocaleDateString()}</TableCell>
                                                 </TableRow>
@@ -305,5 +320,3 @@ export function StudentsList() {
     </div>
   );
 }
-
-
