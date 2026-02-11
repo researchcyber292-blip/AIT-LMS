@@ -13,15 +13,22 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Course, Instructor } from '@/lib/types';
 import { collection } from 'firebase/firestore';
 
+// Map instructor teachingCategory enum to display names
+const teachingCategoryDisplayMap: Record<string, string> = {
+    'hacking': 'Ethical Hacking',
+    'datascience': 'Data Science',
+    'webdev': 'Full Stack Dev',
+    'aiml': 'AI & ML',
+    'programming': 'Coding',
+    'others': 'Others'
+};
+
+// Generate categories dynamically from the map
 const courseCategories = [
     'All',
-    'Ethical Hacking',
-    'Data Science',
-    'Full Stack Dev',
-    'AI & ML',
-    'Robotics & Tech',
-    'Coding',
+    ...Object.values(teachingCategoryDisplayMap)
 ];
+
 
 export default function CoursesPage() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -46,6 +53,7 @@ export default function CoursesPage() {
             const instructor = instructors.find(inst => inst.id === course.instructorId);
             return {
                 ...course,
+                instructorTeachingCategory: instructor?.teachingCategory,
                 instructor: instructor ? {
                     name: `${instructor.firstName} ${instructor.lastName}`,
                     avatar: instructor.photoURL
@@ -60,8 +68,19 @@ export default function CoursesPage() {
     const filteredCourses = useMemo(() => {
         if (!allCourses) return [];
         return allCourses.filter(course => {
-            const matchesCategory = activeCategory === 'All' || course.category === activeCategory;
             const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());
+            if (activeCategory === 'All') {
+                return matchesSearch;
+            }
+            
+            // Find the key (e.g., 'hacking') for the active category display name (e.g., 'Ethical Hacking')
+            const activeCategoryKey = Object.keys(teachingCategoryDisplayMap).find(
+                key => teachingCategoryDisplayMap[key] === activeCategory
+            );
+
+            // Filter by the instructor's teaching category
+            const matchesCategory = course.instructorTeachingCategory === activeCategoryKey;
+            
             return matchesCategory && matchesSearch;
         });
     }, [activeCategory, searchTerm, allCourses]);
