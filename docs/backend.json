@@ -124,6 +124,11 @@
         "title": {
           "type": "string",
           "description": "The instructor's professional title (e.g., 'Senior Penetration Tester')."
+        },
+        "teachingCategory": {
+          "type": "string",
+          "description": "The primary category the instructor teaches in.",
+          "enum": ["hacking", "datascience", "webdev", "aiml", "programming", "others"]
         }
       },
       "required": [

@@ -80,6 +80,7 @@ export type Instructor = {
   qualifications?: string;
   image?: string;
   imageHint?: string;
+  teachingCategory?: string;
 };
 
 export type TeamMember = {

@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 const { placeholderImages } = imageData;
@@ -43,6 +44,7 @@ const avatars = placeholderImages.filter(img => img.id.startsWith('avatar-'));
 
 const profileSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters.").max(50, "Title is too long."),
+    teachingCategory: z.string({ required_error: "Please select your primary teaching category." }),
     qualifications: z.string().optional(),
     bio: z.string().min(30, "Bio must be at least 30 characters long to be effective.").max(500, "Bio is too long."),
     photoURL: z.string({ required_error: "Please select a profile picture." }).min(1, "Please select a profile picture."),
@@ -61,6 +63,7 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
             qualifications: instructor.qualifications || '',
             bio: instructor.bio || '',
             photoURL: instructor.photoURL || '',
+            teachingCategory: instructor.teachingCategory || undefined,
         }
     });
 
@@ -85,7 +88,8 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
                 title: data.title,
                 qualifications: data.qualifications,
                 bio: data.bio,
-                photoURL: data.photoURL
+                photoURL: data.photoURL,
+                teachingCategory: data.teachingCategory,
             });
             toast({ title: "Profile Created!", description: "Your public profile is now live." });
             onBack();
@@ -135,6 +139,31 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
                                                 <FormControl>
                                                     <Input placeholder="e.g., Mr. Ashok Sir or Senior Penetration Tester" {...field} />
                                                 </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="teachingCategory"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Primary Teaching Category</FormLabel>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select what you will teach" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        <SelectItem value="hacking">Hacking</SelectItem>
+                                                        <SelectItem value="datascience">Data Science</SelectItem>
+                                                        <SelectItem value="webdev">Web Development</SelectItem>
+                                                        <SelectItem value="aiml">AI & ML</SelectItem>
+                                                        <SelectItem value="programming">Programming/Coding</SelectItem>
+                                                        <SelectItem value="others">Others</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
