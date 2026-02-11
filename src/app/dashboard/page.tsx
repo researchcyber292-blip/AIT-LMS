@@ -131,9 +131,9 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
                                         name="title"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Enter Your Name</FormLabel>
+                                                <FormLabel>Your Title or Role</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="e.g., Mr. Ashok Sir" {...field} />
+                                                    <Input placeholder="e.g., Mr. Ashok Sir or Senior Penetration Tester" {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -162,7 +162,7 @@ function InstructorProfileForm({ instructor, onBack }: { instructor: Instructor;
                                     name="bio"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel>Biography</FormLabel>
+                                            <FormLabel>Biography / Description</FormLabel>
                                             <FormControl>
                                                 <Textarea
                                                     placeholder="Tell students about your experience, passion, and what makes your teaching unique. (Minimum 30 characters)"
