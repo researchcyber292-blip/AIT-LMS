@@ -663,3 +663,5 @@
     "reasoning": "The Firestore structure is designed to provide a secure and scalable data model for the CyberLearn application, focusing on authorization independence and clear data relationships. The structure emphasizes path-based ownership for private user data and membership maps for collaborative data access. \n\nAuthorization Independence (CRITICAL):  Authorization Independence is achieved by avoiding the get() function in rules. This is accomplished via denormalization: relevant authorization data (such as course instructor) is included directly within the documents where it's needed.\n\nQAPs Support: List operations are secured through structural segregation and path-based ownership. User-specific data (enrollments) is stored under the `/users/{userId}` path, allowing secure listing of only the current user's enrollments. Access to the courses collection is controlled by role-based access via the instructorId field, and is publicly readable only."
   }
 }
+
+    
