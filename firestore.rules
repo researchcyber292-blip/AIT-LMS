@@ -318,7 +318,20 @@ service cloud.firestore {
         allow update, delete: if isChatParticipant(chatId) && isOwner(resource.data.userId);
       }
     }
+    
+    /**
+     * @description Stores metadata about uploaded videos.
+     * @path /videos/{videoId}
+     * @allow (read, list) Publicly readable.
+     * @allow (create) Any authenticated user can upload a video.
+     * @allow (delete) Only the user who uploaded the video can delete it.
+     * @principle User-owned content.
+     */
+     match /videos/{videoId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.uploaderId == request.auth.uid;
+      allow delete: if isOwner(resource.data.uploaderId);
+      allow update: if false;
+    }
   }
 }
-
-    

@@ -435,6 +435,42 @@
         "userName",
         "timestamp"
       ]
+    },
+    "Video": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Video",
+      "type": "object",
+      "description": "Represents a video uploaded to Hostinger.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "uploaderId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "url",
+        "fileName",
+        "title",
+        "createdAt",
+        "uploaderId"
+      ]
     }
   },
   "auth": {
@@ -593,6 +629,22 @@
             {
               "name": "messageId",
               "description": "Unique ID for the chat message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/videos/{videoId}",
+        "definition": {
+          "entityName": "Video",
+          "schema": {
+            "$ref": "#/backend/entities/Video"
+          },
+          "description": "Stores metadata about videos uploaded to Hostinger.",
+          "params": [
+            {
+              "name": "videoId",
+              "description": "Unique ID for the video."
             }
           ]
         }

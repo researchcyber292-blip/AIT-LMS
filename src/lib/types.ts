@@ -142,4 +142,12 @@ export type ChatMessage = {
   isRead?: boolean;
 };
 
+export type Video = {
+  id: string;
+  url: string;
+  fileName: string;
+  title: string;
+  createdAt: any; // Firestore Server Timestamp
+  uploaderId: string;
+};
     
