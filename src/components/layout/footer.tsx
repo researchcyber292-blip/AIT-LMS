@@ -86,7 +86,7 @@ export function Footer() {
         { label: 'Instructor Login', href: '/login' },
         { label: 'Sitemap', href: '#' },
         { label: 'Accessibility', href: '#' },
-        { label: 'Upload', href: '#' },
+        { label: 'Upload', href: '/upload' },
       ]
     }
   ];
