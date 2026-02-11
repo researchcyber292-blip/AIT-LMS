@@ -15,6 +15,9 @@ import type { Video } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { signInAnonymously, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import Loading from '@/app/loading';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+
 
 // --- Admin Login Component ---
 
@@ -91,6 +94,16 @@ function UploaderComponent() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+
+  const courseCategories = [
+    { value: 'ethical-hacking', label: 'Ethical Hacking' },
+    { value: 'data-science', label: 'Data Science' },
+    { value: 'full-stack-dev', label: 'Full Stack Dev' },
+    { value: 'ai-ml', label: 'AI & ML' },
+    { value: 'robotics-tech', label: 'Robotics & Tech' },
+    { value: 'coding', label: 'Coding' },
+    { value: 'python', label: 'Python' },
+  ];
 
   const fetchVideos = useCallback(async () => {
     if (!firestore || !user) return;
@@ -239,7 +252,16 @@ function UploaderComponent() {
                     </div>
                     <div className="grid w-full items-center gap-1.5">
                         <Label htmlFor="video-category">2. Course Category</Label>
-                        <Input id="video-category" placeholder="e.g., python, ethical-hacking" value={videoCategory} onChange={(e) => setVideoCategory(e.target.value)} disabled={!selectedFile} />
+                        <Select onValueChange={setVideoCategory} value={videoCategory} disabled={!selectedFile}>
+                            <SelectTrigger id="video-category">
+                                <SelectValue placeholder="Select a category..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {courseCategories.map(cat => (
+                                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
