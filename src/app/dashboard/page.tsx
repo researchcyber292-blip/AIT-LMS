@@ -415,11 +415,12 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
   const mainActions = [
       { title: "Launch Live Class", description: "Start a real-time session for your students.", onClick: () => window.open('https://moderated.jitsi.net/', '_blank'), icon: Mic, isEnabled: true },
       { 
-        title: hasCompletedProfile ? "My Courses & Management" : "START SELLING COURSES TO EARN", 
+        title: hasCompletedProfile ? "My Courses & Management" : "COMPLETE YOUR PROFILE", 
         description: hasCompletedProfile ? "Manage your courses, profile, and account settings." : "Create your public profile to display on course pages.", 
         onClick: () => hasCompletedProfile ? setView('management') : setView('profile'),
         icon: hasCompletedProfile ? LayoutGrid : BookUser,
-        isEnabled: true
+        isEnabled: true,
+        glow: !hasCompletedProfile
       },
       { title: "Earnings & Payouts", description: "View your balance and request withdrawals.", onClick: showNotImplementedToast, icon: Wallet, isEnabled: true },
       { title: "Student Analytics", description: "Gain insights into student progress and engagement.", onClick: showNotImplementedToast, icon: BarChart, isEnabled: true },
@@ -460,11 +461,24 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
       {/* Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {mainActions.map((action, i) => (
-            <Card key={i} className={cn("bg-card/50 backdrop-blur-sm border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-blue-500/20 group", action.isEnabled && "cursor-pointer")} onClick={action.isEnabled ? action.onClick : undefined}>
+            <Card 
+                key={i} 
+                className={cn(
+                    "bg-card/50 backdrop-blur-sm transition-all duration-300 shadow-lg group",
+                    action.isEnabled && "cursor-pointer",
+                    action.glow 
+                        ? "animated-glowing-border hover:shadow-primary/20" 
+                        : "border-blue-500/20 hover:border-blue-500/50 hover:shadow-blue-500/20"
+                )} 
+                onClick={action.isEnabled ? action.onClick : undefined}
+            >
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
-                            <action.icon className="h-6 w-6 text-blue-300" />
+                        <div className={cn(
+                            "p-3 rounded-lg border transition-colors",
+                            action.glow ? "bg-primary/10 border-primary/20 group-hover:bg-primary/20" : "bg-blue-500/10 border-blue-500/20 group-hover:bg-blue-500/20"
+                        )}>
+                            <action.icon className={cn("h-6 w-6", action.glow ? "text-primary" : "text-blue-300")} />
                         </div>
                         <CardTitle className="font-headline text-xl">{action.title}</CardTitle>
                     </div>
