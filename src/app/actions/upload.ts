@@ -1,6 +1,8 @@
+
 'use server';
 
-import Client from 'ssh2-sftp-client';
+import admin from '@/firebase/admin';
+import { Buffer } from 'buffer';
 
 interface UploadResult {
   success: boolean;
@@ -9,59 +11,51 @@ interface UploadResult {
   error?: string;
 }
 
-export async function uploadToHostinger(formData: FormData): Promise<UploadResult> {
+/**
+ * Uploads a file to Firebase Cloud Storage using the Firebase Admin SDK.
+ * This is a server-side action and should not be exposed to the client.
+ * @param formData The FormData object containing the file to upload.
+ * @returns An object indicating the result of the upload.
+ */
+export async function uploadToFirebaseStorage(formData: FormData): Promise<UploadResult> {
   const file = formData.get('video') as File | null;
 
   if (!file) {
     return { success: false, error: 'No file provided.' };
   }
 
+  // In a real-world app, you'd add user authentication/authorization checks here
+  // to ensure only allowed users can upload files.
+
   const buffer = Buffer.from(await file.arrayBuffer());
-  // Sanitize file name and make it unique
+  // Sanitize file name and make it unique to avoid overwrites
   const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-  const uniqueFileName = `${Date.now()}-${sanitizedFileName}`;
-
-  const sftp = new Client();
-
-  const config = {
-    host: process.env.HOSTINGER_IP,
-    port: 22,
-    username: process.env.HOSTINGER_USERNAME,
-    password: process.env.HOSTINGER_PASSWORD,
-  };
-
-  if (!config.host || !config.username || !config.password) {
-    console.error('SFTP credentials are not configured in environment variables.');
-    return { success: false, error: 'Server is not configured for file uploads. Please contact support.' };
-  }
+  const uniqueFileName = `videos/${Date.now()}-${sanitizedFileName}`;
 
   try {
-    await sftp.connect(config);
+    const bucket = admin.storage().bucket();
+    const fileUpload = bucket.file(uniqueFileName);
 
-    // Dynamic path based on username and designated uploads folder in public_html
-    const remoteDir = `/home/${config.username}/public_html/course_vault/videos`;
-    const remotePath = `${remoteDir}/${uniqueFileName}`;
-    
-    // Ensure the directory exists
-    await sftp.mkdir(remoteDir, true);
+    await fileUpload.save(buffer, {
+      metadata: {
+        contentType: file.type,
+      },
+    });
 
-    await sftp.put(buffer, remotePath);
-    
-    await sftp.end();
+    // To make the file publicly accessible, we set its ACL.
+    // For more granular control (e.g., only paid users can view), you would use Signed URLs.
+    await fileUpload.makePublic();
 
-    const fileUrl = `https://avirajinfotech.com/course_vault/videos/${uniqueFileName}`;
+    // The public URL has a predictable format.
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
 
     return { 
       success: true, 
-      url: fileUrl,
+      url: publicUrl,
       fileName: uniqueFileName
     };
   } catch (err: any) {
-    console.error('SFTP Upload Error:', err);
-    // In case of error, always try to gracefully end the connection
-    if (sftp.isBusy()) {
-      await sftp.end();
-    }
+    console.error('Firebase Storage Upload Error:', err);
     return { success: false, error: err.message || 'Failed to upload file due to a server error.' };
   }
 }

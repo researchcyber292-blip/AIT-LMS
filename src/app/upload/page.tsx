@@ -1,15 +1,16 @@
+
 'use client';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { UploadCloud, Film, Trash2, Link as LinkIcon } from 'lucide-react';
+import { UploadCloud, Film, Link as LinkIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { useFirestore, useUser, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
-import { uploadToHostinger } from '@/app/actions/upload';
+import { uploadToFirebaseStorage } from '@/app/actions/upload';
 import type { Video } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -71,7 +72,7 @@ export default function UploadPage() {
     formData.append('video', selectedFile);
 
     try {
-        const result = await uploadToHostinger(formData);
+        const result = await uploadToFirebaseStorage(formData);
 
         if (result.success && result.url && result.fileName) {
             await addDoc(collection(firestore, 'videos'), {
@@ -90,7 +91,6 @@ export default function UploadPage() {
             // Reset file input after successful upload and db record
             setSelectedFile(null);
             setPreviewUrl(null);
-            // This requires a bit of a trick to clear the input value
             const fileInput = document.getElementById('video-upload') as HTMLInputElement;
             if (fileInput) {
                 fileInput.value = '';
@@ -120,7 +120,7 @@ export default function UploadPage() {
         <div className="text-center mb-12">
             <h1 className="text-4xl font-bold font-headline">Upload Video Content</h1>
             <p className="mt-2 text-muted-foreground">
-                Select a video file from your device to upload to the platform.
+                Select a video file to upload to your Firebase Storage.
             </p>
         </div>
 
@@ -162,7 +162,7 @@ export default function UploadPage() {
                         ) : (
                           <>
                             <UploadCloud className="mr-2 h-4 w-4" />
-                            Upload Video
+                            Upload to Firebase
                           </>
                         )}
                     </Button>
