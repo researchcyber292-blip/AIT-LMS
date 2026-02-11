@@ -444,7 +444,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
   const mainActions = [
       { title: "Launch Live Class", description: "Start a real-time session for your students.", onClick: () => window.open('https://moderated.jitsi.net/', '_blank'), icon: Mic, isEnabled: true },
       { 
-        title: hasCompletedProfile ? "My Courses & Management" : "COMPLETE YOUR PROFILE", 
+        title: hasCompletedProfile ? "Create Classroom & Management" : "COMPLETE YOUR PROFILE", 
         description: hasCompletedProfile ? "Manage your courses, profile, and account settings." : "Create your public profile to display on course pages.", 
         onClick: () => hasCompletedProfile ? setView('management') : setView('profile'),
         icon: hasCompletedProfile ? LayoutGrid : BookUser,
@@ -683,5 +683,3 @@ export default function DashboardPage() {
 
   return <StudentDashboard />;
 }
-
-    
