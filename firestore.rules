@@ -333,7 +333,9 @@ service cloud.firestore {
       allow update: if false;
     }
     match /videos {
-      allow list: if isAnonymousAdmin();
+      allow list: if isSignedIn();
     }
   }
 }
+
+    
