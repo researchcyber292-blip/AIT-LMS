@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,10 +25,26 @@ export default function UploadPage() {
 
   const videosQuery = useMemoFirebase(() => {
       if (!firestore) return null;
-      return query(collection(firestore, 'videos'), orderBy('createdAt', 'desc'));
+      // Removed orderBy from the query to work around a potential SDK bug
+      return query(collection(firestore, 'videos'));
   }, [firestore]);
 
   const { data: videos, isLoading: videosLoading } = useCollection<Video>(videosQuery);
+  
+  // Sort videos on the client-side to ensure newest appear first
+  const sortedVideos = useMemo(() => {
+    if (!videos) return null;
+    return [...videos].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        // Sort by timestamp seconds, descending
+        return b.createdAt.seconds - a.createdAt.seconds;
+      }
+      // Handle cases where createdAt might be null or not yet set
+      if (a.createdAt) return -1;
+      if (b.createdAt) return 1;
+      return 0;
+    });
+  }, [videos]);
 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,9 +198,9 @@ export default function UploadPage() {
                 <Skeleton className="h-16 w-full" />
               </div>
             )}
-            {!videosLoading && videos && videos.length > 0 ? (
+            {!videosLoading && sortedVideos && sortedVideos.length > 0 ? (
               <div className="space-y-2">
-                {videos.map((video: Video) => (
+                {sortedVideos.map((video: Video) => (
                   <div key={video.id} className="flex items-center justify-between rounded-lg border p-3 gap-2">
                     <div className="flex items-center gap-3 overflow-hidden">
                       <Film className="h-5 w-5 text-muted-foreground flex-shrink-0" />
