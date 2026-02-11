@@ -658,7 +658,7 @@ function RoleSelectionView({ onSelectStudent }: { onSelectStudent: () => void })
                             <CardTitle>I'm a Student</CardTitle>
                         </CardHeader>
                     </Card>
-                     <Card className="hover:border-primary hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/instructor-login')}>
+                     <Card className="hover:border-primary hover:shadow-lg transition-all cursor-pointer" onClick={() => router.push('/instructor-support-login')}>
                         <CardHeader className="items-center">
                              <div className="p-4 bg-primary/10 rounded-full mb-2">
                                 <Briefcase className="h-8 w-8 text-primary" />
@@ -799,5 +799,7 @@ export default function MessagingPage() {
 
     return <ChatView userRole={userRole} />;
 }
+
+    
 
     
