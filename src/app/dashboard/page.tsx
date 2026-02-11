@@ -304,7 +304,7 @@ function InstructorManagementView({ onBack, onEditProfile }: { onBack: () => voi
                     <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div>
-                    <h1 className="font-headline text-4xl font-bold">My Courses &amp; Management</h1>
+                    <h1 className="font-headline text-4xl font-bold">Classroom & Profile Management</h1>
                     <p className="mt-2 text-muted-foreground">Manage your content and account settings.</p>
                 </div>
             </div>
@@ -316,14 +316,14 @@ function InstructorManagementView({ onBack, onEditProfile }: { onBack: () => voi
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                     <div className="rounded-lg border bg-card/70 p-6 text-center flex flex-col items-center justify-center">
-                        <h3 className="text-lg font-semibold font-headline">Course Studio</h3>
+                        <h3 className="text-lg font-semibold font-headline">Create a Classroom</h3>
                         <p className="text-sm text-muted-foreground mt-2 mb-4 flex-grow">Create, edit, and publish your video courses.</p>
                         <Button asChild>
-                           <Link href="/studio">Open AIT Studio</Link>
+                           <Link href="/studio">Create Classroom</Link>
                         </Button>
                     </div>
                     <div className="rounded-lg border bg-card/70 p-6 text-center flex flex-col items-center justify-center">
-                        <h3 className="text-lg font-semibold font-headline">Edit Profile Preview</h3>
+                        <h3 className="text-lg font-semibold font-headline">Edit Your Profile</h3>
                         <p className="text-sm text-muted-foreground mt-2 mb-4 flex-grow">Update your public name, bio, and picture.</p>
                         <Button onClick={onEditProfile} variant="outline">
                             Edit Your Profile
@@ -493,7 +493,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
             <Card 
                 key={i} 
                 className={cn(
-                    "bg-card/50 backdrop-blur-sm transition-all duration-300 shadow-lg group",
+                    "bg-card/50 backdrop-blur-sm transition-all duration-300 shadow-lg group cursor-pointer",
                     action.isEnabled && "cursor-pointer",
                     action.glow 
                         ? "animated-glowing-border rounded-lg hover:shadow-primary/20" 
