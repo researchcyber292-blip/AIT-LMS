@@ -24,10 +24,10 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
   }
   
   const sftpConfig = {
-    host: process.env.HOSTINGER_IP,
+    host: process.env.HOST_IP,
     port: 22,
-    username: process.env.HOSTINGER_USERNAME,
-    password: process.env.HOSTINGER_PASSWORD
+    username: process.env.HOST_USER,
+    password: process.env.HOST_PASS
   };
 
   if (!sftpConfig.host || !sftpConfig.username || !sftpConfig.password) {
