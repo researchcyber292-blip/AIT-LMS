@@ -42,12 +42,12 @@ export function CourseCard({ course }: CourseCardProps) {
         <div className="relative overflow-hidden rounded-t-lg">
             <Link href={`/courses/${course.id}`} className="block">
               <Image
-                src={course.image}
+                src={course.image || `https://picsum.photos/seed/${course.id}/600/400`}
                 alt={course.title}
                 width={600}
                 height={400}
                 className="aspect-video w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                data-ai-hint={course.imageHint}
+                data-ai-hint={course.imageHint || 'course learning'}
               />
             </Link>
             <Button 
