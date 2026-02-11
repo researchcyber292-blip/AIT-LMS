@@ -8,8 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { UploadCloud, Film, Link as LinkIcon, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
-import { useFirestore, useUser, useAuth } from '@/firebase';
-import { collection, addDoc, serverTimestamp, query, orderBy, getDocs } from 'firebase/firestore';
+import { useFirestore, useUser, useAuth, errorEmitter, FirestorePermissionError } from '@/firebase';
+import { collection, addDoc, serverTimestamp, query, getDocs } from 'firebase/firestore';
 import { uploadToHostinger } from '@/app/actions/upload';
 import type { Video } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -91,15 +91,22 @@ function UploaderComponent() {
   const { toast } = useToast();
 
   const fetchVideos = useCallback(async () => {
-    if (!firestore) return;
+    if (!firestore || !user) return;
     setVideosLoading(true);
     try {
-      const videosQuery = query(collection(firestore, 'videos'), orderBy('createdAt', 'desc'));
+      const videosQuery = query(collection(firestore, 'videos'));
       const querySnapshot = await getDocs(videosQuery);
       const videosData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Video));
+      videosData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       setVideos(videosData);
     } catch (error: any) {
       console.error("Error fetching videos:", error);
+      const permissionError = new FirestorePermissionError({
+        operation: 'list',
+        path: 'videos',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+
       toast({
         variant: 'destructive',
         title: 'Error fetching videos',
@@ -108,11 +115,13 @@ function UploaderComponent() {
     } finally {
       setVideosLoading(false);
     }
-  }, [firestore, toast]);
+  }, [firestore, toast, user]);
 
   useEffect(() => {
-    fetchVideos();
-  }, [fetchVideos]);
+    if (user) {
+        fetchVideos();
+    }
+  }, [user, fetchVideos]);
 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
