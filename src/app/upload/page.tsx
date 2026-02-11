@@ -1,20 +1,84 @@
-
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { UploadCloud, Film, Link as LinkIcon } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { UploadCloud, Film, Link as LinkIcon, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
-import { useFirestore, useUser, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { useFirestore, useUser, useCollection, useMemoFirebase, useAuth } from '@/firebase';
+import { collection, addDoc, serverTimestamp, query } from 'firebase/firestore';
 import { uploadToFirebaseStorage } from '@/app/actions/upload';
 import type { Video } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { signInAnonymously, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import Loading from '@/app/loading';
 
-export default function UploadPage() {
+// --- Admin Login Component ---
+
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "admin";
+
+function AdminLoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const { toast } = useToast();
+    const auth = useAuth();
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            try {
+                await setPersistence(auth, browserLocalPersistence);
+                await signInAnonymously(auth);
+                toast({ title: "Admin Access Granted" });
+                onLoginSuccess();
+            } catch (error) {
+                console.error("Admin sign-in failed:", error);
+                toast({ variant: 'destructive', title: 'Login Failed', description: 'Could not start an admin session.' });
+                setIsLoading(false);
+            }
+        } else {
+            toast({ variant: 'destructive', title: 'Access Denied', description: 'Invalid credentials.' });
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="container py-12 md:py-16 flex justify-center items-center min-h-[calc(100vh-10rem)]">
+            <Card className="w-full max-w-sm">
+                <CardHeader className="text-center">
+                    <Shield className="mx-auto h-12 w-12 text-primary" />
+                    <CardTitle className="mt-4 text-2xl font-bold">Admin Authentication</CardTitle>
+                    <CardDescription>Please log in to upload videos.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleLogin} className="space-y-4">
+                        <div>
+                            <Label htmlFor="username">Username</Label>
+                            <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required disabled={isLoading} />
+                        </div>
+                        <div>
+                            <Label htmlFor="password">Password</Label>
+                            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={isLoading} />
+                        </div>
+                        <Button type="submit" className="w-full !mt-6" disabled={isLoading}>
+                            {isLoading ? 'Authenticating...' : 'Enter Upload Area'}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
+// --- Uploader Component (original page content) ---
+
+function UploaderComponent() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -25,21 +89,17 @@ export default function UploadPage() {
 
   const videosQuery = useMemoFirebase(() => {
       if (!firestore) return null;
-      // Removed orderBy from the query to work around a potential SDK bug
       return query(collection(firestore, 'videos'));
   }, [firestore]);
 
   const { data: videos, isLoading: videosLoading } = useCollection<Video>(videosQuery);
   
-  // Sort videos on the client-side to ensure newest appear first
   const sortedVideos = useMemo(() => {
     if (!videos) return null;
     return [...videos].sort((a, b) => {
       if (a.createdAt && b.createdAt) {
-        // Sort by timestamp seconds, descending
         return b.createdAt.seconds - a.createdAt.seconds;
       }
-      // Handle cases where createdAt might be null or not yet set
       if (a.createdAt) return -1;
       if (b.createdAt) return 1;
       return 0;
@@ -78,7 +138,7 @@ export default function UploadPage() {
       toast({
         variant: 'destructive',
         title: 'Authentication Required',
-        description: 'You must be logged in to upload a video.',
+        description: 'You must be logged in as an admin to upload a video.',
       });
       return;
     }
@@ -104,7 +164,6 @@ export default function UploadPage() {
                 description: `${selectedFile.name} is now available.`,
             });
             
-            // Reset file input after successful upload and db record
             setSelectedFile(null);
             setPreviewUrl(null);
             const fileInput = document.getElementById('video-upload') as HTMLInputElement;
@@ -217,7 +276,6 @@ export default function UploadPage() {
                         </a>
                       </div>
                     </div>
-                    {/* Delete button can be added here later */}
                   </div>
                 ))}
               </div>
@@ -226,8 +284,35 @@ export default function UploadPage() {
             )}
           </CardContent>
         </Card>
-
       </div>
     </div>
   );
+}
+
+
+// --- Main Page Component ---
+
+export default function UploadPage() {
+  const { user, isUserLoading } = useUser();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check if the current user is our anonymous admin
+    if (!isUserLoading && user && user.isAnonymous) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user, isUserLoading]);
+
+  if (isUserLoading) {
+    return <Loading />;
+  }
+
+  // If user is an admin, show the uploader, otherwise show the login page.
+  if (isAdmin) {
+    return <UploaderComponent />;
+  }
+  
+  return <AdminLoginPage onLoginSuccess={() => setIsAdmin(true)} />;
 }
