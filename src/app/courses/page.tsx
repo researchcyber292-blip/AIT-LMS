@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -9,8 +8,10 @@ import { CourseCard } from '@/components/course-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { COURSES as allCourses } from '@/data/content';
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import type { Course, Instructor } from '@/lib/types';
+import { collection } from 'firebase/firestore';
 
 const courseCategories = [
     'All',
@@ -25,14 +26,47 @@ const courseCategories = [
 export default function CoursesPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
+    const firestore = useFirestore();
+
+    const coursesQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return collection(firestore, 'courses');
+    }, [firestore]);
+    const { data: courses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
+
+    const instructorsQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        return collection(firestore, 'instructors');
+    }, [firestore]);
+    const { data: instructors, isLoading: areInstructorsLoading } = useCollection<Instructor>(instructorsQuery);
+
+    const allCourses = useMemo(() => {
+        if (!courses || !instructors) return [];
+        return courses.map(course => {
+            const instructor = instructors.find(inst => inst.id === course.instructorId);
+            return {
+                ...course,
+                instructor: instructor ? {
+                    name: `${instructor.firstName} ${instructor.lastName}`,
+                    avatar: instructor.photoURL
+                } : {
+                    name: 'AIT Staff',
+                    avatar: '/image.png'
+                }
+            };
+        });
+    }, [courses, instructors]);
 
     const filteredCourses = useMemo(() => {
+        if (!allCourses) return [];
         return allCourses.filter(course => {
             const matchesCategory = activeCategory === 'All' || course.category === activeCategory;
             const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());
             return matchesCategory && matchesSearch;
         });
-    }, [activeCategory, searchTerm]);
+    }, [activeCategory, searchTerm, allCourses]);
+
+    const isLoading = areCoursesLoading || areInstructorsLoading;
 
     const renderSkeletons = () => (
         [...Array(6)].map((_, i) => (
@@ -123,17 +157,19 @@ export default function CoursesPage() {
 
                     {/* Courses Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredCourses.length > 0 ? (
-                            filteredCourses.map((course) => (
-                                <CourseCard key={course.id} course={course} />
-                            ))
-                        ) : (
-                            <div className="col-span-full text-center py-16">
-                                <h3 className="text-2xl font-semibold">No courses found</h3>
-                                <p className="text-muted-foreground mt-2">
-                                    Try adjusting your search or filter.
-                                </p>
-                            </div>
+                         {isLoading ? renderSkeletons() : (
+                            filteredCourses.length > 0 ? (
+                                filteredCourses.map((course) => (
+                                    <CourseCard key={course.id} course={course} />
+                                ))
+                            ) : (
+                                <div className="col-span-full text-center py-16">
+                                    <h3 className="text-2xl font-semibold">No courses found</h3>
+                                    <p className="text-muted-foreground mt-2">
+                                        Try adjusting your search or filter.
+                                    </p>
+                                </div>
+                            )
                         )}
                     </div>
                 </section>

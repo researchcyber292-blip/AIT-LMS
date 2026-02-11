@@ -1,4 +1,3 @@
-
 'use client';
 
 import { notFound, useParams } from 'next/navigation';
@@ -52,7 +51,6 @@ export default function InstructorProfileClient() {
   );
   const { data: instructor, isLoading: isInstructorLoading } = useDoc<Instructor>(instructorDocRef);
   
-  // Fetch all courses instead of using a `where` query to avoid indexing issues.
   const coursesCollectionRef = useMemoFirebase(() => {
     if (!firestore) return null;
     return collection(firestore, "courses");
@@ -60,11 +58,18 @@ export default function InstructorProfileClient() {
 
   const { data: allCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesCollectionRef);
 
-  // Filter the courses on the client side. This is less efficient but more reliable without manual index creation.
   const instructorCourses = useMemo(() => {
     if (!allCourses || !params.id) return [];
-    return allCourses.filter(course => course.instructorId === params.id);
-  }, [allCourses, params.id]);
+    return allCourses
+      .filter(course => course.instructorId === params.id)
+      .map(course => ({
+        ...course,
+        instructor: {
+          name: `${instructor?.firstName || ''} ${instructor?.lastName || ''}`,
+          avatar: instructor?.photoURL
+        }
+      }));
+  }, [allCourses, params.id, instructor]);
 
 
   const isLoading = isInstructorLoading || areCoursesLoading;
