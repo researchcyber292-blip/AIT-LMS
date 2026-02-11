@@ -228,7 +228,6 @@ service cloud.firestore {
      * @description Secures student profile data.
      * @path /users/{userId}
      * @allow (get, list) Authenticated users and admins can read/list profiles to enable messaging.
-     * @allow (update) The owner can update their own profile, with special validation for chat stats.
      * @principle Restricts access to a user's own data tree and enforces relational integrity.
      */
     match /users/{userId} {
@@ -322,16 +321,19 @@ service cloud.firestore {
     /**
      * @description Stores metadata about uploaded videos.
      * @path /videos/{videoId}
-     * @allow (read, list) Publicly readable.
+     * @allow (read) Publicly readable.
      * @allow (create) Any authenticated user can upload a video.
      * @allow (delete) Only the user who uploaded the video can delete it.
      * @principle User-owned content.
      */
      match /videos/{videoId} {
-      allow get, list: if true;
+      allow get: if true;
       allow create: if isSignedIn() && request.resource.data.uploaderId == request.auth.uid;
       allow delete: if isOwner(resource.data.uploaderId);
       allow update: if false;
+    }
+    match /videos {
+      allow list: if true;
     }
   }
 }
