@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { useFirestore, useUser, useAuth } from '@/firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy, getDocs } from 'firebase/firestore';
-import { uploadToFirebaseStorage } from '@/app/actions/upload';
+import { uploadToHostinger } from '@/app/actions/upload';
 import type { Video } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { signInAnonymously, setPersistence, browserLocalPersistence } from 'firebase/auth';
@@ -155,12 +156,12 @@ function UploaderComponent() {
     formData.append('video', selectedFile);
 
     try {
-        const result = await uploadToFirebaseStorage(formData);
+        const result = await uploadToHostinger(formData);
 
-        if (result.success && result.url && result.fileName) {
+        if (result.success && result.url) {
             await addDoc(collection(firestore, 'videos'), {
                 url: result.url,
-                fileName: result.fileName,
+                fileName: result.url.split('/').pop() || 'video.mp4',
                 title: selectedFile.name,
                 uploaderId: user.uid,
                 createdAt: serverTimestamp(),
@@ -168,7 +169,7 @@ function UploaderComponent() {
 
             toast({
                 title: 'Upload Complete!',
-                description: `${selectedFile.name} is now available.`,
+                description: `${selectedFile.name} is now available on Hostinger.`,
             });
             
             setSelectedFile(null);
@@ -205,7 +206,7 @@ function UploaderComponent() {
         <div className="text-center mb-12">
             <h1 className="text-4xl font-bold font-headline">Upload Video Content</h1>
             <p className="mt-2 text-muted-foreground">
-                Select a video file to upload to your Firebase Storage.
+                Select a video file to upload to your Hostinger storage via SFTP.
             </p>
         </div>
 
@@ -247,7 +248,7 @@ function UploaderComponent() {
                         ) : (
                           <>
                             <UploadCloud className="mr-2 h-4 w-4" />
-                            Upload to Firebase
+                            Upload to Hostinger
                           </>
                         )}
                     </Button>
