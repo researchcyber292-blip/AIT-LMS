@@ -25,7 +25,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
   
   const sftpConfig = {
     host: process.env.HOST_IP,
-    port: 22,
+    port: Number(process.env.HOST_PORT || 22),
     username: process.env.HOST_USER,
     password: process.env.HOST_PASS
   };
@@ -38,7 +38,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
   const buffer = Buffer.from(await file.arrayBuffer());
   const remoteFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
   // The absolute path on the Hostinger server where the file will be uploaded.
-  const remotePath = `/home/u630495566/domains/avirajinfotech.com/public_html/uploads/${remoteFileName}`;
+  const remotePath = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads/${remoteFileName}`;
 
   const sftp = new Client();
 
@@ -51,7 +51,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     
     await sftp.end();
     
-    const publicUrl = `https://avirajinfotech.com/uploads/${remoteFileName}`;
+    const publicUrl = `https://asian.avirajinfotech.com/uploads/${remoteFileName}`;
 
     return { 
       success: true, 
