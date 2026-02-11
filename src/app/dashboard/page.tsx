@@ -467,7 +467,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
                     "bg-card/50 backdrop-blur-sm transition-all duration-300 shadow-lg group",
                     action.isEnabled && "cursor-pointer",
                     action.glow 
-                        ? "animated-glowing-border hover:shadow-primary/20" 
+                        ? "animated-glowing-border rounded-lg hover:shadow-primary/20" 
                         : "border-blue-500/20 hover:border-blue-500/50 hover:shadow-blue-500/20"
                 )} 
                 onClick={action.isEnabled ? action.onClick : undefined}
@@ -475,7 +475,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-4">
                         <div className={cn(
-                            "p-3 rounded-lg border transition-colors",
+                            "p-3 rounded-full border transition-colors",
                             action.glow ? "bg-primary/10 border-primary/20 group-hover:bg-primary/20" : "bg-blue-500/10 border-blue-500/20 group-hover:bg-blue-500/20"
                         )}>
                             <action.icon className={cn("h-6 w-6", action.glow ? "text-primary" : "text-blue-300")} />
