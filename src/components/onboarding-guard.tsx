@@ -48,7 +48,8 @@ const PUBLIC_PAGES = [
     '/careers',
     '/press-kit',
     '/brand-guidelines',
-    '/restricted-access'
+    '/restricted-access',
+    '/upload'
 ];
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
