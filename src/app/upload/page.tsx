@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { UploadCloud, Film, Link as LinkIcon, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
-import { useFirestore, useUser, useCollection, useMemoFirebase, useAuth } from '@/firebase';
-import { collection, addDoc, serverTimestamp, query } from 'firebase/firestore';
+import { useFirestore, useUser, useAuth } from '@/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, getDocs } from 'firebase/firestore';
 import { uploadToFirebaseStorage } from '@/app/actions/upload';
 import type { Video } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -82,29 +82,36 @@ function UploaderComponent() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [videos, setVideos] = useState<Video[] | null>(null);
+  const [videosLoading, setVideosLoading] = useState(true);
 
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
 
-  const videosQuery = useMemoFirebase(() => {
-      if (!firestore) return null;
-      return query(collection(firestore, 'videos'));
-  }, [firestore]);
+  const fetchVideos = useCallback(async () => {
+    if (!firestore) return;
+    setVideosLoading(true);
+    try {
+      const videosQuery = query(collection(firestore, 'videos'), orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(videosQuery);
+      const videosData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Video));
+      setVideos(videosData);
+    } catch (error: any) {
+      console.error("Error fetching videos:", error);
+      toast({
+        variant: 'destructive',
+        title: 'Error fetching videos',
+        description: error.message || 'You might not have permission to view the video list.',
+      });
+    } finally {
+      setVideosLoading(false);
+    }
+  }, [firestore, toast]);
 
-  const { data: videos, isLoading: videosLoading } = useCollection<Video>(videosQuery);
-  
-  const sortedVideos = useMemo(() => {
-    if (!videos) return null;
-    return [...videos].sort((a, b) => {
-      if (a.createdAt && b.createdAt) {
-        return b.createdAt.seconds - a.createdAt.seconds;
-      }
-      if (a.createdAt) return -1;
-      if (b.createdAt) return 1;
-      return 0;
-    });
-  }, [videos]);
+  useEffect(() => {
+    fetchVideos();
+  }, [fetchVideos]);
 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,6 +177,9 @@ function UploaderComponent() {
             if (fileInput) {
                 fileInput.value = '';
             }
+
+            // Re-fetch the videos list to show the new one
+            await fetchVideos();
 
         } else {
              toast({
@@ -257,9 +267,9 @@ function UploaderComponent() {
                 <Skeleton className="h-16 w-full" />
               </div>
             )}
-            {!videosLoading && sortedVideos && sortedVideos.length > 0 ? (
+            {!videosLoading && videos && videos.length > 0 ? (
               <div className="space-y-2">
-                {sortedVideos.map((video: Video) => (
+                {videos.map((video: Video) => (
                   <div key={video.id} className="flex items-center justify-between rounded-lg border p-3 gap-2">
                     <div className="flex items-center gap-3 overflow-hidden">
                       <Film className="h-5 w-5 text-muted-foreground flex-shrink-0" />
