@@ -455,6 +455,10 @@
         "title": {
           "type": "string"
         },
+        "category": {
+          "type": "string",
+          "description": "The course category this video belongs to."
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time"
@@ -468,6 +472,7 @@
         "url",
         "fileName",
         "title",
+        "category",
         "createdAt",
         "uploaderId"
       ]
@@ -640,7 +645,7 @@
           "schema": {
             "$ref": "#/backend/entities/Video"
           },
-          "description": "Stores metadata about videos uploaded to Hostinger.",
+          "description": "Stores metadata about videos uploaded to Hostinger, organized by course category.",
           "params": [
             {
               "name": "videoId",

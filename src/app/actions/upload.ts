@@ -11,16 +11,20 @@ interface UploadResult {
 }
 
 /**
- * Uploads a file to a Hostinger server using SFTP.
+ * Uploads a file to a Hostinger server using SFTP into a category-specific folder.
  * This is a server-side action and should not be exposed to the client.
- * @param formData The FormData object containing the file to upload.
+ * @param formData The FormData object containing the file and category.
  * @returns An object indicating the result of the upload.
  */
 export async function uploadToHostinger(formData: FormData): Promise<UploadResult> {
   const file = formData.get('video') as File | null;
+  const category = formData.get('category') as string | null;
 
   if (!file) {
     return { success: false, error: 'No file provided.' };
+  }
+  if (!category) {
+    return { success: false, error: 'No course category provided.' };
   }
   
   const sftpConfig = {
@@ -36,22 +40,27 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
+  const sanitizedCategory = category.toLowerCase().replace(/[^a-z0-9_-]/g, '');
   const remoteFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  
   // The absolute path on the Hostinger server where the file will be uploaded.
-  const remotePath = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads/${remoteFileName}`;
+  const remoteUploadDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads/${sanitizedCategory}`;
+  const remotePath = `${remoteUploadDir}/${remoteFileName}`;
 
   const sftp = new Client();
 
   try {
     await sftp.connect(sftpConfig);
 
-    // Hostinger's public_html is usually the web root.
-    // The public URL will be based on the domain, not the full SFTP path.
+    // Create the category-specific directory if it doesn't exist.
+    await sftp.mkdir(remoteUploadDir, true);
+
+    // Upload the file.
     await sftp.put(buffer, remotePath);
     
     await sftp.end();
     
-    const publicUrl = `https://asian.avirajinfotech.com/uploads/${remoteFileName}`;
+    const publicUrl = `https://asian.avirajinfotech.com/uploads/${sanitizedCategory}/${remoteFileName}`;
 
     return { 
       success: true, 

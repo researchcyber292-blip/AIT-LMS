@@ -6,15 +6,15 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { CheckCircle, BarChart, Clock } from 'lucide-react';
+import { CheckCircle, BarChart, Clock, Film } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { createRazorpayOrder } from '@/ai/flows/create-razorpay-order';
 import { verifyRazorpayPayment } from '@/ai/flows/verify-razorpay-payment';
-import { collection, addDoc, doc } from 'firebase/firestore';
-import type { Enrollment, Instructor, Course } from '@/lib/types';
+import { collection, addDoc, doc, query, where } from 'firebase/firestore';
+import type { Enrollment, Instructor, Course, Video } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -25,6 +25,15 @@ declare global {
   interface Window {
     Razorpay: any;
   }
+}
+
+function StreamedVideoPlayer({ src }: { src: string }) {
+  return (
+    <video controls className="h-full w-full" controlsList="nodownload">
+      <source src={src} type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  );
 }
 
 function LiveInstructorProfile({ instructorId }: { instructorId: string }) {
@@ -98,6 +107,7 @@ export default function CourseDetailClient() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
   // Fetch course data from Firestore
   const courseDocRef = useMemoFirebase(() => {
@@ -106,6 +116,15 @@ export default function CourseDetailClient() {
   }, [firestore, params.id]);
 
   const { data: course, isLoading: isCourseLoading } = useDoc<Course>(courseDocRef);
+
+  // Fetch videos for this course category
+  const videosQuery = useMemoFirebase(() => {
+    if (!firestore || !course?.category) return null;
+    return query(collection(firestore, 'course_videos'), where('category', '==', course.category));
+  }, [firestore, course]);
+  
+  const { data: videos, isLoading: videosLoading } = useCollection<Video>(videosQuery);
+
 
   // Check enrollment status
   const enrollmentsQuery = useMemoFirebase(() => {
@@ -116,7 +135,14 @@ export default function CourseDetailClient() {
   
   const isEnrolled = enrollments?.some(e => e.courseId === course?.id) || false;
   
-  const isLoading = isCourseLoading || enrollmentsLoading;
+  const isLoading = isCourseLoading || enrollmentsLoading || videosLoading;
+  
+  // Set the first video as default if available
+  useState(() => {
+      if (videos && videos.length > 0 && !selectedVideo) {
+          setSelectedVideo(videos[0]);
+      }
+  });
 
   const handlePayment = async () => {
     if (!course) return;
@@ -290,14 +316,21 @@ export default function CourseDetailClient() {
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
         <div className="md:col-span-1 md:sticky md:top-24 h-fit">
           <div className="rounded-xl border bg-card shadow-lg overflow-hidden">
-            <Image
-              src={course.image}
-              alt={course.title}
-              width={600}
-              height={400}
-              className="w-full object-cover"
-              data-ai-hint={course.imageHint}
-            />
+            {isEnrolled && selectedVideo ? (
+                <div className="aspect-video bg-black">
+                    <StreamedVideoPlayer src={selectedVideo.url} />
+                </div>
+            ) : (
+                <Image
+                src={course.image}
+                alt={course.title}
+                width={600}
+                height={400}
+                className="w-full object-cover"
+                data-ai-hint={course.imageHint}
+                />
+            )}
+            
             <div className="p-6">
               <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{course.price}</p>
               {renderActionButtons()}
@@ -341,6 +374,20 @@ export default function CourseDetailClient() {
             <h1 className="font-headline text-4xl font-bold tracking-tight lg:text-5xl">{course.title}</h1>
             <p className="mt-4 text-lg text-muted-foreground">{course.longDescription}</p>
 
+            {isEnrolled && videos && videos.length > 0 && (
+                 <div className="mt-10">
+                    <h2 className="font-headline text-2xl font-semibold border-l-4 border-primary pl-4">Course Videos</h2>
+                    <div className="mt-4 space-y-2">
+                        {videos.map(video => (
+                            <button key={video.id} onClick={() => setSelectedVideo(video)} className={`w-full text-left p-3 rounded-md transition-colors flex items-center gap-3 ${selectedVideo?.id === video.id ? 'bg-primary/10' : 'hover:bg-muted'}`}>
+                                <Film className={`h-5 w-5 ${selectedVideo?.id === video.id ? 'text-primary' : 'text-muted-foreground'}`} />
+                                <span className={`font-medium ${selectedVideo?.id === video.id ? 'text-primary' : ''}`}>{video.title}</span>
+                            </button>
+                        ))}
+                    </div>
+                 </div>
+            )}
+            
             <div className="mt-10">
                 <h2 className="font-headline text-2xl font-semibold border-l-4 border-primary pl-4">What You'll Learn</h2>
                 <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">

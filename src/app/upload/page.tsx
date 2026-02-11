@@ -9,7 +9,7 @@ import { UploadCloud, Film, Link as LinkIcon, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { useFirestore, useUser, useAuth, errorEmitter, FirestorePermissionError } from '@/firebase';
-import { collection, addDoc, serverTimestamp, query, getDocs } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query } from 'firebase/firestore';
 import { uploadToHostinger } from '@/app/actions/upload';
 import type { Video } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -81,6 +81,8 @@ function AdminLoginPage({ onLoginSuccess }: { onLoginSuccess: () => void }) {
 
 function UploaderComponent() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoCategory, setVideoCategory] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [videos, setVideos] = useState<Video[] | null>(null);
@@ -129,6 +131,8 @@ function UploaderComponent() {
     if (file) {
       if (file.type.startsWith('video/')) {
         setSelectedFile(file);
+        // Set default title from filename without extension
+        setVideoTitle(file.name.replace(/\.[^/.]+$/, ""));
         const url = URL.createObjectURL(file);
         setPreviewUrl(url);
       } else {
@@ -142,11 +146,11 @@ function UploaderComponent() {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
+    if (!selectedFile || !videoTitle || !videoCategory) {
         toast({
             variant: 'destructive',
-            title: 'No File Selected',
-            description: 'Please choose a video file to upload.',
+            title: 'Missing Information',
+            description: 'Please select a video file and provide a title and category.',
         });
         return;
     }
@@ -163,6 +167,7 @@ function UploaderComponent() {
     setIsUploading(true);
     const formData = new FormData();
     formData.append('video', selectedFile);
+    formData.append('category', videoCategory);
 
     try {
         const result = await uploadToHostinger(formData);
@@ -171,7 +176,8 @@ function UploaderComponent() {
             await addDoc(collection(firestore, 'course_videos'), {
                 url: result.url,
                 fileName: result.url.split('/').pop() || 'video.mp4',
-                title: selectedFile.name,
+                title: videoTitle,
+                category: videoCategory,
                 uploaderId: user.uid,
                 createdAt: serverTimestamp(),
             });
@@ -182,6 +188,8 @@ function UploaderComponent() {
             });
             
             setSelectedFile(null);
+            setVideoTitle('');
+            setVideoCategory('');
             setPreviewUrl(null);
             const fileInput = document.getElementById('video-upload') as HTMLInputElement;
             if (fileInput) {
@@ -224,15 +232,23 @@ function UploaderComponent() {
                 <CardTitle>Video Uploader</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="video-upload">Select Video</Label>
-                    <div className="flex gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid w-full items-center gap-1.5">
+                        <Label htmlFor="video-upload">1. Select Video File</Label>
                         <Input id="video-upload" type="file" accept="video/*" onChange={handleFileChange} className="cursor-pointer"/>
+                    </div>
+                    <div className="grid w-full items-center gap-1.5">
+                        <Label htmlFor="video-category">2. Course Category</Label>
+                        <Input id="video-category" placeholder="e.g., python, ethical-hacking" value={videoCategory} onChange={(e) => setVideoCategory(e.target.value)} disabled={!selectedFile} />
                     </div>
                 </div>
 
                 {previewUrl && (
                     <div className="space-y-4">
+                         <div className="grid w-full items-center gap-1.5">
+                            <Label htmlFor="video-title">3. Video Title</Label>
+                            <Input id="video-title" placeholder="Enter a title for the video" value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)} />
+                        </div>
                         <h3 className="font-semibold">Video Preview</h3>
                         <div className="rounded-lg border bg-black aspect-video overflow-hidden">
                              <video
@@ -248,7 +264,7 @@ function UploaderComponent() {
                 )}
                 
                 <div className="pt-4">
-                     <Button onClick={handleUpload} className="w-full" disabled={!selectedFile || isUploading}>
+                     <Button onClick={handleUpload} className="w-full" disabled={!selectedFile || !videoTitle || !videoCategory || isUploading}>
                         {isUploading ? (
                           <>
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
@@ -296,6 +312,7 @@ function UploaderComponent() {
                         </a>
                       </div>
                     </div>
+                     <Badge variant="secondary">{video.category}</Badge>
                   </div>
                 ))}
               </div>

@@ -147,6 +147,7 @@ export type Video = {
   url: string;
   fileName: string;
   title: string;
+  category: string;
   createdAt: any; // Firestore Server Timestamp
   uploaderId: string;
 };
