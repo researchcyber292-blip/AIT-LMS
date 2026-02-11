@@ -320,22 +320,20 @@ service cloud.firestore {
     
     /**
      * @description Stores metadata about uploaded videos.
-     * @path /videos/{videoId}
-     * @allow (read, list) Publicly readable.
+     * @path /course_videos/{videoId}
+     * @allow (read) Publicly readable.
      * @allow (create) Only anonymous admins can upload a video.
      * @allow (delete) Only anonymous admins can delete videos.
      * @principle Admin-only content management.
      */
-     match /videos/{videoId} {
+     match /course_videos/{videoId} {
       allow get: if true;
       allow create: if isAnonymousAdmin() && request.resource.data.uploaderId == request.auth.uid;
       allow delete: if isAnonymousAdmin();
       allow update: if false;
     }
-    match /videos {
+    match /course_videos {
       allow list: if true;
     }
   }
 }
-
-    

@@ -634,7 +634,7 @@
         }
       },
       {
-        "path": "/videos/{videoId}",
+        "path": "/course_videos/{videoId}",
         "definition": {
           "entityName": "Video",
           "schema": {

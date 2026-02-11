@@ -94,7 +94,7 @@ function UploaderComponent() {
     if (!firestore || !user) return;
     setVideosLoading(true);
     try {
-      const videosQuery = query(collection(firestore, 'videos'));
+      const videosQuery = query(collection(firestore, 'course_videos'));
       const querySnapshot = await getDocs(videosQuery);
       const videosData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Video));
       videosData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
@@ -103,7 +103,7 @@ function UploaderComponent() {
       console.error("Error fetching videos:", error);
       const permissionError = new FirestorePermissionError({
         operation: 'list',
-        path: 'videos',
+        path: 'course_videos',
       });
       errorEmitter.emit('permission-error', permissionError);
 
@@ -118,7 +118,7 @@ function UploaderComponent() {
   }, [firestore, toast, user]);
 
   useEffect(() => {
-    if (user) {
+    if (user && user.isAnonymous) {
         fetchVideos();
     }
   }, [user, fetchVideos]);
@@ -168,7 +168,7 @@ function UploaderComponent() {
         const result = await uploadToHostinger(formData);
 
         if (result.success && result.url) {
-            await addDoc(collection(firestore, 'videos'), {
+            await addDoc(collection(firestore, 'course_videos'), {
                 url: result.url,
                 fileName: result.url.split('/').pop() || 'video.mp4',
                 title: selectedFile.name,
