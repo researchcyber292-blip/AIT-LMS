@@ -74,10 +74,12 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
   let publicUrl = '';
 
   if (uploadType === 'video') {
-    remoteUploadDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads/${sanitizedCategory}/${instructorFolder}`;
+    // Corrected Path: Use a path relative to the SFTP user's home directory.
+    remoteUploadDir = `domains/avirajinfotech.com/public_html/asian/uploads/${sanitizedCategory}/${instructorFolder}`;
     publicUrl = `https://asian.avirajinfotech.com/uploads/${sanitizedCategory}/${instructorFolder}/${remoteFileName}`;
   } else { // 'thumbnail'
-    remoteUploadDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads/thumbnails/${instructorFolder}`;
+    // Corrected Path: Relative path for thumbnails
+    remoteUploadDir = `domains/avirajinfotech.com/public_html/asian/uploads/thumbnails/${instructorFolder}`;
     publicUrl = `https://asian.avirajinfotech.com/uploads/thumbnails/${instructorFolder}/${remoteFileName}`;
   }
 
