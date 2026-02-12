@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video, Eye, BarChart, Clock, Crown, Settings } from 'lucide-react';
+import { ArrowLeft, BookOpen, Send, ListVideo, CheckCircle, Plus, Trash2, Image as ImageIcon, Video, Eye, BarChart, Clock, Crown, Settings, UploadCloud, Film } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Image from 'next/image';
@@ -23,8 +23,10 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
+import { uploadToHostinger } from '@/app/actions/upload';
+import type { Video as VideoType } from '@/lib/types';
 
 
 export default function StudioPage() {
@@ -64,11 +66,11 @@ export default function StudioPage() {
 
     // Media Tab
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-    const [youtubeUrls, setYoutubeUrls] = useState(['']);
-    const [goldYoutubeUrls, setGoldYoutubeUrls] = useState(['']);
-    const [platinumYoutubeUrls, setPlatinumYoutubeUrls] = useState(['']);
-    const [silverYoutubeUrls, setSilverYoutubeUrls] = useState(['']);
-
+    const [uploadingFile, setUploadingFile] = useState<File | null>(null);
+    const [uploadingVideoTitle, setUploadingVideoTitle] = useState('');
+    const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+    const [videosForCategory, setVideosForCategory] = useState<VideoType[]>([]);
+    const [isLoadingVideos, setIsLoadingVideos] = useState(false);
     
     // Publish Tab
     const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
@@ -77,6 +79,28 @@ export default function StudioPage() {
     const firestore = useFirestore();
     const { toast } = useToast();
 
+     // Effect to fetch videos when category changes
+    useEffect(() => {
+        if (!firestore || !category) {
+            setVideosForCategory([]);
+            return;
+        }
+
+        setIsLoadingVideos(true);
+        const videosQuery = query(collection(firestore, 'course_videos'), where('category', '==', category));
+        
+        getDocs(videosQuery).then(snapshot => {
+            const videosData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VideoType));
+            videosData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            setVideosForCategory(videosData);
+        }).catch(error => {
+            console.error("Error fetching course videos:", error);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch existing videos for this category.' });
+        }).finally(() => {
+            setIsLoadingVideos(false);
+        });
+
+    }, [category, firestore, toast]);
     
     // --- HANDLER FUNCTIONS ---
 
@@ -182,90 +206,54 @@ export default function StudioPage() {
             }
         }
     };
+
+    const handleUploadVideo = async () => {
+        if (!uploadingFile || !uploadingVideoTitle || !category) {
+            toast({ variant: 'destructive', title: 'Missing Information', description: 'Please provide a file, title, and set a course category in the Details tab.' });
+            return;
+        }
+        if (!user || !firestore) {
+            toast({ variant: 'destructive', title: 'Authentication Error', description: 'You must be logged in to upload a video.' });
+            return;
+        }
+
+        setIsUploadingVideo(true);
+        const formData = new FormData();
+        formData.append('video', uploadingFile);
+        formData.append('category', category);
+
+        try {
+            const result = await uploadToHostinger(formData);
+            if (result.success && result.url) {
+                const newVideoData: Omit<VideoType, 'id' | 'createdAt'> = {
+                    url: result.url,
+                    fileName: result.url.split('/').pop() || 'video.mp4',
+                    title: uploadingVideoTitle,
+                    category: category,
+                    uploaderId: user.uid,
+                };
+                const docRef = await addDoc(collection(firestore, 'course_videos'), {
+                    ...newVideoData,
+                    createdAt: serverTimestamp(),
+                });
+                
+                setVideosForCategory(prev => [{id: docRef.id, createdAt: new Date(), ...newVideoData}, ...prev]);
+
+                toast({ title: 'Video Uploaded!', description: `${uploadingFile.name} is now available.` });
+                setUploadingFile(null);
+                setUploadingVideoTitle('');
+                const fileInput = document.getElementById('video-file-upload') as HTMLInputElement;
+                if (fileInput) fileInput.value = '';
+            } else {
+                toast({ variant: 'destructive', title: 'Upload Failed', description: result.error || 'An unknown error occurred.' });
+            }
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Upload Error', description: error.message });
+        } finally {
+            setIsUploadingVideo(false);
+        }
+    };
     
-    // Handlers for general youtube urls
-    const handleYoutubeUrlChange = (index: number, value: string) => {
-        const newUrls = [...youtubeUrls];
-        newUrls[index] = value;
-        setYoutubeUrls(newUrls);
-    };
-
-    const addYoutubeUrl = () => {
-        if (youtubeUrls.length < 111) {
-            setYoutubeUrls([...youtubeUrls, '']);
-        }
-    };
-
-    const removeYoutubeUrl = (index: number) => {
-        if (youtubeUrls.length > 1) {
-            const newUrls = [...youtubeUrls];
-            newUrls.splice(index, 1);
-            setYoutubeUrls(newUrls);
-        }
-    };
-    
-    // Handlers for Gold youtube urls
-    const handleGoldYoutubeUrlChange = (index: number, value: string) => {
-        const newUrls = [...goldYoutubeUrls];
-        newUrls[index] = value;
-        setGoldYoutubeUrls(newUrls);
-    };
-
-    const addGoldYoutubeUrl = () => {
-        if (goldYoutubeUrls.length < 111) {
-            setGoldYoutubeUrls([...goldYoutubeUrls, '']);
-        }
-    };
-
-    const removeGoldYoutubeUrl = (index: number) => {
-        if (goldYoutubeUrls.length > 1) {
-            const newUrls = [...goldYoutubeUrls];
-            newUrls.splice(index, 1);
-            setGoldYoutubeUrls(newUrls);
-        }
-    };
-
-    // Handlers for Platinum youtube urls
-    const handlePlatinumYoutubeUrlChange = (index: number, value: string) => {
-        const newUrls = [...platinumYoutubeUrls];
-        newUrls[index] = value;
-        setPlatinumYoutubeUrls(newUrls);
-    };
-
-    const addPlatinumYoutubeUrl = () => {
-        if (platinumYoutubeUrls.length < 111) {
-            setPlatinumYoutubeUrls([...platinumYoutubeUrls, '']);
-        }
-    };
-
-    const removePlatinumYoutubeUrl = (index: number) => {
-        if (platinumYoutubeUrls.length > 1) {
-            const newUrls = [...platinumYoutubeUrls];
-            newUrls.splice(index, 1);
-            setPlatinumYoutubeUrls(newUrls);
-        }
-    };
-
-    // Handlers for Silver youtube urls
-    const handleSilverYoutubeUrlChange = (index: number, value: string) => {
-        const newUrls = [...silverYoutubeUrls];
-        newUrls[index] = value;
-        setSilverYoutubeUrls(newUrls);
-    };
-
-    const addSilverYoutubeUrl = () => {
-        if (silverYoutubeUrls.length < 111) {
-            setSilverYoutubeUrls([...silverYoutubeUrls, '']);
-        }
-    };
-
-    const removeSilverYoutubeUrl = (index: number) => {
-        if (silverYoutubeUrls.length > 1) {
-            const newUrls = [...silverYoutubeUrls];
-            newUrls.splice(index, 1);
-            setSilverYoutubeUrls(newUrls);
-        }
-    };
 
     const handlePublish = async () => {
         if (!user || !firestore) {
@@ -297,11 +285,10 @@ export default function StudioPage() {
             paymentMethod: priceType === 'paid' ? paymentMethod : undefined,
             price: priceType === 'paid' && paymentMethod === 'direct' ? parseFloat(directPrice) || 0 : 0,
             subscriptionTiers: priceType === 'paid' && paymentMethod === 'templates' ? {
-                gold: { price: goldPrice, description: goldDescription, features: goldFeatures.filter(Boolean), videos: goldYoutubeUrls.filter(Boolean) },
-                platinum: { price: platinumPrice, description: platinumDescription, features: platinumFeatures.filter(Boolean), videos: platinumYoutubeUrls.filter(Boolean) },
-                silver: { price: silverPrice, description: silverDescription, features: silverFeatures.filter(Boolean), videos: silverYoutubeUrls.filter(Boolean) },
+                gold: { price: goldPrice, description: goldDescription, features: goldFeatures.filter(Boolean) },
+                platinum: { price: platinumPrice, description: platinumDescription, features: platinumFeatures.filter(Boolean) },
+                silver: { price: silverPrice, description: silverDescription, features: silverFeatures.filter(Boolean) },
             } : null,
-            videos: priceType !== 'paid' || paymentMethod !== 'templates' ? youtubeUrls.filter(Boolean) : [],
             duration: formatDuration(courseDuration[0]),
             liveSessionsEnabled: wantsToGoLive,
             resourcesEnabled: providesResources,
@@ -700,7 +687,7 @@ export default function StudioPage() {
                             <CardTitle>Course Media</CardTitle>
                             <CardDescription>Upload assets for your course like a thumbnail image and video content.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-8">
                             <div className="space-y-2">
                                 <Label>Upload Thumbnail</Label>
                                 <div className="flex items-center gap-4">
@@ -727,161 +714,45 @@ export default function StudioPage() {
                                 <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
                             </div>
                             
-                            {priceType === 'paid' && paymentMethod === 'templates' ? (
-                                <div className="space-y-8">
-                                    <div className="space-y-4 rounded-lg border border-yellow-500/50 bg-yellow-500/5 p-4">
-                                        <Label className="text-lg font-medium text-yellow-400">Gold Plan Videos</Label>
-                                        <div className="space-y-2">
-                                            {goldYoutubeUrls.map((url, index) => (
-                                                <div key={index} className="flex items-center gap-2">
-                                                    <Input
-                                                        type="url"
-                                                        placeholder={`https://www.youtube.com/watch?v=...`}
-                                                        value={url}
-                                                        onChange={(e) => handleGoldYoutubeUrlChange(index, e.target.value)}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => removeGoldYoutubeUrl(index)}
-                                                        className="h-8 w-8 flex-shrink-0"
-                                                        disabled={goldYoutubeUrls.length <= 1}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            ))}
+                            <div className="space-y-4">
+                                <h3 className="font-semibold text-lg">Upload Course Videos</h3>
+                                <p className="text-sm text-muted-foreground">Upload videos one by one. They will be associated with the course category you set in the 'Details' tab.</p>
+                                <Card className="p-4 bg-muted/50">
+                                    <div className="space-y-4">
+                                        <div className="grid w-full items-center gap-1.5">
+                                            <Label htmlFor="video-file-upload">Video File</Label>
+                                            <Input id="video-file-upload" type="file" accept="video/*" onChange={(e) => setUploadingFile(e.target.files?.[0] || null)} />
                                         </div>
-                                        {goldYoutubeUrls.length < 111 && (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={addGoldYoutubeUrl}
-                                                className="mt-2"
-                                            >
-                                                <Plus className="mr-2 h-4 w-4" /> Add Video URL
-                                            </Button>
-                                        )}
-                                        <p className="text-sm text-muted-foreground">Add YouTube links for the Gold plan. Max 111 videos.</p>
-                                    </div>
-                                    
-                                    <div className="space-y-4 rounded-lg border border-slate-400/50 bg-slate-500/5 p-4">
-                                        <Label className="text-lg font-medium text-slate-300">Platinum Plan Videos</Label>
-                                        <div className="space-y-2">
-                                            {platinumYoutubeUrls.map((url, index) => (
-                                                <div key={index} className="flex items-center gap-2">
-                                                    <Input
-                                                        type="url"
-                                                        placeholder={`https://www.youtube.com/watch?v=...`}
-                                                        value={url}
-                                                        onChange={(e) => handlePlatinumYoutubeUrlChange(index, e.target.value)}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => removePlatinumYoutubeUrl(index)}
-                                                        className="h-8 w-8 flex-shrink-0"
-                                                        disabled={platinumYoutubeUrls.length <= 1}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            ))}
+                                        <div className="grid w-full items-center gap-1.5">
+                                            <Label htmlFor="uploading-video-title">Video Title</Label>
+                                            <Input id="uploading-video-title" value={uploadingVideoTitle} onChange={(e) => setUploadingVideoTitle(e.target.value)} placeholder="e.g., Module 1: Introduction" />
                                         </div>
-                                        {platinumYoutubeUrls.length < 111 && (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={addPlatinumYoutubeUrl}
-                                                className="mt-2"
-                                            >
-                                                <Plus className="mr-2 h-4 w-4" /> Add Video URL
-                                            </Button>
-                                        )}
+                                        <Button onClick={handleUploadVideo} disabled={isUploadingVideo || !uploadingFile || !uploadingVideoTitle || !category}>
+                                            {isUploadingVideo ? 'Uploading...' : 'Upload Video'}
+                                        </Button>
+                                        {!category && <p className="text-xs text-destructive">Please set a course category in the 'Details' tab first.</p>}
                                     </div>
-
-                                    <div className="space-y-4 rounded-lg border border-zinc-500/50 bg-zinc-500/10 p-4">
-                                        <Label className="text-lg font-medium text-zinc-300">Silver Plan Videos</Label>
-                                        <div className="space-y-2">
-                                            {silverYoutubeUrls.map((url, index) => (
-                                                <div key={index} className="flex items-center gap-2">
-                                                    <Input
-                                                        type="url"
-                                                        placeholder={`https://www.youtube.com/watch?v=...`}
-                                                        value={url}
-                                                        onChange={(e) => handleSilverYoutubeUrlChange(index, e.target.value)}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => removeSilverYoutubeUrl(index)}
-                                                        className="h-8 w-8 flex-shrink-0"
-                                                        disabled={silverYoutubeUrls.length <= 1}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
+                                </Card>
+                            </div>
+                            
+                            <div className="mt-6 space-y-4">
+                                <h3 className="font-semibold text-lg">Uploaded Videos for "{category || 'Not Set'}"</h3>
+                                {isLoadingVideos ? <p className="text-muted-foreground">Loading videos...</p> : videosForCategory.length > 0 ? (
+                                    <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                                        {videosForCategory.map((video: VideoType) => (
+                                            <div key={video.id} className="flex items-center justify-between rounded-lg border bg-background p-3 gap-2">
+                                                <div className="flex items-center gap-3 overflow-hidden">
+                                                    <Film className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                                                    <p className="font-medium truncate">{video.title}</p>
                                                 </div>
-                                            ))}
-                                        </div>
-                                        {silverYoutubeUrls.length < 111 && (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={addSilverYoutubeUrl}
-                                                className="mt-2"
-                                            >
-                                                <Plus className="mr-2 h-4 w-4" /> Add Video URL
-                                            </Button>
-                                        )}
-                                    </div>
-
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    <Label>Course Videos (YouTube URLs)</Label>
-                                    <div className="space-y-2">
-                                        {youtubeUrls.map((url, index) => (
-                                            <div key={index} className="flex items-center gap-2">
-                                                <Input
-                                                    type="url"
-                                                    placeholder={`https://www.youtube.com/watch?v=...`}
-                                                    value={url}
-                                                    onChange={(e) => handleYoutubeUrlChange(index, e.target.value)}
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => removeYoutubeUrl(index)}
-                                                    className="h-8 w-8 flex-shrink-0"
-                                                    disabled={youtubeUrls.length <= 1}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
+                                                <Badge variant="secondary">{video.category}</Badge>
                                             </div>
                                         ))}
                                     </div>
-                                    {youtubeUrls.length < 111 && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={addYoutubeUrl}
-                                            className="mt-2"
-                                        >
-                                            <Plus className="mr-2 h-4 w-4" /> Add Video URL
-                                        </Button>
-                                    )}
-                                    <p className="text-sm text-muted-foreground">Add links to your course videos from YouTube. You can add up to 111 videos.</p>
-                                </div>
-                            )}
-
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">No videos uploaded for this category yet.</p>
+                                )}
+                            </div>
                         </CardContent>
                         <CardFooter className="flex justify-between">
                             <Button variant="outline" onClick={() => setActiveTab('additional-details')}>Back</Button>

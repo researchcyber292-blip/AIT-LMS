@@ -39,11 +39,10 @@ export type Course = {
   priceType: 'paid' | 'free';
   paymentMethod?: 'direct' | 'templates';
   subscriptionTiers?: {
-    gold: { price: string, description: string, features: string[], videos: string[] },
-    platinum: { price: string, description: string, features: string[], videos: string[] },
-    silver: { price: string, description: string, features: string[], videos: string[] },
+    gold: { price: string, description: string, features: string[] },
+    platinum: { price: string, description: string, features: string[] },
+    silver: { price: string, description: string, features: string[] },
   } | null,
-  videos?: string[];
   duration: string;
   liveSessionsEnabled: boolean;
   resourcesEnabled: boolean;
