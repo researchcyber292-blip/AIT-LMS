@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Video, Mic, Wallet, BookCopy, Users, BarChart, ArrowLeft, BookUser, LayoutGrid, Trash2 } from 'lucide-react';
 import { useAuth, useUser, useFirestore, useCollection, useDoc, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
-import { collection, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, updateDoc, deleteDoc, query, where, getDocs, writeBatch } from 'firebase/firestore';
 import { deleteUser } from 'firebase/auth';
 import type { Enrollment, Instructor, Wallet as WalletType, Course } from '@/lib/types';
 import Loading from '@/app/loading';
@@ -267,17 +267,34 @@ function InstructorManagementView({ onBack, onEditProfile }: { onBack: () => voi
         setIsDeleting(true);
 
         try {
+            // Find all courses by this instructor
+            const coursesQuery = query(collection(firestore, 'courses'), where('instructorId', '==', user.uid));
+            const coursesSnapshot = await getDocs(coursesQuery);
+            
+            // Start a batch write to delete all documents atomically
+            const batch = writeBatch(firestore);
+
+            // Add all course deletions to the batch
+            coursesSnapshot.forEach(courseDoc => {
+                batch.delete(courseDoc.ref);
+            });
+
+            // Add instructor profile and wallet to the batch
             const instructorDocRef = doc(firestore, 'instructors', user.uid);
+            batch.delete(instructorDocRef);
+
             const walletDocRef = doc(firestore, 'wallets', user.uid);
+            batch.delete(walletDocRef);
 
-            await deleteDoc(instructorDocRef);
-            await deleteDoc(walletDocRef);
+            // Commit all Firestore deletions
+            await batch.commit();
 
+            // Finally, delete the user from Firebase Authentication
             await deleteUser(user);
             
             toast({
                 title: 'Account Deleted',
-                description: 'Your instructor account has been permanently deleted.',
+                description: 'Your instructor account, profile, and all associated courses have been permanently deleted.',
             });
         } catch (error: any) {
             console.error('Error deleting instructor account:', error);
@@ -412,22 +429,10 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
   // Fetch instructor's courses from Firestore
   const coursesQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return collection(firestore, "courses");
+    return query(collection(firestore, "courses"), where("instructorId", "==", user.uid));
   }, [firestore, user]);
-  const { data: allCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
+  const { data: instructorCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
   
-  const instructorCourses = useMemo(() => {
-    if (!allCourses) return [];
-    return allCourses
-      .filter(c => c.instructorId === instructor.id)
-      .map(course => ({
-        ...course,
-        instructor: {
-          name: `${instructor.firstName} ${instructor.lastName}`,
-          avatar: instructor.photoURL,
-        }
-      }));
-  }, [allCourses, instructor]);
 
 
   // Placeholder data for stats
@@ -443,7 +448,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
 
   const stats = [
     { title: "Total Earnings", value: `₹${(wallet?.totalEarned || 0).toLocaleString()}`, icon: Wallet },
-    { title: "Courses Published", value: instructorCourses.length, icon: BookCopy },
+    { title: "Courses Published", value: instructorCourses?.length || 0, icon: BookCopy },
     { title: "Total Students", value: totalStudents.toLocaleString(), icon: Users },
   ];
 
@@ -548,7 +553,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
                     </div>
                 ))}
             </div>
-        ) : instructorCourses.length > 0 ? (
+        ) : instructorCourses && instructorCourses.length > 0 ? (
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {instructorCourses.map(course => (
                     <CourseCard key={course.id} course={course} />
