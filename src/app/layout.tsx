@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-  const isFullScreenPage = ['/student-welcome', '/welcome-video-2', '/profile-setup', '/getting-started', '/activation', '/admin', '/creation-success', '/live-classroom', '/dashboard', '/studio', '/explore'].includes(pathname);
+  const isFullScreenPage = ['/admin', '/dashboard', '/studio', '/explore'].includes(pathname);
 
   return (
     <html lang="en">

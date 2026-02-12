@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -29,7 +30,7 @@ export default function SignUpPage() {
             <p className="text-muted-foreground mt-2 mb-10 text-lg">Choose your path and let's get started on your journey.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <Link href="/student-welcome">
+                <Link href="/register">
                     <Card className="group text-left h-full transition-all duration-300 hover:border-primary hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 cursor-pointer">
                         <CardHeader>
                             <div className="p-3 bg-blue-100 dark:bg-primary/10 rounded-full w-fit mb-4">
