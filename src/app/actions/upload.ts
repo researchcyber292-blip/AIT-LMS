@@ -54,7 +54,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
-  const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
+  const baseRemoteDir = `domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
   // Differentiate path for thumbnails
@@ -62,15 +62,14 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     remoteUploadDir = `${remoteUploadDir}/thumbnail`;
   }
   
-  const publicUrlPath = `asian/uploads/${sanitizedCategory}/${instructorFolder}${uploadType === 'thumbnail' ? '/thumbnail' : ''}/${remoteFileName}`;
-  const publicUrl = `https://asian.avirajinfotech.com/${publicUrlPath.replace(/^asian\//, '')}`;
+  const publicUrlPath = `uploads/${sanitizedCategory}/${instructorFolder}${uploadType === 'thumbnail' ? '/thumbnail' : ''}/${remoteFileName}`;
+  const publicUrl = `https://asian.avirajinfotech.com/${publicUrlPath}`;
 
   const remotePath = `${remoteUploadDir}/${remoteFileName}`;
   const sftp = new Client();
 
   try {
     await sftp.connect(sftpConfig);
-    // Use the absolute path for mkdir, with recursive creation enabled.
     await sftp.mkdir(remoteUploadDir, true); 
     await sftp.put(buffer, remotePath);
     await sftp.end();
