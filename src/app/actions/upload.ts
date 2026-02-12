@@ -50,26 +50,27 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const sanitizedUsername = instructorUsername.toLowerCase().replace(/[^a-z0-9]/g, '');
   const sanitizedCategory = category.toLowerCase().replace(/[^a-z0-9_-]/g, '');
-  
-  // Path for the public URL, which does not include `public_html`
-  let publicUrlBasePath = `asian/uploads/${sanitizedCategory}/${sanitizedUsername}/${courseId}`;
-  
-  // Path for SFTP, which likely requires `public_html` for a jailed user environment
-  let remoteUploadDir = `public_html/${publicUrlBasePath}`;
+  const sanitizedCourseId = courseId.replace(/[^a-zA-Z0-9_-]/g, '_');
 
+  const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
+  
+  const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
+  let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
+  
   // Differentiate path for thumbnails
   if (uploadType === 'thumbnail') {
     remoteUploadDir = `${remoteUploadDir}/thumbnail`;
-    publicUrlBasePath = `${publicUrlBasePath}/thumbnail`;
   }
   
-  const publicUrl = `https://asian.avirajinfotech.com/${publicUrlBasePath}/${remoteFileName}`;
+  const publicUrlPath = `asian/uploads/${sanitizedCategory}/${instructorFolder}${uploadType === 'thumbnail' ? '/thumbnail' : ''}/${remoteFileName}`;
+  const publicUrl = `https://asian.avirajinfotech.com/${publicUrlPath.replace(/^asian\//, '')}`;
+
   const remotePath = `${remoteUploadDir}/${remoteFileName}`;
   const sftp = new Client();
 
   try {
     await sftp.connect(sftpConfig);
-    // The `mkdir` function with `recursive: true` will create the entire path if it doesn't exist.
+    // Use the absolute path for mkdir, with recursive creation enabled.
     await sftp.mkdir(remoteUploadDir, true); 
     await sftp.put(buffer, remotePath);
     await sftp.end();
@@ -87,6 +88,6 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     if (err.message.includes('No such file')) {
        return { success: false, error: `The path was not found on the server. Please check the remote root path configuration. Path tried: ${remoteUploadDir}` };
     }
-    return { success: false, error: `An unexpected response was received from the server. This often means the path is incorrect. Please verify your Hostinger SFTP root directory.` };
+    return { success: false, error: `An unexpected response was received from the server. This often means the path is incorrect. Please verify your Hostinger SFTP root directory. Full path tried: ${remoteUploadDir}` };
   }
 }
