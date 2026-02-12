@@ -29,6 +29,16 @@ import { uploadToHostinger } from '@/app/actions/upload';
 import type { Video as VideoType, Course } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+const courseCategories = [
+    { value: 'ethical-hacking', label: 'Ethical Hacking' },
+    { value: 'data-science', label: 'Data Science' },
+    { value: 'full-stack-dev', label: 'Full Stack Dev' },
+    { value: 'ai-ml', label: 'AI & ML' },
+    { value: 'robotics-tech', label: 'Robotics & Tech' },
+    { value: 'coding', label: 'Coding' },
+    { value: 'python', label: 'Python' },
+];
+
 
 export default function StudioPage() {
     const router = useRouter();
@@ -42,8 +52,6 @@ export default function StudioPage() {
     const [level, setLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced'>('Beginner');
     const [category, setCategory] = useState('');
     const [categorySelection, setCategorySelection] = useState('');
-    const [allCategories, setAllCategories] = useState<string[]>([]);
-    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
     const [learningObjectives, setLearningObjectives] = useState(['']);
 
     // Curriculum Tab
@@ -82,24 +90,6 @@ export default function StudioPage() {
     const { user } = useUser();
     const firestore = useFirestore();
     const { toast } = useToast();
-
-     // Effect to fetch existing categories for the dropdown
-    useEffect(() => {
-        if (firestore) {
-            setIsLoadingCategories(true);
-            const coursesCol = collection(firestore, 'courses');
-            getDocs(coursesCol).then(snapshot => {
-                const uniqueCategories = [...new Set(snapshot.docs.map(doc => doc.data().category).filter(Boolean))];
-                setAllCategories(uniqueCategories);
-            }).catch(err => {
-                console.error("Error fetching categories: ", err);
-                // Fail gracefully, user can still type a category
-            }).finally(() => {
-                setIsLoadingCategories(false);
-            });
-        }
-    }, [firestore]);
-
 
      // Effect to fetch videos when category changes
     useEffect(() => {
@@ -404,14 +394,13 @@ export default function StudioPage() {
                                             setCategory('');
                                         }
                                     }}
-                                    disabled={isLoadingCategories}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder={isLoadingCategories ? 'Loading...' : 'Select a category'} />
+                                        <SelectValue placeholder="Select a category" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {allCategories.map((cat) => (
-                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        {courseCategories.map((cat) => (
+                                            <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
                                         ))}
                                         <SelectItem value="other">Other...</SelectItem>
                                     </SelectContent>
@@ -791,7 +780,7 @@ export default function StudioPage() {
                             </div>
                             
                             <div className="mt-6 space-y-4">
-                                <h3 className="font-semibold text-lg">Uploaded Videos for "{category || 'Not Set'}"</h3>
+                                <h3 className="font-semibold text-lg">Uploaded Videos for "{courseCategories.find(c => c.value === category)?.label || category || 'Not Set'}"</h3>
                                 {isLoadingVideos ? <p className="text-muted-foreground">Loading videos...</p> : videosForCategory.length > 0 ? (
                                     <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
                                         {videosForCategory.map((video: VideoType) => (
@@ -800,7 +789,7 @@ export default function StudioPage() {
                                                     <Film className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                                                     <p className="font-medium truncate">{video.title}</p>
                                                 </div>
-                                                <Badge variant="secondary">{video.category}</Badge>
+                                                <Badge variant="secondary">{courseCategories.find(c => c.value === video.category)?.label || video.category}</Badge>
                                             </div>
                                         ))}
                                     </div>
@@ -892,7 +881,7 @@ export default function StudioPage() {
                                     </div>
                                     
                                     <div className="md:col-span-2">
-                                        <Badge variant="secondary" className="mb-2 capitalize">{category || "Category"}</Badge>
+                                        <Badge variant="secondary" className="mb-2 capitalize">{courseCategories.find(c => c.value === category)?.label || category || "Category"}</Badge>
                                         <h1 className="font-headline text-4xl font-bold tracking-tight lg:text-5xl">{title || "Your Course Title"}</h1>
                                         <p className="mt-4 text-lg text-muted-foreground">{longDescription || "Your detailed course description will appear here."}</p>
 
@@ -1012,4 +1001,3 @@ export default function StudioPage() {
     );
 }
 
-    
