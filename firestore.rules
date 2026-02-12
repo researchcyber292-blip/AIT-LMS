@@ -1,4 +1,3 @@
-
 /**
  * Core Philosophy:
  * This ruleset enforces a security model with a clear separation between public and private data.
@@ -53,6 +52,13 @@ service cloud.firestore {
     }
 
     /**
+     * Checks if the authenticated user is a registered instructor.
+     */
+    function isInstructor(userId) {
+      return exists(/databases/$(database)/documents/instructors/$(userId));
+    }
+
+    /**
      * Verifies that a document exists before an update or delete operation.
      * This prevents writes to non-existent paths.
      */
@@ -81,7 +87,7 @@ service cloud.firestore {
      * Checks if the authenticated user is a participant in the private chat.
      */
     function isChatParticipant(chatId) {
-      return isSignedIn() && request.auth.uid in chatId.split('_');
+      return isSignedIn() && (request.auth.uid in chatId.split('_'));
     }
 
     /**
@@ -139,7 +145,7 @@ service cloud.firestore {
      */
     function hasMessageQuota() {
       // Admins and instructors are not subject to message limits.
-      if (isAnonymousAdmin() || exists(/databases/$(database)/documents/instructors/$(request.auth.uid))) {
+      if (isAnonymousAdmin() || isInstructor(request.auth.uid)) {
         return true;
       }
       
@@ -203,7 +209,7 @@ service cloud.firestore {
      */
     match /courses/{courseId} {
       allow get, list: if true;
-      allow create: if isSignedIn() && isCreatorTheInstructor();
+      allow create: if isSignedIn() && isInstructor(request.auth.uid) && isCreatorTheInstructor();
       allow update: if isExistingOwner(resource.data.instructorId) && isInstructorImmutable();
       allow delete: if isExistingOwner(resource.data.instructorId);
     }
@@ -320,20 +326,17 @@ service cloud.firestore {
     
     /**
      * @description Stores metadata about uploaded videos.
-     * @path /videos/{videoId}
-     * @allow (read, list) Publicly readable.
-     * @allow (create) Only anonymous admins can upload a video.
+     * @path /course_videos/{videoId}
+     * @allow (read) Publicly readable.
+     * @allow (create) Instructors and admins can upload videos.
      * @allow (delete) Only anonymous admins can delete videos.
-     * @principle Admin-only content management.
+     * @principle Content management for authorized users.
      */
-     match /videos/{videoId} {
-      allow get: if true;
-      allow create: if isAnonymousAdmin() && request.resource.data.uploaderId == request.auth.uid;
-      allow delete: if isAnonymousAdmin();
+     match /course_videos/{videoId} {
+      allow get, list: if true;
+      allow create: if (isInstructor(request.auth.uid) || isAnonymousAdmin()) && request.resource.data.uploaderId == request.auth.uid;
+      allow delete: if isAnonymousAdmin() || isOwner(resource.data.uploaderId);
       allow update: if false;
-    }
-    match /videos {
-      allow list: if isSignedIn();
     }
   }
 }
