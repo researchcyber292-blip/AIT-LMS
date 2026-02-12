@@ -55,15 +55,15 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
-  const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
+  const baseRemoteDir = `domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
   if (uploadType === 'thumbnail') {
     remoteUploadDir = `${remoteUploadDir}/thumbnail`;
   }
   
-  const publicUrlPath = `uploads/${sanitizedCategory}/${instructorFolder}${uploadType === 'thumbnail' ? '/thumbnail' : ''}/${remoteFileName}`;
-  const publicUrl = `https://asian.avirajinfotech.com/${publicUrlPath}`;
+  const publicUrlPath = `asian/uploads/${sanitizedCategory}/${instructorFolder}${uploadType === 'thumbnail' ? '/thumbnail' : ''}/${remoteFileName}`;
+  const publicUrl = `https://avirajinfotech.com/${publicUrlPath}`;
 
   const remotePath = `${remoteUploadDir}/${remoteFileName}`;
   const sftp = new Client();
