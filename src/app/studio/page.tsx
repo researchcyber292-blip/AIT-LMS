@@ -80,6 +80,7 @@ export default function StudioPage() {
     const [providesResources, setProvidesResources] = useState(false);
 
     // Media
+    const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
     const [videosForCategory, setVideosForCategory] = useState<VideoType[]>([]);
     const [isLoadingVideos, setIsLoadingVideos] = useState(false);
@@ -175,10 +176,12 @@ export default function StudioPage() {
     const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file && file.type.startsWith('image/')) {
+            setThumbnailFile(file);
             const reader = new FileReader();
             reader.onloadend = () => setThumbnailPreview(reader.result as string);
             reader.readAsDataURL(file);
         } else {
+            setThumbnailFile(null);
             setThumbnailPreview(null);
         }
     };
@@ -364,34 +367,57 @@ export default function StudioPage() {
     // --- Publish Handler ---
     const handlePublish = async () => {
         if (!user || !firestore) return toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in.' });
-        if (!title || !longDescription || !thumbnailPreview) {
-            setActiveTab('details');
-            return toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out title, description, and add a thumbnail.' });
+        if (!thumbnailFile) {
+            setActiveTab('media');
+            return toast({ variant: 'destructive', title: 'Missing Thumbnail', description: 'Please upload a course thumbnail image.' });
         }
+        if (!title || !longDescription) {
+            setActiveTab('details');
+            return toast({ variant: 'destructive', title: 'Missing Information', description: 'Please fill out title and description.' });
+        }
+
         setIsPublishing(true);
-        const newCourseData = {
-            title, shortDescription, longDescription, level, category,
-            learningObjectives: learningObjectives.filter(o => o.trim() !== ''),
-            curriculum: [], instructorId: user.uid, image: thumbnailPreview, imageHint: 'custom course thumbnail',
-            createdAt: serverTimestamp(), priceType,
-            paymentMethod: priceType === 'paid' ? paymentMethod : undefined,
-            price: priceType === 'paid' && paymentMethod === 'direct' ? parseFloat(directPrice) || 0 : 0,
-            subscriptionTiers: priceType === 'paid' && paymentMethod === 'templates' ? {
-                gold: { price: goldPrice, description: goldDescription, features: goldFeatures.filter(Boolean) },
-                platinum: { price: platinumPrice, description: platinumDescription, features: platinumFeatures.filter(Boolean) },
-                silver: { price: silverPrice, description: silverDescription, features: silverFeatures.filter(Boolean) },
-            } : null,
-            duration: formatDuration(courseDuration[0]),
-            liveSessionsEnabled: wantsToGoLive,
-            resourcesEnabled: providesResources,
-        };
+        
         try {
+            const thumbnailFormData = new FormData();
+            thumbnailFormData.append('thumbnail', thumbnailFile);
+            if (!user.displayName) throw new Error("Instructor name not found.");
+            thumbnailFormData.append('instructorUsername', user.displayName);
+
+            const uploadResult = await uploadToHostinger(thumbnailFormData);
+
+            if (!uploadResult.success || !uploadResult.url) {
+                throw new Error(uploadResult.error || 'Failed to upload thumbnail.');
+            }
+            const thumbnailUrl = uploadResult.url;
+
+            const newCourseData = {
+                title, shortDescription, longDescription, level, category,
+                learningObjectives: learningObjectives.filter(o => o.trim() !== ''),
+                curriculum: [],
+                instructorId: user.uid,
+                image: thumbnailUrl,
+                imageHint: 'course thumbnail',
+                createdAt: serverTimestamp(),
+                priceType,
+                paymentMethod: priceType === 'paid' ? paymentMethod : undefined,
+                price: priceType === 'paid' && paymentMethod === 'direct' ? parseFloat(directPrice) || 0 : 0,
+                subscriptionTiers: priceType === 'paid' && paymentMethod === 'templates' ? {
+                    gold: { price: goldPrice, description: goldDescription, features: goldFeatures.filter(Boolean) },
+                    platinum: { price: platinumPrice, description: platinumDescription, features: platinumFeatures.filter(Boolean) },
+                    silver: { price: silverPrice, description: silverDescription, features: silverFeatures.filter(Boolean) },
+                } : null,
+                duration: formatDuration(courseDuration[0]),
+                liveSessionsEnabled: wantsToGoLive,
+                resourcesEnabled: providesResources,
+            };
+
             await addDoc(collection(firestore, 'courses'), newCourseData);
             toast({ title: 'Course Published!', description: 'Your course is now live.' });
             router.push('/dashboard');
         } catch (error: any) {
             console.error("Error publishing course:", error);
-            toast({ variant: 'destructive', title: 'Publish Failed', description: 'Could not save the course. Check permissions.' });
+            toast({ variant: 'destructive', title: 'Publish Failed', description: error.message || 'Could not save the course.' });
         } finally {
             setIsPublishing(false);
         }
