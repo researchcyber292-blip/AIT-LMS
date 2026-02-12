@@ -22,11 +22,11 @@ import {
 } from "@/components/ui/dialog"
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { collection, addDoc, serverTimestamp, getDocs, query, where, doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { uploadToHostinger } from '@/app/actions/upload';
-import type { Video as VideoType, Course } from '@/lib/types';
+import type { Video as VideoType, Course, Instructor } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const courseCategories = [
@@ -102,6 +102,13 @@ export default function StudioPage() {
     const { user } = useUser();
     const firestore = useFirestore();
     const { toast } = useToast();
+
+    const instructorDocRef = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return doc(firestore, 'instructors', user.uid);
+    }, [user, firestore]);
+    const { data: instructor, isLoading: isInstructorLoading } = useDoc<Instructor>(instructorDocRef);
+
 
     // --- DATA FETCHING & EFFECTS ---
     const fetchVideos = useCallback(async () => {
@@ -258,13 +265,14 @@ export default function StudioPage() {
             toast({ variant: 'destructive', title: 'Missing Info', description: 'Please provide a file, title, and course category.' });
             return;
         }
-        if (!user || !firestore) {
-            toast({ variant: 'destructive', title: 'Auth Error', description: 'You must be logged in to upload.' });
+        if (!user || !firestore || !instructor) {
+            toast({ variant: 'destructive', title: 'Auth Error', description: 'You must be logged in as an instructor to upload.' });
             return;
         }
-        const instructorUsername = user.displayName;
-        if (!instructorUsername) {
-            toast({ variant: 'destructive', title: 'Auth Error', description: 'Instructor name not found.' });
+        
+        const instructorUsername = `${instructor.firstName} ${instructor.lastName}`;
+        if (!instructorUsername.trim()) {
+            toast({ variant: 'destructive', title: 'Auth Error', description: 'Instructor name not found in profile.' });
             return;
         }
 
@@ -366,7 +374,7 @@ export default function StudioPage() {
 
     // --- Publish Handler ---
     const handlePublish = async () => {
-        if (!user || !firestore) return toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in.' });
+        if (!user || !firestore || !instructor) return toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in as an instructor.' });
         if (!thumbnailFile) {
             setActiveTab('media');
             return toast({ variant: 'destructive', title: 'Missing Thumbnail', description: 'Please upload a course thumbnail image.' });
@@ -381,8 +389,9 @@ export default function StudioPage() {
         try {
             const thumbnailFormData = new FormData();
             thumbnailFormData.append('thumbnail', thumbnailFile);
-            if (!user.displayName) throw new Error("Instructor name not found.");
-            thumbnailFormData.append('instructorUsername', user.displayName);
+            const instructorUsername = `${instructor.firstName} ${instructor.lastName}`;
+            if (!instructorUsername.trim()) throw new Error("Instructor name not found in profile.");
+            thumbnailFormData.append('instructorUsername', instructorUsername);
 
             const uploadResult = await uploadToHostinger(thumbnailFormData);
 
@@ -635,3 +644,5 @@ export default function StudioPage() {
         </div>
     );
 }
+
+    
