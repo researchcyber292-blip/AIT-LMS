@@ -11,7 +11,7 @@ import { collection, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { deleteUser } from 'firebase/auth';
 import type { Enrollment, Instructor, Wallet as WalletType, Course } from '@/lib/types';
 import Loading from '@/app/loading';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -36,6 +36,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CourseCard } from '@/components/course-card';
 
 
 const { placeholderImages } = imageData;
@@ -414,7 +415,19 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
     return collection(firestore, "courses");
   }, [firestore, user]);
   const { data: allCourses, isLoading: areCoursesLoading } = useCollection<Course>(coursesQuery);
-  const instructorCourses = allCourses?.filter(c => c.instructorId === instructor.id) || [];
+  
+  const instructorCourses = useMemo(() => {
+    if (!allCourses) return [];
+    return allCourses
+      .filter(c => c.instructorId === instructor.id)
+      .map(course => ({
+        ...course,
+        instructor: {
+          name: `${instructor.firstName} ${instructor.lastName}`,
+          avatar: instructor.photoURL,
+        }
+      }));
+  }, [allCourses, instructor]);
 
 
   // Placeholder data for stats
@@ -493,7 +506,7 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
             <Card 
                 key={i} 
                 className={cn(
-                    "bg-card/50 backdrop-blur-sm transition-all duration-300 shadow-lg group cursor-pointer",
+                    "bg-card/50 backdrop-blur-sm transition-all duration-300 shadow-lg group",
                     action.isEnabled && "cursor-pointer",
                     action.glow 
                         ? "animated-glowing-border rounded-lg hover:shadow-primary/20" 
@@ -517,6 +530,37 @@ function InstructorDashboard({ instructor }: { instructor: Instructor }) {
                 </CardContent>
             </Card>
         ))}
+      </div>
+      
+      {/* Your Courses Section */}
+      <div className="mt-12">
+        <h2 className="font-headline text-3xl font-bold mb-4">Your Courses</h2>
+        
+        {areCoursesLoading ? (
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex flex-col space-y-3">
+                        <Skeleton className="h-[225px] w-full rounded-xl" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        ) : instructorCourses.length > 0 ? (
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {instructorCourses.map(course => (
+                    <CourseCard key={course.id} course={course} />
+                ))}
+            </div>
+        ) : (
+            <Card className="mt-6 flex flex-col items-center justify-center p-12 text-center border-2 border-dashed bg-card/50">
+                <BookOpen className="h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 font-semibold text-lg">You haven't created any courses yet.</h3>
+                <p className="mt-2 text-sm text-muted-foreground">Click "Create Classroom & Management" to get started.</p>
+            </Card>
+        )}
       </div>
 
     </div>
