@@ -13,20 +13,22 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import type { Course, Instructor } from '@/lib/types';
 import { collection } from 'firebase/firestore';
 
-// Map instructor teachingCategory enum to display names
-const teachingCategoryDisplayMap: Record<string, string> = {
-    'hacking': 'Ethical Hacking',
-    'datascience': 'Data Science',
-    'webdev': 'Full Stack Dev',
-    'aiml': 'AI & ML',
-    'programming': 'Coding',
-    'others': 'Others'
+// A map for studio values to display names for filtering
+const courseCategoryDisplayMap: Record<string, string> = {
+    'ethical-hacking': 'Ethical Hacking',
+    'data-science': 'Data Science',
+    'full-stack-dev': 'Full Stack Dev',
+    'ai-ml': 'AI & ML',
+    'robotics-tech': 'Robotics & Tech',
+    'coding': 'Coding',
+    'python': 'Python',
 };
 
-// Generate categories dynamically from the map
+// Generate categories dynamically from the map for the filter UI
 const courseCategories = [
     'All',
-    ...Object.values(teachingCategoryDisplayMap)
+    ...Object.values(courseCategoryDisplayMap),
+    'Others'
 ];
 
 
@@ -53,7 +55,6 @@ export default function CoursesPage() {
             const instructor = instructors.find(inst => inst.id === course.instructorId);
             return {
                 ...course,
-                instructorTeachingCategory: instructor?.teachingCategory,
                 instructor: instructor ? {
                     name: `${instructor.firstName} ${instructor.lastName}`,
                     avatar: instructor.photoURL
@@ -67,21 +68,28 @@ export default function CoursesPage() {
 
     const filteredCourses = useMemo(() => {
         if (!allCourses) return [];
+
+        const mainCategoryKeys = Object.keys(courseCategoryDisplayMap);
+
         return allCourses.filter(course => {
             const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase());
+            if (!matchesSearch) return false;
+
             if (activeCategory === 'All') {
-                return matchesSearch;
+                return true;
             }
             
-            // Find the key (e.g., 'hacking') for the active category display name (e.g., 'Ethical Hacking')
-            const activeCategoryKey = Object.keys(teachingCategoryDisplayMap).find(
-                key => teachingCategoryDisplayMap[key] === activeCategory
-            );
+            if (activeCategory === 'Others') {
+                // A course is in 'Others' if its category value is not one of the main ones
+                return !mainCategoryKeys.includes(course.category) && course.category;
+            }
 
-            // Filter by the instructor's teaching category
-            const matchesCategory = course.instructorTeachingCategory === activeCategoryKey;
+            // Find the key (e.g., 'ethical-hacking') for the active category display name (e.g., 'Ethical Hacking')
+            const activeCategoryKey = Object.keys(courseCategoryDisplayMap).find(
+                key => courseCategoryDisplayMap[key] === activeCategory
+            );
             
-            return matchesCategory && matchesSearch;
+            return course.category === activeCategoryKey;
         });
     }, [activeCategory, searchTerm, allCourses]);
 

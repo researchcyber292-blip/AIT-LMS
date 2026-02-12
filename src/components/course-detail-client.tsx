@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { CheckCircle, BarChart, Clock, Film } from 'lucide-react';
+import { CheckCircle, BarChart, Clock, Film, Crown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -19,6 +19,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import Loading from '@/app/loading';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 
 
 declare global {
@@ -108,6 +116,7 @@ export default function CourseDetailClient() {
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   // Fetch course data from Firestore
   const courseDocRef = useMemoFirebase(() => {
@@ -332,8 +341,22 @@ export default function CourseDetailClient() {
             )}
             
             <div className="p-6">
-              <p className="mb-4 text-4xl font-bold font-headline text-primary">₹{course.price}</p>
-              {renderActionButtons()}
+                {course.priceType === 'paid' && course.paymentMethod === 'templates' ? (
+                    <>
+                        <p className="mb-4 text-4xl font-bold font-headline text-primary">Subscription</p>
+                        <Button size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => setIsPricingModalOpen(true)}>
+                            View Subscription Plans
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        <p className="mb-4 text-4xl font-bold font-headline text-primary">
+                            {course.priceType === 'free' ? 'Free' : `₹${course.price || '0.00'}`}
+                        </p>
+                        {renderActionButtons()}
+                    </>
+                )}
+
 
               <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -415,6 +438,25 @@ export default function CourseDetailClient() {
             </div>
         </div>
       </div>
+        <Dialog open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
+            <DialogContent className="max-w-5xl bg-background border-border">
+                <DialogHeader>
+                    <DialogTitle className="font-headline text-3xl text-center">Subscription Plans</DialogTitle>
+                    <DialogDescription className="text-center">Choose the plan that's right for you.</DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-6">
+                    {course.subscriptionTiers?.gold.price && (
+                        <Card className="border-yellow-500/50 bg-yellow-500/10 flex flex-col"><CardHeader><CardTitle className="text-yellow-400 font-headline text-2xl flex items-center gap-2"><Crown /> Gold Plan</CardTitle><p className="text-3xl font-bold pt-2">{course.subscriptionTiers.gold.price}</p></CardHeader><CardContent className="flex-grow space-y-4"><p className="text-muted-foreground text-sm italic">{course.subscriptionTiers.gold.description}</p><ul className="space-y-2 pt-2">{course.subscriptionTiers.gold.features.map((feature, i) => (<li key={`modal-gold-${i}`} className="flex items-start gap-2 text-sm"><CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" /><span>{feature}</span></li>))}</ul></CardContent><CardFooter><Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold" onClick={() => toast({ title: 'Coming Soon!', description: 'Subscription purchases will be available soon.' })}>Select Plan</Button></CardFooter></Card>
+                    )}
+                    {course.subscriptionTiers?.platinum.price && (
+                         <Card className="border-slate-400/50 bg-slate-400/10 flex flex-col"><CardHeader><CardTitle className="text-slate-300 font-headline text-2xl">Premium (Platinum) Plan</CardTitle><p className="text-3xl font-bold pt-2">{course.subscriptionTiers.platinum.price}</p></CardHeader><CardContent className="flex-grow space-y-4"><p className="text-muted-foreground text-sm italic">{course.subscriptionTiers.platinum.description}</p><ul className="space-y-2 pt-2">{course.subscriptionTiers.platinum.features.map((feature, i) => (<li key={`modal-plat-${i}`} className="flex items-start gap-2 text-sm"><CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" /><span>{feature}</span></li>))}</ul></CardContent><CardFooter><Button className="w-full bg-slate-500 hover:bg-slate-600 font-bold" onClick={() => toast({ title: 'Coming Soon!', description: 'Subscription purchases will be available soon.' })}>Select Plan</Button></CardFooter></Card>
+                    )}
+                    {course.subscriptionTiers?.silver.price && (
+                        <Card className="border-zinc-500/50 bg-zinc-500/10 flex flex-col"><CardHeader><CardTitle className="text-zinc-300 font-headline text-2xl">Silver Plan</CardTitle><p className="text-3xl font-bold pt-2">{course.subscriptionTiers.silver.price}</p></CardHeader><CardContent className="flex-grow space-y-4"><p className="text-muted-foreground text-sm italic">{course.subscriptionTiers.silver.description}</p><ul className="space-y-2 pt-2">{course.subscriptionTiers.silver.features.map((feature, i) => (<li key={`modal-silv-${i}`} className="flex items-start gap-2 text-sm"><CheckCircle className="h-4 w-4 text-green-500 mt-0.5 shrink-0" /><span>{feature}</span></li>))}</ul></CardContent><CardFooter><Button className="w-full bg-zinc-500 hover:bg-zinc-600 font-bold" onClick={() => toast({ title: 'Coming Soon!', description: 'Subscription purchases will be available soon.' })}>Select Plan</Button></CardFooter></Card>
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
     </div>
   );
 }

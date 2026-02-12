@@ -69,34 +69,39 @@ export function CourseCard({ course }: CourseCardProps) {
                 <span className="sr-only">Favorite</span>
             </Button>
         </div>
-      <CardContent className="flex flex-1 flex-col p-4 space-y-4">
+      <CardContent className="flex flex-1 flex-col p-4 space-y-3">
         <div className="flex justify-between items-center">
             <StarRating rating={course.rating} reviews={course.reviews} />
             {course.category && <Badge variant="outline">{course.category}</Badge>}
         </div>
         
-        <h3 className="font-bold text-base leading-snug flex-1">
-          <Link href={`/courses/${course.id}`} className="hover:text-primary transition-colors">{course.title}</Link>
-        </h3>
-        
-        <div className="flex items-center text-sm text-muted-foreground gap-x-4 gap-y-1 flex-wrap">
-            {course.duration && <div className="flex items-center gap-1.5"><Clock className="h-4 w-4"/><span>{course.duration}</span></div>}
-            {course.lessons && <div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4"/><span>{course.lessons} Lessons</span></div>}
-            {course.students && <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/><span>{course.students} Students</span></div>}
+        <div className="flex-1 space-y-2">
+            <h3 className="font-bold text-lg leading-snug">
+              <Link href={`/courses/${course.id}`} className="hover:text-primary transition-colors">{course.title}</Link>
+            </h3>
+            <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
         </div>
         
-        <div className="!mt-auto pt-4 border-t border-border">
-            <div className="flex justify-between items-center">
-                {course.instructor && (
-                    <div className="flex items-center gap-2">
-                        <Avatar className="h-7 w-7">
-                            <AvatarImage src={course.instructor.avatar || undefined} alt={course.instructor.name} />
-                            <AvatarFallback>{getInitials(course.instructor.name)}</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm font-medium">{course.instructor.name}</span>
-                    </div>
-                )}
-                <p className="text-lg font-bold text-primary">₹{course.price}</p>
+        <div className="pt-2 space-y-3">
+            <div className="flex items-center text-sm text-muted-foreground gap-x-4 gap-y-1 flex-wrap">
+                {course.duration && <div className="flex items-center gap-1.5"><Clock className="h-4 w-4"/><span>{course.duration}</span></div>}
+                {course.lessons && <div className="flex items-center gap-1.5"><BookOpen className="h-4 w-4"/><span>{course.lessons} Lessons</span></div>}
+                {course.students && <div className="flex items-center gap-1.5"><Users className="h-4 w-4"/><span>{course.students} Students</span></div>}
+            </div>
+            
+            <div className="pt-3 border-t border-border">
+                <div className="flex justify-between items-center">
+                    {course.instructor && (
+                        <div className="flex items-center gap-2">
+                            <Avatar className="h-7 w-7">
+                                <AvatarImage src={course.instructor.avatar || undefined} alt={course.instructor.name} />
+                                <AvatarFallback>{getInitials(course.instructor.name)}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm font-medium">{course.instructor.name}</span>
+                        </div>
+                    )}
+                    <p className="text-lg font-bold text-primary">₹{course.price}</p>
+                </div>
             </div>
         </div>
       </CardContent>
