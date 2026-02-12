@@ -26,7 +26,8 @@ import { useUser, useFirestore } from '@/firebase';
 import { collection, addDoc, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { uploadToHostinger } from '@/app/actions/upload';
-import type { Video as VideoType } from '@/lib/types';
+import type { Video as VideoType, Course } from '@/lib/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 export default function StudioPage() {
@@ -40,6 +41,9 @@ export default function StudioPage() {
     const [longDescription, setLongDescription] = useState('');
     const [level, setLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced' | 'Highly Advanced'>('Beginner');
     const [category, setCategory] = useState('');
+    const [categorySelection, setCategorySelection] = useState('');
+    const [allCategories, setAllCategories] = useState<string[]>([]);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
     const [learningObjectives, setLearningObjectives] = useState(['']);
 
     // Curriculum Tab
@@ -78,6 +82,24 @@ export default function StudioPage() {
     const { user } = useUser();
     const firestore = useFirestore();
     const { toast } = useToast();
+
+     // Effect to fetch existing categories for the dropdown
+    useEffect(() => {
+        if (firestore) {
+            setIsLoadingCategories(true);
+            const coursesCol = collection(firestore, 'courses');
+            getDocs(coursesCol).then(snapshot => {
+                const uniqueCategories = [...new Set(snapshot.docs.map(doc => doc.data().category).filter(Boolean))];
+                setAllCategories(uniqueCategories);
+            }).catch(err => {
+                console.error("Error fetching categories: ", err);
+                // Fail gracefully, user can still type a category
+            }).finally(() => {
+                setIsLoadingCategories(false);
+            });
+        }
+    }, [firestore]);
+
 
      // Effect to fetch videos when category changes
     useEffect(() => {
@@ -371,9 +393,42 @@ export default function StudioPage() {
                                 <Textarea id="course-long-description" placeholder="A comprehensive overview of the course content, goals, and target audience." value={longDescription} onChange={(e) => setLongDescription(e.target.value)} className="min-h-[200px]" />
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor="course-category">Category</Label>
-                                <Input id="course-category" placeholder="e.g., Web Development, Data Science" value={category} onChange={(e) => setCategory(e.target.value)} />
+                                <Label>Category</Label>
+                                <Select
+                                    value={categorySelection}
+                                    onValueChange={(value) => {
+                                        setCategorySelection(value);
+                                        if (value !== 'other') {
+                                            setCategory(value);
+                                        } else {
+                                            setCategory('');
+                                        }
+                                    }}
+                                    disabled={isLoadingCategories}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={isLoadingCategories ? 'Loading...' : 'Select a category'} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {allCategories.map((cat) => (
+                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        ))}
+                                        <SelectItem value="other">Other...</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
+
+                            {categorySelection === 'other' && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="custom-category">Custom Category Name</Label>
+                                    <Input
+                                        id="custom-category"
+                                        placeholder="e.g., Mobile Security"
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                    />
+                                </div>
+                            )}
                             <div className="space-y-2">
                                 <Label>Level</Label>
                                 <RadioGroup value={level} onValueChange={(v) => setLevel(v as any)} className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
@@ -956,3 +1011,5 @@ export default function StudioPage() {
         </div>
     );
 }
+
+    
