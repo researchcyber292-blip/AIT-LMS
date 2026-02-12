@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +39,11 @@ const courseCategories = [
     { value: 'python', label: 'Python' },
 ];
 
+interface UploadState {
+  file: File | null;
+  title: string;
+  isUploading: boolean;
+}
 
 export default function StudioPage() {
     const router = useRouter();
@@ -78,11 +83,14 @@ export default function StudioPage() {
 
     // Media Tab
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-    const [uploadingFile, setUploadingFile] = useState<File | null>(null);
-    const [uploadingVideoTitle, setUploadingVideoTitle] = useState('');
-    const [isUploadingVideo, setIsUploadingVideo] = useState(false);
     const [videosForCategory, setVideosForCategory] = useState<VideoType[]>([]);
     const [isLoadingVideos, setIsLoadingVideos] = useState(false);
+    const [uploadStates, setUploadStates] = useState({
+        gold: { file: null, title: '', isUploading: false },
+        silver: { file: null, title: '', isUploading: false },
+        platinum: { file: null, title: '', isUploading: false },
+        general: { file: null, title: '', isUploading: false },
+    });
     
     // Publish Tab
     const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
@@ -91,8 +99,7 @@ export default function StudioPage() {
     const firestore = useFirestore();
     const { toast } = useToast();
 
-     // Effect to fetch videos when category changes
-    useEffect(() => {
+    const fetchVideos = useCallback(async () => {
         if (!firestore || !category) {
             setVideosForCategory([]);
             return;
@@ -112,7 +119,39 @@ export default function StudioPage() {
             setIsLoadingVideos(false);
         });
 
-    }, [category, firestore, toast]);
+    }, [firestore, category, toast]);
+
+    useEffect(() => {
+        fetchVideos();
+    }, [fetchVideos]);
+
+    useEffect(() => {
+        if (!category) {
+            const resetTitles = (prev: typeof uploadStates) => ({
+                gold: { ...prev.gold, title: '' },
+                silver: { ...prev.silver, title: '' },
+                platinum: { ...prev.platinum, title: '' },
+                general: { ...prev.general, title: '' },
+            });
+            setUploadStates(prev => ({ ...prev, ...resetTitles(prev) }));
+            return;
+        }
+
+        const newCategoryLabel = courseCategories.find(c => c.value === category)?.label || category;
+
+        const goldCount = videosForCategory.filter(v => v.plan === 'gold').length;
+        const silverCount = videosForCategory.filter(v => v.plan === 'silver').length;
+        const platinumCount = videosForCategory.filter(v => v.plan === 'platinum').length;
+        const generalCount = videosForCategory.filter(v => !v.plan).length;
+        
+        setUploadStates(prev => ({
+            gold: { ...prev.gold, title: `Part-${goldCount + 1}-${newCategoryLabel}` },
+            silver: { ...prev.silver, title: `Part-${silverCount + 1}-${newCategoryLabel}` },
+            platinum: { ...prev.platinum, title: `Part-${platinumCount + 1}-${newCategoryLabel}` },
+            general: { ...prev.general, title: `Part-${generalCount + 1}-${newCategoryLabel}` },
+        }));
+
+    }, [videosForCategory, category]);
     
     // --- HANDLER FUNCTIONS ---
 
@@ -219,8 +258,33 @@ export default function StudioPage() {
         }
     };
 
-    const handleUploadVideo = async (plan?: 'gold' | 'silver' | 'platinum') => {
-        if (!uploadingFile || !uploadingVideoTitle || !category) {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, plan: keyof typeof uploadStates) => {
+        const file = event.target.files?.[0] || null;
+        if (file && !file.type.startsWith('video/')) {
+            toast({
+                variant: 'destructive',
+                title: 'Invalid File Type',
+                description: 'Please select a video file.',
+            });
+            return;
+        }
+        setUploadStates(prev => ({
+            ...prev,
+            [plan]: { ...prev[plan], file: file }
+        }));
+    };
+
+    const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>, plan: keyof typeof uploadStates) => {
+        const newTitle = event.target.value;
+        setUploadStates(prev => ({
+            ...prev,
+            [plan]: { ...prev[plan], title: newTitle }
+        }));
+    };
+
+    const handleUploadVideo = async (plan: keyof typeof uploadStates) => {
+        const state = uploadStates[plan];
+        if (!state.file || !state.title || !category) {
             toast({ variant: 'destructive', title: 'Missing Information', description: 'Please provide a file, title, and set a course category in the Details tab.' });
             return;
         }
@@ -229,9 +293,10 @@ export default function StudioPage() {
             return;
         }
 
-        setIsUploadingVideo(true);
+        setUploadStates(prev => ({ ...prev, [plan]: { ...prev[plan], isUploading: true } }));
+
         const formData = new FormData();
-        formData.append('video', uploadingFile);
+        formData.append('video', state.file);
         formData.append('category', category);
 
         try {
@@ -240,32 +305,34 @@ export default function StudioPage() {
                 const newVideoData: Omit<VideoType, 'id' | 'createdAt'> = {
                     url: result.url,
                     fileName: result.url.split('/').pop() || 'video.mp4',
-                    title: uploadingVideoTitle,
+                    title: state.title,
                     category: category,
                     uploaderId: user.uid,
-                    ...(plan && { plan }),
+                    ...(plan !== 'general' && { plan }),
                 };
-                const docRef = await addDoc(collection(firestore, 'course_videos'), {
+                await addDoc(collection(firestore, 'course_videos'), {
                     ...newVideoData,
                     createdAt: serverTimestamp(),
                 });
                 
-                setVideosForCategory(prev => [{id: docRef.id, createdAt: new Date(), ...newVideoData}, ...prev]);
+                await fetchVideos();
 
-                toast({ title: 'Video Uploaded!', description: `${uploadingFile.name} is now available.` });
-                setUploadingFile(null);
-                setUploadingVideoTitle('');
-                const fileInput = document.getElementById('video-file-upload') as HTMLInputElement;
+                toast({ title: 'Video Uploaded!', description: `${state.file.name} is now available.` });
+
+                setUploadStates(prev => ({ ...prev, [plan]: { ...prev[plan], file: null, isUploading: false } }));
+                const fileInput = document.getElementById(`video-file-${plan}`) as HTMLInputElement;
                 if (fileInput) fileInput.value = '';
+
             } else {
                 toast({ variant: 'destructive', title: 'Upload Failed', description: result.error || 'An unknown error occurred.' });
             }
         } catch (error: any) {
             toast({ variant: 'destructive', title: 'Upload Error', description: error.message });
         } finally {
-            setIsUploadingVideo(false);
+            setUploadStates(prev => ({ ...prev, [plan]: { ...prev[plan], isUploading: false } }));
         }
     };
+
 
     const renderVideoList = (videoList: VideoType[]) => {
         if (isLoadingVideos) return <p className="text-muted-foreground">Loading videos...</p>;
@@ -791,14 +858,14 @@ export default function StudioPage() {
                                                 <div className="p-4 rounded-lg bg-muted/50 border border-dashed">
                                                      <div className="grid w-full items-center gap-1.5">
                                                         <Label htmlFor={`video-file-${plan}`}>Video File</Label>
-                                                        <Input id={`video-file-${plan}`} type="file" accept="video/*" onChange={(e) => setUploadingFile(e.target.files?.[0] || null)} />
+                                                        <Input id={`video-file-${plan}`} type="file" accept="video/*" onChange={(e) => handleFileChange(e, plan)} />
                                                     </div>
                                                     <div className="grid w-full items-center gap-1.5 mt-4">
                                                         <Label htmlFor={`video-title-${plan}`}>Video Title</Label>
-                                                        <Input id={`video-title-${plan}`} value={uploadingVideoTitle} onChange={(e) => setUploadingVideoTitle(e.target.value)} placeholder="e.g., Module 1: Introduction" />
+                                                        <Input id={`video-title-${plan}`} value={uploadStates[plan].title} onChange={(e) => handleTitleChange(e, plan)} placeholder="e.g., Module 1: Introduction" />
                                                     </div>
-                                                    <Button onClick={() => handleUploadVideo(plan)} disabled={isUploadingVideo || !uploadingFile || !uploadingVideoTitle || !category} className="mt-4">
-                                                        {isUploadingVideo ? 'Uploading...' : `Upload to ${plan === 'platinum' ? 'Premium' : plan}`}
+                                                    <Button onClick={() => handleUploadVideo(plan)} disabled={uploadStates[plan].isUploading || !uploadStates[plan].file || !uploadStates[plan].title || !category} className="mt-4">
+                                                        {uploadStates[plan].isUploading ? 'Uploading...' : `Upload to ${plan === 'platinum' ? 'Premium' : plan}`}
                                                     </Button>
                                                 </div>
                                                 <div className="mt-4">
@@ -815,22 +882,22 @@ export default function StudioPage() {
                                     <Card className="p-4 bg-muted/50">
                                         <div className="space-y-4">
                                             <div className="grid w-full items-center gap-1.5">
-                                                <Label htmlFor="video-file-upload">Video File</Label>
-                                                <Input id="video-file-upload" type="file" accept="video/*" onChange={(e) => setUploadingFile(e.target.files?.[0] || null)} />
+                                                <Label htmlFor="video-file-general">Video File</Label>
+                                                <Input id="video-file-general" type="file" accept="video/*" onChange={(e) => handleFileChange(e, 'general')} />
                                             </div>
                                             <div className="grid w-full items-center gap-1.5">
                                                 <Label htmlFor="uploading-video-title">Video Title</Label>
-                                                <Input id="uploading-video-title" value={uploadingVideoTitle} onChange={(e) => setUploadingVideoTitle(e.target.value)} placeholder="e.g., Module 1: Introduction" />
+                                                <Input id="uploading-video-title" value={uploadStates.general.title} onChange={(e) => handleTitleChange(e, 'general')} placeholder="e.g., Module 1: Introduction" />
                                             </div>
-                                            <Button onClick={() => handleUploadVideo()} disabled={isUploadingVideo || !uploadingFile || !uploadingVideoTitle || !category}>
-                                                {isUploadingVideo ? 'Uploading...' : 'Upload Video'}
+                                            <Button onClick={() => handleUploadVideo('general')} disabled={uploadStates.general.isUploading || !uploadStates.general.file || !uploadStates.general.title || !category}>
+                                                {uploadStates.general.isUploading ? 'Uploading...' : 'Upload Video'}
                                             </Button>
                                             {!category && <p className="text-xs text-destructive">Please set a course category in the 'Details' tab first.</p>}
                                         </div>
                                     </Card>
                                     <div className="mt-6 space-y-4">
                                         <h3 className="font-semibold text-lg">Uploaded Videos for "{courseCategories.find(c => c.value === category)?.label || category || 'Not Set'}"</h3>
-                                        {renderVideoList(videosForCategory)}
+                                        {renderVideoList(videosForCategory.filter(v => !v.plan))}
                                     </div>
                                 </div>
                             )}
@@ -1039,5 +1106,3 @@ export default function StudioPage() {
         </div>
     );
 }
-
-    
