@@ -1,3 +1,4 @@
+
 /**
  * Core Philosophy:
  * This ruleset enforces a security model with a clear separation between public and private data.
@@ -225,7 +226,7 @@ service cloud.firestore {
      */
     match /instructors/{instructorId} {
       allow create: if isOwner(instructorId);
-      allow get, list: if true;
+      allow read: if true;
       allow update: if isOwner(instructorId) || isAnonymousAdmin();
       allow delete: if isOwner(instructorId) || isAnonymousAdmin();
     }
@@ -335,10 +336,8 @@ service cloud.firestore {
      match /course_videos/{videoId} {
       allow get, list: if true;
       allow create: if (isInstructor(request.auth.uid) || isAnonymousAdmin()) && request.resource.data.uploaderId == request.auth.uid;
-      allow delete: if isAnonymousAdmin() || isOwner(resource.data.uploaderId);
       allow update: if false;
+      allow delete: if isAnonymousAdmin() || isOwner(resource.data.uploaderId);
     }
   }
 }
-
-    
