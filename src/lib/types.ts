@@ -151,7 +151,7 @@ export type Video = {
   plan?: 'gold' | 'silver' | 'platinum';
   createdAt: any; // Firestore Server Timestamp
   uploaderId: string;
+  instructorUsername?: string;
+  folderName?: string;
 };
-    
-
     

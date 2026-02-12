@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -258,22 +259,30 @@ export default function StudioPage() {
             toast({ variant: 'destructive', title: 'Auth Error', description: 'You must be logged in to upload.' });
             return;
         }
+        const instructorUsername = user.displayName;
+        if (!instructorUsername) {
+            toast({ variant: 'destructive', title: 'Auth Error', description: 'Instructor name not found.' });
+            return;
+        }
 
         setUploadItems(prev => ({ ...prev, [plan]: prev[plan].map(item => item.id === id ? { ...item, isUploading: true } : item) }));
 
         const formData = new FormData();
         formData.append('video', itemToUpload.file);
         formData.append('category', category);
+        formData.append('instructorUsername', instructorUsername);
 
         try {
             const result = await uploadToHostinger(formData);
-            if (result.success && result.url) {
+            if (result.success && result.url && result.folderName) {
                 const newVideoData: Omit<VideoType, 'id'|'createdAt'> = {
                     url: result.url,
                     fileName: result.url.split('/').pop() || 'video.mp4',
                     title: itemToUpload.title,
                     category: category,
                     uploaderId: user.uid,
+                    instructorUsername: instructorUsername.toLowerCase().replace(/\s+/g, ''),
+                    folderName: result.folderName,
                     ...(plan !== 'general' && { plan }),
                 };
                 await addDoc(collection(firestore, 'course_videos'), { ...newVideoData, createdAt: serverTimestamp() });
