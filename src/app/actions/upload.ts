@@ -54,7 +54,8 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
-  const baseRemoteDir = `domains/avirajinfotech.com/public_html/asian/uploads`;
+  // Use the full absolute path as required by the Hostinger server environment.
+  const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
   // Differentiate path for thumbnails
@@ -62,6 +63,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     remoteUploadDir = `${remoteUploadDir}/thumbnail`;
   }
   
+  // This public-facing URL path remains correct as it's relative to the web root.
   const publicUrlPath = `uploads/${sanitizedCategory}/${instructorFolder}${uploadType === 'thumbnail' ? '/thumbnail' : ''}/${remoteFileName}`;
   const publicUrl = `https://asian.avirajinfotech.com/${publicUrlPath}`;
 
@@ -70,6 +72,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   try {
     await sftp.connect(sftpConfig);
+    // The `true` flag ensures parent directories (like the category folder) are created if they don't exist.
     await sftp.mkdir(remoteUploadDir, true); 
     await sftp.put(buffer, remotePath);
     await sftp.end();
