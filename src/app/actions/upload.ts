@@ -1,5 +1,6 @@
 
 'use server';
+export const dynamic = 'force-dynamic';
 
 import Client from 'ssh2-sftp-client';
 import { Buffer } from 'buffer';
@@ -54,16 +55,13 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
-  // Use the full absolute path as required by the Hostinger server environment.
   const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
-  // Differentiate path for thumbnails
   if (uploadType === 'thumbnail') {
     remoteUploadDir = `${remoteUploadDir}/thumbnail`;
   }
   
-  // This public-facing URL path remains correct as it's relative to the web root.
   const publicUrlPath = `uploads/${sanitizedCategory}/${instructorFolder}${uploadType === 'thumbnail' ? '/thumbnail' : ''}/${remoteFileName}`;
   const publicUrl = `https://asian.avirajinfotech.com/${publicUrlPath}`;
 
@@ -72,7 +70,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   try {
     await sftp.connect(sftpConfig);
-    // The `true` flag ensures parent directories (like the category folder) are created if they don't exist.
+    // The `true` flag ensures parent directories are created if they don't exist.
     await sftp.mkdir(remoteUploadDir, true); 
     await sftp.put(buffer, remotePath);
     await sftp.end();
@@ -82,8 +80,14 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
       url: publicUrl,
     };
   } catch (err: any) {
-    console.error('SFTP Upload Error:', err);
-    await sftp.end();
+    // Specifically logging the error as requested for better debugging in Hostinger logs.
+    console.error('[SFTP Action Error]: An error occurred during the SFTP operation.', err);
+    
+    // It's good practice to try to end the connection even if an error occurred.
+    if (sftp.sftp) {
+        await sftp.end().catch(endErr => console.error('[SFTP End Error]: Failed to close SFTP connection after error:', endErr));
+    }
+    
     if (err.code === 2) {
       return { success: false, error: `SFTP connection failed. Check credentials and host details. Original error: ${err.message}` };
     }
