@@ -219,7 +219,7 @@ export default function StudioPage() {
         }
     };
 
-    const handleUploadVideo = async () => {
+    const handleUploadVideo = async (plan?: 'gold' | 'silver' | 'platinum') => {
         if (!uploadingFile || !uploadingVideoTitle || !category) {
             toast({ variant: 'destructive', title: 'Missing Information', description: 'Please provide a file, title, and set a course category in the Details tab.' });
             return;
@@ -243,6 +243,7 @@ export default function StudioPage() {
                     title: uploadingVideoTitle,
                     category: category,
                     uploaderId: user.uid,
+                    ...(plan && { plan }),
                 };
                 const docRef = await addDoc(collection(firestore, 'course_videos'), {
                     ...newVideoData,
@@ -264,6 +265,26 @@ export default function StudioPage() {
         } finally {
             setIsUploadingVideo(false);
         }
+    };
+
+    const renderVideoList = (videoList: VideoType[]) => {
+        if (isLoadingVideos) return <p className="text-muted-foreground">Loading videos...</p>;
+        if (videoList.length > 0) {
+            return (
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                    {videoList.map((video: VideoType) => (
+                        <div key={video.id} className="flex items-center justify-between rounded-lg border bg-background p-3 gap-2">
+                            <div className="flex items-center gap-3 overflow-hidden">
+                                <Film className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                                <p className="font-medium truncate">{video.title}</p>
+                            </div>
+                            <Badge variant="secondary">{courseCategories.find(c => c.value === video.category)?.label || video.category}</Badge>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+        return <p className="text-sm text-muted-foreground">No videos uploaded for this plan yet.</p>;
     };
     
 
@@ -579,7 +600,7 @@ export default function StudioPage() {
                                                 </Card>
                                                 <Card className="border-slate-400/50 bg-slate-500/5">
                                                     <CardHeader>
-                                                        <CardTitle className="text-slate-300">Platinum Plan</CardTitle>
+                                                        <CardTitle className="text-slate-300">Premium (Platinum) Plan</CardTitle>
                                                     </CardHeader>
                                                     <CardContent className="space-y-4">
                                                         <div>
@@ -758,45 +779,62 @@ export default function StudioPage() {
                                 <p className="text-sm text-muted-foreground">Recommended: 1280x720px, JPG or PNG.</p>
                             </div>
                             
-                            <div className="space-y-4">
-                                <h3 className="font-semibold text-lg">Upload Course Videos</h3>
-                                <p className="text-sm text-muted-foreground">Upload videos one by one. They will be associated with the course category you set in the 'Details' tab.</p>
-                                <Card className="p-4 bg-muted/50">
-                                    <div className="space-y-4">
-                                        <div className="grid w-full items-center gap-1.5">
-                                            <Label htmlFor="video-file-upload">Video File</Label>
-                                            <Input id="video-file-upload" type="file" accept="video/*" onChange={(e) => setUploadingFile(e.target.files?.[0] || null)} />
-                                        </div>
-                                        <div className="grid w-full items-center gap-1.5">
-                                            <Label htmlFor="uploading-video-title">Video Title</Label>
-                                            <Input id="uploading-video-title" value={uploadingVideoTitle} onChange={(e) => setUploadingVideoTitle(e.target.value)} placeholder="e.g., Module 1: Introduction" />
-                                        </div>
-                                        <Button onClick={handleUploadVideo} disabled={isUploadingVideo || !uploadingFile || !uploadingVideoTitle || !category}>
-                                            {isUploadingVideo ? 'Uploading...' : 'Upload Video'}
-                                        </Button>
-                                        {!category && <p className="text-xs text-destructive">Please set a course category in the 'Details' tab first.</p>}
-                                    </div>
-                                </Card>
-                            </div>
-                            
-                            <div className="mt-6 space-y-4">
-                                <h3 className="font-semibold text-lg">Uploaded Videos for "{courseCategories.find(c => c.value === category)?.label || category || 'Not Set'}"</h3>
-                                {isLoadingVideos ? <p className="text-muted-foreground">Loading videos...</p> : videosForCategory.length > 0 ? (
-                                    <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
-                                        {videosForCategory.map((video: VideoType) => (
-                                            <div key={video.id} className="flex items-center justify-between rounded-lg border bg-background p-3 gap-2">
-                                                <div className="flex items-center gap-3 overflow-hidden">
-                                                    <Film className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                                                    <p className="font-medium truncate">{video.title}</p>
+                            {priceType === 'paid' && paymentMethod === 'templates' ? (
+                                <div className="space-y-6">
+                                     <h3 className="font-semibold text-lg">Upload Videos for Each Plan</h3>
+                                     {(['gold', 'platinum', 'silver'] as const).map(plan => (
+                                         <Card key={plan}>
+                                             <CardHeader>
+                                                <CardTitle className="capitalize">{plan === 'platinum' ? 'Premium (Platinum)' : plan} Plan Videos</CardTitle>
+                                             </CardHeader>
+                                             <CardContent className="space-y-4">
+                                                <div className="p-4 rounded-lg bg-muted/50 border border-dashed">
+                                                     <div className="grid w-full items-center gap-1.5">
+                                                        <Label htmlFor={`video-file-${plan}`}>Video File</Label>
+                                                        <Input id={`video-file-${plan}`} type="file" accept="video/*" onChange={(e) => setUploadingFile(e.target.files?.[0] || null)} />
+                                                    </div>
+                                                    <div className="grid w-full items-center gap-1.5 mt-4">
+                                                        <Label htmlFor={`video-title-${plan}`}>Video Title</Label>
+                                                        <Input id={`video-title-${plan}`} value={uploadingVideoTitle} onChange={(e) => setUploadingVideoTitle(e.target.value)} placeholder="e.g., Module 1: Introduction" />
+                                                    </div>
+                                                    <Button onClick={() => handleUploadVideo(plan)} disabled={isUploadingVideo || !uploadingFile || !uploadingVideoTitle || !category} className="mt-4">
+                                                        {isUploadingVideo ? 'Uploading...' : `Upload to ${plan === 'platinum' ? 'Premium' : plan}`}
+                                                    </Button>
                                                 </div>
-                                                <Badge variant="secondary">{courseCategories.find(c => c.value === video.category)?.label || video.category}</Badge>
+                                                <div className="mt-4">
+                                                    {renderVideoList(videosForCategory.filter(v => v.plan === plan))}
+                                                </div>
+                                             </CardContent>
+                                         </Card>
+                                     ))}
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-lg">Upload Course Videos</h3>
+                                    <p className="text-sm text-muted-foreground">Upload videos one by one. They will be associated with the course category you set in the 'Details' tab.</p>
+                                    <Card className="p-4 bg-muted/50">
+                                        <div className="space-y-4">
+                                            <div className="grid w-full items-center gap-1.5">
+                                                <Label htmlFor="video-file-upload">Video File</Label>
+                                                <Input id="video-file-upload" type="file" accept="video/*" onChange={(e) => setUploadingFile(e.target.files?.[0] || null)} />
                                             </div>
-                                        ))}
+                                            <div className="grid w-full items-center gap-1.5">
+                                                <Label htmlFor="uploading-video-title">Video Title</Label>
+                                                <Input id="uploading-video-title" value={uploadingVideoTitle} onChange={(e) => setUploadingVideoTitle(e.target.value)} placeholder="e.g., Module 1: Introduction" />
+                                            </div>
+                                            <Button onClick={() => handleUploadVideo()} disabled={isUploadingVideo || !uploadingFile || !uploadingVideoTitle || !category}>
+                                                {isUploadingVideo ? 'Uploading...' : 'Upload Video'}
+                                            </Button>
+                                            {!category && <p className="text-xs text-destructive">Please set a course category in the 'Details' tab first.</p>}
+                                        </div>
+                                    </Card>
+                                    <div className="mt-6 space-y-4">
+                                        <h3 className="font-semibold text-lg">Uploaded Videos for "{courseCategories.find(c => c.value === category)?.label || category || 'Not Set'}"</h3>
+                                        {renderVideoList(videosForCategory)}
                                     </div>
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">No videos uploaded for this category yet.</p>
-                                )}
-                            </div>
+                                </div>
+                            )}
+
                         </CardContent>
                         <CardFooter className="flex justify-between">
                             <Button variant="outline" onClick={() => setActiveTab('additional-details')}>Back</Button>
@@ -804,6 +842,7 @@ export default function StudioPage() {
                         </CardFooter>
                     </Card>
                 </TabsContent>
+
                 <TabsContent value="publish">
                     <Card className="mt-6">
                         <CardHeader>
@@ -953,7 +992,7 @@ export default function StudioPage() {
                         {platinumPrice && (
                              <Card className="border-slate-400/50 bg-slate-400/10 flex flex-col">
                                 <CardHeader>
-                                    <CardTitle className="text-slate-300 font-headline text-2xl">Platinum Plan</CardTitle>
+                                    <CardTitle className="text-slate-300 font-headline text-2xl">Premium (Platinum) Plan</CardTitle>
                                     <p className="text-3xl font-bold pt-2">{platinumPrice}</p>
                                 </CardHeader>
                                 <CardContent className="flex-grow space-y-4">
@@ -1001,3 +1040,4 @@ export default function StudioPage() {
     );
 }
 
+    

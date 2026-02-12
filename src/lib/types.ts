@@ -148,7 +148,10 @@ export type Video = {
   fileName: string;
   title: string;
   category: string;
+  plan?: 'gold' | 'silver' | 'platinum';
   createdAt: any; // Firestore Server Timestamp
   uploaderId: string;
 };
+    
+
     

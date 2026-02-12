@@ -464,6 +464,11 @@
           "type": "string",
           "description": "The course category this video belongs to."
         },
+        "plan": {
+          "type": "string",
+          "description": "The subscription plan this video belongs to (gold, silver, platinum).",
+          "enum": ["gold", "silver", "platinum"]
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time"
