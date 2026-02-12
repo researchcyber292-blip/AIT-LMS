@@ -148,10 +148,9 @@ export type Video = {
   fileName: string;
   title: string;
   category: string;
+  courseId: string; // Added to link video to a specific course
   plan?: 'gold' | 'silver' | 'platinum';
   createdAt: any; // Firestore Server Timestamp
   uploaderId: string;
-  instructorUsername?: string;
-  folderName?: string;
 };
     

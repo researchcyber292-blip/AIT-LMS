@@ -23,7 +23,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, addDoc, serverTimestamp, getDocs, query, where, doc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query, where, doc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { uploadToHostinger } from '@/app/actions/upload';
 import type { Video as VideoType, Course, Instructor } from '@/lib/types';
@@ -49,6 +49,9 @@ interface UploadItem {
 export default function StudioPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState('details');
+    // Generate a stable, unique ID for the course being created in this session.
+    const [courseId] = useState(() => 'course_' + Math.random().toString(36).substring(2, 12));
+
 
     // --- STATE MANAGEMENT ---
     // Details
@@ -282,18 +285,18 @@ export default function StudioPage() {
         formData.append('video', itemToUpload.file);
         formData.append('category', category);
         formData.append('instructorUsername', instructorUsername);
+        formData.append('courseId', courseId); // Pass the unique course ID
 
         try {
             const result = await uploadToHostinger(formData);
-            if (result.success && result.url && result.folderName) {
+            if (result.success && result.url) {
                 const newVideoData: Omit<VideoType, 'id'|'createdAt'> = {
                     url: result.url,
                     fileName: result.url.split('/').pop() || 'video.mp4',
                     title: itemToUpload.title,
                     category: category,
                     uploaderId: user.uid,
-                    instructorUsername: instructorUsername.toLowerCase().replace(/\s+/g, ''),
-                    folderName: result.folderName,
+                    courseId: courseId,
                     ...(plan !== 'general' && { plan }),
                 };
                 await addDoc(collection(firestore, 'course_videos'), { ...newVideoData, createdAt: serverTimestamp() });
@@ -392,6 +395,9 @@ export default function StudioPage() {
             const instructorUsername = `${instructor.firstName} ${instructor.lastName}`;
             if (!instructorUsername.trim()) throw new Error("Instructor name not found in profile.");
             thumbnailFormData.append('instructorUsername', instructorUsername);
+            thumbnailFormData.append('courseId', courseId); // Pass course ID for thumbnail path
+            thumbnailFormData.append('category', category); // Pass category for thumbnail path
+
 
             const uploadResult = await uploadToHostinger(thumbnailFormData);
 
@@ -400,7 +406,7 @@ export default function StudioPage() {
             }
             const thumbnailUrl = uploadResult.url;
 
-            const newCourseData = {
+            const newCourseData: Omit<Course, 'id'> = {
                 title, shortDescription, longDescription, level, category,
                 learningObjectives: learningObjectives.filter(o => o.trim() !== ''),
                 curriculum: [],
@@ -421,7 +427,9 @@ export default function StudioPage() {
                 resourcesEnabled: providesResources,
             };
 
-            await addDoc(collection(firestore, 'courses'), newCourseData);
+            const courseDocRef = doc(firestore, 'courses', courseId);
+            await setDoc(courseDocRef, { id: courseId, ...newCourseData });
+
             toast({ title: 'Course Published!', description: 'Your course is now live.' });
             router.push('/dashboard');
         } catch (error: any) {
@@ -644,5 +652,3 @@ export default function StudioPage() {
         </div>
     );
 }
-
-    

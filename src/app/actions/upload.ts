@@ -6,26 +6,9 @@ import { Buffer } from 'buffer';
 interface UploadResult {
   success: boolean;
   url?: string;
-  folderName?: string;
   error?: string;
 }
 
-/**
- * Generates a short, random, alphanumeric string for unique folder names.
- * @returns A random string.
- */
-const generateFolderID = () => {
-  return Math.random().toString(36).substring(2, 10);
-};
-
-
-/**
- * Uploads a file (video or thumbnail) to a Hostinger server using SFTP.
- * It creates a unique, instructor-specific subfolder to prevent conflicts.
- * This is a server-side action and should not be exposed to the client.
- * @param formData The FormData object containing the file, and context like category/username.
- * @returns An object indicating the result of the upload.
- */
 export async function uploadToHostinger(formData: FormData): Promise<UploadResult> {
   const videoFile = formData.get('video') as File | null;
   const thumbnailFile = formData.get('thumbnail') as File | null;
@@ -39,18 +22,20 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const category = formData.get('category') as string | null;
   const instructorUsername = formData.get('instructorUsername') as string | null;
+  const courseId = formData.get('courseId') as string | null; // New field for unique course folder
   
   if (!instructorUsername) {
       return { success: false, error: 'Instructor username is required.' };
   }
   
-  if (uploadType === 'video' && !category) {
-    return { success: false, error: 'Course category is required for video uploads.' };
+  // For both videos and thumbnails, we now need category and courseId to build the path.
+  if (!category || !courseId) {
+    return { success: false, error: 'Course category and a unique Course ID are required.' };
   }
   
   const sftpConfig = {
     host: process.env.HOST_IP,
-    port: Number(process.env.HOST_PORT || 22),
+    port: Number(process.env.HOST_PORT || 65002), // Default to 65002 as specified
     username: process.env.HOST_USER,
     password: process.env.HOST_PASS
   };
@@ -63,26 +48,22 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
   const buffer = Buffer.from(await file.arrayBuffer());
   const remoteFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
 
-  const sanitizedUsername = instructorUsername.toLowerCase().replace(/\s+/g, '');
-  const folderID = generateFolderID();
-  const instructorFolder = `${sanitizedUsername}_ait_${folderID}`;
-
-  const sanitizedCategory = category ? category.toLowerCase().replace(/[^a-z0-9_-]/g, '') : '';
+  const sanitizedUsername = instructorUsername.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const sanitizedCategory = category.toLowerCase().replace(/[^a-z0-9_-]/g, '');
   
-  // Use the full absolute path as required by some hosting environments.
-  const baseUploadPath = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
-
-  let remoteUploadDir = '';
-  let publicUrl = '';
-
-  if (uploadType === 'video') {
-    remoteUploadDir = `${baseUploadPath}/${sanitizedCategory}/${instructorFolder}`;
-    publicUrl = `https://asian.avirajinfotech.com/uploads/${sanitizedCategory}/${instructorFolder}/${remoteFileName}`;
-  } else { // 'thumbnail'
-    remoteUploadDir = `${baseUploadPath}/thumbnails/${instructorFolder}`;
-    publicUrl = `https://asian.avirajinfotech.com/uploads/thumbnails/${instructorFolder}/${remoteFileName}`;
+  // Path inside the jailed public_html directory, as requested.
+  // Structure: asian/uploads/{category}/{instructor_username}/{course_id}/
+  let remoteUploadDir = `asian/uploads/${sanitizedCategory}/${sanitizedUsername}/${courseId}`;
+  let publicUrlPath = `uploads/${sanitizedCategory}/${sanitizedUsername}/${courseId}`;
+  
+  // Differentiate path for thumbnails
+  if (uploadType === 'thumbnail') {
+    remoteUploadDir = `${remoteUploadDir}/thumbnail`;
+    publicUrlPath = `${publicUrlPath}/thumbnail`;
   }
-
+  
+  const publicUrl = `https://asian.avirajinfotech.com/${publicUrlPath}/${remoteFileName}`;
+  
   const remotePath = `${remoteUploadDir}/${remoteFileName}`;
   const sftp = new Client();
 
@@ -96,11 +77,17 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     return { 
       success: true, 
       url: publicUrl,
-      folderName: instructorFolder,
     };
   } catch (err: any) {
     console.error('SFTP Upload Error:', err);
     await sftp.end();
-    return { success: false, error: err.message || 'Failed to upload file due to a server error.' };
+    // Return a more specific error message to help diagnose the issue.
+    if (err.code === 2) {
+      return { success: false, error: `SFTP connection failed. Check credentials and host details. Original error: ${err.message}` };
+    }
+    if (err.message.includes('No such file')) {
+       return { success: false, error: `The path was not found on the server. Please check the remote root path configuration. Path tried: ${remoteUploadDir}` };
+    }
+    return { success: false, error: `An unexpected SFTP error occurred. Code: ${err.code}, Message: ${err.message}` };
   }
 }
