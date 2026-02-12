@@ -1,4 +1,3 @@
-
 'use server';
 
 import Client from 'ssh2-sftp-client';
@@ -70,16 +69,18 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const sanitizedCategory = category ? category.toLowerCase().replace(/[^a-z0-9_-]/g, '') : '';
   
+  // Per Hostinger's likely setup, the SFTP user's root is their home directory.
+  // The path needs to be relative to that.
+  const baseUploadPath = `domains/avirajinfotech.com/public_html/asian/uploads`;
+
   let remoteUploadDir = '';
   let publicUrl = '';
 
   if (uploadType === 'video') {
-    // Corrected Path: Relative from public_html
-    remoteUploadDir = `asian/uploads/${sanitizedCategory}/${instructorFolder}`;
+    remoteUploadDir = `${baseUploadPath}/${sanitizedCategory}/${instructorFolder}`;
     publicUrl = `https://asian.avirajinfotech.com/uploads/${sanitizedCategory}/${instructorFolder}/${remoteFileName}`;
   } else { // 'thumbnail'
-    // Corrected Path: Relative from public_html for thumbnails
-    remoteUploadDir = `asian/uploads/thumbnails/${instructorFolder}`;
+    remoteUploadDir = `${baseUploadPath}/thumbnails/${instructorFolder}`;
     publicUrl = `https://asian.avirajinfotech.com/uploads/thumbnails/${instructorFolder}/${remoteFileName}`;
   }
 
@@ -88,7 +89,8 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   try {
     await sftp.connect(sftpConfig);
-    await sftp.mkdir(remoteUploadDir, true);
+    // The `mkdir` function with `recursive: true` will create the entire path if it doesn't exist.
+    await sftp.mkdir(remoteUploadDir, true); 
     await sftp.put(buffer, remotePath);
     await sftp.end();
     
