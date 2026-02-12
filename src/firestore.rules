@@ -333,13 +333,10 @@ service cloud.firestore {
      * @principle Content management for authorized users.
      */
      match /course_videos/{videoId} {
-      allow get: if true;
+      allow read: if true;
       allow create: if (isInstructor(request.auth.uid) || isAnonymousAdmin()) && request.resource.data.uploaderId == request.auth.uid;
-      allow delete: if isAnonymousAdmin() || isOwner(resource.data.uploaderId);
       allow update: if false;
-    }
-    match /course_videos {
-      allow list: if true;
+      allow delete: if isAnonymousAdmin() || isOwner(resource.data.uploaderId);
     }
   }
 }

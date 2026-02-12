@@ -69,9 +69,8 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const sanitizedCategory = category ? category.toLowerCase().replace(/[^a-z0-9_-]/g, '') : '';
   
-  // Per Hostinger's likely setup, the SFTP user's root is their home directory.
-  // The path needs to be relative to that.
-  const baseUploadPath = `domains/avirajinfotech.com/public_html/asian/uploads`;
+  // Use the full absolute path as required by some hosting environments.
+  const baseUploadPath = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
 
   let remoteUploadDir = '';
   let publicUrl = '';
