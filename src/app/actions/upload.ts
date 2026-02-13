@@ -41,8 +41,9 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
   };
 
   if (!sftpConfig.host || !sftpConfig.username || !sftpConfig.password) {
-      console.error("SFTP credentials are not configured in environment variables.");
-      return { success: false, error: "Server SFTP configuration is incomplete." };
+      const errorMessage = "SFTP credentials (HOST_IP, HOST_USER, HOST_PASS) are not configured in your hosting environment's server settings. Please set these environment variables in your Hostinger Node.js dashboard.";
+      console.error(errorMessage);
+      return { success: false, error: errorMessage };
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -54,8 +55,8 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
-  // Use a relative path from the user's home directory.
-  const baseRemoteDir = `domains/avirajinfotech.com/public_html/asian/uploads`;
+  // Use the full absolute path as required by the server.
+  const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
   if (uploadType === 'thumbnail') {
@@ -70,7 +71,6 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   try {
     await sftp.connect(sftpConfig);
-    // The `true` flag ensures parent directories are created if they don't exist.
     await sftp.mkdir(remoteUploadDir, true); 
     await sftp.put(buffer, remotePath);
     await sftp.end();
@@ -80,14 +80,12 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
       url: publicUrl,
     };
   } catch (err: any) {
-    // Enhanced error logging
     console.error('[SFTP Action Error]: An error occurred during the SFTP operation. Code:', err.code, 'Message:', err.message);
     
     if (sftp.sftp) {
         await sftp.end().catch(endErr => console.error('[SFTP End Error]: Failed to close SFTP connection after error:', endErr));
     }
     
-    // Provide a more detailed error message back to the client.
     return { 
       success: false, 
       error: `SFTP operation failed. Code: ${err.code || 'N/A'}. Message: ${err.message || 'Unknown error.'}. Please check server permissions and file paths.`
