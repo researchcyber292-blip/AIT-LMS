@@ -55,6 +55,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
+  // Use a relative path from the user's home directory.
   const baseRemoteDir = `domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
@@ -80,20 +81,17 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
       url: publicUrl,
     };
   } catch (err: any) {
-    // Specifically logging the error as requested for better debugging in Hostinger logs.
-    console.error('[SFTP Action Error]: An error occurred during the SFTP operation.', err);
+    // Enhanced error logging
+    console.error('[SFTP Action Error]: An error occurred during the SFTP operation. Code:', err.code, 'Message:', err.message);
     
-    // It's good practice to try to end the connection even if an error occurred.
     if (sftp.sftp) {
         await sftp.end().catch(endErr => console.error('[SFTP End Error]: Failed to close SFTP connection after error:', endErr));
     }
     
-    if (err.code === 2) {
-      return { success: false, error: `SFTP connection failed. Check credentials and host details. Original error: ${err.message}` };
-    }
-    if (err.message.includes('No such file')) {
-       return { success: false, error: `The path was not found on the server. Please check the remote root path configuration. Path tried: ${remoteUploadDir}` };
-    }
-    return { success: false, error: `An unexpected response was received from the server. This often means the path is incorrect. Please verify your Hostinger SFTP root directory. Full path tried: ${remoteUploadDir}` };
+    // Provide a more detailed error message back to the client.
+    return { 
+      success: false, 
+      error: `SFTP operation failed. Code: ${err.code || 'N/A'}. Message: ${err.message || 'Unknown error.'}. Please check server permissions and file paths.`
+    };
   }
 }
