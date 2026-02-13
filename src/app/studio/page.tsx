@@ -23,7 +23,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, addDoc, serverTimestamp, getDocs, query, where, doc, setDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query, where, doc, setDoc, writeBatch } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { uploadToHostinger } from '@/app/actions/upload';
 import type { Video as VideoType, Course, Instructor } from '@/lib/types';
@@ -43,7 +43,6 @@ interface UploadItem {
   id: string;
   file: File | null;
   title: string;
-  isUploading: boolean;
 }
 
 export default function StudioPage() {
@@ -93,10 +92,10 @@ export default function StudioPage() {
         platinum: UploadItem[];
         general: UploadItem[];
     }>({
-        gold: [{ id: `gold-${Date.now()}`, file: null, title: '', isUploading: false }],
-        silver: [{ id: `silver-${Date.now()}`, file: null, title: '', isUploading: false }],
-        platinum: [{ id: `platinum-${Date.now()}`, file: null, title: '', isUploading: false }],
-        general: [{ id: `general-${Date.now()}`, file: null, title: '', isUploading: false }],
+        gold: [{ id: `gold-${Date.now()}`, file: null, title: '' }],
+        silver: [{ id: `silver-${Date.now()}`, file: null, title: '' }],
+        platinum: [{ id: `platinum-${Date.now()}`, file: null, title: '' }],
+        general: [{ id: `general-${Date.now()}`, file: null, title: '' }],
     });
 
     // Publish
@@ -232,7 +231,6 @@ export default function StudioPage() {
                 id: `${plan}-${Date.now()}`,
                 file: null,
                 title: newCategoryLabel ? `Part-${newPartNumber}-${newCategoryLabel}` : '',
-                isUploading: false,
             };
             return { ...prev, [plan]: [...prev[plan], newItem] };
         });
@@ -261,57 +259,7 @@ export default function StudioPage() {
             [plan]: prev[plan].map(item => item.id === id ? { ...item, title: newTitle } : item)
         }));
     };
-
-    const handleUploadVideo = async (plan: keyof typeof uploadItems, id: string) => {
-        const itemToUpload = uploadItems[plan].find(item => item.id === id);
-        if (!itemToUpload || !itemToUpload.file || !itemToUpload.title || !category) {
-            toast({ variant: 'destructive', title: 'Missing Info', description: 'Please provide a file, title, and course category.' });
-            return;
-        }
-        if (!user || !firestore || !instructor) {
-            toast({ variant: 'destructive', title: 'Auth Error', description: 'You must be logged in as an instructor to upload.' });
-            return;
-        }
-        
-        const instructorUsername = `${instructor.firstName} ${instructor.lastName}`;
-        if (!instructorUsername.trim()) {
-            toast({ variant: 'destructive', title: 'Auth Error', description: 'Instructor name not found in profile.' });
-            return;
-        }
-
-        setUploadItems(prev => ({ ...prev, [plan]: prev[plan].map(item => item.id === id ? { ...item, isUploading: true } : item) }));
-
-        const formData = new FormData();
-        formData.append('video', itemToUpload.file);
-        formData.append('category', category);
-        formData.append('instructorUsername', instructorUsername);
-        formData.append('courseId', courseId); // Pass the unique course ID
-
-        try {
-            const result = await uploadToHostinger(formData);
-            if (result.success && result.url) {
-                const newVideoData: Omit<VideoType, 'id'|'createdAt'> = {
-                    url: result.url,
-                    fileName: result.url.split('/').pop() || 'video.mp4',
-                    title: itemToUpload.title,
-                    category: category,
-                    uploaderId: user.uid,
-                    courseId: courseId,
-                    ...(plan !== 'general' && { plan }),
-                };
-                await addDoc(collection(firestore, 'course_videos'), { ...newVideoData, createdAt: serverTimestamp() });
-                await fetchVideos();
-                toast({ title: 'Video Uploaded!', description: `${itemToUpload.file.name} is now available.` });
-                removeUploadSlot(plan, id);
-            } else {
-                toast({ variant: 'destructive', title: 'Upload Failed', description: result.error });
-            }
-        } catch (error: any) {
-            toast({ variant: 'destructive', title: 'Upload Error', description: error.message });
-        } finally {
-            setUploadItems(prev => ({ ...prev, [plan]: prev[plan].map(item => item.id === id ? { ...item, isUploading: false } : item) }));
-        }
-    };
+    
 
     // --- Render Functions ---
     const renderVideoList = (videoList: VideoType[]) => {
@@ -358,9 +306,6 @@ export default function StudioPage() {
                                 <Label htmlFor={`video-title-${item.id}`}>Video Title</Label>
                                 <Input id={`video-title-${item.id}`} value={item.title} onChange={(e) => handleTitleChange(e, plan, item.id)} placeholder="e.g., Module 1: Introduction" />
                             </div>
-                            <Button onClick={() => handleUploadVideo(plan, item.id)} disabled={item.isUploading || !item.file || !item.title || !category}>
-                                {item.isUploading ? 'Uploading...' : 'Upload Video'}
-                            </Button>
                         </div>
                     ))}
                     <Button variant="outline" onClick={() => addUploadSlot(plan)} className="w-full">
@@ -390,21 +335,66 @@ export default function StudioPage() {
         setIsPublishing(true);
         
         try {
-            const thumbnailFormData = new FormData();
-            thumbnailFormData.append('thumbnail', thumbnailFile);
             const instructorUsername = `${instructor.firstName} ${instructor.lastName}`;
             if (!instructorUsername.trim()) throw new Error("Instructor name not found in profile.");
+
+            toast({ title: "Publishing course...", description: "Uploading media. This might take a few moments." });
+            
+            // Upload thumbnail
+            const thumbnailFormData = new FormData();
+            thumbnailFormData.append('thumbnail', thumbnailFile);
             thumbnailFormData.append('instructorUsername', instructorUsername);
-            thumbnailFormData.append('courseId', courseId); // Pass course ID for thumbnail path
-            thumbnailFormData.append('category', category); // Pass category for thumbnail path
-
-
+            thumbnailFormData.append('courseId', courseId);
+            thumbnailFormData.append('category', category);
             const uploadResult = await uploadToHostinger(thumbnailFormData);
 
             if (!uploadResult.success || !uploadResult.url) {
                 throw new Error(uploadResult.error || 'Failed to upload thumbnail.');
             }
             const thumbnailUrl = uploadResult.url;
+
+            // --- NEW: UPLOAD ALL VIDEOS AND BATCH WRITE TO FIRESTORE ---
+            const allUploadItems = [
+                ...uploadItems.general.map(item => ({ ...item, plan: 'general' as const })),
+                ...uploadItems.gold.map(item => ({ ...item, plan: 'gold' as const })),
+                ...uploadItems.silver.map(item => ({ ...item, plan: 'silver' as const })),
+                ...uploadItems.platinum.map(item => ({ ...item, plan: 'platinum' as const })),
+            ];
+
+            const videosToUpload = allUploadItems.filter(item => item.file && item.title && category);
+
+            const videoBatch = writeBatch(firestore);
+
+            if (videosToUpload.length > 0) {
+                 for (const item of videosToUpload) {
+                    const videoFormData = new FormData();
+                    videoFormData.append('video', item.file!);
+                    videoFormData.append('category', category);
+                    videoFormData.append('instructorUsername', instructorUsername);
+                    videoFormData.append('courseId', courseId);
+                    
+                    const videoUploadResult = await uploadToHostinger(videoFormData);
+
+                    if (!videoUploadResult.success || !videoUploadResult.url) {
+                        throw new Error(videoUploadResult.error || `Failed to upload video: ${item.title}`);
+                    }
+
+                    const videoDocRef = doc(collection(firestore, 'course_videos'));
+                    const newVideoData: Omit<VideoType, 'id'|'createdAt'> = {
+                        url: videoUploadResult.url,
+                        fileName: videoUploadResult.url.split('/').pop() || 'video.mp4',
+                        title: item.title,
+                        category: category,
+                        uploaderId: user.uid,
+                        courseId: courseId,
+                        ...(item.plan !== 'general' && { plan: item.plan }),
+                    };
+                    
+                    videoBatch.set(videoDocRef, { ...newVideoData, createdAt: serverTimestamp() });
+                }
+            }
+
+            // --- END NEW LOGIC ---
 
             const newCourseData: Omit<Course, 'id'> = {
                 title, shortDescription, longDescription, level, category,
@@ -428,9 +418,11 @@ export default function StudioPage() {
             };
 
             const courseDocRef = doc(firestore, 'courses', courseId);
-            await setDoc(courseDocRef, { id: courseId, ...newCourseData });
+            videoBatch.set(courseDocRef, { id: courseId, ...newCourseData });
 
-            toast({ title: 'Course Published!', description: 'Your course is now live.' });
+            await videoBatch.commit();
+
+            toast({ title: 'Course Published!', description: 'Your course and videos are now live.' });
             router.push('/dashboard');
         } catch (error: any) {
             console.error("Error publishing course:", error);
@@ -573,13 +565,12 @@ export default function StudioPage() {
                                     {renderUploadForms('silver')}
                                 </div>
                             ) : (
-                                <div className="space-y-4"><h3 className="font-semibold text-lg">Upload Course Videos</h3><p className="text-sm text-muted-foreground">Upload videos one by one. They will be associated with the course category.</p>
+                                <div className="space-y-4"><h3 className="font-semibold text-lg">Upload Course Videos</h3><p className="text-sm text-muted-foreground">Add videos one by one. They will be uploaded when you publish the course.</p>
                                     {uploadItems.general.map((item, index) => (
                                         <Card key={item.id} className="p-4 bg-muted/50 relative space-y-4">
                                             {uploadItems.general.length > 1 && (<Button variant="ghost" size="icon" className="absolute top-1 right-1 h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => removeUploadSlot('general', item.id)}><Trash2 className="h-4 w-4" /></Button>)}
                                             <div className="grid w-full items-center gap-1.5"><Label htmlFor={`video-file-${item.id}`}>Video File</Label><Input id={`video-file-${item.id}`} type="file" accept="video/*" onChange={(e) => handleFileChange(e, 'general', item.id)} /></div>
                                             <div className="grid w-full items-center gap-1.5"><Label htmlFor={`video-title-${item.id}`}>Video Title</Label><Input id={`video-title-${item.id}`} value={item.title} onChange={(e) => handleTitleChange(e, 'general', item.id)} placeholder="e.g., Module 1: Introduction" /></div>
-                                            <Button onClick={() => handleUploadVideo('general', item.id)} disabled={item.isUploading || !item.file || !item.title || !category}>{item.isUploading ? 'Uploading...' : 'Upload Video'}</Button>
                                         </Card>
                                     ))}
                                     <Button variant="outline" onClick={() => addUploadSlot('general')} className="w-full"><Plus className="mr-2 h-4 w-4" /> Add Another Video</Button>
@@ -652,3 +643,5 @@ export default function StudioPage() {
         </div>
     );
 }
+
+    
