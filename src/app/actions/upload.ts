@@ -1,6 +1,5 @@
 
 'use server';
-export const dynamic = 'force-dynamic';
 
 import Client from 'ssh2-sftp-client';
 import { Buffer } from 'buffer';
