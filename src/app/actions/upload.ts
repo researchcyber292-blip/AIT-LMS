@@ -40,8 +40,8 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     password: process.env.HOST_PASS
   };
 
-  if (!sftpConfig.host || !sftpConfig.username || !sftpConfig.password) {
-      const errorMessage = "SFTP credentials (HOST_IP, HOST_USER, HOST_PASS) are not configured in your hosting environment's server settings. Please set these environment variables in your Hostinger Node.js dashboard.";
+  if (!sftpConfig.host || !sftpConfig.username || !sftpConfig.password || !sftpConfig.port) {
+      const errorMessage = "SFTP credentials missing. Please ensure HOST_IP, HOST_USER, HOST_PASS, and HOST_PORT are all set correctly in your Hostinger Node.js environment variables.";
       console.error(errorMessage);
       return { success: false, error: errorMessage };
   }
@@ -55,7 +55,6 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
-  // Use the full absolute path as required by the server.
   const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
@@ -85,6 +84,13 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     if (sftp.sftp) {
         await sftp.end().catch(endErr => console.error('[SFTP End Error]: Failed to close SFTP connection after error:', endErr));
     }
+
+    if (err.message === 'All configured authentication methods failed') {
+      return {
+        success: false,
+        error: `Authentication failed. The server rejected the login attempt. Please double-check that the HOST_IP, HOST_USER, HOST_PASS, and HOST_PORT values in your Hostinger dashboard are 100% correct. The error from the server was: ${err.message}`
+      };
+    }
     
     return { 
       success: false, 
@@ -92,3 +98,4 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     };
   }
 }
+
