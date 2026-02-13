@@ -55,7 +55,7 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const instructorFolder = `${sanitizedUsername}_ait_${sanitizedCourseId}`;
   
-  const baseRemoteDir = `/home/u630495566/domains/avirajinfotech.com/public_html/asian/uploads`;
+  const baseRemoteDir = `domains/avirajinfotech.com/public_html/asian/uploads`;
   let remoteUploadDir = `${baseRemoteDir}/${sanitizedCategory}/${instructorFolder}`;
   
   if (uploadType === 'thumbnail') {
@@ -67,6 +67,8 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
 
   const remotePath = `${remoteUploadDir}/${remoteFileName}`;
   const sftp = new Client();
+  
+  console.log(`[SFTP Action]: Attempting to connect to ${sftpConfig.host}:${sftpConfig.port} with user ${sftpConfig.username}.`);
 
   try {
     await sftp.connect(sftpConfig);
@@ -98,4 +100,3 @@ export async function uploadToHostinger(formData: FormData): Promise<UploadResul
     };
   }
 }
-
